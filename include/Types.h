@@ -15,3 +15,5 @@ typedef float 		f32;
 typedef double 		f64;
 
 typedef const char* cstring;
+
+#include "Vector2.h"

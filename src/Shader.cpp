@@ -356,14 +356,14 @@ void Shader::SetInt(const std::string &name, int value) const
     glProgramUniform1i(m_id, loc, value);
 }
 
-void Shader::SetVec2(const std::string &name, const glm::vec2 &vector) const
+void Shader::SetVec2(const std::string &name, const Vector2 &vector) const
 {
    int loc = GetUniformLocation(name);
    glUniform2f(loc, vector.x, vector.y);
 }
 
-void Shader::SetVec3(const std::string &name, const glm::vec3 &vector) const
-{
-   int loc = GetUniformLocation(name);
-   glUniform3f(loc, vector.x, vector.y, vector.z);
-}
+// void Shader::SetVec3(const std::string &name, const glm::vec3 &vector) const
+// {
+//    int loc = GetUniformLocation(name);
+//    glUniform3f(loc, vector.x, vector.y, vector.z);
+// }
