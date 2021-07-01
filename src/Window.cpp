@@ -1,12 +1,12 @@
 #include "../include/Window.h"
+#include "../include/glad/glad.h"
 #include "../include/GLFW/glfw3.h"
 #include "../include/Assert.h"
-#include <GL/gl.h>
 #include <iostream>
 
 void WindowResizeCallback(GLFWwindow* f, int x, int y)
 {
-    glViewport(0, 0, x, y);
+    glad_glViewport(0, 0, x, y);
 }
 
 void WindowClose(GLFWwindow* w, int a, int b, int c, int d)
@@ -52,11 +52,11 @@ Window::~Window()
     glfwTerminate();
 }
 
-void Window::Update() const noexcept
+void Window::Display()
 {
-	TL_ASSERT(glGetError() == 0, "glError");
-    glfwPollEvents();
+	TL_ASSERT(glad_glGetError() == 0, "glError");
     glfwSwapBuffers(reinterpret_cast<GLFWwindow*>(m_handle));
+    glfwPollEvents();
 }
 
 bool Window::ShouldClose() const noexcept

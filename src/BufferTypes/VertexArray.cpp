@@ -1,7 +1,8 @@
 #include "../../include/Buffers.h"
 #include "../../include/glad/glad.h"
 
-VertexArray::VertexArray() : m_vertex_count(0)
+VertexArray::VertexArray() 
+: m_vertex_count(0)
 {
 	glCreateVertexArrays(1, &m_id);
 }

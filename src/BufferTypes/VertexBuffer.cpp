@@ -21,9 +21,10 @@ VertexBuffer::~VertexBuffer()
 
 void VertexBuffer::BufferData(void* data, ui32 vertexsize, ui32 numofvertices)
 {
-	m_vertex_count = numofvertices;
+	if(data)
+		m_vertex_count = numofvertices;
 	m_datasize = numofvertices * vertexsize;
-	glNamedBufferStorage(m_id, vertexsize * numofvertices, data, GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT);
+	glNamedBufferStorage(m_id, m_datasize, data, GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT);
 }
 
 void VertexBuffer::PushData(void* data, ui32 vertexsize, ui32 numofvertices)
@@ -31,6 +32,12 @@ void VertexBuffer::PushData(void* data, ui32 vertexsize, ui32 numofvertices)
 	glNamedBufferSubData(m_id, m_datasize, vertexsize * numofvertices, data);
 	m_datasize += numofvertices * vertexsize;
 	m_vertex_count += numofvertices;
+}
+
+void VertexBuffer::SetData(void *data, ui32 s, ui32 n)
+{
+	m_datasize = s*n;
+	glNamedBufferSubData(m_id, 0, m_datasize, data);
 }
 
 void VertexBuffer::Flush()

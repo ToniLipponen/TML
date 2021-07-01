@@ -2,6 +2,7 @@
 #include "../include/glad/glad.h"
 #include "../include/Assert.h"
 #include "../include/Utilities/Copy.h"
+#include <climits>
 #include <cstring>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -12,7 +13,7 @@
 Texture::Texture()
 : m_width(0), m_height(0), m_bpp(0), m_pixeldata(nullptr)
 {
-	glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
+
 }
 
 Texture::Texture(cstring filename)
@@ -37,6 +38,8 @@ Texture::~Texture()
 
 void Texture::LoadFromFile(cstring filename)
 {
+	if(m_id == UINT_MAX)
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
 	stbi_set_flip_vertically_on_load(1);
 	m_pixeldata = stbi_load(filename, &m_width, &m_height, &m_bpp, 0);
 	if(m_pixeldata == nullptr)
@@ -46,6 +49,8 @@ void Texture::LoadFromFile(cstring filename)
 
 void Texture::LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data)
 {
+	if(m_id == UINT_MAX)
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
 	m_pixeldata = new ui8[w*h*bpp];
 	tl::copy(m_pixeldata, data, w*h*bpp);
 	m_width 	= w;
