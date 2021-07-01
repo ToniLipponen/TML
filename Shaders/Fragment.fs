@@ -29,5 +29,9 @@ void main()
     else
     {
         outColor = texture(uTextures[vTexID], vUV);
+        if(outColor.a < 0.1)
+        {
+            discard;
+        }
     }
 }
