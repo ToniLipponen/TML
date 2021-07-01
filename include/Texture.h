@@ -2,6 +2,8 @@
 #include "Types.h"
 #include "Assert.h"
 #include "glm/vec2.hpp"
+#include <climits>
+#include <unordered_map>
 
 class Texture
 {
@@ -44,6 +46,14 @@ public:
 	{
 		return m_scale;
 	}
+	constexpr bool HasData() const noexcept
+	{
+		return m_id != UINT_MAX;
+	}
+	constexpr ui32 GetID()
+	{
+		return m_id;
+	}
 private:
 	void Generate(void);
 
@@ -51,7 +61,7 @@ private:
 	ClampMode m_clampmode = Repeat;
 	Filter m_minfilter = LinearMipmapLinear;
 	Filter m_magfilter = Linear;
-	ui32 m_id;
+	ui32 m_id = UINT_MAX;
 	i32 m_width, m_height, m_bpp;
 	glm::vec2 m_scale = {1.f, 1.f};
 	ui8* m_pixeldata;

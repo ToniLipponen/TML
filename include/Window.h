@@ -19,7 +19,7 @@ public:
     Window& operator=(const Window&) = delete;
 
     virtual ~Window();
-    void Update() const noexcept;
+    virtual void Display();
     bool ShouldClose() const noexcept;
 
     // Getters

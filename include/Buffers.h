@@ -15,6 +15,7 @@ public:
 	void BufferData(void* data, ui32 vertexsize, ui32 numofvertices);
 	void PushData(void* data, ui32 vertexsize, ui32 numofversices);
 	void PushData(void* data, ui32 bytes);
+	void SetData(void* data, ui32 vertexsize, ui32 numofvertices);
 	void Flush();
 	constexpr ui32 DataSize() const
 	{
@@ -38,6 +39,7 @@ public:
 	~IndexBuffer();
 	void BufferData(const ui32* data, ui32 elements) const;
 	void PushData(const ui32* data, ui32 elements);
+	void SetData(const ui32* data, ui32 elements);
 	void Flush();
 
 	constexpr ui32 Elements() const noexcept
