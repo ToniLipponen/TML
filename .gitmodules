@@ -4,3 +4,6 @@
 [submodule "external/freetype2"]
 	path = external/freetype2
 	url = https://github.com/aseprite/freetype2
+[submodule "external/openal-soft"]
+	path = external/openal-soft
+	url = https://github.com/kcat/openal-soft
