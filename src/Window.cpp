@@ -30,6 +30,7 @@ Window::Window(ui32 w, ui32 h, cstring title, ui32 settings)
     glfwWindowHint(GLFW_RESIZABLE,      (settings & Setting::Resizeable) != 0);
     glfwWindowHint(GLFW_MAXIMIZED,      (settings & Setting::Maximized)  != 0);
     glfwWindowHint(GLFW_DOUBLEBUFFER,   (settings & Setting::VSync)      != 0);
+
     if((settings & Setting::Antialias) != 0)
         glfwWindowHint(GLFW_SAMPLES, 4);
 

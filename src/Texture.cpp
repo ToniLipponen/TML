@@ -40,7 +40,6 @@ void Texture::LoadFromFile(cstring filename)
 {
 	if(m_id == UINT_MAX)
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
-	stbi_set_flip_vertically_on_load(1);
 	m_pixeldata = stbi_load(filename, &m_width, &m_height, &m_bpp, 0);
 	if(m_pixeldata == nullptr)
 		tl::Logger::WarningMessage("Failed to load texture -> %s", filename);
