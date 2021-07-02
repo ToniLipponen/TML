@@ -223,6 +223,9 @@ void Renderer::Draw(Sprite& r)
             r.m_tex.Bind(tex);
         }
     }
+    else {
+        return;
+    }
     Vector2 origin;
     origin.x = (r.m_pos.x + r.m_pos.x + r.m_size.x) * 0.5f;
     origin.y = (r.m_pos.y + r.m_pos.y + r.m_size.y) * 0.5f;
@@ -242,14 +245,70 @@ void Renderer::Draw(Sprite& r)
     m_indexData.push_back(currentElements + 2);
 }
 
+void Renderer::Draw(Text& r)
+{
+    ui32 currentElements = m_vertexData.size();
+    if(currentElements + r.m_vertexData.size() >= MAX_VERTEX_COUNT)
+    {
+        EndBatch();
+        currentElements = 0;
+    }
+    if(m_textures.size() >= MAX_TEXTURE_COUNT - 2)
+    {
+        EndBatch();
+        currentElements = 0;
+    }
+    
+    ui32 tex = 0;
+    if(r.m_font.m_texture.GetID() != UINT_MAX)
+    {
+        bool already_in_m_textures = false;
+        auto id = r.m_font.m_texture.GetID();
+        ui32 index = 0;
+        for(auto i : m_textures)
+        {
+            if(i == id)
+            {
+                already_in_m_textures = true;
+                break;
+            }
+            ++index;
+        }
+        if(!already_in_m_textures)
+        {
+            tex = 2 + m_textures.size();
+            r.m_font.m_texture.Bind(tex);
+            m_textures.push_back(r.m_font.m_texture.GetID());
+        }
+        else
+        {
+            tex = index+2;
+            r.m_font.m_texture.Bind(tex);
+        }
+    }
+    else {
+        return;
+    }
+    for(auto& v : r.m_vertexData)
+    {
+        v.tex = tex;
+        m_vertexData.push_back(v);
+    }
+    for(auto i : r.m_indexData)
+        m_indexData.push_back(currentElements + i);
+}
+
+
 
 void Renderer::EndBatch()
 {
+    if(m_vertexData.size() < 4)
+        return;
     CircleTexture->Bind(1);
     m_shader->Bind();
     m_shader->UniformMat4fv("uProjection", 1, 0, &m_projection[0][0]);
     m_shader->UniformMat4fv("uView", 1, 0, &m_view[0][0]);
-    for(int i = 1; i < 15; i++)
+    for(int i = 1; i < 16; i++)
     {
         m_shader->Uniform1ui("uTextures[" + std::to_string(i) + "]", i);
     }
