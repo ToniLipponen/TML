@@ -11,9 +11,35 @@ inline Vector2 Rotate(const Vector2& origin, Vector2 p, float r)
     Vector2 np;
     r = -1.f * (r*0.01744444f);
     p -= origin;
-    float cos_r = cos(r);
-    float sin_r = sin(r);
+    const float cos_r = cos(r);
+    const float sin_r = sin(r);
     np.x = origin.x + p.x * cos_r - p.y * sin_r;
     np.y = origin.y + p.x * sin_r + p.y * cos_r;
     return np;
+}
+
+template<typename T>
+inline constexpr T Clamp(T value, T min, T max) noexcept
+{
+    if(value > max)
+        return max;
+    if(value < min)
+        return min;
+    return value;
+}
+
+template<typename T>
+inline constexpr T Min(T value, T min)
+{
+    if(value < min)
+        return min;
+    return value;
+}
+
+template<typename T>
+inline constexpr T Max(T value, T max)
+{
+    if(value > max)
+        return max;
+    return value;
 }

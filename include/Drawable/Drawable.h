@@ -3,12 +3,6 @@
 #include "../Types.h"
 #include "../Texture.h"
 
-struct TexRect
-{
-    Vector2 pos;
-    Vector2 size;
-};
-
 class Drawable
 {
 public:
@@ -24,7 +18,7 @@ public:
     {
         m_size = s;
     }
-    virtual void SetTexture(const Texture& t)
+    void SetTexture(const Texture& t)
     {
         m_tex = t;
     }
@@ -32,12 +26,26 @@ public:
     {
         m_rotation += d;
     }
+    void Translate(const Vector2& offset)
+    {
+        m_pos += offset;
+    }
+
+    const Vector2& GetSize() const noexcept
+    {
+        return m_size;
+    }
+
+    const Vector2& GetPosition() const noexcept
+    {
+        return m_pos;
+    }
+
     friend class Renderer;
 protected:
     Color m_color;
     Vector2 m_pos;
     Vector2 m_size;
-    TexRect m_rect;
     Texture m_tex;
     float m_rotation = 0;
 };

@@ -1,7 +1,7 @@
 #pragma once
 #include "Types.h"
 #include "Assert.h"
-#include "glm/vec2.hpp"
+#include "Vector2.h"
 #include <climits>
 #include <unordered_map>
 
@@ -38,14 +38,7 @@ public:
 	void SetMipMapLevel(ui8 level);
 	void SetMinMagFilter(Filter min, Filter mag);
 	void SetClampMode(ClampMode mode);
-	void SetScale(const glm::vec2& scale) noexcept
-	{
-		m_scale = scale;
-	}
-	constexpr glm::vec2 GetScale() const noexcept
-	{
-		return m_scale;
-	}
+
 	constexpr bool HasData() const noexcept
 	{
 		return m_id != UINT_MAX;
@@ -53,6 +46,21 @@ public:
 	constexpr ui32 GetID()
 	{
 		return m_id;
+	}
+
+	constexpr Vector2 GetSize() const noexcept
+	{
+		return Vector2{static_cast<float>(m_width), static_cast<float>(m_height)};
+	}
+
+	constexpr ui32 GetWidth() const noexcept
+	{
+		return m_width;
+	}
+
+	constexpr ui32 GetHeight() const noexcept
+	{
+		return m_height;
 	}
 private:
 	void Generate(void);
@@ -63,7 +71,6 @@ private:
 	Filter m_magfilter = Linear;
 	ui32 m_id = UINT_MAX;
 	i32 m_width, m_height, m_bpp;
-	glm::vec2 m_scale = {1.f, 1.f};
 	ui8* m_pixeldata;
 	ui8 m_mipmap_level = 0;
 };

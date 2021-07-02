@@ -19,6 +19,10 @@ struct Color
         const float x = 1.0f / rhs;
         return Color(r*x, g*x, b*x, a*x);
     }
+    constexpr Color operator*(const float rhs) const noexcept
+    {
+        return Color(r*rhs, g*rhs, b*rhs, a*rhs);
+    }
     float r = 0;
     float g = 0;
     float b = 0;
