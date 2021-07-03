@@ -21,7 +21,8 @@ public:
         r = Min(r, 0.1f);
         m_size = Vector2{r,r} * 0.5f;
     }
-    void SetSize(const Vector2&) = delete;
     void SetTexture(const Texture& t) = delete;
     void Rotate(float d) = delete;
+private:
+    void SetSize(const Vector2&) override {}
 };

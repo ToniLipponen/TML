@@ -11,6 +11,9 @@ public:
     Text();
     Text(const std::string& text, const std::string& font_file_name);
     Text(const std::string& text, Font& font);
+
+    void SetPosition(const Vector2& pos) override;
+    void SetSize(const Vector2& size) override;
     friend class Renderer;
 private:
     void Generate();

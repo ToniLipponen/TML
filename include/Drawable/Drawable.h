@@ -10,11 +10,11 @@ public:
     {
         m_color = c;
     }
-    void SetPosition(const Vector2& p)
+    virtual void SetPosition(const Vector2& p)
     {
         m_pos = p;
     }
-    void SetSize(const Vector2& s)
+    virtual void SetSize(const Vector2& s)
     {
         m_size = s;
     }
