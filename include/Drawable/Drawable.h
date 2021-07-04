@@ -6,7 +6,7 @@
 class Drawable
 {
 public:
-    void SetColor(const Color& c)
+    virtual void SetColor(const Color& c)
     {
         m_color = c;
     }

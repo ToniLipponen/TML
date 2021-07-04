@@ -14,6 +14,8 @@ public:
 
     void SetPosition(const Vector2& pos) override;
     void SetSize(const Vector2& size) override;
+    void SetColor(const Color& color) override;
+    void SetString(const std::string& string);
     friend class Renderer;
 private:
     void Generate();

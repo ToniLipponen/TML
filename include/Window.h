@@ -1,5 +1,6 @@
 #pragma once
 #include "Types.h"
+#include "Input.h"
 
 class Window
 {
@@ -20,6 +21,7 @@ public:
 
     virtual ~Window();
     virtual void Display();
+    void Close() const noexcept;
     bool ShouldClose() const noexcept;
 
     // Getters
@@ -28,13 +30,13 @@ public:
     i32 GetHeight() const noexcept;
     i32 GetX() const noexcept;
     i32 GetY() const noexcept;
+    double GetTime() const noexcept;
     
     // Setters
     void SetSize(ui32 width, ui32 height) noexcept;
     void SetTitle(cstring title);
     void Maximize();
     // void SetFullscreen(bool fullscreen);
-
 private:
     void* m_handle;
 };
