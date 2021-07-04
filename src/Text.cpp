@@ -29,33 +29,52 @@ Text::Text(const std::string& text, Font& font)
     Generate();
 }
 
+void Text::SetPosition(const Vector2 &pos)
+{
+    m_pos = pos;
+    Generate();
+}
+
+void Text::SetSize(const Vector2& size)
+{
+    m_size = size;
+    Generate();
+}
+
+void Text::SetColor(const Color& color)
+{
+    m_color = color;
+    Generate();
+}
+
+void Text::SetString(const std::string &string)
+{
+    m_string = string;
+    Generate();
+}
+
 void Text::Generate()
 {
-    float x = 0, y = 128;
-    float d = 1.f / 2048;
-    
+    float x = 0, y = 256;
+    constexpr static float d = 1.f / 2048;
+    constexpr static float cs = 1.f / 256.f;
+    float dm = cs * m_size.x;
     int count = 0;
+    m_vertexData.clear();
+    m_indexData.clear();
     for(auto c : m_string)
     {
         Font::FontChar fc = m_font.m_chars.at(c);
         if(c == ' ')
         {
-            x += 3;
+            x += m_size.x;
             continue;
         }
-        Vector2 s = fc.size / 128.f;
-        float t = fc.top / 128.f;
-        s *= 32;
-        t *= 32;
-        // m_vertexData.push_back(Vertex{m_pos + Vector2{x,t},                      m_color,fc.pos * d,                          1, 0.f});
-        // m_vertexData.push_back(Vertex{m_pos + Vector2{x,t} + Vector2{s.x, 0.f},  m_color,(fc.pos + Vector2{fc.size.x,0}) * d, 1, 0.f});
-        // m_vertexData.push_back(Vertex{m_pos + Vector2{x,t} + Vector2{0, s.y},    m_color,(fc.pos + Vector2{0,fc.size.y}) * d, 1, 0.f});
-        // m_vertexData.push_back(Vertex{m_pos + Vector2{x,t} + Vector2{s.x, s.y},  m_color,(fc.pos + fc.size) * d,              1, 0.f});
 
-        m_vertexData.push_back(Vertex{m_pos + Vector2{x,y-fc.top},                                  m_color,fc.pos * d,                          1, 0.f});
-        m_vertexData.push_back(Vertex{m_pos + Vector2{x,y-fc.top} + Vector2{fc.size.x, 0.f},        m_color,(fc.pos + Vector2{fc.size.x,0}) * d, 1, 0.f});
-        m_vertexData.push_back(Vertex{m_pos + Vector2{x,y-fc.top} + Vector2{0, fc.size.y},          m_color,(fc.pos + Vector2{0,fc.size.y}) * d, 1, 0.f});
-        m_vertexData.push_back(Vertex{m_pos + Vector2{x,y-fc.top} + Vector2{fc.size.x, fc.size.y},  m_color,(fc.pos + fc.size) * d,              1, 0.f});
+        m_vertexData.push_back(Vertex{(Vector2{x,y-fc.top} * dm) + m_pos,                                    m_color,fc.pos * d,                          1, 0.f, TEXT});
+        m_vertexData.push_back(Vertex{((Vector2{x,y-fc.top} + Vector2{fc.size.x, 0.f}) * dm) + m_pos,        m_color,(fc.pos + Vector2{fc.size.x,0}) * d, 1, 0.f, TEXT});
+        m_vertexData.push_back(Vertex{((Vector2{x,y-fc.top} + Vector2{0, fc.size.y}) * dm) + m_pos,          m_color,(fc.pos + Vector2{0,fc.size.y}) * d, 1, 0.f, TEXT});
+        m_vertexData.push_back(Vertex{((Vector2{x,y-fc.top} + Vector2{fc.size.x, fc.size.y}) * dm) + m_pos,  m_color,(fc.pos + fc.size) * d,              1, 0.f, TEXT});
 
         m_indexData.push_back(count + 0);
         m_indexData.push_back(count + 1);
@@ -67,5 +86,6 @@ void Text::Generate()
         
         count += 4;
         x += fc.size.x;
+        // x += s.x;
     }
 }

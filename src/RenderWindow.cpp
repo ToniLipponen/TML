@@ -1,6 +1,5 @@
 #include "../include/RenderWindow.h"
 #include "../include/glad/glad.h"
-#include "../include/GLFW/glfw3.h"
 #include "../include/Drawable/Vertex.h"
 #include "../include/glm/gtx/projection.hpp"
 #include "../include/glm/gtc/matrix_transform.hpp"
@@ -22,13 +21,14 @@ static Shader          *m_shader = nullptr;
 static glm::mat4        m_projection = glm::mat4(1.0f);
 static glm::mat4        m_view       = glm::mat4(1.0f);
 
-constexpr static ui32 MAX_VERTEX_COUNT  = 10000;
-constexpr static ui32 MAX_TEXTURE_COUNT = 16;
+constexpr static ui32 MAX_VERTEX_COUNT  = 100000;
+static i32 MAX_TEXTURE_COUNT = 16;
 
 static std::vector<Vertex>  m_vertexData;
 static std::vector<ui32>    m_indexData;
 static std::vector<ui32>    m_textures;
 
+// Generates an antialiased circle texture
 inline void GenerateCircle(ui32 s, ui8* data)
 {
     const float sHalf = s / 2.f;
@@ -45,11 +45,21 @@ inline void GenerateCircle(ui32 s, ui8* data)
     }
 }
 
+void PrintInformation()
+{
+    glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MAX_TEXTURE_COUNT);
+    const GLubyte* vendor = glad_glGetString(GL_VENDOR);
+    const GLubyte* renderer = glad_glGetString(GL_RENDERER);
+    tl::Logger::InfoMessage("Available GPU texture units: %d", MAX_TEXTURE_COUNT);
+    tl::Logger::InfoMessage("GPU: %s %s", vendor, renderer);
+}
+
 void Renderer::Init()
 {
     m_vertexData.reserve(MAX_VERTEX_COUNT);
     m_indexData.reserve(MAX_VERTEX_COUNT * 1.5);
     gladLoadGL();
+    PrintInformation();
 
     m_vao           = new VertexArray();
     m_vertexBuffer  = new VertexBuffer();
@@ -64,6 +74,7 @@ void Renderer::Init()
     m_layout.Push(2, 4);
     m_layout.Push(1, 4);
     m_layout.Push(1, 4);
+    m_layout.Push(1, 4);
     m_shader->Load("TML/Shaders/Vertex.vs", "TML/Shaders/Fragment.fs"); // Change these
     m_shader->Bind();
 
@@ -74,6 +85,7 @@ void Renderer::Init()
 
     CircleTexture = new Texture();
     CircleTexture->LoadFromMemory(s, s, 1, circleData);
+    delete[] circleData;
     glad_glEnable(GL_BLEND);
     glad_glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	TL_ASSERT(glad_glGetError() == 0, "ENGINE FAILED TO INITIALIZE!");
@@ -112,41 +124,14 @@ void Renderer::Draw(Rectangle& r)
     }
     
     const Color c = r.m_color * 0.003921568f;
-    ui32 tex = 0;
-    if(r.m_tex.GetID() != UINT_MAX)
-    {
-        bool already_in_m_textures = false;
-        auto id = r.m_tex.GetID();
-        ui32 index = 0;
-        for(auto i : m_textures)
-        {
-            if(i == id)
-            {
-                already_in_m_textures = true;
-                break;
-            }
-            ++index;
-        }
-        if(!already_in_m_textures)
-        {
-            tex = 2 + m_textures.size();
-            r.m_tex.Bind(tex);
-            m_textures.push_back(r.m_tex.GetID());
-        }
-        else
-        {
-            tex = index+2;
-            r.m_tex.Bind(tex);
-        }
-    }
     Vector2 origin;
     origin.x = (r.m_pos.x + r.m_pos.x + r.m_size.x) * 0.5f;
     origin.y = (r.m_pos.y + r.m_pos.y + r.m_size.y) * 0.5f;
 
-    m_vertexData.push_back({Rotate(origin, r.m_pos, r.m_rotation),                          c, Vector2{0,0}, tex, r.m_rotation});
-    m_vertexData.push_back({Rotate(origin, r.m_pos+Vector2{r.m_size.x, 0.0f}, r.m_rotation),c, Vector2{1,0}, tex, r.m_rotation});
-    m_vertexData.push_back({Rotate(origin, r.m_pos+Vector2{0.0f, r.m_size.y},r.m_rotation), c, Vector2{0,1}, tex, r.m_rotation});
-    m_vertexData.push_back({Rotate(origin, r.m_pos+r.m_size, r.m_rotation),                 c, Vector2{1,1}, tex, r.m_rotation});
+    m_vertexData.push_back({Rotate(origin, r.m_pos, r.m_rotation),                          c, Vector2{0,0}, 0, r.m_rotation, RECTANGLE});
+    m_vertexData.push_back({Rotate(origin, r.m_pos+Vector2{r.m_size.x, 0.0f}, r.m_rotation),c, Vector2{1,0}, 0, r.m_rotation, RECTANGLE});
+    m_vertexData.push_back({Rotate(origin, r.m_pos+Vector2{0.0f, r.m_size.y},r.m_rotation), c, Vector2{0,1}, 0, r.m_rotation, RECTANGLE});
+    m_vertexData.push_back({Rotate(origin, r.m_pos+r.m_size, r.m_rotation),                 c, Vector2{1,1}, 0, r.m_rotation, RECTANGLE});
 
     m_indexData.push_back(currentElements + 0);
     m_indexData.push_back(currentElements + 1);
@@ -165,13 +150,43 @@ void Renderer::Draw(Circle& r)
         EndBatch();
         currentElements = 0;
     }
+    if(m_textures.size() > MAX_TEXTURE_COUNT - 1)
+    {
+        EndBatch();
+        currentElements = 0;
+    }
 
-    const Color c = r.m_color / 255.f;
+    ui32 tex = 0;
+    bool already_in_m_textures = false;
+    auto id = CircleTexture->GetID();
+    ui32 index = 0;
+    for(auto i : m_textures)
+    {
+        if(i == id)
+        {
+            already_in_m_textures = true;
+            break;
+        }
+        ++index;
+    }
+    if(!already_in_m_textures)
+    {
+        tex = 1 + m_textures.size();
+        CircleTexture->Bind(tex);
+        m_textures.push_back(CircleTexture->GetID());
+    }
+    else
+    {
+        tex = index+1;
+        CircleTexture->Bind(tex);
+    }
+        
+    const Color c = r.m_color * 0.003921568f;
 
-    m_vertexData.push_back({r.m_pos+Vector2{-r.m_size.x, -r.m_size.x},  c, Vector2{0,1}, 1, 0});
-    m_vertexData.push_back({r.m_pos+Vector2{r.m_size.x, -r.m_size.x},   c, Vector2{1,1}, 1, 0});
-    m_vertexData.push_back({r.m_pos+Vector2{-r.m_size.x, r.m_size.x},   c, Vector2{0,0}, 1, 0});
-    m_vertexData.push_back({r.m_pos+r.m_size,                           c, Vector2{1,0}, 1, 0});
+    m_vertexData.push_back({r.m_pos+Vector2{-r.m_size.x, -r.m_size.x},  c, Vector2{0,1}, tex, 0, CIRCLE});
+    m_vertexData.push_back({r.m_pos+Vector2{r.m_size.x, -r.m_size.x},   c, Vector2{1,1}, tex, 0, CIRCLE});
+    m_vertexData.push_back({r.m_pos+Vector2{-r.m_size.x, r.m_size.x},   c, Vector2{0,0}, tex, 0, CIRCLE});
+    m_vertexData.push_back({r.m_pos+r.m_size,                           c, Vector2{1,0}, tex, 0, CIRCLE});
 
     m_indexData.push_back(currentElements + 0);
     m_indexData.push_back(currentElements + 1);
@@ -190,7 +205,7 @@ void Renderer::Draw(Sprite& r)
         EndBatch();
         currentElements = 0;
     }
-    if(m_textures.size() >= MAX_TEXTURE_COUNT - 2)
+    if(m_textures.size() >= MAX_TEXTURE_COUNT - 1)
     {
         EndBatch();
         currentElements = 0;
@@ -213,13 +228,13 @@ void Renderer::Draw(Sprite& r)
         }
         if(!already_in_m_textures)
         {
-            tex = 2 + m_textures.size();
+            tex = 1 + m_textures.size();
             r.m_tex.Bind(tex);
             m_textures.push_back(r.m_tex.GetID());
         }
         else
         {
-            tex = index+2;
+            tex = index+1;
             r.m_tex.Bind(tex);
         }
     }
@@ -231,10 +246,10 @@ void Renderer::Draw(Sprite& r)
     origin.y = (r.m_pos.y + r.m_pos.y + r.m_size.y) * 0.5f;
     const Vector2 v = Vector2{1.f,1.f} / r.m_tex.GetSize();
 
-    m_vertexData.push_back({Rotate(origin, r.m_pos, r.m_rotation),                          {0}, r.m_rect.pos * v, tex, r.m_rotation});
-    m_vertexData.push_back({Rotate(origin, r.m_pos+Vector2{r.m_size.x, 0.0f}, r.m_rotation),{0}, (r.m_rect.pos + Vector2{r.m_rect.size.x, 0}) * v, tex, r.m_rotation});
-    m_vertexData.push_back({Rotate(origin, r.m_pos+Vector2{0.0f, r.m_size.y},r.m_rotation), {0}, (r.m_rect.pos + Vector2{0, r.m_rect.size.y}) * v, tex, r.m_rotation});
-    m_vertexData.push_back({Rotate(origin, r.m_pos+r.m_size, r.m_rotation),                 {0}, (r.m_rect.pos + r.m_rect.size) * v, tex, r.m_rotation});
+    m_vertexData.push_back({Rotate(origin, r.m_pos, r.m_rotation),                          {0}, r.m_rect.pos * v, tex, r.m_rotation, TEXTURE});
+    m_vertexData.push_back({Rotate(origin, r.m_pos+Vector2{r.m_size.x, 0.0f}, r.m_rotation),{0}, (r.m_rect.pos + Vector2{r.m_rect.size.x, 0}) * v, tex, r.m_rotation, TEXTURE});
+    m_vertexData.push_back({Rotate(origin, r.m_pos+Vector2{0.0f, r.m_size.y},r.m_rotation), {0}, (r.m_rect.pos + Vector2{0, r.m_rect.size.y}) * v, tex, r.m_rotation, TEXTURE});
+    m_vertexData.push_back({Rotate(origin, r.m_pos+r.m_size, r.m_rotation),                 {0}, (r.m_rect.pos + r.m_rect.size) * v, tex, r.m_rotation, TEXTURE});
 
     m_indexData.push_back(currentElements + 0);
     m_indexData.push_back(currentElements + 1);
@@ -253,7 +268,7 @@ void Renderer::Draw(Text& r)
         EndBatch();
         currentElements = 0;
     }
-    if(m_textures.size() >= MAX_TEXTURE_COUNT - 2)
+    if(m_textures.size() >= MAX_TEXTURE_COUNT - 1)
     {
         EndBatch();
         currentElements = 0;
@@ -276,13 +291,13 @@ void Renderer::Draw(Text& r)
         }
         if(!already_in_m_textures)
         {
-            tex = 2 + m_textures.size();
+            tex = 1 + m_textures.size();
             r.m_font.m_texture.Bind(tex);
             m_textures.push_back(r.m_font.m_texture.GetID());
         }
         else
         {
-            tex = index+2;
+            tex = index+1;
             r.m_font.m_texture.Bind(tex);
         }
     }
@@ -298,17 +313,14 @@ void Renderer::Draw(Text& r)
         m_indexData.push_back(currentElements + i);
 }
 
-
-
 void Renderer::EndBatch()
 {
-    if(m_vertexData.size() < 4)
+    if(m_vertexData.size() < 3)
         return;
-    CircleTexture->Bind(1);
     m_shader->Bind();
     m_shader->UniformMat4fv("uProjection", 1, 0, &m_projection[0][0]);
     m_shader->UniformMat4fv("uView", 1, 0, &m_view[0][0]);
-    for(int i = 1; i < 16; i++)
+    for(int i = 1; i < MAX_TEXTURE_COUNT; i++)
     {
         m_shader->Uniform1ui("uTextures[" + std::to_string(i) + "]", i);
     }

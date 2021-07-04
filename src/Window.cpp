@@ -2,20 +2,12 @@
 #include "../include/glad/glad.h"
 #include "../include/GLFW/glfw3.h"
 #include "../include/Assert.h"
+#include "../include/Input.h"
 #include <iostream>
 
 void WindowResizeCallback(GLFWwindow* f, int x, int y)
 {
     glad_glViewport(0, 0, x, y);
-}
-
-void WindowClose(GLFWwindow* w, int a, int b, int c, int d)
-{
-    if(a == GLFW_KEY_ESCAPE)
-    {
-        glfwDestroyWindow(w);
-        glfwTerminate();
-    }
 }
 
 Window::Window(ui32 w, ui32 h, cstring title, ui32 settings)
@@ -27,6 +19,10 @@ Window::Window(ui32 w, ui32 h, cstring title, ui32 settings)
         std::exit(1);
     }
     
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     glfwWindowHint(GLFW_RESIZABLE,      (settings & Setting::Resizeable) != 0);
     glfwWindowHint(GLFW_MAXIMIZED,      (settings & Setting::Maximized)  != 0);
     glfwWindowHint(GLFW_DOUBLEBUFFER,   (settings & Setting::VSync)      != 0);
@@ -34,7 +30,10 @@ Window::Window(ui32 w, ui32 h, cstring title, ui32 settings)
     if((settings & Setting::Antialias) != 0)
         glfwWindowHint(GLFW_SAMPLES, 4);
 
-    m_handle = glfwCreateWindow(w, h, title, 0, 0);
+    if(settings & Setting::Fullscreen)
+        m_handle = glfwCreateWindow(w, h, title, glfwGetPrimaryMonitor(), 0);
+    else
+        m_handle = glfwCreateWindow(w, h, title, 0, 0);
     if(!m_handle)
     {
         std::cerr << "ERROR: Failed to create a window.\n";
@@ -44,7 +43,7 @@ Window::Window(ui32 w, ui32 h, cstring title, ui32 settings)
     glfwShowWindow(reinterpret_cast<GLFWwindow*>(m_handle));
     
     glfwSetWindowSizeCallback(reinterpret_cast<GLFWwindow*>(m_handle), WindowResizeCallback);
-    glfwSetKeyCallback(reinterpret_cast<GLFWwindow*>(m_handle), WindowClose);
+    Input::Keyboard::Initialize();
 }
 
 Window::~Window()
@@ -58,6 +57,11 @@ void Window::Display()
 	TL_ASSERT(glad_glGetError() == 0, "glError");
     glfwSwapBuffers(reinterpret_cast<GLFWwindow*>(m_handle));
     glfwPollEvents();
+}
+
+void Window::Close() const noexcept
+{
+    glfwSetWindowShouldClose(reinterpret_cast<GLFWwindow*>(m_handle), 1);
 }
 
 bool Window::ShouldClose() const noexcept
@@ -96,6 +100,11 @@ i32 Window::GetY() const noexcept
     i32 x, y;
     glfwGetWindowPos(reinterpret_cast<GLFWwindow*>(m_handle), &x, &y);
     return y;
+}
+
+double Window::GetTime() const noexcept
+{
+    return glfwGetTime();
 }
 
 void Window::SetSize(ui32 w, ui32 h) noexcept
