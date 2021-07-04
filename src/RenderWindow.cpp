@@ -10,6 +10,84 @@
 #include <cstdlib>
 #include <string>
 
+const static std::string VERTEX_STRING = 
+{
+"    #version 460 core\n"
+"    layout (location = 0) in vec2 Pos;\n"
+"    layout (location = 1) in vec4 Color;\n"
+"    layout (location = 2) in vec2 UV;\n"
+"    layout (location = 3) in uint TexID;\n"
+"    layout (location = 4) in float Rotation;\n"
+"    layout (location = 5) in uint type;\n"
+"    out vec4  vColor;\n"
+"    out vec2  vUV;\n"
+"    out uint  vTexID;\n"
+"    out uint  vType;\n"
+"    uniform mat4 uProjection;\n"
+"    uniform mat4 uView;\n"
+"    void main()\n"
+"    {\n"
+"        gl_Position = uView * (uProjection * vec4(Pos, 1.0, 1.0));\n"
+"        vColor = Color;\n"
+"        vUV = UV;\n"
+"        vTexID = TexID;\n"
+"        vType = type;\n"
+"    }\n"
+};
+const static std::string FRAGMENT_STRING = 
+{
+"    #version 460 core\n"
+"    in vec4 vColor;\n"
+"    in vec2 vUV;\n"
+"    in flat uint vTexID;\n"
+"    in flat uint vType;\n"
+"    out vec4 outColor;\n"
+"    uniform sampler2D uTextures[32];\n"
+"    void main()\n"
+"    {\n"
+"        vec4 color = vec4(0.0);\n"
+"        switch(vType)\n"
+"        {\n"
+"            case 0:\n"
+"                color = texture(uTextures[vTexID], vUV);\n"
+"                if(color.r > 0.1)\n"
+"                {\n"
+"                    outColor = vColor;\n"
+"                    outColor.a = color.r;\n"
+"                }\n"
+"                else\n"
+"                {\n"
+"                    discard;\n"
+"                }\n"
+"            break;\n"
+"            case 1:\n"
+"                outColor = vec4(vColor);\n"
+"            break;\n"
+"            case 2:\n"
+"                outColor = texture(uTextures[vTexID], vUV);\n"
+"                if(outColor.a < 0.1)\n"
+"                {\n"
+"                    discard;\n"
+"                }\n"
+"            break;\n"
+"            case 3:\n"
+"                color = texture(uTextures[vTexID], vUV);\n"
+"                if(color.r > 0.2)\n"
+"                {\n"
+"                    outColor = vColor;\n"
+"                    outColor.a = color.r;\n"
+"                }\n"
+"                else\n"
+"                {\n"
+"                    discard;\n"
+"                }\n"
+"            break;\n"
+"            default:\n"
+"                discard;\n"
+"            break;\n"
+"        }\n"
+"    }\n"
+};
 static Texture* CircleTexture = nullptr;
 
 static VertexArray     *m_vao = nullptr;
@@ -75,7 +153,8 @@ void Renderer::Init()
     m_layout.Push(1, 4);
     m_layout.Push(1, 4);
     m_layout.Push(1, 4);
-    m_shader->Load("TML/Shaders/Vertex.vs", "TML/Shaders/Fragment.fs"); // Change these
+    // m_shader->Load("TML/Shaders/Vertex.vs", "TML/Shaders/Fragment.fs"); // Change these
+    m_shader->FromString(VERTEX_STRING, FRAGMENT_STRING);
     m_shader->Bind();
 
     const int s = 4096;

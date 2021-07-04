@@ -2,7 +2,6 @@
 #include "../include/Assert.h"
 
 #include <cstdlib>
-#include <freetype2/ft2build.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -52,7 +51,7 @@ void Font::LoadFromFile(const std::string &filename)
         if(x + face->glyph->bitmap.width < ATLAS_SIZE)
         {
             fc = {
-                Vector2{face->glyph->bitmap.width, face->glyph->bitmap.rows},
+                Vector2{face->glyph->bitmap.width*1.f, face->glyph->bitmap.rows*1.f},
                 Vector2{static_cast<float>(x), static_cast<float>(y-face->glyph->bitmap.rows)},
                 face->glyph->advance.x,
                 face->glyph->bitmap_top
@@ -65,7 +64,7 @@ void Font::LoadFromFile(const std::string &filename)
             y -= face->glyph->bitmap.rows+face->glyph->bitmap_top;
             x = 0;
             fc = {
-                Vector2{face->glyph->bitmap.width, face->glyph->bitmap.rows},
+                Vector2{face->glyph->bitmap.width*1.f, face->glyph->bitmap.rows*1.f},
                 Vector2{static_cast<float>(x), static_cast<float>(y-face->glyph->bitmap.rows)},
                 face->glyph->advance.x,
                 face->glyph->bitmap_top

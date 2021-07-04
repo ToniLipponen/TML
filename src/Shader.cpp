@@ -53,19 +53,15 @@ void Shader::Load(cstring vs, cstring fs, cstring gs) const
 {
     std::string vert = ReadFile(vs);
     std::string frag = ReadFile(fs);
-    std::string geo;
-    if(gs[0] != '\0')
-        geo = ReadFile(gs);
-    
-    this->m_id = glCreateProgram();
+    FromString(vert, frag);
+}
+
+void Shader::FromString(const std::string& vs, const std::string& fs) const
+{
     ui32 _vs = glCreateShader(GL_VERTEX_SHADER);
     ui32 _fs = glCreateShader(GL_FRAGMENT_SHADER);
-    ui32 _gs = glCreateShader(GL_GEOMETRY_SHADER);
-
-    const char* vertex   = vert.c_str();
-    const char* fragment = frag.c_str();
-    const char* geometry = geo.c_str();
-    const bool has_geo = (geo.length() > 1);
+    const char* vertex   = vs.c_str();
+    const char* fragment = fs.c_str();
 
     glShaderSource(_vs, 1, &vertex, nullptr);
     glCompileShader(_vs);
@@ -73,18 +69,10 @@ void Shader::Load(cstring vs, cstring fs, cstring gs) const
     glShaderSource(_fs, 1, &fragment, nullptr);
     glCompileShader(_fs);
 
-    if(has_geo)
-    {
-        glShaderSource(_gs, 1, &geometry, nullptr);
-        glCompileShader(_gs);
-    }
-
     i32 vertex_status = 1, fragment_status = 1, geometry_status = 1;
     glGetShaderiv(_vs, GL_COMPILE_STATUS, &vertex_status);
     glGetShaderiv(_fs, GL_COMPILE_STATUS, &fragment_status);
-    if(has_geo)
-        glGetShaderiv(_gs, GL_COMPILE_STATUS, &geometry_status);
-    
+
     if(vertex_status != 1){
         char vertex_message[1024*4];
         i32 vertex_message_len = 0;
@@ -99,71 +87,53 @@ void Shader::Load(cstring vs, cstring fs, cstring gs) const
         tl::Logger::ErrorMessage(fragment_message);
         assert(fragment_status == 1);
     }
-    if(geometry_status != 1){
-        char message[1024*4];
-        i32 message_len = 0;
-        glGetShaderInfoLog(_fs, 500, &message_len, message);
-        tl::Logger::ErrorMessage(message);
-        assert(geometry_status == 1);
-    }
 
     glAttachShader(m_id, _vs);
     glAttachShader(m_id, _fs);
-    if(has_geo)
-        glAttachShader(m_id, _gs);
-
 
     glLinkProgram(m_id);
     glValidateProgram(m_id);
 
     glDetachShader(m_id, _vs);
     glDetachShader(m_id, _fs);
-    if(has_geo)
-        glAttachShader(m_id, _gs);
-
     glDeleteShader(_vs);
     glDeleteShader(_fs);
-    if(has_geo)
-        glDeleteShader(_gs);
-}
 
-void Shader::FromString(const std::string& fs, const std::string& vs) const
-{
-    this->m_id = glCreateProgram();
-    ui32 _vs = glCreateShader(GL_VERTEX_SHADER);
-    ui32 _fs = glCreateShader(GL_FRAGMENT_SHADER);
+    // this->m_id = glCreateProgram();
+    // ui32 _vs = glCreateShader(GL_VERTEX_SHADER);
+    // ui32 _fs = glCreateShader(GL_FRAGMENT_SHADER);
 
-    const char* vertex   = vs.c_str();
-    const char* fragment = fs.c_str();
+    // const char* vertex   = vs.c_str();
+    // const char* fragment = fs.c_str();
 
-    glShaderSource(_vs, 1, &vertex, nullptr);
-    glCompileShader(_vs);
-    glShaderSource(_fs, 1, &fragment, nullptr);
-    glCompileShader(_fs);
+    // glShaderSource(_vs, 1, &vertex, nullptr);
+    // glCompileShader(_vs);
+    // glShaderSource(_fs, 1, &fragment, nullptr);
+    // glCompileShader(_fs);
 
-    i32 vertex_status = 1, fragment_status = 1;
+    // i32 vertex_status = 1, fragment_status = 1;
 
-    glGetShaderiv(_vs, GL_COMPILE_STATUS, &vertex_status);
-    glGetShaderiv(_fs, GL_COMPILE_STATUS, &fragment_status);
+    // glGetShaderiv(_vs, GL_COMPILE_STATUS, &vertex_status);
+    // glGetShaderiv(_fs, GL_COMPILE_STATUS, &fragment_status);
     
-    if(vertex_status != 1){
-        std::printf("ERROR: Failed to compile vertex shader -> %s\n", vs.c_str());
-        assert(vertex_status == 1);
-    }
-    if(fragment_status != 1){
-        std::printf("ERROR: Failed to compile fragment shader -> %s\n", fs.c_str());
-        assert(fragment_status == 1);
-    }
+    // if(vertex_status != 1){
+    //     std::printf("ERROR: Failed to compile vertex shader -> %s\n", vs.c_str());
+    //     assert(vertex_status == 1);
+    // }
+    // if(fragment_status != 1){
+    //     std::printf("ERROR: Failed to compile fragment shader -> %s\n", fs.c_str());
+    //     assert(fragment_status == 1);
+    // }
 
-    glAttachShader(m_id, _vs);
-    glAttachShader(m_id, _fs);
-    glLinkProgram(m_id);
-    glValidateProgram(m_id);
+    // glAttachShader(m_id, _vs);
+    // glAttachShader(m_id, _fs);
+    // glLinkProgram(m_id);
+    // glValidateProgram(m_id);
 
-    glDetachShader(m_id, _vs);
-    glDetachShader(m_id, _fs);
-    glDeleteShader(_vs);
-    glDeleteShader(_fs);
+    // glDetachShader(m_id, _vs);
+    // glDetachShader(m_id, _fs);
+    // glDeleteShader(_vs);
+    // glDeleteShader(_fs);
 }
 
 inline i32 Shader::GetUniformLocation(const std::string& name) const

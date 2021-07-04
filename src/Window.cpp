@@ -1,5 +1,6 @@
 #include "../include/Window.h"
 #include "../include/glad/glad.h"
+#define GLFW_INCLUDE_NONE
 #include "../include/GLFW/glfw3.h"
 #include "../include/Assert.h"
 #include "../include/Input.h"

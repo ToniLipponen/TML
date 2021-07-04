@@ -18,8 +18,8 @@ private:
     {
         Vector2 size;
         Vector2 pos;
-        ui32 advance;
-        ui32 top;
+        i32 advance;
+        i32 top;
     };
     std::map<char, FontChar> m_chars;
 };
