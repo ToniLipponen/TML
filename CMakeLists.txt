@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 project(TML)
 
+file(MAKE_DIRECTORY build)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY build)
+include_directories(external/freetype2/include)
 add_subdirectory(external/glfw)
 add_subdirectory(external/openal-soft)
+add_subdirectory(external/freetype2)
 file(GLOB_RECURSE SRC_FILES src/*.cpp src/glad.c)
 
-add_library(TML ${SRC_FILES})
+add_library(TML STATIC ${SRC_FILES})
 link_libraries(TML glfw openal freetype2)
+target_link_libraries(TML glfw freetype2 openal ${GLFW_LIBRARIES})
 target_include_directories(TML PRIVATE external/freetype2/include)
