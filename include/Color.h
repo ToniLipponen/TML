@@ -1,7 +1,6 @@
 #pragma once
 #include "Types.h"
 
-
 struct Color
 {
     Color() = default;
@@ -22,6 +21,10 @@ struct Color
     constexpr Color operator*(const float rhs) const noexcept
     {
         return Color(r*rhs, g*rhs, b*rhs, a*rhs);
+    }
+    constexpr Color operator+(const Color& color) const noexcept
+    {
+        return Color(r+color.r, g+color.g, b+color.b, a+color.a);
     }
     float r = 0;
     float g = 0;

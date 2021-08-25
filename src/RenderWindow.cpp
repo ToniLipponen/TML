@@ -1,18 +1,15 @@
 #include "../include/RenderWindow.h"
 #include "../include/glad/glad.h"
-#include "../include/Drawable/Vertex.h"
 #include "../include/glm/gtx/projection.hpp"
 #include "../include/glm/gtc/matrix_transform.hpp"
-#include "../include/glm/gtx/matrix_transform_2d.hpp"
-
-#include "../include/glm/mat4x4.hpp"
-#include "../include/Utilities/Utilities.h"
+//#define NO_GL_DEBUGGING 1
+#include "../include/GlDebug.h"
 #include <cstdlib>
 #include <string>
 
 const static std::string VERTEX_STRING = 
 {
-    "    #version 460 core\n"
+ "    #version 460 core\n"
     "    layout (location = 0) in vec2 Pos;\n"
     "    layout (location = 1) in vec4 Color;\n"
     "    layout (location = 2) in vec2 UV;\n"
@@ -34,59 +31,60 @@ const static std::string VERTEX_STRING =
     "        vType = type;\n"
     "    }\n"
 };
+
 const static std::string FRAGMENT_STRING = 
 {
-    "    #version 460 core\n"
-    "    in vec4 vColor;\n"
-    "    in vec2 vUV;\n"
-    "    in flat uint vTexID;\n"
-    "    in flat uint vType;\n"
-    "    out vec4 outColor;\n"
-    "    uniform sampler2D uTextures[32];\n"
-    "    void main()\n"
-    "    {\n"
-    "        vec4 color = vec4(0.0);\n"
-    "        switch(vType)\n"
-    "        {\n"
-    "            case 0:\n"
-    "                color = texture(uTextures[vTexID], vUV);\n"
-    "                if(color.r > 0.1)\n"
-    "                {\n"
-    "                    outColor = vColor;\n"
-    "                    outColor.a = color.r;\n"
-    "                }\n"
-    "                else\n"
-    "                {\n"
-    "                    discard;\n"
-    "                }\n"
-    "            break;\n"
-    "            case 1:\n"
-    "                outColor = vec4(vColor);\n"
-    "            break;\n"
-    "            case 2:\n"
-    "                outColor = texture(uTextures[vTexID], vUV);\n"
-    "                if(outColor.a < 0.1)\n"
-    "                {\n"
-    "                    discard;\n"
-    "                }\n"
-    "            break;\n"
-    "            case 3:\n"
-    "                color = texture(uTextures[vTexID], vUV);\n"
-    "                if(color.r > 0.2)\n"
-    "                {\n"
-    "                    outColor = vColor;\n"
-    "                    outColor.a = color.r;\n"
-    "                }\n"
-    "                else\n"
-    "                {\n"
-    "                    discard;\n"
-    "                }\n"
-    "            break;\n"
-    "            default:\n"
-    "                discard;\n"
-    "            break;\n"
-    "        }\n"
-    "    }\n"
+ "#version 460 core\n"
+    "in vec4 vColor;\n"
+    "in vec2 vUV;\n"
+    "in flat uint vTexID;\n"
+    "in flat uint vType;\n"
+    "out vec4 outColor;\n"
+    "uniform sampler2D uTextures[32];\n"
+    "void main()\n"
+    "{\n"
+    "   vec4 color = vec4(0.0);\n"
+    "   switch(vType)\n"
+    "   {\n"
+    "       case 0:\n"
+    "       color = texture(uTextures[vTexID], vUV);\n"
+    "       if(color.r > 0.1)\n"
+    "       {\n"
+    "           outColor = vColor;\n"
+    "           outColor.a = color.r;\n"
+    "       }\n"
+    "       else\n"
+    "       {\n"
+    "           discard;\n"
+    "       }\n"
+    "       break;\n"
+    "       case 1:\n"
+    "           outColor = vec4(vColor);\n"
+    "       break;\n"
+    "       case 2:\n"
+    "           outColor = texture(uTextures[vTexID], vUV);\n"
+    "           if(outColor.a < 0.1)\n"
+    "           {\n"
+    "               discard;\n"
+    "           }\n"
+    "       break;\n"
+    "       case 3:\n"
+    "           color = texture(uTextures[vTexID], vUV);\n"
+    "           if(color.r > 0.3)\n"
+    "           {\n"
+    "               outColor = vColor;\n"
+    "               outColor.a = color.r;\n"
+    "           }\n"
+    "           else\n"
+    "           {\n"
+    "               discard;\n"
+    "           }\n"
+    "       break;\n"
+    "       default:\n"
+    "           discard;\n"
+    "       break;\n"
+    "   }\n"
+    "}\n"
 };
 static Texture* CircleTexture = nullptr;
 
@@ -106,7 +104,7 @@ static std::vector<Vertex>  m_vertexData;
 static std::vector<ui32>    m_indexData;
 static std::vector<ui32>    m_textures;
 
-// Generates an antialiased circle texture
+// Generates an anti-aliased circle texture
 inline void GenerateCircle(ui32 s, ui8* data)
 {
     const float sHalf = s / 2.f;
@@ -140,20 +138,19 @@ void Renderer::Init()
     PrintInformation();
 
     m_vao           = new VertexArray();
-    m_vertexBuffer  = new VertexBuffer();
-    m_indexBuffer   = new IndexBuffer();
+    m_vertexBuffer  = new VertexBuffer(nullptr, sizeof(Vertex), MAX_VERTEX_COUNT);
+    m_indexBuffer   = new IndexBuffer(nullptr, MAX_VERTEX_COUNT);
     m_shader        = new Shader();
 
     m_vao->Bind();
-    m_vertexBuffer->BufferData(0, sizeof(Vertex), MAX_VERTEX_COUNT);
-    m_indexBuffer->BufferData(0, MAX_VERTEX_COUNT*1.5);
+//    m_vertexBuffer->BufferData(0, sizeof(Vertex), MAX_VERTEX_COUNT);
+//    m_indexBuffer->BufferData(0, MAX_VERTEX_COUNT*1.5);
     m_layout.Push(2, 4);
     m_layout.Push(4, 4);
     m_layout.Push(2, 4);
     m_layout.Push(1, 4);
     m_layout.Push(1, 4);
     m_layout.Push(1, 4);
-    // m_shader->Load("TML/Shaders/Vertex.vs", "TML/Shaders/Fragment.fs"); // Change these
     m_shader->FromString(VERTEX_STRING, FRAGMENT_STRING);
     m_shader->Bind();
 
@@ -166,10 +163,7 @@ void Renderer::Init()
     CircleTexture->LoadFromMemory(s, s, 1, circleData);
     delete[] circleData;
     glad_glEnable(GL_BLEND);
-    glad_glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	TL_ASSERT(glad_glGetError() == 0, "ENGINE FAILED TO INITIALIZE!");
-
-    // m_shader->FromString(const std::string &vs, const std::string &fs);
+    GL_CALL(glad_glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 }
 
 void Renderer::Clear()
@@ -178,7 +172,7 @@ void Renderer::Clear()
 	static int f[4];
 	glad_glGetIntegerv(GL_VIEWPORT, f);
 	m_projection = glm::ortho(f[0]*1.f, f[2]*1.f, f[3]*1.f, f[1]*1.f);
-    BeginBatch();
+    GL_CALL(BeginBatch());
 }
 
 void Renderer::BeginBatch()
@@ -396,16 +390,23 @@ void Renderer::EndBatch()
 {
     if(m_vertexData.size() < 3)
         return;
-    m_shader->Bind();
-    m_shader->UniformMat4fv("uProjection", 1, 0, &m_projection[0][0]);
-    m_shader->UniformMat4fv("uView", 1, 0, &m_view[0][0]);
-    for(int i = 1; i < MAX_TEXTURE_COUNT; i++)
+    GL_CALL(m_shader->Bind());
+    GL_CALL(m_shader->UniformMat4fv("uProjection", 1, 0, &m_projection[0][0]));
+    GL_CALL(m_shader->UniformMat4fv("uView", 1, 0, &m_view[0][0]));
+    for(i32 i = 1; i < 4; i++)
     {
-        m_shader->Uniform1ui("uTextures[" + std::to_string(i) + "]", i);
+        GL_CALL(m_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i));
     }
-
-    m_vertexBuffer->SetData(m_vertexData.data(), sizeof(Vertex), m_vertexData.size());
-    m_indexBuffer->SetData(m_indexData.data(), m_indexData.size());
+    if(m_vertexData.data())
+    {
+        m_vertexBuffer->SetData(m_vertexData.data(), sizeof(Vertex), m_vertexData.size());
+        m_indexBuffer->SetData(m_indexData.data(), m_indexData.size());
+    }
+    else
+    { // No data, so just return
+        Renderer::BeginBatch();
+        return;
+    }
 
     m_vao->BufferData(*m_vertexBuffer, *m_indexBuffer, m_layout);
     m_vao->Bind();

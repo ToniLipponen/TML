@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cassert>
 #include "../include/Assert.h"
+#include "../include/GlDebug.h"
 
 constexpr float _color_mult = 1.f / 255.f;
 
@@ -190,8 +191,9 @@ void Shader::Uniform4i(const std::string& name, i32 x, i32 y, i32 z, i32 w) cons
 
 void Shader::Uniform1ui(const std::string& name, ui32 x) const
 {
-    i32 loc = GetUniformLocation(name);
-    glProgramUniform1ui(m_id, loc, x);
+    i32 loc = GL_CALL(GetUniformLocation(name));
+    if(loc == -1) return;
+    GL_CALL(glProgramUniform1ui(m_id, loc, x));
 }
 void Shader::Uniform2ui(const std::string& name, ui32 x, ui32 y) const
 {

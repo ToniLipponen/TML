@@ -53,28 +53,51 @@ void Text::SetString(const std::string &string)
     Generate();
 }
 
+void Text::SetFont(const Font &font)
+{
+    m_font = font;
+}
+
+#define GetCharSize(ax, bx, as) (bx - ax) * as / 256.f * m_size.x
+#define GetSpacing(size) (size / 10) * m_spacing
 void Text::Generate()
 {
-    float x = 0, y = 256;
-    constexpr static float d = 1.f / 2048;
-    constexpr static float cs = 1.f / 256.f;
-    float dm = cs * m_size.x;
+    if(m_font.m_chars.empty()) // Font failed to load? No glyphs available.
+        return;
+    float x = 0, y = 32;
     int count = 0;
     m_vertexData.clear();
     m_indexData.clear();
     for(auto c : m_string)
     {
-        Font::FontChar fc = m_font.m_chars.at(c);
-        if(c == ' ')
+        if(c == '\n')
         {
-            x += m_size.x;
+            x = 0;
+            y += m_size.x;
             continue;
         }
+        else if(c == ' ')
+        {
+            x += GetSpacing(m_size.x);
+            continue;
+        }
+        Font::FontChar fc = m_font.m_chars.at(c);
 
-        m_vertexData.push_back(Vertex{(Vector2{x,y-fc.top} * dm) + m_pos,                                    m_color,fc.pos * d,                          1, 0.f, TEXT});
-        m_vertexData.push_back(Vertex{((Vector2{x,y-fc.top} + Vector2{fc.size.x, 0.f}) * dm) + m_pos,        m_color,(fc.pos + Vector2{fc.size.x,0}) * d, 1, 0.f, TEXT});
-        m_vertexData.push_back(Vertex{((Vector2{x,y-fc.top} + Vector2{0, fc.size.y}) * dm) + m_pos,          m_color,(fc.pos + Vector2{0,fc.size.y}) * d, 1, 0.f, TEXT});
-        m_vertexData.push_back(Vertex{((Vector2{x,y-fc.top} + Vector2{fc.size.x, fc.size.y}) * dm) + m_pos,  m_color,(fc.pos + fc.size) * d,              1, 0.f, TEXT});
+        float offset = 128 - GetCharSize(fc.pos.y, fc.size.y, 2048);
+
+        m_vertexData.push_back(Vertex{(Vector2{x,y-fabsf(fc.offset.y*256)}) + m_pos,
+                                      m_color,fc.pos,1, 0.f, TEXT});
+        m_vertexData.push_back(Vertex{((Vector2{x,y-fabsf(fc.offset.y*256)} + Vector2{GetCharSize(fc.pos.x, fc.size.x, 2048), 0.f})) + m_pos,
+                                      m_color,Vector2{fc.size.x,fc.pos.y},1, 0.f, TEXT});
+        m_vertexData.push_back(Vertex{((Vector2{x,y-fabsf(fc.offset.y*256.f)} + Vector2{0, GetCharSize(fc.pos.y, fc.size.y, 2048)})) + m_pos,
+                                      m_color,Vector2{fc.pos.x,fc.size.y},1, 0.f, TEXT});
+        m_vertexData.push_back(Vertex{((Vector2{x,y-fabsf(fc.offset.y*256)} + Vector2{GetCharSize(fc.pos.x, fc.size.x, 2048), GetCharSize(fc.pos.y, fc.size.y, 2048)})) + m_pos,
+                                      m_color,fc.size,1, 0.f, TEXT});
+
+//        m_vertexData.push_back(Vertex{(Vector2{x,y-fc.top} * dm) + m_pos,                                    m_color,fc.pos * d,                          1, 0.f, TEXT});
+//        m_vertexData.push_back(Vertex{((Vector2{x,y-fc.top} + Vector2{fc.size.x, 0.f}) * dm) + m_pos,        m_color,(fc.pos + Vector2{fc.size.x,0}) * d, 1, 0.f, TEXT});
+//        m_vertexData.push_back(Vertex{((Vector2{x,y-fc.top} + Vector2{0, fc.size.y}) * dm) + m_pos,          m_color,(fc.pos + Vector2{0,fc.size.y}) * d, 1, 0.f, TEXT});
+//        m_vertexData.push_back(Vertex{((Vector2{x,y-fc.top} + Vector2{fc.size.x, fc.size.y}) * dm) + m_pos,  m_color,(fc.pos + fc.size) * d,              1, 0.f, TEXT});
 
         m_indexData.push_back(count + 0);
         m_indexData.push_back(count + 1);
@@ -85,7 +108,7 @@ void Text::Generate()
         m_indexData.push_back(count + 2);
         
         count += 4;
-        x += fc.size.x;
+        x += GetCharSize(fc.pos.x, fc.size.x, 2048) + GetSpacing(m_size.x);
         // x += s.x;
     }
 }

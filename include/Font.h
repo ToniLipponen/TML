@@ -14,12 +14,19 @@ public:
     Texture m_texture;
     friend class Text;
 private:
+//    struct FontChar
+//    {
+//        Vector2 size;
+//        Vector2 pos;
+//        i32 advance;
+//        i32 top;
+//    };
     struct FontChar
     {
         Vector2 size;
         Vector2 pos;
-        i32 advance;
-        i32 top;
+        Vector2 offset;
+        float advance;
     };
     std::map<char, FontChar> m_chars;
 };

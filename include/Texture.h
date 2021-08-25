@@ -32,7 +32,7 @@ public:
 	~Texture();
 
 	void LoadFromFile(cstring filename);
-	void LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data);
+	void LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data); // Makes a copy of @data
 	void Bind(ui32 slot = 0);
 	
 	void SetMipMapLevel(ui8 level);

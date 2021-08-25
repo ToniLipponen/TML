@@ -55,7 +55,7 @@ Window::~Window()
 
 void Window::Display()
 {
-	TL_ASSERT(glad_glGetError() == 0, "glError");
+	//TL_ASSERT(glad_glGetError() == 0, "glError");
     glfwSwapBuffers(reinterpret_cast<GLFWwindow*>(m_handle));
     glfwPollEvents();
 }

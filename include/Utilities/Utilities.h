@@ -43,3 +43,10 @@ inline constexpr T Max(T value, T max)
         return max;
     return value;
 }
+
+// Needs types with +, - and * operators
+template<typename T>
+inline constexpr T Lerp(const T& a, const T& b, float m)
+{
+    return a + m * (b-a);
+}

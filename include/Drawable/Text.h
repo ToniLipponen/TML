@@ -16,6 +16,8 @@ public:
     void SetSize(const Vector2& size) override;
     void SetColor(const Color& color) override;
     void SetString(const std::string& string);
+    void SetFont(const Font& font);
+    void SetSpacing(ui32 s);
     friend class Renderer;
 private:
     void Generate();
@@ -23,4 +25,5 @@ private:
     std::string m_string;
     std::vector<Vertex> m_vertexData;
     std::vector<ui32> m_indexData;
+    ui32 m_spacing = 1;
 };
