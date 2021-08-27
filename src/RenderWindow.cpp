@@ -1,4 +1,5 @@
 #include "../include/RenderWindow.h"
+#include "../include/Utilities/Utilities.h"
 #include "../include/glad/glad.h"
 #include "../include/glm/gtx/projection.hpp"
 #include "../include/glm/gtc/matrix_transform.hpp"
@@ -97,7 +98,7 @@ static Shader          *m_shader = nullptr;
 static glm::mat4        m_projection = glm::mat4(1.0f);
 static glm::mat4        m_view       = glm::mat4(1.0f);
 
-constexpr static ui32 MAX_VERTEX_COUNT  = 100000;
+constexpr static ui32 MAX_VERTEX_COUNT  = 10000000;
 static i32 MAX_TEXTURE_COUNT = 16;
 
 static std::vector<Vertex>  m_vertexData;
@@ -384,6 +385,141 @@ void Renderer::Draw(Text& r)
     }
     for(auto i : r.m_indexData)
         m_indexData.push_back(currentElements + i);
+}
+
+void Renderer::DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Color color, bool rounded)
+{
+    ui32 currentElements = m_vertexData.size();
+    if(currentElements >= MAX_VERTEX_COUNT - 4)
+    {
+        EndBatch();
+        currentElements = 0;
+    }
+    // dx and dy for normals
+    const float dx = b.x - a.x;
+    const float dy = b.y - a.y;
+    const Color bColor = color; // Needed non normalized
+    color = color * 0.003921568f;
+
+    m_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness / 2) + a, color, {0,0}, 0, 0, RECTANGLE});
+    m_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness / 2) + a, color, {0,0}, 0, 0, RECTANGLE});
+    m_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness / 2) + b, color, {0,0}, 0, 0, RECTANGLE});
+    m_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness / 2) + b, color, {0,0}, 0, 0, RECTANGLE});
+
+    m_indexData.push_back(currentElements + 0);
+    m_indexData.push_back(currentElements + 1);
+    m_indexData.push_back(currentElements + 2);
+
+    m_indexData.push_back(currentElements + 1);
+    m_indexData.push_back(currentElements + 3);
+    m_indexData.push_back(currentElements + 2);
+    if(rounded)
+    {
+        Renderer::DrawCircle(a, thickness/2, bColor);
+        Renderer::DrawCircle(b, thickness/2, bColor);
+    }
+}
+
+void Renderer::p_DrawRect(const Vector2& pos, const Vector2& dimensions, const Color& color, float rotation)
+{
+    ui32 currentElements = m_vertexData.size();
+    if(currentElements >= MAX_VERTEX_COUNT - 4)
+    {
+        EndBatch();
+        currentElements = 0;
+    }
+
+    const Color c = color * 0.003921568f;
+    Vector2 origin;
+    origin.x = (pos.x + pos.x + dimensions.x) * 0.5f;
+    origin.y = (pos.y + pos.y + dimensions.y) * 0.5f;
+
+    m_vertexData.push_back({Rotate(origin, pos, rotation),                          c, Vector2{0,0}, 0, rotation, RECTANGLE});
+    m_vertexData.push_back({Rotate(origin, pos+Vector2{dimensions.x, 0.0f},rotation),c, Vector2{1,0}, 0, rotation, RECTANGLE});
+    m_vertexData.push_back({Rotate(origin, pos+Vector2{0.0f, dimensions.y},rotation), c, Vector2{0,1}, 0, rotation, RECTANGLE});
+    m_vertexData.push_back({Rotate(origin, pos+dimensions, rotation),                 c, Vector2{1,1}, 0, rotation, RECTANGLE});
+
+    m_indexData.push_back(currentElements + 0);
+    m_indexData.push_back(currentElements + 1);
+    m_indexData.push_back(currentElements + 2);
+
+    m_indexData.push_back(currentElements + 1);
+    m_indexData.push_back(currentElements + 3);
+    m_indexData.push_back(currentElements + 2);
+}
+
+void Renderer::DrawRect(const Vector2& pos, const Vector2& dimensions, const Color& color, float roundness, float rotation)
+{
+    if(roundness < 3.f) // If roundness is too low, just draw a regular rectangle
+        p_DrawRect(pos, dimensions, color, rotation);
+    else
+    {
+        Vector2 origin =
+                {origin.x = (pos.x + pos.x + dimensions.x) * 0.5f,
+                 origin.y = (pos.y + pos.y + dimensions.y) * 0.5f};
+        p_DrawRect(pos+Vector2{0, roundness}, dimensions - Vector2{0, roundness*2}, color, rotation);
+        p_DrawRect(pos+Vector2{roundness, 0}, dimensions - Vector2{roundness*2, 0}, color, rotation);
+
+        DrawCircle(Rotate(origin, pos+Vector2{roundness, roundness}, rotation), roundness, color);
+        DrawCircle(Rotate(origin, pos+Vector2{dimensions.x - roundness, roundness}, rotation), roundness, color);
+        DrawCircle(Rotate(origin,pos+Vector2{roundness,dimensions.y - roundness}, rotation), roundness, color);
+        DrawCircle(Rotate(origin,pos+dimensions-Vector2{roundness, roundness}, rotation), roundness, color);
+    }
+}
+
+void Renderer::DrawCircle(const Vector2& pos, float radius, Color color)
+{
+    ui32 currentElements = m_vertexData.size();
+    if(currentElements >= MAX_VERTEX_COUNT - 4)
+    {
+        EndBatch();
+        currentElements = 0;
+    }
+//    if(m_textures.size() > MAX_TEXTURE_COUNT - 1)
+//    {
+//        EndBatch();
+//        currentElements = 0;
+//    }
+
+    ui32 tex = 0;
+    bool already_in_m_textures = false;
+    auto id = CircleTexture->GetID();
+    ui32 index = 0;
+    for(auto i : m_textures)
+    {
+        if(i == id)
+        {
+            already_in_m_textures = true;
+            break;
+        }
+        ++index;
+    }
+    if(!already_in_m_textures)
+    {
+        tex = 1 + m_textures.size();
+        CircleTexture->Bind(tex);
+        m_textures.push_back(CircleTexture->GetID());
+    }
+    else
+    {
+        tex = index+1;
+        CircleTexture->Bind(tex);
+    }
+
+    color = color * 0.003921568f;
+
+    m_vertexData.push_back({pos+Vector2{-radius, -radius},  color, Vector2{0,1}, tex, 0, CIRCLE});
+    m_vertexData.push_back({pos+Vector2{radius, -radius},   color, Vector2{1,1}, tex, 0, CIRCLE});
+    m_vertexData.push_back({pos+Vector2{-radius, radius},   color, Vector2{0,0}, tex, 0, CIRCLE});
+    m_vertexData.push_back({pos+Vector2{radius, radius},    color, Vector2{1,0}, tex, 0, CIRCLE});
+
+    m_indexData.push_back(currentElements + 0);
+    m_indexData.push_back(currentElements + 1);
+    m_indexData.push_back(currentElements + 2);
+
+    m_indexData.push_back(currentElements + 1);
+    m_indexData.push_back(currentElements + 3);
+    m_indexData.push_back(currentElements + 2);
 }
 
 void Renderer::EndBatch()

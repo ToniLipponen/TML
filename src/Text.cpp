@@ -58,8 +58,9 @@ void Text::SetFont(const Font &font)
     m_font = font;
 }
 
-#define GetCharSize(ax, bx, as) (bx - ax) * as / 256.f * m_size.x
+#define GetCharSize(ax, bx, as) (bx - ax) * as / 384.f * m_size.x
 #define GetSpacing(size) (size / 10) * m_spacing
+
 void Text::Generate()
 {
     if(m_font.m_chars.empty()) // Font failed to load? No glyphs available.
@@ -85,13 +86,13 @@ void Text::Generate()
 
         float offset = 128 - GetCharSize(fc.pos.y, fc.size.y, 2048);
 
-        m_vertexData.push_back(Vertex{(Vector2{x,y-fabsf(fc.offset.y*256)}) + m_pos,
+        m_vertexData.push_back(Vertex{(Vector2{x-fabsf(fc.offset.x*384),y-fabsf(fc.offset.y*384)}) + m_pos,
                                       m_color,fc.pos,1, 0.f, TEXT});
-        m_vertexData.push_back(Vertex{((Vector2{x,y-fabsf(fc.offset.y*256)} + Vector2{GetCharSize(fc.pos.x, fc.size.x, 2048), 0.f})) + m_pos,
+        m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*384),y-fabsf(fc.offset.y*384)} + Vector2{GetCharSize(fc.pos.x, fc.size.x, 2048), 0.f})) + m_pos,
                                       m_color,Vector2{fc.size.x,fc.pos.y},1, 0.f, TEXT});
-        m_vertexData.push_back(Vertex{((Vector2{x,y-fabsf(fc.offset.y*256.f)} + Vector2{0, GetCharSize(fc.pos.y, fc.size.y, 2048)})) + m_pos,
+        m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*384),y-fabsf(fc.offset.y*384)} + Vector2{0, GetCharSize(fc.pos.y, fc.size.y, 2048)})) + m_pos,
                                       m_color,Vector2{fc.pos.x,fc.size.y},1, 0.f, TEXT});
-        m_vertexData.push_back(Vertex{((Vector2{x,y-fabsf(fc.offset.y*256)} + Vector2{GetCharSize(fc.pos.x, fc.size.x, 2048), GetCharSize(fc.pos.y, fc.size.y, 2048)})) + m_pos,
+        m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*384),y-fabsf(fc.offset.y*384)} + Vector2{GetCharSize(fc.pos.x, fc.size.x, 2048), GetCharSize(fc.pos.y, fc.size.y, 2048)})) + m_pos,
                                       m_color,fc.size,1, 0.f, TEXT});
 
 //        m_vertexData.push_back(Vertex{(Vector2{x,y-fc.top} * dm) + m_pos,                                    m_color,fc.pos * d,                          1, 0.f, TEXT});

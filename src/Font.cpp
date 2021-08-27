@@ -2,11 +2,11 @@
 #include "../include/Assert.h"
 #define STB_TRUETYPE_IMPLEMENTATION 1
 #include "../include/stb/stb_truetype.h"
-#define STB_IMAGE_WRITE_IMPLEMENTATION 1
-#include "../include/stb/stb_image_write.h"
+//#define STB_IMAGE_WRITE_IMPLEMENTATION 1
+//#include "../include/stb/stb_image_write.h"
 #include <fstream>
 
-#define ATLAS_SIZE 2048
+#define ATLAS_SIZE 4096
 
 inline constexpr static void AddCharToAtlas(ui8* atlasData, ui8* charData, ui32 w, ui32 h, ui32 x, ui32 y)
 {
@@ -36,7 +36,7 @@ void Font::LoadFromFile(const std::string& filename)
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
     if(!file.is_open())
     {
-        tl::Logger::ErrorMessage("Could not load font -> %s", filename.c_str());
+        tl::Logger::ErrorMessage("Failed to load font -> %s", filename.c_str());
         delete[] bitmap;
         file.close();
         return;
@@ -48,9 +48,10 @@ void Font::LoadFromFile(const std::string& filename)
     file.close();
 
     stbtt_InitFont(&font, buffer, 0);
-    stbtt_BakeFontBitmap(reinterpret_cast<const unsigned char *>(buffer), 0, 256.0, bitmap, ATLAS_SIZE, ATLAS_SIZE, 32, 96, cdata);
+    stbtt_BakeFontBitmap(reinterpret_cast<const unsigned char *>(buffer), 0, 385.0, bitmap, ATLAS_SIZE, ATLAS_SIZE, 32, 96, cdata);
     m_texture.LoadFromMemory(ATLAS_SIZE, ATLAS_SIZE, 1, bitmap);
-    stbi_write_png("atlas.png", ATLAS_SIZE, ATLAS_SIZE, 1, bitmap, 0);
+    m_texture.SetClampMode(Texture::ClampToEdge);
+//    stbi_write_png("atlas.png", ATLAS_SIZE, ATLAS_SIZE, 1, bitmap, 0);
     for(int i = 0; i < 96; i++)
     {
         m_chars[static_cast<char>(i+32)] = (FontChar){

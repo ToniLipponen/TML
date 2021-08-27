@@ -27,9 +27,7 @@ Window::Window(ui32 w, ui32 h, cstring title, ui32 settings)
     glfwWindowHint(GLFW_RESIZABLE,      (settings & Setting::Resizeable) != 0);
     glfwWindowHint(GLFW_MAXIMIZED,      (settings & Setting::Maximized)  != 0);
     glfwWindowHint(GLFW_DOUBLEBUFFER,   (settings & Setting::VSync)      != 0);
-
-    if((settings & Setting::Antialias) != 0)
-        glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_SAMPLES,        (settings & Setting::Antialias) * 4);
 
     if(settings & Setting::Fullscreen)
         m_handle = glfwCreateWindow(w, h, title, glfwGetPrimaryMonitor(), 0);
@@ -55,7 +53,6 @@ Window::~Window()
 
 void Window::Display()
 {
-	//TL_ASSERT(glad_glGetError() == 0, "glError");
     glfwSwapBuffers(reinterpret_cast<GLFWwindow*>(m_handle));
     glfwPollEvents();
 }
@@ -110,7 +107,6 @@ double Window::GetTime() const noexcept
 
 void Window::SetSize(ui32 w, ui32 h) noexcept
 {
-    // glfwMaximizeWindow(reinterpret_cast<GLFWwindow*>(m_handle));
     glfwRestoreWindow(reinterpret_cast<GLFWwindow*>(m_handle));
     glfwSetWindowSize(reinterpret_cast<GLFWwindow*>(m_handle), w, h);
 }

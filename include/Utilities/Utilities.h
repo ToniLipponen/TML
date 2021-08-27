@@ -21,6 +21,7 @@ inline Vector2 Rotate(const Vector2& origin, Vector2 p, float r)
 template<typename T>
 inline constexpr T Clamp(T value, T min, T max) noexcept
 {
+    return Min(Max(value, max), min);
     if(value > max)
         return max;
     if(value < min)
