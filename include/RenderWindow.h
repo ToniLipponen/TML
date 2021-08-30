@@ -19,8 +19,8 @@ public:
 
     static void DrawLine(const Vector2& a, const Vector2& b, float thickness, Color color, bool rounded = true);
     static void DrawRect(const Vector2& pos, const Vector2& dimensions, const Color& color, float roundness = 0.0f, float rotation = 0.0f);
-    static void DrawCircle(const Vector2& pos, float radius, Color color);
-    static void DrawText(const std::string& text, Font& font, Color color);
+    static void DrawCircle(const Vector2& pos, float radius, const Color& color);
+    static void DrawText(const Vector2& pos, const std::string& text, Font& font, const Color& color); // This is slow
 
     static void EndBatch();
 private:

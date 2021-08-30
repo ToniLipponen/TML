@@ -467,7 +467,7 @@ void Renderer::DrawRect(const Vector2& pos, const Vector2& dimensions, const Col
     }
 }
 
-void Renderer::DrawCircle(const Vector2& pos, float radius, Color color)
+void Renderer::DrawCircle(const Vector2& pos, float radius, const Color& color)
 {
     ui32 currentElements = m_vertexData.size();
     if(currentElements >= MAX_VERTEX_COUNT - 4)
@@ -506,12 +506,12 @@ void Renderer::DrawCircle(const Vector2& pos, float radius, Color color)
         CircleTexture->Bind(tex);
     }
 
-    color = color * 0.003921568f;
+    const Color ncolor = color * 0.003921568f;
 
-    m_vertexData.push_back({pos+Vector2{-radius, -radius},  color, Vector2{0,1}, tex, 0, CIRCLE});
-    m_vertexData.push_back({pos+Vector2{radius, -radius},   color, Vector2{1,1}, tex, 0, CIRCLE});
-    m_vertexData.push_back({pos+Vector2{-radius, radius},   color, Vector2{0,0}, tex, 0, CIRCLE});
-    m_vertexData.push_back({pos+Vector2{radius, radius},    color, Vector2{1,0}, tex, 0, CIRCLE});
+    m_vertexData.push_back({pos+Vector2{-radius, -radius},  ncolor, Vector2{0,1}, tex, 0, CIRCLE});
+    m_vertexData.push_back({pos+Vector2{radius, -radius},   ncolor, Vector2{1,1}, tex, 0, CIRCLE});
+    m_vertexData.push_back({pos+Vector2{-radius, radius},   ncolor, Vector2{0,0}, tex, 0, CIRCLE});
+    m_vertexData.push_back({pos+Vector2{radius, radius},    ncolor, Vector2{1,0}, tex, 0, CIRCLE});
 
     m_indexData.push_back(currentElements + 0);
     m_indexData.push_back(currentElements + 1);
@@ -520,6 +520,14 @@ void Renderer::DrawCircle(const Vector2& pos, float radius, Color color)
     m_indexData.push_back(currentElements + 1);
     m_indexData.push_back(currentElements + 3);
     m_indexData.push_back(currentElements + 2);
+}
+
+void Renderer::DrawText(const Vector2& pos, const std::string& text, Font& font, const Color& color)
+{
+    Text t(text, font);
+    t.SetPosition(pos);
+    t.SetColor(color);
+    Draw(t);
 }
 
 void Renderer::EndBatch()
