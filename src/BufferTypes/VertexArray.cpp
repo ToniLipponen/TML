@@ -1,8 +1,11 @@
 #include "../../include/Buffers.h"
-#include "../../include/glad/glad.h"
+#include "../../external-headers//glad/glad.h"
 #include "../../include/GlDebug.h"
+using namespace tml;
 
-VertexArray::VertexArray() 
+#ifndef TML_GL_VERSION_330
+
+VertexArray::VertexArray()
 : m_vertex_count(0)
 {
     GL_CALL(glCreateVertexArrays(1, &m_id));
@@ -30,7 +33,7 @@ VertexArray::VertexArray(VertexBuffer& vb, BufferLayout& layout)
 // 	glDeleteVertexArrays(1, &m_id);
 // }
 
-void VertexArray::BufferData(VertexBuffer& vb, BufferLayout& layout)
+void VertexArray::BufferData(VertexBuffer& vb, BufferLayout& layout) noexcept
 {
 	auto& lo = layout.GetData();
 	ui32 offset = 0, prevsize = 0;
@@ -46,7 +49,7 @@ void VertexArray::BufferData(VertexBuffer& vb, BufferLayout& layout)
 	m_vertex_count = vb.VertexCount();
 }
 
-void VertexArray::BufferData(VertexBuffer& vb, IndexBuffer& ib, BufferLayout& layout)
+void VertexArray::BufferData(VertexBuffer& vb, IndexBuffer& ib, BufferLayout& layout) noexcept
 {
 	auto& lo = layout.GetData();
 	ui32 offset = 0, prevsize = 0;
@@ -63,12 +66,83 @@ void VertexArray::BufferData(VertexBuffer& vb, IndexBuffer& ib, BufferLayout& la
 	m_vertex_count = ib.Elements();
 }
 
-void VertexArray::Bind() const
+void VertexArray::Bind() const noexcept
 {
     GL_CALL(glBindVertexArray(m_id));
 }
 
-void VertexArray::Unbind() const
+void VertexArray::Unbind() const noexcept
 {
     GL_CALL(glBindVertexArray(0));
 }
+
+#else
+VertexArray::VertexArray()
+: m_vertex_count(0)
+{
+    GL_CALL(glad_glGenVertexArrays(1, &m_id));
+}
+
+VertexArray::VertexArray(VertexBuffer& vb, BufferLayout& layout)
+: m_vertex_count(vb.VertexCount())
+{
+    GL_CALL(glad_glGenVertexArrays(1, &m_id));
+    GL_CALL(glad_glBindVertexArray(m_id));
+    vb.Bind();
+    auto& lo = layout.GetData();
+    ui64 offset = 0;
+    for(int i = 0; i < lo.size(); ++i)
+    {
+        GL_CALL(glad_glEnableVertexAttribArray(i));
+        GL_CALL(glad_glVertexAttribPointer(i, lo.at(i).first, GL_FLOAT, 0, layout.GetStride(), (void*)(offset)));
+        offset += lo.at(i).first * lo.at(i).second;
+    }
+    m_vertex_count = vb.VertexCount();
+}
+
+// VertexArray::~VertexArray()
+// {
+// 	glDeleteVertexArrays(1, &m_id);
+// }
+
+void VertexArray::BufferData(VertexBuffer& vb, BufferLayout& layout) noexcept
+{
+    GL_CALL(glad_glBindVertexArray(m_id));
+    vb.Bind();
+    auto& lo = layout.GetData();
+    ui64 offset = 0;
+    for(int i = 0; i < lo.size(); ++i)
+    {
+        GL_CALL(glad_glEnableVertexAttribArray(i));
+        GL_CALL(glad_glVertexAttribPointer(i, lo.at(i).first, GL_FLOAT, 0, layout.GetStride(), (void*)(offset)));
+        offset += lo.at(i).first * lo.at(i).second;
+    }
+    m_vertex_count = vb.VertexCount();
+}
+
+void VertexArray::BufferData(VertexBuffer& vb, IndexBuffer& ib, BufferLayout& layout) noexcept
+{
+    GL_CALL(glad_glBindVertexArray(m_id));
+    vb.Bind();
+	auto& lo = layout.GetData();
+	ui64 offset = 0;
+	for(int i = 0; i < lo.size(); ++i)
+	{
+        GL_CALL(glad_glEnableVertexAttribArray(i));
+        GL_CALL(glad_glVertexAttribPointer(i, lo.at(i).first, GL_FLOAT, 0, layout.GetStride(), (void*)(offset)));
+		offset += lo.at(i).first * lo.at(i).second;
+	}
+    ib.Bind();
+	m_vertex_count = ib.Elements();
+}
+
+void VertexArray::Bind() const noexcept
+{
+    GL_CALL(glad_glBindVertexArray(m_id));
+}
+
+void VertexArray::Unbind() const noexcept
+{
+    GL_CALL(glad_glBindVertexArray(0));
+}
+#endif

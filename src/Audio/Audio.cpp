@@ -1,16 +1,15 @@
 #include "../../include/Audio/Audio.h"
 #include "../../include/Assert.h"
 
-
 #define DR_FLAC_IMPLEMENTATION
-#include "../../include/Audio/decoders/dr_flac.h"  /* Enables FLAC decoding. */
+#include "../../external-headers/miniaudio/decoders/dr_flac.h"  /* Enables FLAC decoding. */
 #define DR_MP3_IMPLEMENTATION
-#include "../../include/Audio/decoders/dr_mp3.h"   /* Enables MP3 decoding. */
+#include "../../external-headers/miniaudio/decoders/dr_mp3.h"   /* Enables MP3 decoding. */
 #define DR_WAV_IMPLEMENTATION
-#include "../../include/Audio/decoders/dr_wav.h"   /* Enables WAV decoding. */
+#include "../../external-headers/miniaudio/decoders/dr_wav.h"   /* Enables WAV decoding. */
 
 #define MINIAUDIO_IMPLEMENTATION
-#include "../../include/Audio/miniaudio.h"
+#include "../../external-headers/miniaudio/miniaudio.h"
 
 #include <cstring>
 #include <fstream>
@@ -51,59 +50,51 @@ static void Initialize_Device()
     DEVICES_INITIALIZED = true;
 }
 
-Sound::Sound()
-{
-    Initialize_Device();
-}
+namespace tml {
+    Sound::Sound() {
+        Initialize_Device();
+    }
 
-Sound::Sound(const std::string& filename)
-{
-    Initialize_Device();
-    m_decoder = new ma_decoder;
-    ma_result result = ma_decoder_init_file(filename.c_str(), nullptr, m_decoder);
-    if(result != MA_SUCCESS)
-        tl::Logger::ErrorMessage("Failed to load sound file -> %s", filename.c_str());
-}
+    Sound::Sound(const std::string &filename) {
+        Initialize_Device();
+        m_decoder = new ma_decoder;
+        ma_result result = ma_decoder_init_file(filename.c_str(), nullptr, (ma_decoder*)m_decoder);
+        if (result != MA_SUCCESS)
+            tml::Logger::ErrorMessage("Failed to load sound file -> %s", filename.c_str());
+    }
 
-Sound::~Sound()
-{
-    ma_decoder_uninit(m_decoder);
-    delete m_decoder;
-}
+    Sound::~Sound() {
+        ma_decoder_uninit((ma_decoder*)m_decoder);
+        delete (ma_decoder*)m_decoder;
+    }
 
-void Sound::Play()
-{
-    m_state = Playing;
-    OUTPUT_DEVICE.pUserData = m_decoder;
-}
+    void Sound::Play() {
+        m_state = Playing;
+        OUTPUT_DEVICE.pUserData = m_decoder;
+    }
 
-void Sound::Stop()
-{
-    m_state = Stopped;
-    ma_decoder_seek_to_pcm_frame(m_decoder, 0);
-    OUTPUT_DEVICE.pUserData = nullptr;
-}
+    void Sound::Stop() {
+        m_state = Stopped;
+        ma_decoder_seek_to_pcm_frame((ma_decoder*)m_decoder, 0);
+        OUTPUT_DEVICE.pUserData = nullptr;
+    }
 
-void Sound::Pause()
-{
-    OUTPUT_DEVICE.pUserData = nullptr;
-}
+    void Sound::Pause() {
+        OUTPUT_DEVICE.pUserData = nullptr;
+    }
 
-void Sound::Resume()
-{
-    OUTPUT_DEVICE.pUserData = m_decoder;
-}
+    void Sound::Resume() {
+        OUTPUT_DEVICE.pUserData = m_decoder;
+    }
 
-void Sound::SetLooping(bool loop)
-{
-    m_looping = loop;
-}
+    void Sound::SetLooping(bool loop) {
+        m_looping = loop;
+    }
 
-void Sound::SetPitch(float pitch)
-{
+    void Sound::SetPitch(float pitch) {
 
-}
+    }
 
-void Sound::SetVolume(float volume)
-{
-}
+    void Sound::SetVolume(float volume) {
+    }
+};

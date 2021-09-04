@@ -22,7 +22,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-namespace tl
+namespace tml
 {
 namespace Logger
 {

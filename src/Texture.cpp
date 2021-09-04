@@ -1,14 +1,14 @@
 #include "../include/Texture.h"
-#include "../include/glad/glad.h"
+#include "../external-headers/glad/glad.h"
 #include "../include/Assert.h"
 #include "../include/Utilities/Copy.h"
 #include <climits>
-#include <cstring>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "../include/stb/stb_image.h"
+#include "../external-headers/stb/stb_image.h"
 
 #include <algorithm>
+using namespace tml;
 
 Texture::Texture()
 : m_width(0), m_height(0), m_bpp(0), m_pixeldata(nullptr)
@@ -24,16 +24,19 @@ Texture::Texture(cstring filename)
 }
 
 Texture::Texture(i32 w, i32 h, ui8 bpp, ui8* data)
-: m_width(w), m_height(h), m_bpp(bpp), m_pixeldata(data)
+: m_width(w), m_height(h), m_bpp(bpp)
 {
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
+    LoadFromMemory(w,h,bpp,data);
 	Generate();
 }
 
 Texture::~Texture()
 {
-	glDeleteTextures(1, &m_id);
-	delete[] m_pixeldata;
+    if(m_id != UINT_MAX) // If glCreateTextures() has been called
+	    glDeleteTextures(1, &m_id);
+    if(m_pixeldata != nullptr) // Guard against double free
+        delete[] m_pixeldata;
 }
 
 void Texture::LoadFromFile(cstring filename)
@@ -42,7 +45,7 @@ void Texture::LoadFromFile(cstring filename)
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
 	m_pixeldata = stbi_load(filename, &m_width, &m_height, &m_bpp, 0);
 	if(m_pixeldata == nullptr)
-		tl::Logger::WarningMessage("Failed to load texture -> %s", filename);
+		tml::Logger::WarningMessage("Failed to load texture -> %s", filename);
 	Generate();
 }
 
@@ -50,6 +53,8 @@ void Texture::LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data)
 {
 	if(m_id == UINT_MAX)
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
+    if(m_pixeldata)
+        delete[] m_pixeldata;
 	m_pixeldata = new ui8[w*h*bpp];
 	tl::copy(m_pixeldata, data, w*h*bpp);
 	m_width 	= w;
@@ -85,8 +90,10 @@ void Texture::Generate(void)
 	glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, m_clampmode);
 	glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, m_minfilter);
 	glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, m_magfilter);
-	glTextureParameterf(m_id, GL_TEXTURE_MAX_ANISOTROPY, 16);
-	glTextureParameterf(m_id, GL_TEXTURE_LOD_BIAS, 0);
+    #ifndef TML_GL_VERSION_330
+	    glTextureParameterf(m_id, GL_TEXTURE_MAX_ANISOTROPY, 16);
+    #endif
+    glTextureParameterf(m_id, GL_TEXTURE_LOD_BIAS, 0);
 	
 	if(m_width > 0 && m_height > 0)
 	{
