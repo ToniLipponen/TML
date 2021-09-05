@@ -1,12 +1,11 @@
 #include "../include/Font.h"
-#include "../include/Assert.h"
 #define STB_TRUETYPE_IMPLEMENTATION 1
 #include "../external-headers//stb/stb_truetype.h"
 #include <fstream>
 
 #define ATLAS_SIZE 4096
-
 using namespace tml;
+
 inline constexpr static void AddCharToAtlas(ui8* atlasData, ui8* charData, ui32 w, ui32 h, ui32 x, ui32 y)
 {
     for(int i = y; i < y+h; ++i)

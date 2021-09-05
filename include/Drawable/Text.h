@@ -5,7 +5,8 @@
 #include <vector>
 #include <string>
 
-namespace tml {
+namespace tml
+{
     class Text : public Drawable {
     public:
         // Initializes a Text with the default font and no string content.
@@ -20,7 +21,9 @@ namespace tml {
 
         void SetPosition(const Vector2 &pos) override;
 
-        void SetSize(const Vector2 &size) override;
+//        void SetSize(const Vector2 &size) = ;
+
+        void SetSize(float s);
 
         void SetColor(const Color &color) override;
 
@@ -30,16 +33,17 @@ namespace tml {
 
         void SetSpacing(ui32 s);
 
+        inline constexpr Vector2 GetSize() const noexcept { return {m_width, m_height}; }
+
         friend class Renderer;
 
     private:
         void Generate();
-
         Font m_font;
         std::string m_string;
         std::vector<Vertex> m_vertexData;
         std::vector<ui32> m_indexData;
         ui32 m_spacing = 1;
-
+        float m_width = 0, m_height = 0;
     };
 };

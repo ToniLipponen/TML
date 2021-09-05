@@ -1,5 +1,7 @@
 #include "../include/Drawable/Text.h"
 #include "../include/Default_font.h"
+#include "../include/Utilities/Utilities.h"
+
 using namespace tml;
 
 Text::Text()
@@ -17,6 +19,7 @@ Text::Text(const std::string& text)
     m_pos = {0,0};
     m_size = {32,32};
     m_font.LoadFromMemory(DEFAULT_FONT_DATA.data(), DEFAULT_FONT_DATA.size());
+    Generate();
 }
 
 Text::Text(const std::string& text, const std::string& font_file_name)
@@ -45,9 +48,15 @@ void Text::SetPosition(const Vector2 &pos)
     Generate();
 }
 
-void Text::SetSize(const Vector2& size)
+//void Text::SetSize(const Vector2& size)
+//{
+//    m_size = size;
+//    Generate();
+//}
+
+void Text::SetSize(float s)
 {
-    m_size = size;
+    m_size = {s,s};
     Generate();
 }
 
@@ -66,6 +75,13 @@ void Text::SetString(const std::string &string)
 void Text::SetFont(const Font &font)
 {
     m_font = font;
+    Generate();
+}
+
+void Text::SetSpacing(ui32 s)
+{
+    m_spacing = s;
+    Generate();
 }
 
 #define GetCharSize(ax, bx, as) (bx - ax) * as / 385.f * m_size.x
@@ -86,23 +102,21 @@ void Text::Generate()
         {
             x = 0;
             y += m_size.x;
+            m_height += 385.f * m_size.x / (4096 / 3);
             continue;
         }
-        else if(c == ' ')
-        {
-            x += GetSpacing(m_size.x);
-            continue;
-        }
-        const Font::FontChar fc = m_font.m_chars.at(c);
-
+        const Font::FontChar& fc = m_font.m_chars.at(c);
+        const float cw = GetCharSize(fc.pos.x, fc.size.x, 4096);
+        const float ch = GetCharSize(fc.pos.y, fc.size.y, 4096);
+        // This is a mess, please fix
         m_vertexData.push_back(Vertex{(Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)}) + m_pos,
-                                      col,fc.pos,1, 0.f, Vertex::TEXT});
-        m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)} + Vector2{GetCharSize(fc.pos.x, fc.size.x, 2048), 0.f})) + m_pos,
-                                      col,Vector2{fc.size.x,fc.pos.y},1, 0.f, Vertex::TEXT});
-        m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)} + Vector2{0, GetCharSize(fc.pos.y, fc.size.y, 2048)})) + m_pos,
-                                      col,Vector2{fc.pos.x,fc.size.y},1, 0.f, Vertex::TEXT});
-        m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)} + Vector2{GetCharSize(fc.pos.x, fc.size.x, 2048), GetCharSize(fc.pos.y, fc.size.y, 2048)})) + m_pos,
-                                      col,fc.size,1, 0.f, Vertex::TEXT});
+            col,fc.pos,1, 0.f, Vertex::TEXT});
+        m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)} + Vector2{cw, 0.f})) + m_pos,
+            col,Vector2{fc.size.x,fc.pos.y},1, 0.f, Vertex::TEXT});
+        m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)} + Vector2{0, ch})) + m_pos,
+            col,Vector2{fc.pos.x,fc.size.y},1, 0.f, Vertex::TEXT});
+        m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)} + Vector2{cw, ch})) + m_pos,
+            col,fc.size,1, 0.f, Vertex::TEXT});
         m_indexData.push_back(count + 0);
         m_indexData.push_back(count + 1);
         m_indexData.push_back(count + 2);
@@ -110,8 +124,10 @@ void Text::Generate()
         m_indexData.push_back(count + 1);
         m_indexData.push_back(count + 3);
         m_indexData.push_back(count + 2);
+        m_height = Util::Min(ch, m_height);
         
         count += 4;
-        x += GetCharSize(fc.pos.x, fc.size.x, 2048) + GetSpacing(m_size.x);
+        x += GetCharSize(fc.pos.x, fc.size.x, 4096) + GetSpacing(m_size.x);
     }
+    m_width     = x;
 }

@@ -5,6 +5,7 @@
 #include "Drawable/Circle.h"
 #include "Drawable/Sprite.h"
 #include "Drawable/Text.h"
+#include "Drawable/Video.h"
 
 namespace tml {
     class Renderer {
@@ -22,6 +23,9 @@ namespace tml {
         static void Draw(Sprite &sprite);
 
         static void Draw(Text &text);
+
+        // You need to call video.Advance() before drawing
+        static void Draw(Video& video);
 
         static void DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Color color, bool rounded = true);
 

@@ -44,6 +44,12 @@ const static std::string FRAGMENT_STRING =
     "flat in uint vType;\n"
     "out vec4 outColor;\n"
     "uniform sampler2D uTextures[32];\n"
+     "mat4 bt601 = mat4(\n"
+     "  1.16438,  0.00000,  1.59603, -0.87079,\n"
+     "  1.16438, -0.39176, -0.81297,  0.52959,\n"
+     "  1.16438,  2.01723,  0.00000, -1.08139,\n"
+     "  0, 0, 0, 1\n"
+     ");\n"
     "void main()\n"
     "{\n"
     "   vec4 color = vec4(0.0);\n"
@@ -82,6 +88,9 @@ const static std::string FRAGMENT_STRING =
     "           {\n"
     "               discard;\n"
     "           }\n"
+    "       break;\n"
+    "       case 4:\n"
+    "           color = texture(uTextures[vTexID], vUV) * bt601;"
     "       break;\n"
     "       default:\n"
     "           discard;\n"
@@ -393,6 +402,68 @@ void Renderer::Draw(Text& r)
         m_indexData.push_back(currentElements + i);
 }
 
+void Renderer::Draw(Video& r)
+{
+    ui32 currentElements = m_vertexData.size();
+    if(currentElements >= MAX_VERTEX_COUNT - 4)
+    {
+        EndBatch();
+        currentElements = 0;
+    }
+    if(m_textures.size() >= MAX_TEXTURE_COUNT - 1)
+    {
+        EndBatch();
+        currentElements = 0;
+    }
+
+    ui32 tex = 0;
+    if(r.m_tex.GetID() != UINT_MAX)
+    {
+        bool already_in_m_textures = false;
+        auto id = r.m_tex.GetID();
+        ui32 index = 0;
+        for(auto i : m_textures)
+        {
+            if(i == id)
+            {
+                already_in_m_textures = true;
+                break;
+            }
+            ++index;
+        }
+        if(!already_in_m_textures)
+        {
+            tex = 1 + m_textures.size();
+            r.m_tex.Bind(tex);
+            m_textures.push_back(r.m_tex.GetID());
+        }
+        else
+        {
+            tex = index+1;
+            r.m_tex.Bind(tex);
+        }
+    }
+    else {
+        return;
+    }
+    Vector2 origin;
+    origin.x = (r.m_pos.x + r.m_pos.x + r.m_size.x) * 0.5f;
+    origin.y = (r.m_pos.y + r.m_pos.y + r.m_size.y) * 0.5f;
+    const Vector2 v = Vector2{1.f,1.f} / r.m_tex.GetSize();
+
+    m_vertexData.push_back({Util::Rotate(origin, r.m_pos, r.m_rotation),                          {0}, {0,0}, tex, r.m_rotation, Vertex::TEXTURE});
+    m_vertexData.push_back({Util::Rotate(origin, r.m_pos+Vector2{r.m_size.x, 0.0f}, r.m_rotation),{0}, {1,0}, tex, r.m_rotation, Vertex::TEXTURE});
+    m_vertexData.push_back({Util::Rotate(origin, r.m_pos+Vector2{0.0f, r.m_size.y},r.m_rotation), {0}, {0,1}, tex, r.m_rotation, Vertex::TEXTURE});
+    m_vertexData.push_back({Util::Rotate(origin, r.m_pos+r.m_size, r.m_rotation),                 {0}, {1,1}, tex, r.m_rotation, Vertex::TEXTURE});
+
+    m_indexData.push_back(currentElements + 0);
+    m_indexData.push_back(currentElements + 1);
+    m_indexData.push_back(currentElements + 2);
+
+    m_indexData.push_back(currentElements + 1);
+    m_indexData.push_back(currentElements + 3);
+    m_indexData.push_back(currentElements + 2);
+}
 void Renderer::DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Color color, bool rounded)
 {
     ui32 currentElements = m_vertexData.size();

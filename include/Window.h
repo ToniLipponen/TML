@@ -48,6 +48,7 @@ namespace tml {
 
         void Maximize();
         // void SetFullscreen(bool fullscreen);
+        void Screenshot(const cstring filename);
     private:
         void *m_handle;
     };

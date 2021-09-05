@@ -1,6 +1,9 @@
 #include "../include/Window.h"
 #include "../external-headers/glad/glad.h"
 #include "../external-headers/GLFW/glfw3.h"
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION 1
+#include "../external-headers/stb/stb_image_write.h"
 #include <iostream>
 
 void WindowResizeCallback(GLFWwindow* f, int x, int y)
@@ -100,5 +103,14 @@ namespace tml {
 
     void Window::Maximize() {
         glfwMaximizeWindow(reinterpret_cast<GLFWwindow *>(m_handle));
+    }
+
+    void Window::Screenshot(const cstring filename) {
+        const ui32 w = GetWidth(), h = GetHeight();
+        ui8* pixels = new ui8[3 * w * h];
+        glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+        stbi_flip_vertically_on_write(1);
+        stbi_write_png(filename, w, h, 3, pixels, 0);
+        delete[] pixels;
     }
 };
