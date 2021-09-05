@@ -84,7 +84,6 @@ void Texture::SetClampMode(ClampMode mode)
 
 void Texture::Generate(void)
 {
-    tml::Logger::InfoMessage("tex id = %d", m_id);
     GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, m_clampmode));
     GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, m_clampmode));
     GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, m_minfilter));
