@@ -48,12 +48,6 @@ void Text::SetPosition(const Vector2 &pos)
     Generate();
 }
 
-//void Text::SetSize(const Vector2& size)
-//{
-//    m_size = size;
-//    Generate();
-//}
-
 void Text::SetSize(float s)
 {
     m_size = {s,s};

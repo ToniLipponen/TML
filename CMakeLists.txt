@@ -11,7 +11,7 @@ if(!TML_DEBUG_OPENGL_CALLS)
     add_compile_definitions(NO_GL_DEBUGGING=1)
 endif()
 
-add_compile_options(-msse3 -O3)
+add_compile_options(-msse3 -O2)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O2")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O2")
 

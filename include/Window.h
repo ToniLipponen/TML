@@ -15,37 +15,22 @@ namespace tml {
         };
     public:
         Window(ui32 width, ui32 height, cstring title, ui32 settings);
-
         Window(const Window &) = delete;
-
         Window &operator=(const Window &) = delete;
-
         virtual ~Window();
-
         virtual void Display();
-
         void Close() const noexcept;
-
         bool ShouldClose() const noexcept;
-
-        // Getters
+        
         void *GetHandle() noexcept;
-
         i32 GetWidth() const noexcept;
-
         i32 GetHeight() const noexcept;
-
         i32 GetX() const noexcept;
-
         i32 GetY() const noexcept;
-
         double GetTime() const noexcept;
 
-        // Setters
         void SetSize(ui32 width, ui32 height) noexcept;
-
         void SetTitle(cstring title);
-
         void Maximize();
         // void SetFullscreen(bool fullscreen);
         void Screenshot(const cstring filename);

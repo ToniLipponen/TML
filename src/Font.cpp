@@ -32,6 +32,7 @@ Font::Font(const ui8* data, ui32 datasize)
 // Todo: Make this call Font::LoadFromMemory to remove duplicate code
 void Font::LoadFromFile(const std::string& filename)
 {
+    m_chars.clear();
     stbtt_bakedchar cdata[96];
     unsigned char* bitmap = new unsigned char[ATLAS_SIZE*ATLAS_SIZE];
     unsigned char* buffer;
@@ -56,20 +57,20 @@ void Font::LoadFromFile(const std::string& filename)
     m_texture.SetClampMode(Texture::ClampToEdge);
     m_texture.SetMinMagFilter(Texture::Filter::Linear,
                               Texture::Filter::Linear);
-    for(int i = 0; i < 96; i++)
+    for(char i = 0; i < 96; i++)
     {
-        m_chars[static_cast<char>(i+32)] = (FontChar){
+        m_chars.insert({i+32,FontChar{
             {static_cast<float>(cdata[i].x1) / ATLAS_SIZE, static_cast<float>(cdata[i].y1) / ATLAS_SIZE},
             {static_cast<float>(cdata[i].x0) / ATLAS_SIZE, static_cast<float>(cdata[i].y0) / ATLAS_SIZE},
             {static_cast<float>(cdata[i].xoff) / ATLAS_SIZE, static_cast<float>(cdata[i].yoff) / ATLAS_SIZE},
-            cdata[i].xadvance};
+            cdata[i].xadvance}});
     }
     delete[] buffer;
-    delete[] bitmap;
 }
 
 void Font::LoadFromMemory(const ui8* data, ui32 size)
 {
+    m_chars.clear();
     stbtt_bakedchar cdata[96];
     unsigned char* bitmap = new unsigned char[ATLAS_SIZE*ATLAS_SIZE];
     stbtt_fontinfo font;
@@ -81,11 +82,10 @@ void Font::LoadFromMemory(const ui8* data, ui32 size)
     m_texture.SetMinMagFilter(Texture::Filter::Linear, Texture::Filter::Linear);
     for(int i = 0; i < 96; i++)
     {
-        m_chars[static_cast<char>(i+32)] = (FontChar){
+        m_chars[static_cast<char>(i+32)] = FontChar{
                 {static_cast<float>(cdata[i].x1) / ATLAS_SIZE, static_cast<float>(cdata[i].y1) / ATLAS_SIZE},
                 {static_cast<float>(cdata[i].x0) / ATLAS_SIZE, static_cast<float>(cdata[i].y0) / ATLAS_SIZE},
                 {static_cast<float>(cdata[i].xoff) / ATLAS_SIZE, static_cast<float>(cdata[i].yoff) / ATLAS_SIZE},
                 cdata[i].xadvance};
     }
-    delete[] bitmap;
 }

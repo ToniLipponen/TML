@@ -3,6 +3,7 @@
 #include "../include/GlDebug.h"
 #include "../include/Utilities/Copy.h"
 #include <climits>
+#include <memory>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "../external-headers/stb/stb_image.h"
@@ -33,10 +34,12 @@ Texture::Texture(i32 w, i32 h, ui8 bpp, ui8* data)
 
 Texture::~Texture()
 {
-    if(m_id != UINT_MAX) // If glCreateTextures() has been called
-        GL_CALL(glDeleteTextures(1, &m_id));
-    if(m_pixeldata != nullptr) // Guard against double free
+    GL_CALL(glDeleteTextures(1, &m_id));
+    if(m_pixeldata != nullptr)
+    {
         delete[] m_pixeldata;
+        m_pixeldata = nullptr;
+    }
 }
 
 void Texture::LoadFromFile(cstring filename)
@@ -51,13 +54,26 @@ void Texture::LoadFromFile(cstring filename)
 
 void Texture::LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data)
 {
-    if(m_pixeldata)
+    if(m_allocated) // If memory has been allocated internally, delete the memory
+        delete[] m_pixeldata;
+    m_pixeldata = data;
+    m_width 	= w;
+    m_height 	= h;
+    m_bpp 		= bpp;
+    m_allocated = false;
+    Generate();
+}
+
+void Texture::CopyFromMemory(i32 w, i32 h, ui8 bpp, ui8* data)
+{
+    if(m_pixeldata && m_allocated)
         delete[] m_pixeldata;
 	m_pixeldata = new ui8[w*h*bpp];
 	tl::copy(m_pixeldata, data, w*h*bpp);
 	m_width 	= w;
 	m_height 	= h;
 	m_bpp 		= bpp;
+    m_allocated = true;
 	Generate();
 }
 
@@ -88,40 +104,32 @@ void Texture::Generate(void)
     GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, m_clampmode));
     GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, m_minfilter));
     GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, m_magfilter));
-//    #ifndef TML_GL_VERSION_330
-//	    glTextureParameterf(m_id, GL_TEXTURE_MAX_ANISOTROPY, 16);
-//    #endif
-//    glTextureParameterf(m_id, GL_TEXTURE_LOD_BIAS, 0);
 	
 	if(m_width > 0 && m_height > 0)
 	{
 		if(m_pixeldata != nullptr)
 		{
+            i32 ch = 0, chi = 0;
 			switch(m_bpp)
 			{
 			case 1:
-                GL_CALL(glTextureStorage2D(m_id, 8, GL_R8, m_width, m_height));
-                GL_CALL(glTextureSubImage2D(m_id, m_mipmap_level, 0, 0, m_width, m_height, GL_RED, GL_UNSIGNED_BYTE, m_pixeldata));
-                GL_CALL(glGenerateTextureMipmap(m_id));
+                ch = GL_R8; chi = GL_RED;
 			break;
 			case 2:
-                GL_CALL(glTextureStorage2D(m_id, 8, GL_RG8, m_width, m_height));
-                GL_CALL(glTextureSubImage2D(m_id, m_mipmap_level, 0, 0, m_width, m_height, GL_RG, GL_UNSIGNED_BYTE, m_pixeldata));
-                GL_CALL(glGenerateTextureMipmap(m_id));
+                ch = GL_RG8; chi = GL_RG;
 			break;
 			case 3:
-                GL_CALL(glTextureStorage2D(m_id, 8, GL_RGB8, m_width, m_height));
-                GL_CALL(glTextureSubImage2D(m_id, m_mipmap_level, 0, 0, m_width, m_height, GL_RGB, GL_UNSIGNED_BYTE, m_pixeldata));
-                GL_CALL(glGenerateTextureMipmap(m_id));
+                ch = GL_RGB8; chi = GL_RGB;
 			break;
 			case 4:
-                GL_CALL(glTextureStorage2D(m_id, 8, GL_RGBA8, m_width, m_height));
-                GL_CALL(glTextureSubImage2D(m_id, m_mipmap_level, 0, 0, m_width, m_height, GL_RGBA, GL_UNSIGNED_BYTE, m_pixeldata));
-                GL_CALL(glGenerateTextureMipmap(m_id));
+                ch = GL_RGBA8; chi = GL_RGBA;
 			break;
 			default:
 			break;
 			}
+            GL_CALL(glTextureStorage2D(m_id, 8, ch, m_width, m_height));
+            GL_CALL(glTextureSubImage2D(m_id, m_mipmap_level, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, m_pixeldata));
+            GL_CALL(glGenerateTextureMipmap(m_id));
 		}
 	}
 }

@@ -27,22 +27,16 @@ namespace tml {
         };
     public:
         Texture();
-
         Texture(cstring filename);
-
         Texture(i32 w, i32 h, ui8 bpp, ui8 *data);
-
         ~Texture();
 
         void LoadFromFile(cstring filename);
-
-        void LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8 *data); // Makes a copy of @data
+        void LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data); // @data has to be alive throughout the use of this texture
+        void CopyFromMemory(i32 w, i32 h, ui8 Bpp, ui8* data); // Makes a copy of @data
         void Bind(ui32 slot = 0);
-
         void SetMipMapLevel(ui8 level);
-
         void SetMinMagFilter(Filter min, Filter mag);
-
         void SetClampMode(ClampMode mode);
 
         constexpr bool HasData() const noexcept {
@@ -76,5 +70,6 @@ namespace tml {
         i32 m_width, m_height, m_bpp;
         ui8 *m_pixeldata = nullptr;
         ui8 m_mipmap_level = 0;
+        bool m_allocated = false;
     };
 };

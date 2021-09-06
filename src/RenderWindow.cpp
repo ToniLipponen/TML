@@ -177,7 +177,6 @@ void Renderer::Init()
 
     CircleTexture = new Texture();
     CircleTexture->LoadFromMemory(s, s, 1, circleData);
-    delete[] circleData;
     GL_CALL(glad_glEnable(GL_BLEND));
     GL_CALL(glad_glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 }
