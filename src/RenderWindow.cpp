@@ -1,103 +1,206 @@
 #include "../include/RenderWindow.h"
-#include "../include/Utilities/Utilities.h"
 #include "../include/Utilities/Bezier.h"
 #include "../external-headers/glad/glad.h"
-#include "../external-headers/glm/gtx/projection.hpp"
-#include "../external-headers/glm/gtc/matrix_transform.hpp"
 #include "../include/GlDebug.h"
-#include <cstdlib>
 #include <string>
 
-using namespace tml;
-const static std::string VERTEX_STRING = 
-{
- "    #version 440 core\n"
-    "    layout (location = 0) in vec2 Pos;\n"
-    "    layout (location = 1) in vec4 Color;\n"
-    "    layout (location = 2) in mediump vec2 UV;\n"
-    "    layout (location = 3) in mediump uint TexID;\n"
-    "    layout (location = 4) in mediump float Rotation;\n"
-    "    layout (location = 5) in uint type;\n"
-    "    out vec4  vColor;\n"
-    "    out vec2  vUV;\n"
-    "    out uint  vTexID;\n"
-    "    out uint  vType;\n"
-    "    uniform mat4 uProjection;\n"
-    "    uniform mat4 uView;\n"
-    "    void main()\n"
-    "    {\n"
-    "        gl_Position = uView * (uProjection * vec4(Pos, 1.0, 1.0));\n"
-    "        vColor = Color;\n"
-    "        vUV = UV;\n"
-    "        vTexID = TexID;\n"
-    "        vType = type;\n"
-    "    }\n"
-};
+const static std::string VERTEX_STRING =
+R"END(
+#version 450 core
+layout (location = 0) in vec2 Pos;
+layout (location = 1) in vec4 Color;
+layout (location = 2) in mediump vec2 UV;
+layout (location = 3) in mediump uint TexID;
+layout (location = 4) in mediump float Rotation;
+layout (location = 5) in uint type;
+out vec4  vColor;
+out vec2  vUV;
+out uint  vTexID;
+out uint  vType;
 
-const static std::string FRAGMENT_STRING = 
+uniform vec2 uViewSize;
+uniform vec2 uCameraPos;
+uniform float uCameraRot;
+uniform float uCameraZoom;
+
+vec2 Rotate(vec2 v, float a)
 {
- "#version 440 core\n"
-    "precision mediump float;"
-    "in vec4 vColor;\n"
-    "in vec2 vUV;\n"
-    "flat in uint vTexID;\n"
-    "flat in uint vType;\n"
-    "out vec4 outColor;\n"
-    "uniform sampler2D uTextures[32];\n"
-     "mat4 bt601 = mat4(\n"
-     "  1.16438,  0.00000,  1.59603, -0.87079,\n"
-     "  1.16438, -0.39176, -0.81297,  0.52959,\n"
-     "  1.16438,  2.01723,  0.00000, -1.08139,\n"
-     "  0, 0, 0, 1\n"
-     ");\n"
-    "void main()\n"
-    "{\n"
-    "   vec4 color = vec4(0.0);\n"
-    "   switch(vType)\n"
-    "   {\n"
-    "       case 0:\n"
-    "           color = texture(uTextures[vTexID], vUV);\n"
-    "           if(color.r > 0.02)\n"
-    "           {\n"
-    "               outColor = vColor;\n"
-    "               outColor.a = color.r * vColor.a;\n"
-    "           }\n"
-    "           else\n"
-    "           {\n"
-    "               discard;\n"
-    "           }\n"
-    "       break;\n"
-    "       case 1:\n"
-    "           outColor = vColor;\n"
-    "       break;\n"
-    "       case 2:\n"
-    "           outColor = texture(uTextures[vTexID], vUV);\n"
-    "           if(outColor.a < 0.1)\n"
-    "           {\n"
-    "               discard;\n"
-    "           }\n"
-    "       break;\n"
-    "       case 3:\n"
-    "           color = texture(uTextures[vTexID], vUV);\n"
-    "           if(color.r > 0.02)\n"
-    "           {\n"
-    "               outColor = vColor;\n"
-    "               outColor.a = color.r * vColor.a;\n"
-    "           }\n"
-    "           else\n"
-    "           {\n"
-    "               discard;\n"
-    "           }\n"
-    "       break;\n"
-    "       case 4:\n"
-    "           color = texture(uTextures[vTexID], vUV) * bt601;"
-    "       break;\n"
-    "       default:\n"
-    "           discard;\n"
-    "       break;\n"
-    "   }\n"
-    "}\n"
-};
+	float s = sin(a);
+	float c = cos(a);
+	return mat2(c, -s, s, c) * v;
+}
+
+vec2 ToClip(vec2 s)
+{
+    return (s / uViewSize - 0.5) * vec2(2, -2);
+}
+
+void main()
+{
+    vec2 p = Rotate((Pos*uCameraZoom)-uCameraPos, Rotation);
+    p = ToClip(p);
+    gl_Position = vec4(Rotate(p, uCameraRot), 1, 1);
+    vColor = Color;
+    vUV = UV;
+    vTexID = TexID;
+    vType = type;
+}
+)END";
+
+const static std::string FRAGMENT_STRING =
+R"END(
+#version 450 core
+in vec4 vColor;
+in vec2 vUV;
+flat in uint vTexID;
+flat in uint vType;
+out vec4 outColor;
+uniform sampler2D uTextures[32];
+mat4 bt601 = mat4(
+  1.16438,  0.00000,  1.59603, -0.87079,
+  1.16438, -0.39176, -0.81297,  0.52959,
+  1.16438,  2.01723,  0.00000, -1.08139,
+  0, 0, 0, 1
+);
+void main()
+{
+   vec4 color = vec4(0.0);
+   switch(vType)
+   {
+       case 0:
+           color = texture(uTextures[vTexID], vUV);
+           if(color.r > 0.02)
+           {
+               outColor = vColor;
+               outColor.a = color.r * vColor.a;
+           }
+           else
+           {
+               discard;
+           }
+       break;
+       case 1:
+           outColor = vColor;
+       break;
+       case 2:
+           outColor = texture(uTextures[vTexID], vUV);
+           if(outColor.a < 0.1)
+           {
+               discard;
+           }
+       break;
+       case 3:
+           color = texture(uTextures[vTexID], vUV);
+           if(color.r > 0.02)
+           {
+               outColor = vColor;
+               outColor.a = color.r * vColor.a;
+           }
+           else
+           {
+               discard;
+           }
+       break;
+       case 4:
+           color = texture(uTextures[vTexID], vUV) * bt601;
+       break;
+       default:
+           discard;
+       break;
+   }
+}
+)END";
+using namespace tml;
+//const static std::string VERTEX_STRING =
+//{
+// "#version 450 core\n"
+//    "layout (location = 0) in vec2 Pos;\n"
+//    "layout (location = 1) in vec4 Color;\n"
+//    "layout (location = 2) in mediump vec2 UV;\n"
+//    "layout (location = 3) in mediump uint TexID;\n"
+//    "layout (location = 4) in mediump float Rotation;\n"
+//    "layout (location = 5) in uint type;\n"
+//    "out vec4  vColor;\n"
+//    "out vec2  vUV;\n"
+//    "out uint  vTexID;\n"
+//    "out uint  vType;\n"
+//    "uniform mat4 uProjection;\n"
+//    "uniform vec2 uViewPortSize;\n"
+//    "uniform mat4 uView;\n"
+//    "void main()\n"
+//    "{\n"
+//    "   gl_Position = uView * (uProjection * vec4(Pos, 1.0, 1.0));\n"
+//    "   vColor = Color;\n"
+//    "   vUV = UV;\n"
+//    "   vTexID = TexID;\n"
+//    "   vType = type;\n"
+//    "}\n"
+//};
+
+//const static std::string FRAGMENT_STRING =
+//{
+// "#version 450 core\n"
+//    "precision mediump float;"
+//    "in vec4 vColor;\n"
+//    "in vec2 vUV;\n"
+//    "flat in uint vTexID;\n"
+//    "flat in uint vType;\n"
+//    "out vec4 outColor;\n"
+//    "uniform sampler2D uTextures[32];\n"
+//     "mat4 bt601 = mat4(\n"
+//     "  1.16438,  0.00000,  1.59603, -0.87079,\n"
+//     "  1.16438, -0.39176, -0.81297,  0.52959,\n"
+//     "  1.16438,  2.01723,  0.00000, -1.08139,\n"
+//     "  0, 0, 0, 1\n"
+//     ");\n"
+//    "void main()\n"
+//    "{\n"
+//    "   vec4 color = vec4(0.0);\n"
+//    "   switch(vType)\n"
+//    "   {\n"
+//    "       case 0:\n"
+//    "           color = texture(uTextures[vTexID], vUV);\n"
+//    "           if(color.r > 0.02)\n"
+//    "           {\n"
+//    "               outColor = vColor;\n"
+//    "               outColor.a = color.r * vColor.a;\n"
+//    "           }\n"
+//    "           else\n"
+//    "           {\n"
+//    "               discard;\n"
+//    "           }\n"
+//    "       break;\n"
+//    "       case 1:\n"
+//    "           outColor = vColor;\n"
+//    "       break;\n"
+//    "       case 2:\n"
+//    "           outColor = texture(uTextures[vTexID], vUV);\n"
+//    "           if(outColor.a < 0.1)\n"
+//    "           {\n"
+//    "               discard;\n"
+//    "           }\n"
+//    "       break;\n"
+//    "       case 3:\n"
+//    "           color = texture(uTextures[vTexID], vUV);\n"
+//    "           if(color.r > 0.02)\n"
+//    "           {\n"
+//    "               outColor = vColor;\n"
+//    "               outColor.a = color.r * vColor.a;\n"
+//    "           }\n"
+//    "           else\n"
+//    "           {\n"
+//    "               discard;\n"
+//    "           }\n"
+//    "       break;\n"
+//    "       case 4:\n"
+//    "           color = texture(uTextures[vTexID], vUV) * bt601;"
+//    "       break;\n"
+//    "       default:\n"
+//    "           discard;\n"
+//    "       break;\n"
+//    "   }\n"
+//    "}\n"
+//};
 static Texture* CircleTexture = nullptr;
 
 static VertexArray     *m_vao = nullptr;
@@ -106,8 +209,10 @@ static IndexBuffer     *m_indexBuffer = nullptr;
 static BufferLayout    m_layout;
 static Shader          *m_shader = nullptr;
 
-static glm::mat4        m_projection = glm::mat4(1.0f);
-static glm::mat4        m_view       = glm::mat4(1.0f);
+static Vector2  m_viewSize   = {0,0};
+static Vector2  m_cameraPos  = {0,0};
+static float    m_cameraRot  = 0;
+static float    m_cameraZoom = 1;
 
 constexpr static ui32 MAX_VERTEX_COUNT  = 100000;
 static i32 MAX_TEXTURE_COUNT = 16;
@@ -116,7 +221,7 @@ static std::vector<Vertex>  m_vertexData;
 static std::vector<ui32>    m_indexData;
 static std::vector<ui32>    m_textures;
 
-// Generates an anti-aliased circle texture
+// Should generate an anti-aliased circle texture
 inline void GenerateCircle(ui32 s, ui8* data)
 {
     const float sHalf = s / 2.f;
@@ -125,7 +230,7 @@ inline void GenerateCircle(ui32 s, ui8* data)
     {
         for(int j = 0; j < s; ++j)
         {
-            if(d = glm::distance(glm::vec2(j,i), glm::vec2(sHalf, sHalf)) < sHalf)
+            if(d = Vector2::Distance(Vector2(j,i), Vector2(sHalf, sHalf)) < sHalf)
                 data[i*s+j] = 255;
             else
                 data[i*s+j] = (255 * (sHalf / d));
@@ -181,12 +286,31 @@ void Renderer::Init()
     GL_CALL(glad_glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 }
 
+void Renderer::SetCamera(Camera &cam)
+{
+    m_cameraPos = cam.GetPosition() - (m_viewSize * 0.5f);
+    m_cameraRot = cam.GetRotation();
+    m_cameraZoom = cam.GetZoom();
+}
+
+void Renderer::ResetCamera()
+{
+    m_cameraZoom = 1;
+    m_cameraPos = {0,0};
+    m_cameraRot = 0;
+}
+
 void Renderer::Clear()
 {
     GL_CALL(glad_glClear(GL_COLOR_BUFFER_BIT));
 	static int f[4];
 	GL_CALL(glad_glGetIntegerv(GL_VIEWPORT, f));
-	m_projection = glm::ortho(f[0]*1.f, f[2]*1.f, f[3]*1.f, f[1]*1.f);
+    m_viewSize = Vector2{static_cast<float>(f[2]), static_cast<float>(f[3])};
+
+    // Put these in a separate function ResetView()
+    ResetCamera();
+
+//	m_projection = glm::ortho(f[0]*1.f, f[2]*1.f, f[3]*1.f, f[1]*1.f);
     GL_CALL(BeginBatch());
 }
 
@@ -622,23 +746,16 @@ void Renderer::EndBatch()
     if(m_vertexData.size() < 3)
         return;
     GL_CALL(m_shader->Bind());
-    GL_CALL(m_shader->UniformMat4fv("uProjection", 1, 0, &m_projection[0][0]));
-    GL_CALL(m_shader->UniformMat4fv("uView", 1, 0, &m_view[0][0]));
-    for(i32 i = 1; i < MAX_TEXTURE_COUNT; i++)
-    {
-        GL_CALL(m_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i));
-    }
-    if(m_vertexData.data())
-    {
-        m_vertexBuffer->SetData(m_vertexData.data(), sizeof(Vertex), m_vertexData.size());
-        m_indexBuffer->SetData(m_indexData.data(), m_indexData.size());
-    }
-    else
-    { // No data, so just return
-        Renderer::BeginBatch();
-        return;
-    }
+    GL_CALL(m_shader->SetVec2("uViewSize", m_viewSize));
+    GL_CALL(m_shader->SetVec2("uCameraPos", m_cameraPos));
+    GL_CALL(m_shader->Uniform1f("uCameraRot", m_cameraRot));
+    GL_CALL(m_shader->Uniform1f("uCameraZoom", m_cameraZoom));
 
+    for(i32 i = 1; i < MAX_TEXTURE_COUNT; i++)
+        GL_CALL(m_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i));
+
+    m_vertexBuffer->SetData(m_vertexData.data(), sizeof(Vertex), m_vertexData.size());
+    m_indexBuffer->SetData(m_indexData.data(), m_indexData.size());
     m_vao->BufferData(*m_vertexBuffer, *m_indexBuffer, m_layout);
     m_vao->Bind();
     GL_CALL(glad_glDrawElements(GL_TRIANGLES, m_indexData.size(), GL_UNSIGNED_INT, 0));

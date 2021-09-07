@@ -6,11 +6,16 @@
 #include "Drawable/Sprite.h"
 #include "Drawable/Text.h"
 #include "Drawable/Video.h"
+#include "Camera.h"
 
 namespace tml {
     class Renderer {
     public:
         static void Init();
+
+        static void SetCamera(Camera& cam);
+
+        static void ResetCamera();
 
         static void Clear();
 
