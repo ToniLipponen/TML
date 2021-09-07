@@ -37,9 +37,9 @@ vec2 ToClip(vec2 s)
 
 void main()
 {
-    vec2 p = Rotate((Pos*uCameraZoom)-uCameraPos, Rotation);
+    vec2 p = Rotate((Pos)-uCameraPos, Rotation);
     p = ToClip(p);
-    gl_Position = vec4(Rotate(p, uCameraRot), 1, 1);
+    gl_Position = vec4(Rotate(p*uCameraZoom, uCameraRot), 1, 1);
     vColor = Color;
     vUV = UV;
     vTexID = TexID;
@@ -295,6 +295,7 @@ void Renderer::SetCamera(Camera &cam)
 
 void Renderer::ResetCamera()
 {
+    EndBatch();
     m_cameraZoom = 1;
     m_cameraPos = {0,0};
     m_cameraRot = 0;

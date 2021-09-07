@@ -1,9 +1,8 @@
 #pragma once
-// Header including some useful utilities
-
 #include "Copy.h"
 #include "Condition.h"
 #include "../Vector2.h"
+#include "../Camera.h"
 
 namespace tml {
     namespace Util {
@@ -49,6 +48,13 @@ namespace tml {
         template<typename T>
         inline constexpr T Lerp(const T &a, const T &b, float m) noexcept {
             return a + ((b - a) * m);
+        }
+
+        // TODO
+        // Figure this out.
+        inline Vector2 ScreenToWorld(const Vector2& p, const Vector2& view_dimensions, Camera& camera) noexcept
+        {
+            return (p + camera.GetPosition()) * camera.GetZoom()  - (view_dimensions / 2);
         }
     };
 };
