@@ -13,6 +13,7 @@ endif()
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp src/glad.c)
 add_subdirectory(external/glfw/)
+include_directories(external/glm)
 
 add_library(TML SHARED ${SRC_FILES})
 if(WIN32)
@@ -27,3 +28,4 @@ if(UNIX)
     set(GLFW_LIBRARY ${PROJECT_BINARY_DIR}/external/glfw/src/libglfw3.a)
     target_link_libraries(TML ${GLFW_LIBRARY} dl pthread)
 endif(UNIX)
+target_include_directories(TML PUBLIC external/glm)

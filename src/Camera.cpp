@@ -25,7 +25,7 @@ namespace tml
 
     void Camera::Rotate(float d)
     {
-        m_rotation = d;
+        m_rotation += d;
     }
 
     void Camera::SetPosition(const Vector2& position)

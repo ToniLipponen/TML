@@ -54,7 +54,7 @@ namespace tml {
         // Figure this out.
         inline Vector2 ScreenToWorld(const Vector2& p, const Vector2& view_dimensions, Camera& camera) noexcept
         {
-            return (p + camera.GetPosition()) * camera.GetZoom()  - (view_dimensions / 2);
+            return p + camera.GetPosition()  - (view_dimensions / 2) * (1.0f - camera.GetZoom());
         }
     };
 };
