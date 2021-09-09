@@ -1,23 +1,27 @@
 #include "../include/Window.h"
+#include "internal/Assert.h"
+#include "../include/Utilities/Condition.h"
 #include "../external-headers/glad/glad.h"
+#define GLFW_INCLUDE_NONE
 #include "../external-headers/GLFW/glfw3.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION 1
 #include "../external-headers/stb/stb_image_write.h"
-#include <iostream>
+#include "../external-headers/stb/stb_image.h"
+#include "internal/Default_icon.h"
+#include "internal/Default_cursor.h"
+
 
 void WindowResizeCallback(GLFWwindow* f, int x, int y)
 {
     glViewport(0, 0, x, y);
 }
+
 namespace tml {
     Window::Window(ui32 w, ui32 h, cstring title, ui32 settings)
-            : m_handle(nullptr) {
-        if (glfwInit() == GLFW_FALSE) {
-            std::cerr << "ERROR: Failed to initialize window.\n";
-            std::exit(1);
-        }
-
+    : m_handle(nullptr), m_title(title)
+    {
+        TML_ASSERT(glfwInit(), "Failed to initialize window.");
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -25,21 +29,27 @@ namespace tml {
         glfwWindowHint(GLFW_RESIZABLE, (settings & Settings::Resizeable) != 0);
         glfwWindowHint(GLFW_MAXIMIZED, (settings & Settings::Maximized) != 0);
         glfwWindowHint(GLFW_DOUBLEBUFFER, (settings & Settings::VSync) != 0);
-        glfwWindowHint(GLFW_SAMPLES, (settings & Settings::Antialias) * 8);
+        glfwWindowHint(GLFW_SAMPLES, (settings & Settings::Antialias) * 4);
 
         if (settings & Settings::Fullscreen)
             m_handle = glfwCreateWindow(w, h, title, glfwGetPrimaryMonitor(), 0);
         else
             m_handle = glfwCreateWindow(w, h, title, 0, 0);
-        if (!m_handle) {
-            std::cerr << "ERROR: Failed to create a window.\n";
-            std::exit(2);
-        }
+        TML_ASSERT(m_handle != nullptr, "Failed to create a window handle.");
         glfwMakeContextCurrent(reinterpret_cast<GLFWwindow *>(m_handle));
         glfwShowWindow(reinterpret_cast<GLFWwindow *>(m_handle));
-
         glfwSetWindowSizeCallback(reinterpret_cast<GLFWwindow *>(m_handle), WindowResizeCallback);
         Keyboard::Initialize();
+
+        GLFWimage img, img2;
+        int channels = 4;
+        img.pixels = stbi_load_from_memory(DEFAULT_ICON_DATA.data(),DEFAULT_ICON_DATA.size(), &img.width, &img.height, &channels, 4);
+        glfwSetWindowIcon(reinterpret_cast<GLFWwindow*>(m_handle),1, &img);
+        img2.pixels = stbi_load_from_memory(DEFAULT_CURSOR_DATA.data(), DEFAULT_CURSOR_DATA.size(), &img2.width, &img2.height, &channels, 4);
+        auto cursor = glfwCreateCursor(&img2, 0,0);
+        glfwSetCursor(reinterpret_cast<GLFWwindow*>(m_handle), cursor);
+        delete[] img.pixels;
+        delete[] img2.pixels;
     }
 
     Window::~Window() {
@@ -104,7 +114,25 @@ namespace tml {
     void Window::Maximize() {
         glfwMaximizeWindow(reinterpret_cast<GLFWwindow *>(m_handle));
     }
-
+    void Window::SetFullscreen(bool full, i32 user_w, i32 user_h)
+    {
+        int w = 0, h = 0, x = 0, y = 0;
+        auto monitor = glfwGetPrimaryMonitor();
+        // Destroy old handle
+        glfwDestroyWindow(reinterpret_cast<GLFWwindow *>(m_handle));
+        m_handle = nullptr;
+        glfwGetMonitorWorkarea(monitor, &w, &h, &x, &y);
+        m_handle = glfwCreateWindow(
+                tml::Condition(user_w == -1, w, user_w),
+                tml::Condition(user_h == -1, h, user_h),
+                m_title.c_str(),
+                0,
+                0);
+//        TML_ASSERT(m_handle != nullptr, "Failed to create a window handle.");
+        glfwMakeContextCurrent(reinterpret_cast<GLFWwindow *>(m_handle));
+//        glfwShowWindow(reinterpret_cast<GLFWwindow *>(m_handle));
+        glfwSetWindowSizeCallback(reinterpret_cast<GLFWwindow *>(m_handle), WindowResizeCallback);
+    }
     void Window::Screenshot(const cstring filename) {
         const ui32 w = GetWidth(), h = GetHeight();
         ui8* pixels = new ui8[3 * w * h];

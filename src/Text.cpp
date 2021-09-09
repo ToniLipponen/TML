@@ -1,5 +1,5 @@
 #include "../include/Drawable/Text.h"
-#include "../include/Default_font.h"
+#include "internal/Default_font.h"
 #include "../include/Utilities/Utilities.h"
 
 using namespace tml;
@@ -104,13 +104,13 @@ void Text::Generate()
         const float ch = GetCharSize(fc.pos.y, fc.size.y, 4096);
         // This is a mess, please fix
         m_vertexData.push_back(Vertex{(Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)}) + m_pos,
-            col,fc.pos,1, 0.f, Vertex::TEXT});
+            col,fc.pos+Vector2(0.0008f, 0.00f),1, 0.f, Vertex::TEXT});
         m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)} + Vector2{cw, 0.f})) + m_pos,
-            col,Vector2{fc.size.x,fc.pos.y},1, 0.f, Vertex::TEXT});
+            col,Vector2{fc.size.x-0.0008f,fc.pos.y},1, 0.f, Vertex::TEXT});
         m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)} + Vector2{0, ch})) + m_pos,
-            col,Vector2{fc.pos.x,fc.size.y},1, 0.f, Vertex::TEXT});
+            col,Vector2{fc.pos.x+0.0008f,fc.size.y},1, 0.f, Vertex::TEXT});
         m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)} + Vector2{cw, ch})) + m_pos,
-            col,fc.size,1, 0.f, Vertex::TEXT});
+            col,fc.size-Vector2(0.0008f, 0.0000f),1, 0.f, Vertex::TEXT});
         m_indexData.push_back(count + 0);
         m_indexData.push_back(count + 1);
         m_indexData.push_back(count + 2);

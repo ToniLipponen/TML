@@ -2,14 +2,19 @@
 #include "../include/Utilities/Bezier.h"
 #include "../external-headers/glad/glad.h"
 #include "../include/GlDebug.h"
+#include "internal/Assert.h"
+#include "internal/Circle_texture.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <string>
+#include "../external-headers/stb/stb_image.h"
+
 
 const static std::string VERTEX_STRING =
 R"END(
 #version 450 core
-layout (location = 0) in vec2 Pos;
+layout (location = 0) in mediump vec2 Pos;
 layout (location = 1) in mediump vec4 Color;
 layout (location = 2) in mediump vec2 UV;
 layout (location = 3) in mediump uint TexID;
@@ -125,23 +130,7 @@ static i32 MAX_TEXTURE_COUNT = 16;
 static std::vector<Vertex>  m_vertexData;
 static std::vector<ui32>    m_indexData;
 static std::vector<ui32>    m_textures;
-
-// Should generate an anti-aliased circle texture
-inline void GenerateCircle(ui32 s, ui8* data)
-{
-    const float sHalf = s / 2.f;
-    float d = 0.f;
-    for(int i = 0; i < s; ++i)
-    {
-        for(int j = 0; j < s; ++j)
-        {
-            if(d = Vector2::Distance(Vector2(j,i), Vector2(sHalf, sHalf)) < sHalf)
-                data[i*s+j] = 255;
-            else
-                data[i*s+j] = (255 * (sHalf / d));
-        }
-    }
-}
+int Renderer::batch_count = 0;
 
 void PrintInformation()
 {
@@ -162,12 +151,12 @@ void Renderer::Init()
 {
     m_vertexData.reserve(MAX_VERTEX_COUNT);
     m_indexData.reserve(MAX_VERTEX_COUNT * 1.5);
-    gladLoadGL();
+    TML_ASSERT(gladLoadGL(), "Failed to initialize OpenGL.");
     PrintInformation();
 
     m_vao           = new VertexArray();
     m_vertexBuffer  = new VertexBuffer(nullptr, sizeof(Vertex), MAX_VERTEX_COUNT);
-    m_indexBuffer   = new IndexBuffer(nullptr, MAX_VERTEX_COUNT);
+    m_indexBuffer   = new IndexBuffer(nullptr, MAX_VERTEX_COUNT * 1.5);
     m_shader        = new Shader();
 
     m_vao->Bind();
@@ -179,14 +168,18 @@ void Renderer::Init()
     m_layout.Push(1, 4);
     m_shader->FromString(VERTEX_STRING, FRAGMENT_STRING);
     m_shader->Bind();
-
-    const int s = 4096;
-    ui8* circleData = new ui8[s*s];
-    GenerateCircle(s, circleData);
+    int w = 0,h = 0,bpp = 0;
+    ui8* circleData = stbi_load_from_memory(CIRCLE_TEXTURE_DATA.data(), CIRCLE_TEXTURE_DATA.size(), &w, &h, &bpp, 1);
     CircleTexture = new Texture();
-    CircleTexture->LoadFromMemory(s, s, 1, circleData);
+    CircleTexture->LoadFromMemory(w, h, bpp, circleData);
+    delete[] circleData;
     GL_CALL(glad_glEnable(GL_BLEND));
     GL_CALL(glad_glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+}
+
+void Renderer::SetClearColor(const Color &color)
+{
+    GL_CALL(glad_glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
 }
 
 void Renderer::SetCamera(Camera &cam)
@@ -207,6 +200,7 @@ void Renderer::ResetCamera()
 
 void Renderer::Clear()
 {
+    batch_count = 0;
     GL_CALL(glad_glClear(GL_COLOR_BUFFER_BIT));
 	static int f[4];
 	GL_CALL(glad_glGetIntegerv(GL_VIEWPORT, f));
@@ -380,12 +374,12 @@ void Renderer::Draw(Sprite& r)
 void Renderer::Draw(Text& r)
 {
     ui32 currentElements = m_vertexData.size();
-    if(currentElements + r.m_vertexData.size() >= MAX_VERTEX_COUNT)
+    if((currentElements + r.m_vertexData.size()) >= MAX_VERTEX_COUNT)
     {
         EndBatch();
         currentElements = 0;
     }
-    if(m_textures.size() >= MAX_TEXTURE_COUNT - 1)
+    else if(m_textures.size() >= (MAX_TEXTURE_COUNT - 1))
     {
         EndBatch();
         currentElements = 0;
@@ -575,7 +569,7 @@ void Renderer::DrawRect(const Vector2& pos, const Vector2& dimensions, const Col
 void Renderer::DrawCircle(const Vector2& pos, float radius, const Color& color)
 {
     ui32 currentElements = m_vertexData.size();
-    if(currentElements >= MAX_VERTEX_COUNT - 4)
+    if(currentElements >= (MAX_VERTEX_COUNT - 4))
     {
         EndBatch();
         currentElements = 0;
@@ -669,4 +663,5 @@ void Renderer::EndBatch()
     GL_CALL(glad_glDrawElements(GL_TRIANGLES, m_indexData.size(), GL_UNSIGNED_INT, 0));
 
     Renderer::BeginBatch();
+    ++batch_count;
 }

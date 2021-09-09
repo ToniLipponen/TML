@@ -1,5 +1,5 @@
 #include "../include/GlDebug.h"
-#include "../include/Assert.h"
+#include "internal/Assert.h"
 #include "../external-headers//glad/glad.h"
 
 int CheckGLError()

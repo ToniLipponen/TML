@@ -1,5 +1,6 @@
 #include "../include/Drawable/Video.h"
 #include "../include/Utilities/Utilities.h"
+#include "../src/internal/Assert.h"
 #define PL_MPEG_IMPLEMENTATION 1
 #include "../external-headers/PL_MPEG/pl_mpeg.h"
 

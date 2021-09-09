@@ -1,6 +1,7 @@
 #pragma once
 #include "Types.h"
 #include "Input.h"
+#include <string>
 
 namespace tml {
     class Window {
@@ -32,9 +33,10 @@ namespace tml {
         void SetSize(ui32 width, ui32 height) noexcept;
         void SetTitle(cstring title);
         void Maximize();
-        // void SetFullscreen(bool fullscreen);
+        void SetFullscreen(bool fullscreen, i32 w = -1, i32 h = -1);
         void Screenshot(const cstring filename);
     private:
+        std::string m_title;
         void *m_handle;
     };
 };

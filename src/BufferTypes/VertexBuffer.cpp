@@ -46,8 +46,8 @@ void VertexBuffer::SetData(void *data, ui32 s, ui32 n)
 
 void VertexBuffer::Flush()
 {
-    GL_CALL(glad_glNamedBufferData(m_id, 0, 0,
-                              GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT));
+//    GL_CALL(glad_glNamedBufferData(m_id, 0, 0,
+//                              GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT));
 	m_datasize = 0;
 	m_vertex_count = 0;
 }

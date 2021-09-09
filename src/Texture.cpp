@@ -2,9 +2,8 @@
 #include "../external-headers/glad/glad.h"
 #include "../include/GlDebug.h"
 #include "../include/Utilities/Copy.h"
+#include "../src/internal/Assert.h"
 #include <climits>
-#include <memory>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "../external-headers/stb/stb_image.h"
 

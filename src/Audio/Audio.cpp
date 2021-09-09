@@ -1,5 +1,5 @@
 #include "../../include/Audio/Audio.h"
-#include "../../include/Assert.h"
+#include "../internal/Assert.h"
 
 #define DR_FLAC_IMPLEMENTATION
 #include "../../external-headers/miniaudio/decoders/dr_flac.h"  /* Enables FLAC decoding. */
@@ -45,7 +45,7 @@ static void Initialize_Device()
     config.dataCallback         = data_callback;
     config.stopCallback         = stop_callback;
     config.pUserData            = nullptr;
-    TL_ASSERT(ma_device_init(NULL, &config, &OUTPUT_DEVICE) == MA_SUCCESS, "Failed to initialize audio output device");
+    TML_ASSERT(ma_device_init(NULL, &config, &OUTPUT_DEVICE) == MA_SUCCESS, "Failed to initialize audio output device");
     ma_device_start(&OUTPUT_DEVICE);
     DEVICES_INITIALIZED = true;
 }

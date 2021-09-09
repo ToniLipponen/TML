@@ -1,3 +1,4 @@
+// Small abstraction layer for function pointers.
 #pragma once
 
 namespace tml
@@ -6,16 +7,19 @@ namespace tml
     class Function_ptr
     {
     public:
-        Function_ptr(return_value (*func_ptr)(arguments ...))
+        constexpr Function_ptr(return_value (*func_ptr)(arguments ...))
                 : m_func_ptr(func_ptr)
         {
 
         }
-        return_value operator()(arguments ... b)
+        return_value operator()(arguments ... b) const noexcept
         {
             return m_func_ptr(b ...);
         }
-
+        return_value (*)(args ...) GetRawPointer() const noexcept
+        {
+            return m_func_ptr;
+        }
     private:
         return_value (*m_func_ptr)(arguments ...);
     };

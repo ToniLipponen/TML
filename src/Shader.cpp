@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <cassert>
-#include "../include/Assert.h"
+#include "internal/Assert.h"
 #include "../include/GlDebug.h"
 
 using namespace tml;

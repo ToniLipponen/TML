@@ -1,4 +1,6 @@
 #include "../include/Font.h"
+#include "../include/Image.h"
+#include "internal/Assert.h"
 #define STB_TRUETYPE_IMPLEMENTATION 1
 #include "../external-headers//stb/stb_truetype.h"
 #include <fstream>

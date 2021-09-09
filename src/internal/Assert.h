@@ -1,13 +1,13 @@
 
 #pragma once
 
-#include "Types.h"
+#include "../../include/Types.h"
 #include <cstdio>
-#define TL_NO_DEBUGGING 0
+
 #if (TL_NO_DEBUGGING != 1)
 	#include <cassert>
-	#ifndef TL_ASSERT
-		#define TL_ASSERT(expr, msg) if(!(expr)){ \
+	#ifndef TML_ASSERT
+		#define TML_ASSERT(expr, msg) if(!(expr)){ \
 			std::printf("[\033[1;31m Error \033[0m]: "); \
 			std::puts(msg); \
 			assert(expr);\
@@ -15,7 +15,7 @@
 		}
 	#endif
 #else
-	#define TL_ASSERT(expr, msd)
+	#define TML_ASSERT(expr, msd)
 #endif
 
 #include <iostream>

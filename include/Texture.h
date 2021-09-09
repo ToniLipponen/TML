@@ -1,6 +1,5 @@
 #pragma once
 #include "Types.h"
-#include "Assert.h"
 #include "Vector2.h"
 
 #ifndef UINT_MAX
