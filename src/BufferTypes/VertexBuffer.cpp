@@ -1,16 +1,17 @@
-#include "../../include/Buffers.h"
+#include "../internal/Buffers.h"
 #include "../../external-headers/glad/glad.h"
-#include "../../include/GlDebug.h"
+#include "../internal/GlDebug.h"
 using namespace tml;
 
 #ifndef TML_GL_VERSION_330
-VertexBuffer::VertexBuffer() : m_datasize(0), m_vertex_count(0)
+VertexBuffer::VertexBuffer()
+: m_id(0), m_datasize(0), m_vertex_count(0)
 {
     GL_CALL(glad_glCreateBuffers(1, &m_id));
 }
 
 VertexBuffer::VertexBuffer(const void* data, ui32 vertexsize, ui32 vertexnum)
-: m_datasize(0), m_vertex_count(0)
+: m_id(0), m_datasize(0), m_vertex_count(0)
 {
     GL_CALL(glad_glCreateBuffers(1, &m_id));
     GL_CALL(glad_glNamedBufferStorage(m_id, vertexsize * vertexnum, data,
@@ -46,8 +47,6 @@ void VertexBuffer::SetData(void *data, ui32 s, ui32 n)
 
 void VertexBuffer::Flush()
 {
-//    GL_CALL(glad_glNamedBufferData(m_id, 0, 0,
-//                              GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT));
 	m_datasize = 0;
 	m_vertex_count = 0;
 }

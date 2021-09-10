@@ -7,14 +7,12 @@
 namespace tml {
     namespace Util {
         inline Vector2 Rotate(const Vector2 &origin, Vector2 p, float r) {
-            Vector2 np;
-            r = -1.f * (r * 0.01744444f);
+            r = (r * 0.01745329f);
             p -= origin;
             const float cos_r = cosf(r);
             const float sin_r = sinf(r);
-            np.x = origin.x + p.x * cos_r - p.y * sin_r;
-            np.y = origin.y + p.x * sin_r + p.y * cos_r;
-            return np;
+            return {origin.x + p.x * cos_r - p.y * sin_r,
+                    origin.y + p.x * sin_r + p.y * cos_r};
         }
 
         template<typename T>
@@ -34,13 +32,13 @@ namespace tml {
         }
 
         template<typename T>
-        inline constexpr T Max(T value, T max) noexcept {
+        [[maybe_unused]] inline constexpr T Max(T value, T max) noexcept {
             if (value > max)
                 return max;
             return value;
         }
 
-        // Needs types with +, - and * operators
+        // Need types with +, - and * operators
         // T operator+(const T& rhs)
         // T operator-(const T& rhs)
         // T operator*(float rhs)
@@ -50,18 +48,23 @@ namespace tml {
         }
         // @brief Checks whether a value is withing given range
         template <typename T>
-        inline constexpr bool InRange(const T& min, const T& value, const T& max) noexcept
+        [[maybe_unused]] inline constexpr bool InRange(const T& min, const T& value, const T& max) noexcept
         {
             if(value >= min && value <= max)
                 return true;
             return false;
         }
 
+        inline Vector2 AngleToHeading(float degrees) noexcept
+        {
+            return {cosf(degrees * 0.01745329f), sinf(degrees * 0.01745329f)};
+        }
+
         // TODO
         // Figure this out.
-        inline Vector2 ScreenToWorld(const Vector2& p, const Vector2& view_dimensions, Camera& camera) noexcept
-        {
-            return p + camera.GetPosition()  - (view_dimensions / 2) * (1.0f - camera.GetZoom());
-        }
-    };
-};
+//        [[maybe_unused]] inline Vector2 ScreenToWorld(const Vector2& p, const Vector2& view_dimensions, Camera& camera) noexcept
+//        {
+//            return p + camera.GetPosition()  - (view_dimensions / 2) * (1.0f - camera.GetZoom());
+//        }
+    }
+}

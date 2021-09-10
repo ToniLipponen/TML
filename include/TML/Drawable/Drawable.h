@@ -1,32 +1,40 @@
 #pragma once
-#include "../Buffers.h"
+#include "../../../src/internal/Buffers.h"
 #include "../Types.h"
 #include "../Texture.h"
 namespace tml {
     class Drawable {
     public:
-        virtual void SetColor(const Color &c) {
+        virtual void SetColor(const Color &c) noexcept {
             m_color = c;
         }
 
-        virtual void SetPosition(const Vector2 &p) {
+        virtual void SetPosition(const Vector2 &p) noexcept {
             m_pos = p;
         }
 
-        virtual void SetSize(const Vector2 &s) {
+        virtual void SetPosition(float x, float y) noexcept {
+            m_pos = {x, y};
+        }
+
+        virtual void SetSize(const Vector2 &s) noexcept {
             m_size = s;
         }
 
-        void SetTexture(const Texture &t) {
+        void SetTexture(const Texture &t) noexcept {
             m_tex = t;
         }
 
-        void Rotate(float d) {
+        void Rotate(float d) noexcept {
             m_rotation += d;
         }
 
-        void Translate(const Vector2 &offset) {
+        void Translate(const Vector2 &offset) noexcept {
             m_pos += offset;
+        }
+
+        void Translate(float x, float y) noexcept {
+            m_pos += {x,y};
         }
 
         const Vector2 &GetSize() const noexcept {
@@ -35,6 +43,10 @@ namespace tml {
 
         const Vector2 &GetPosition() const noexcept {
             return m_pos;
+        }
+        constexpr float GetRotation() const noexcept
+        {
+            return m_rotation;
         }
 
         friend class Renderer;

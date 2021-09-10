@@ -1,6 +1,6 @@
 #pragma once
 #include "Window.h"
-#include "Shader.h"
+#include "../../src/internal/Shader.h"
 #include "Drawable/Rectangle.h"
 #include "Drawable/Circle.h"
 #include "Drawable/Sprite.h"
@@ -41,11 +41,20 @@ namespace tml {
         static void
         DrawBezier(const Vector2 &a, const Vector2 &cp, const Vector2 &b, float thickness, const Color &color,
                    bool rounded = true, float step = 0.01f);
-
+        // @brief Draws a grid. The rows and columns mean how many cells the grid should contain horizontally and vertically.
+        static void DrawGrid(const Vector2& top_left, const Vector2& size, ui32 rows, ui32 columns,
+                             const Color& color, float thickness = 1.f, bool rounded = false);
+        static void DrawTexture(Texture& tex, const Vector2& pos, const Vector2& size);
         static void EndBatch();
         static int batch_count;
 
     private:
+        static void
+        PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& tex_id, Vertex::Drawable_Type type);
+
+        static void // Rotated
+        PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& tex_id, float rotation, Vertex::Drawable_Type type);
+
         static void
         p_DrawRect(const Vector2 &pos, const Vector2 &dimensions, const Color &color, float rotation = 0.0f);
     };

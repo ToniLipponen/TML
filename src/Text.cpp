@@ -1,6 +1,6 @@
-#include "../include/Drawable/Text.h"
+#include <TML/Drawable/Text.h>
 #include "internal/Default_font.h"
-#include "../include/Utilities/Utilities.h"
+#include "../external-headers/stb/stb_truetype.h"
 
 using namespace tml;
 
@@ -12,8 +12,8 @@ Text::Text()
     m_font.LoadFromMemory(DEFAULT_FONT_DATA.data(), DEFAULT_FONT_DATA.size());
 }
 
-Text::Text(const std::string& text)
-: m_string(text)
+Text::Text(std::string text)
+: m_string(std::move(text))
 {
     m_color = {255,255,255};
     m_pos = {0,0};
@@ -22,8 +22,8 @@ Text::Text(const std::string& text)
     Generate();
 }
 
-Text::Text(const std::string& text, const std::string& font_file_name)
-: m_string(text)
+Text::Text(std::string text, const std::string& font_file_name)
+: m_string(std::move(text))
 {
     m_font.LoadFromFile(font_file_name);
     m_color = {255,255,255};
@@ -32,9 +32,9 @@ Text::Text(const std::string& text, const std::string& font_file_name)
     Generate();
 }
 
-Text::Text(const std::string& text, Font& font)
+Text::Text(std::string text, Font& font)
+: m_string(std::move(text))
 {
-    m_string = text;
     m_font = font;
     m_color = {255,255,255};
     m_pos = {0,0};
@@ -42,8 +42,10 @@ Text::Text(const std::string& text, Font& font)
     Generate();
 }
 
-void Text::SetPosition(const Vector2 &pos)
+void Text::SetPosition(const Vector2 &pos) noexcept
 {
+    if(m_pos.x == pos.x && m_pos.y == pos.y)
+        return;
     m_pos = pos;
     Generate();
 }
@@ -54,15 +56,17 @@ void Text::SetSize(float s)
     Generate();
 }
 
-void Text::SetColor(const Color& color)
+void Text::SetColor(const Color& color) noexcept
 {
     m_color = color;
     Generate();
 }
 
-void Text::SetString(const std::string &string)
+[[maybe_unused]] void Text::SetString(std::string string)
 {
-    m_string = string;
+    if(m_string == string) // Slow with long strings
+        return;
+    m_string = std::move(string);
     Generate();
 }
 
@@ -72,45 +76,29 @@ void Text::SetFont(const Font &font)
     Generate();
 }
 
-void Text::SetSpacing(ui32 s)
+[[maybe_unused]] void Text::SetSpacing(ui32 s)
 {
     m_spacing = s;
     Generate();
 }
 
-#define GetCharSize(ax, bx, as) (bx - ax) * as / 385.f * m_size.x
-#define GetSpacing(size) (size / 10) * m_spacing
-
-void Text::Generate()
+void Text::Generate() noexcept
 {
-    if(m_font.m_chars.empty()) // Font failed to load? No glyphs available.
-        return;
-    float x = 0, y = 32;
+    float x = m_pos.x, y = m_pos.y;
     int count = 0;
     m_vertexData.clear();
     m_indexData.clear();
     const Color col = m_color * 0.003921568f;
+    stbtt_aligned_quad q;
     for(auto c : m_string)
     {
-        if(c == '\n')
-        {
-            x = 0;
-            y += m_size.x;
-            m_height += 385.f * m_size.x / (4096 / 3);
-            continue;
-        }
-        const Font::FontChar& fc = m_font.m_chars.at(c);
-        const float cw = GetCharSize(fc.pos.x, fc.size.x, 4096);
-        const float ch = GetCharSize(fc.pos.y, fc.size.y, 4096);
-        // This is a mess, please fix
-        m_vertexData.push_back(Vertex{(Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)}) + m_pos,
-            col,fc.pos+Vector2(0.0008f, 0.00f),1, 0.f, Vertex::TEXT});
-        m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)} + Vector2{cw, 0.f})) + m_pos,
-            col,Vector2{fc.size.x-0.0008f,fc.pos.y},1, 0.f, Vertex::TEXT});
-        m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)} + Vector2{0, ch})) + m_pos,
-            col,Vector2{fc.pos.x+0.0008f,fc.size.y},1, 0.f, Vertex::TEXT});
-        m_vertexData.push_back(Vertex{((Vector2{x-fabsf(fc.offset.x*385),y-fabsf(fc.offset.y*385)} + Vector2{cw, ch})) + m_pos,
-            col,fc.size-Vector2(0.0008f, 0.0000f),1, 0.f, Vertex::TEXT});
+        stbtt_GetBakedQuad((stbtt_bakedchar*)m_font.m_cdata, 2048, 2048,int(c-32), &x, &y,&q, 1);
+        // top / bottom * size
+        m_vertexData.push_back({{q.x0, q.y0}, col, {q.s0, q.t0}, 0, Vertex::TEXT});
+        m_vertexData.push_back({{q.x1, q.y0}, col, {q.s1, q.t0}, 0, Vertex::TEXT});
+        m_vertexData.push_back({{q.x0, q.y1}, col, {q.s0, q.t1}, 0, Vertex::TEXT});
+        m_vertexData.push_back({{q.x1, q.y1}, col, {q.s1, q.t1}, 0, Vertex::TEXT});
+
         m_indexData.push_back(count + 0);
         m_indexData.push_back(count + 1);
         m_indexData.push_back(count + 2);
@@ -118,10 +106,8 @@ void Text::Generate()
         m_indexData.push_back(count + 1);
         m_indexData.push_back(count + 3);
         m_indexData.push_back(count + 2);
-        m_height = Util::Min(ch, m_height);
         
         count += 4;
-        x += GetCharSize(fc.pos.x, fc.size.x, 4096) + GetSpacing(m_size.x);
     }
     m_width     = x;
 }

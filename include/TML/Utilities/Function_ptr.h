@@ -8,7 +8,7 @@ namespace tml
     {
     public:
         constexpr Function_ptr(return_value (*func_ptr)(arguments ...))
-                : m_func_ptr(func_ptr)
+        : m_func_ptr(func_ptr)
         {
 
         }

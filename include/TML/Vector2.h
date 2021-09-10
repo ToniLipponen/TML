@@ -5,33 +5,31 @@ namespace tml {
     class Vector2 {
     public:
         Vector2() = default;
+        Vector2(float v) noexcept : x(v), y(v) {}
+        Vector2(float x, float y) noexcept : x{x}, y{y} {}
 
-        inline constexpr Vector2(float x, float y) : x(x), y(y) {}
-
-        inline constexpr Vector2(const Vector2 &v) : x(v.x), y(v.y) {}
-
-        inline constexpr Vector2 operator+(const Vector2 &rhs) const noexcept {
-            return Vector2(x + rhs.x, y + rhs.y);
+        inline Vector2 operator+(const Vector2 &rhs) const noexcept {
+            return {x + rhs.x, y + rhs.y};
         }
 
-        inline constexpr Vector2 operator-(const Vector2 &rhs) const noexcept {
-            return Vector2(x - rhs.x, y - rhs.y);
+        inline Vector2 operator-(const Vector2 &rhs) const noexcept {
+            return {x - rhs.x, y - rhs.y};
         }
 
-        inline constexpr Vector2 operator/(const Vector2 &rhs) const noexcept {
-            return Vector2(x / rhs.x, y / rhs.y);
+        inline Vector2 operator/(const Vector2 &rhs) const noexcept {
+            return {x / rhs.x, y / rhs.y};
         }
 
-        inline constexpr Vector2 operator*(const Vector2 &rhs) const noexcept {
-            return Vector2(x * rhs.x, y * rhs.y);
+        inline Vector2 operator*(const Vector2 &rhs) const noexcept {
+            return {x * rhs.x, y * rhs.y};
         }
 
-        inline constexpr Vector2 operator/(const float rhs) const noexcept {
-            return Vector2(x / rhs, y / rhs);
+        inline Vector2 operator/(const float rhs) const noexcept {
+            return {x / rhs, y / rhs};
         }
 
-        inline constexpr Vector2 operator*(const float rhs) const noexcept {
-            return Vector2(x * rhs, y * rhs);
+        inline Vector2 operator*(const float rhs) const noexcept {
+            return {x * rhs, y * rhs};
         }
 
         inline constexpr Vector2 &operator+=(const Vector2 &rhs) noexcept {
@@ -70,22 +68,22 @@ namespace tml {
             return *this;
         }
 
-        inline constexpr float Length() const noexcept {
-            return sqrt(x * x + y * y);
+        inline float Length() const noexcept {
+            return sqrtf(x * x + y * y);
         }
 
-        inline constexpr Vector2 &Normalize() noexcept {
+        inline Vector2 &Normalize() noexcept {
             return (*this /= Length());
         }
 
-        inline constexpr Vector2 Normalized() const noexcept {
+        inline Vector2 Normalized() const noexcept {
             return *this / Length();
         }
 
-        inline constexpr static float Distance(const Vector2 &a, const Vector2 &b) noexcept {
-            return sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
+        inline static float Distance(const Vector2 &a, const Vector2 &b) noexcept {
+            return sqrtf(powf(b.x - a.x, 2) + powf(b.y - a.y, 2));
         }
 
         float x, y;
     };
-};
+}

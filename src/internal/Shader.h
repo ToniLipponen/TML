@@ -1,5 +1,5 @@
 #pragma once
-#include "Types.h"
+#include "../../include/TML/Types.h"
 #include <string>
 #include <unordered_map>
 
@@ -8,13 +8,13 @@ namespace tml {
     public:
         Shader();
 
-        Shader(cstring vs, cstring fs, cstring gs = "\0");
+        Shader(cstring vs, cstring fs);
 
         void Bind() const;
 
         void Unbind() const;
 
-        void Load(cstring vs, cstring fs, cstring gs = "\0") const;
+        void Load(cstring vs, cstring fs) const;
 
         void FromString(const std::string &vs, const std::string &fs) const;
 

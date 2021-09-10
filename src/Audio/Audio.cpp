@@ -1,4 +1,4 @@
-#include "../../include/Audio/Audio.h"
+#include <TML/Audio/Audio.h>
 #include "../internal/Assert.h"
 
 #define DR_FLAC_IMPLEMENTATION

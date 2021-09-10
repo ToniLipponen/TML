@@ -1,17 +1,17 @@
-#include "../../include/Buffers.h"
+#include "../internal/Buffers.h"
 #include "../../external-headers//glad/glad.h"
-#include "../../include/GlDebug.h"
+#include "../internal/GlDebug.h"
 using namespace tml;
 
 #ifndef TML_GL_VERSION_330
 IndexBuffer::IndexBuffer()
-: m_elements(0)
+: m_id(0), m_elements(0)
 {
 	GL_CALL(glCreateBuffers(1, &m_id));
 }
 
 IndexBuffer::IndexBuffer(const ui32* data, ui32 elements) 
-: m_elements(elements)
+: m_id(0), m_elements(elements)
 {
     GL_CALL(glCreateBuffers(1, &m_id));
     GL_CALL(glNamedBufferStorage(m_id, elements * 4, data, GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT));
@@ -42,7 +42,6 @@ void IndexBuffer::SetData(const ui32 *data, ui32 elements)
 
 void IndexBuffer::Flush()
 {
-    GL_CALL(glNamedBufferStorage(m_id, 0, 0, GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT));
 	m_elements = 0;
 }
 #else
