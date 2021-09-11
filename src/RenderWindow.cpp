@@ -156,7 +156,7 @@ void PrintInformation()
     tml::Logger::InfoMessage("Available GPU texture units: %d", MAX_TEXTURE_COUNT);
 }
 
-void Renderer::Init()
+bool Renderer::Init()
 {
     s_vertexData.reserve(MAX_VERTEX_COUNT);
     s_indexData.reserve(MAX_VERTEX_COUNT * 1.5);
@@ -185,7 +185,7 @@ void Renderer::Init()
     GL_CALL(glad_glEnable(GL_BLEND));
     GL_CALL(glad_glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     GL_CALL(glad_glDisable(GL_DEPTH_TEST));
-
+    return true;
 }
 
 void Renderer::SetClearColor(const Color &color)

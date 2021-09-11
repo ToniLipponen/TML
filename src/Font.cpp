@@ -27,33 +27,22 @@ Font::Font(const ui8* data, ui32 datasize)
     LoadFromMemory(data, datasize);
 }
 
-// Todo: Make this call Font::LoadFromMemory to remove duplicate code
 void Font::LoadFromFile(const std::string& filename)
 {
-    stbtt_bakedchar cdata[96];
-    auto* bitmap = new unsigned char[ATLAS_SIZE*ATLAS_SIZE];
-    unsigned char* buffer;
-    stbtt_fontinfo font;
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
     if(!file.is_open())
     {
         Logger::ErrorMessage("Failed to load font -> %s", filename.c_str());
-        delete[] bitmap;
         file.close();
         return;
     }
+    unsigned char* buffer;
     const auto file_len = file.tellg();
     file.seekg(0, std::ios::beg);
     buffer = new unsigned char[file_len];
-    file.read(reinterpret_cast<char*>(buffer), file_len);
+    file.read((char*)buffer, file_len);
     file.close();
-
-    stbtt_InitFont(&font, buffer, 0);
-    stbtt_BakeFontBitmap(reinterpret_cast<const unsigned char *>(buffer), 0, 385.0, bitmap, ATLAS_SIZE, ATLAS_SIZE, 32, 96, cdata);
-    m_texture.LoadFromMemory(ATLAS_SIZE, ATLAS_SIZE, 1, bitmap);
-    m_texture.SetClampMode(Texture::ClampToEdge);
-    m_texture.SetMinMagFilter(Texture::Filter::Linear,
-                              Texture::Filter::Linear);
+    LoadFromMemory(buffer, file_len);
     delete[] buffer;
 }
 

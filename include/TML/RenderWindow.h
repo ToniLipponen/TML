@@ -10,7 +10,7 @@
 namespace tml {
     class Renderer {
     public:
-        static void Init();
+        static bool Init();
         static void SetClearColor(const Color& color);
         static void SetCamera(Camera& cam);
         static void ResetCamera();
