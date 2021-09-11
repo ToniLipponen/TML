@@ -80,17 +80,17 @@ void Text::SetFont(const Font &font)
     Generate();
 }
 
-constexpr void NormalizeQuad(stbtt_aligned_quad& q, float x) noexcept
+constexpr void NormalizeQuad(stbtt_aligned_quad& q, float s, float x, float y) noexcept
 {
-    q.x0 *= (x / 256.0);
-    q.x1 *= (x / 256.0);
-    q.y0 *= (x / 256.0);
-    q.y1 *= (x / 256.0);
+    (q.x0 *= (s / 256.0)) += x;
+    (q.x1 *= (s / 256.0)) += x;
+    (q.y0 *= (s / 256.0)) += y;
+    (q.y1 *= (s / 256.0)) += y;
 }
 
 void Text::Generate() noexcept
 {
-    float x = m_pos.x, y = m_pos.y + 256.f;
+    float x = 0, y = 256.f;
     int count = 0;
     m_vertexData.clear();
     m_indexData.clear();
@@ -98,7 +98,7 @@ void Text::Generate() noexcept
     for(auto c : m_string)
     {
         stbtt_GetBakedQuad((stbtt_bakedchar*)m_font.m_cdata, 2048, 2048,int(c-32), &x, &y,&q, 1);
-        NormalizeQuad(q, m_size.x);
+        NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
         m_vertexData.push_back({{q.x0, q.y0}, m_color.Hex(), {q.s0, q.t0}, 0, Vertex::TEXT});
         m_vertexData.push_back({{q.x1, q.y0}, m_color.Hex(), {q.s1, q.t0}, 0, Vertex::TEXT});
         m_vertexData.push_back({{q.x0, q.y1}, m_color.Hex(), {q.s0, q.t1}, 0, Vertex::TEXT});

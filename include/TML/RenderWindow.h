@@ -44,6 +44,7 @@ namespace tml {
         static void DrawGrid(const Vector2& top_left, const Vector2& size, ui32 rows, ui32 columns,
                              const Color& color, float thickness = 1.f, bool rounded = false);
         static void DrawTexture(Texture& tex, const Vector2& pos, const Vector2& size);
+        static void DrawText(const std::string& text, const Vector2& pos, float size, const Color& color = WHITE);
         static void EndBatch();
         static int batch_count;
 
