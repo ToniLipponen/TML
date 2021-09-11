@@ -1,4 +1,4 @@
-#include "../include/Input.h"
+#include "../include/TML/Input.h"
 #define GLFW_INCLUDE_NONE
 #include "../external-headers//GLFW/glfw3.h"
 #include <map>
@@ -34,7 +34,7 @@ namespace tml {
     Vector2 Mouse::GetPosition() {
         double x = 0, y = 0;
         glfwGetCursorPos(glfwGetCurrentContext(), &x, &y);
-        return Vector2(x, y);
+        return {static_cast<float>(x), static_cast<float>(y)};
     }
 
     bool Mouse::ButtonPressed(Button button) {

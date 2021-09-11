@@ -16,8 +16,5 @@ namespace tml {
             m_size = {w, h};
             m_color = {255, 255, 255, 255};
         }
-
-    private:
-
     };
-};
+}

@@ -1,6 +1,6 @@
-#include "../include/Window.h"
+#include "../include/TML/Window.h"
 #include "internal/Assert.h"
-#include "../include/Utilities/Condition.h"
+#include <TML/Utilities/Condition.h>
 #include "../external-headers/glad/glad.h"
 #define GLFW_INCLUDE_NONE
 #include "../external-headers/GLFW/glfw3.h"
@@ -12,13 +12,13 @@
 #include "internal/Default_cursor.h"
 
 
-void WindowResizeCallback(GLFWwindow* f, int x, int y)
+void WindowResizeCallback(__attribute__((unused)) GLFWwindow* f, int x, int y)
 {
     glViewport(0, 0, x, y);
 }
 
 namespace tml {
-    Window::Window(ui32 w, ui32 h, cstring title, ui32 settings)
+    Window::Window(i32 w, i32 h, cstring title, ui32 settings)
     : m_handle(nullptr), m_title(title)
     {
         TML_ASSERT(glfwInit(), "Failed to initialize window.");
@@ -29,12 +29,12 @@ namespace tml {
         glfwWindowHint(GLFW_RESIZABLE, (settings & Settings::Resizeable) != 0);
         glfwWindowHint(GLFW_MAXIMIZED, (settings & Settings::Maximized) != 0);
         glfwWindowHint(GLFW_DOUBLEBUFFER, (settings & Settings::VSync) != 0);
-        glfwWindowHint(GLFW_SAMPLES, (settings & Settings::Antialias) * 4);
+        glfwWindowHint(GLFW_SAMPLES, static_cast<int>((settings & Settings::Antialias) * 4));
 
         if (settings & Settings::Fullscreen)
-            m_handle = glfwCreateWindow(w, h, title, glfwGetPrimaryMonitor(), 0);
+            m_handle = glfwCreateWindow(w, h, title, glfwGetPrimaryMonitor(), nullptr);
         else
-            m_handle = glfwCreateWindow(w, h, title, 0, 0);
+            m_handle = glfwCreateWindow(w, h, title, nullptr, nullptr);
         TML_ASSERT(m_handle != nullptr, "Failed to create a window handle.");
         glfwMakeContextCurrent(reinterpret_cast<GLFWwindow *>(m_handle));
         glfwShowWindow(reinterpret_cast<GLFWwindow *>(m_handle));
@@ -43,9 +43,21 @@ namespace tml {
 
         GLFWimage img, img2;
         int channels = 4;
-        img.pixels = stbi_load_from_memory(DEFAULT_ICON_DATA.data(),DEFAULT_ICON_DATA.size(), &img.width, &img.height, &channels, 4);
+        img.pixels = stbi_load_from_memory(
+                DEFAULT_ICON_DATA.data(),
+                static_cast<int>(DEFAULT_ICON_DATA.size()),
+                &img.width,
+                &img.height, &
+                channels,
+                4);
         glfwSetWindowIcon(reinterpret_cast<GLFWwindow*>(m_handle),1, &img);
-        img2.pixels = stbi_load_from_memory(DEFAULT_CURSOR_DATA.data(), DEFAULT_CURSOR_DATA.size(), &img2.width, &img2.height, &channels, 4);
+        img2.pixels = stbi_load_from_memory(
+                DEFAULT_CURSOR_DATA.data(),
+                static_cast<int>(DEFAULT_CURSOR_DATA.size()),
+                &img2.width,
+                &img2.height,
+                &channels,
+                4);
         auto cursor = glfwCreateCursor(&img2, 0,0);
         glfwSetCursor(reinterpret_cast<GLFWwindow*>(m_handle), cursor);
         delete[] img.pixels;
@@ -104,7 +116,7 @@ namespace tml {
 
     void Window::SetSize(ui32 w, ui32 h) noexcept {
         glfwRestoreWindow(reinterpret_cast<GLFWwindow *>(m_handle));
-        glfwSetWindowSize(reinterpret_cast<GLFWwindow *>(m_handle), w, h);
+        glfwSetWindowSize(reinterpret_cast<GLFWwindow *>(m_handle), static_cast<int>(w), static_cast<int>(h));
     }
 
     void Window::SetTitle(cstring title) {
@@ -114,7 +126,9 @@ namespace tml {
     void Window::Maximize() {
         glfwMaximizeWindow(reinterpret_cast<GLFWwindow *>(m_handle));
     }
-    void Window::SetFullscreen(bool full, i32 user_w, i32 user_h)
+
+    // Fix this
+    [[maybe_unused]] void Window::SetFullscreen(bool full, i32 user_w, i32 user_h)
     {
         int w = 0, h = 0, x = 0, y = 0;
         auto monitor = glfwGetPrimaryMonitor();
@@ -134,7 +148,7 @@ namespace tml {
         glfwSetWindowSizeCallback(reinterpret_cast<GLFWwindow *>(m_handle), WindowResizeCallback);
     }
     void Window::Screenshot(const cstring filename) {
-        const ui32 w = GetWidth(), h = GetHeight();
+        const i32 w = GetWidth(), h = GetHeight();
         ui8* pixels = new ui8[3 * w * h];
         glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, pixels);
         stbi_flip_vertically_on_write(1);

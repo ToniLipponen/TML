@@ -3,7 +3,7 @@
 namespace tml {
     class Keyboard {
     public:
-        enum Key {
+        enum [[maybe_unused]] Key {
             KEY_SPACE = 32,
             KEY_APOSTROPHE = 39,  /* ' */
             KEY_COMMA = 44,  /* , */
@@ -128,25 +128,15 @@ namespace tml {
         };
 
         static bool IsKeyPressed(Key key);
-
         static bool IsKeyDown(Key key);
-
         static void Initialize();
-
-    private:
     };
 
     class Mouse {
     public:
-        enum Button {
-            Left, Right, Middle, Four, Five, Six, Seven, Last
-        };
+        enum [[maybe_unused]] Button {Left, Right, Middle, Four, Five, Six, Seven, Last};
 
         static Vector2 GetPosition();
-
         static bool ButtonPressed(Button button);
-
-    private:
-
     };
 };

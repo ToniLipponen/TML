@@ -12,20 +12,20 @@ namespace tml
         // Initializes a Text with the default font and no string content.
         Text();
         // Initializes a Text with the default font
-        Text(const std::string &text);
-        Text(const std::string &text, const std::string &font_file_name);
-        Text(const std::string &text, Font &font);
-        void SetPosition(const Vector2 &pos) override;
+        explicit Text(std::string text);
+        Text(std::string text, const std::string &font_file_name);
+        Text(std::string text, Font &font);
+        void SetPosition(const Vector2 &pos) noexcept override;
         void SetSize(float s);
-        void SetColor(const Color &color) override;
-        void SetString(const std::string &string);
+        void SetColor(const Color &color) noexcept override;
+        [[maybe_unused]] void SetString(std::string string);
         void SetFont(const Font &font);
-        void SetSpacing(ui32 s);
-        inline constexpr Vector2 GetSize() const noexcept { return {m_width, m_height}; }
+        [[maybe_unused]] void SetSpacing(ui32 s);
+        [[maybe_unused]] inline Vector2 GetSize() const noexcept { return {m_width, m_height}; }
         friend class Renderer;
 
     private:
-        void Generate();
+        void Generate() noexcept;
         Font m_font;
         std::string m_string;
         std::vector<Vertex> m_vertexData;
@@ -33,4 +33,4 @@ namespace tml
         ui32 m_spacing = 1;
         float m_width = 0, m_height = 0;
     };
-};
+}

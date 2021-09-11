@@ -1,5 +1,5 @@
 #pragma once
-#include "Types.h"
+#include "../../include/TML/Types.h"
 #include <utility>
 #include <vector>
 
@@ -7,26 +7,14 @@ namespace tml {
     class VertexBuffer {
     public:
         VertexBuffer();
-
-        // VertexBuffer(VertexBuffer&) = delete;
-        // VertexBuffer(VertexBuffer&&) = delete;
         VertexBuffer(const void *data, ui32 vertexsize, ui32 numofvertices);
-
         ~VertexBuffer();
-
-        void Bind() const noexcept;
-
         void BufferData(void *data, ui32 vertexsize, ui32 numofvertices);
-
         void PushData(void *data, ui32 vertexsize, ui32 numofversices);
-
-        void PushData(void *data, ui32 bytes);
-
         void SetData(void *data, ui32 vertexsize, ui32 numofvertices);
-
         void Flush();
 
-        constexpr ui32 DataSize() const {
+        [[maybe_unused]] constexpr ui32 DataSize() const {
             return m_datasize;
         }
 
@@ -44,21 +32,12 @@ namespace tml {
     class IndexBuffer {
     public:
         IndexBuffer();
-
         IndexBuffer(const ui32 *data, ui32 elements);
-
         ~IndexBuffer();
-
-        void Bind() const noexcept;
-
         void BufferData(const ui32 *data, ui32 elements);
-
         void PushData(const ui32 *data, ui32 elements);
-
         void SetData(const ui32 *data, ui32 elements);
-
         void Flush();
-
         constexpr ui32 Elements() const noexcept {
             return m_elements;
         }
@@ -75,10 +54,10 @@ namespace tml {
     public:
         BufferLayout() : m_stride(0) {}
 
-        BufferLayout(const std::vector<std::pair<ui32, ui32>> &layout) : m_layout(layout), m_stride(0) {}
+        explicit BufferLayout(std::vector<std::pair<ui32, ui32>> layout) : m_layout(std::move(layout)), m_stride(0) {}
 
         void Push(ui32 elements, ui32 size) {
-            m_layout.push_back({elements, size});
+            m_layout.emplace_back(std::pair<ui32,ui32>{elements, size});
             m_stride += elements * size;
         }
 
@@ -123,4 +102,4 @@ namespace tml {
     private:
         ui32 m_id, m_vertex_count;
     };
-};
+}

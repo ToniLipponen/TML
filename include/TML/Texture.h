@@ -9,14 +9,14 @@
 namespace tml {
     class Texture {
     public:
-        enum ClampMode {
+        enum [[maybe_unused]] ClampMode {
             ClampToBorder = 0x812D,
             ClampToEdge = 0x812F,
             MirrorClampToEdge = 0x8743,
             Repeat = 0x2901,
             MirrorRepeat = 0x8370,
         };
-        enum Filter {
+        enum [[maybe_unused]] Filter {
             Nearest = 0x2600,
             Linear = 0x2601,
             NearestMipmapNearest = 0x2700,
@@ -26,15 +26,15 @@ namespace tml {
         };
     public:
         Texture();
-        Texture(cstring filename);
-        Texture(i32 w, i32 h, ui8 bpp, ui8 *data);
+        [[maybe_unused]] explicit Texture(cstring filename);
+        [[maybe_unused]] Texture(i32 w, i32 h, ui8 bpp, ui8 *data);
         ~Texture();
 
         void LoadFromFile(cstring filename);
         void LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data); // @data has to be alive throughout the use of this texture
-        void CopyFromMemory(i32 w, i32 h, ui8 Bpp, ui8* data); // Makes a copy of @data
-        void Bind(ui32 slot = 0);
-        void SetMipMapLevel(ui8 level);
+        [[maybe_unused]] void CopyFromMemory(i32 w, i32 h, ui8 Bpp, ui8* data); // Makes a copy of @data
+        void Bind(ui32 slot = 0) const;
+        [[maybe_unused]] void SetMipMapLevel(ui8 level);
         void SetMinMagFilter(Filter min, Filter mag);
         void SetClampMode(ClampMode mode);
 
@@ -42,24 +42,24 @@ namespace tml {
             return m_id != UINT_MAX;
         }
 
-        constexpr ui32 GetID() {
+        constexpr ui32 GetID() const {
             return m_id;
         }
 
-        constexpr Vector2 GetSize() const noexcept {
+        Vector2 GetSize() const noexcept {
             return Vector2{static_cast<float>(m_width), static_cast<float>(m_height)};
         }
 
-        constexpr ui32 GetWidth() const noexcept {
+        [[maybe_unused]] constexpr ui32 GetWidth() const noexcept {
             return m_width;
         }
 
-        constexpr ui32 GetHeight() const noexcept {
+        [[maybe_unused]] constexpr ui32 GetHeight() const noexcept {
             return m_height;
         }
 
     private:
-        void Generate(void);
+        void Generate();
 
     private:
         ClampMode m_clampmode = Repeat;
@@ -71,4 +71,4 @@ namespace tml {
         ui8 m_mipmap_level = 0;
         bool m_allocated = false;
     };
-};
+}

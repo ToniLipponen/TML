@@ -6,8 +6,8 @@ namespace tml
     class Video : public Drawable
     {
     public:
-        Video() noexcept;
-        Video(cstring filename) noexcept;
+        Video();
+        explicit Video(cstring filename) noexcept;
         virtual ~Video();
 
         void LoadFromFile(cstring filename) noexcept;

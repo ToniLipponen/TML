@@ -1,18 +1,18 @@
-#include "../../include/Buffers.h"
+#include "../internal/Buffers.h"
 #include "../../external-headers//glad/glad.h"
-#include "../../include/GlDebug.h"
+#include "../internal/GlDebug.h"
 using namespace tml;
 
 #ifndef TML_GL_VERSION_330
 
 VertexArray::VertexArray()
-: m_vertex_count(0)
+: m_id(0), m_vertex_count(0)
 {
     GL_CALL(glCreateVertexArrays(1, &m_id));
 }
 
 VertexArray::VertexArray(VertexBuffer& vb, BufferLayout& layout)
-: m_vertex_count(vb.VertexCount())
+: m_id(0), m_vertex_count(vb.VertexCount())
 {
     GL_CALL(glCreateVertexArrays(1, &m_id));
 	auto& lo = layout.GetData();

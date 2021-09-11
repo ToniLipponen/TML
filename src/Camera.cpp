@@ -1,11 +1,8 @@
-#include "../include/Camera.h"
+#include "../include/TML/Camera.h"
 
 namespace tml
 {
-    Camera::Camera()
-    {
-
-    }
+    Camera::Camera() = default;
 
     Camera::Camera(const tml::Vector2 &pos, float zoom, float rotation)
     : m_pos(pos), m_zoom(zoom), m_rotation(rotation)

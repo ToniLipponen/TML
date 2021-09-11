@@ -1,15 +1,11 @@
-#include "../include/Drawable/Video.h"
-#include "../include/Utilities/Utilities.h"
+#include <TML/Drawable/Video.h>
 #include "../src/internal/Assert.h"
 #define PL_MPEG_IMPLEMENTATION 1
 #include "../external-headers/PL_MPEG/pl_mpeg.h"
 
 using namespace tml;
 
-Video::Video() noexcept
-{
-
-}
+Video::Video() = default;
 
 Video::Video(cstring filename) noexcept
 {
@@ -33,7 +29,7 @@ void Video::LoadFromFile(cstring filename) noexcept
     {
         m_stream_width  = plm_get_width((plm_t*)m_stream);
         m_stream_height = plm_get_height((plm_t*)m_stream);
-        m_size          = Vector2(m_stream_width, m_stream_height);
+        m_size          = Vector2(static_cast<float>(m_stream_width), static_cast<float>(m_stream_height));
         SetFrameRate(plm_get_framerate((plm_t*)m_stream));
         m_frame_data    = new ui8[m_stream_width*m_stream_height*3];
         plm_set_audio_enabled(reinterpret_cast<plm_t*>(m_stream), 0);
@@ -59,7 +55,7 @@ void Video::Advance(f64 step) noexcept
     && plm_has_ended(reinterpret_cast<plm_t*>(m_stream)) != 1)
     {
         // Todo: Fix whatever is causing GL_INVALID_OPERATION in Texture::Generate()
-        plm_frame_t * const frame = plm_decode_video(reinterpret_cast<plm_t*>(m_stream));
+        plm_frame_t* frame = plm_decode_video(reinterpret_cast<plm_t*>(m_stream));
         plm_frame_to_rgb(frame, m_frame_data, m_stream_width * 3);
         m_tex.LoadFromMemory(m_stream_width, m_stream_height, 3, m_frame_data);
         m_timer = 0;

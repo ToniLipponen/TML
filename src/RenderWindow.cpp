@@ -1,7 +1,7 @@
-#include "../include/RenderWindow.h"
-#include "../include/Utilities/Bezier.h"
+#include "../include/TML/RenderWindow.h"
+#include <TML/Utilities/Bezier.h>
 #include "../external-headers/glad/glad.h"
-#include "../include/GlDebug.h"
+#include "internal/GlDebug.h"
 #include "internal/Assert.h"
 #include "internal/Circle_texture.h"
 
@@ -14,12 +14,11 @@
 const static std::string VERTEX_STRING =
 R"END(
 #version 450 core
-layout (location = 0) in mediump vec2 Pos;
-layout (location = 1) in mediump vec4 Color;
-layout (location = 2) in mediump vec2 UV;
-layout (location = 3) in mediump uint TexID;
-layout (location = 4) in mediump float Rotation;
-layout (location = 5) in uint type;
+layout (location = 0) in vec2 Pos;
+layout (location = 1) in vec4 Color;
+layout (location = 2) in vec2 UV;
+layout (location = 3) in uint TexID;
+layout (location = 4) in uint type;
 
 out vec4  vColor;
 out vec2  vUV;
@@ -35,7 +34,7 @@ uniform mat4 uScale;
 void main()
 {
     vec4 r = uView * vec4(Pos-(uViewSize*0.5), 1, 1);
-    gl_Position = uProj * uScale * vec4(r.xy + (uViewSize*0.5), 0, 1);
+    gl_Position = uProj * (uScale * vec4(r.xy + (uViewSize*0.5), 0, 1));
     vColor = Color;
     vUV = UV;
     vTexID = TexID;
@@ -165,16 +164,18 @@ void Renderer::Init()
     m_layout.Push(2, 4);
     m_layout.Push(1, 4);
     m_layout.Push(1, 4);
-    m_layout.Push(1, 4);
     m_shader->FromString(VERTEX_STRING, FRAGMENT_STRING);
     m_shader->Bind();
     int w = 0,h = 0,bpp = 0;
-    ui8* circleData = stbi_load_from_memory(CIRCLE_TEXTURE_DATA.data(), CIRCLE_TEXTURE_DATA.size(), &w, &h, &bpp, 1);
+    ui8* circleData = stbi_load_from_memory(CIRCLE_TEXTURE_DATA.data(), static_cast<int>(CIRCLE_TEXTURE_DATA.size()), &w, &h, &bpp, 1);
     CircleTexture = new Texture();
     CircleTexture->LoadFromMemory(w, h, bpp, circleData);
     delete[] circleData;
     GL_CALL(glad_glEnable(GL_BLEND));
     GL_CALL(glad_glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+    for(i32 i = 1; i < MAX_TEXTURE_COUNT; i++)
+        GL_CALL(m_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i));
 }
 
 void Renderer::SetClearColor(const Color &color)
@@ -184,9 +185,12 @@ void Renderer::SetClearColor(const Color &color)
 
 void Renderer::SetCamera(Camera &cam)
 {
+    ResetCamera();
     m_camera = cam;
-    m_view = glm::translate(m_view, glm::vec3(-cam.GetPosition().x, -cam.GetPosition().y, 0));
+    m_camera.Move((m_viewSize / 2) * -1);
+    m_view = glm::rotate(m_view, cam.GetRotation(), glm::vec3(0.f,0.f,1.f));
     m_view = glm::scale(m_view, glm::vec3(cam.GetZoom(), cam.GetZoom(), 0));
+    m_view = glm::translate(m_view, glm::vec3(-m_camera.GetPosition().x, -m_camera.GetPosition().y, 0));
 }
 
 void Renderer::ResetCamera()
@@ -195,7 +199,6 @@ void Renderer::ResetCamera()
     m_view = glm::mat4(1.f);
     m_scale = glm::mat4(1.f);
     m_zoom = 1.f;
-    m_camPos = {0,0};
 }
 
 void Renderer::Clear()
@@ -205,11 +208,13 @@ void Renderer::Clear()
 	static int f[4];
 	GL_CALL(glad_glGetIntegerv(GL_VIEWPORT, f));
     m_viewSize = Vector2{static_cast<float>(f[2]), static_cast<float>(f[3])};
-
-    // Put these in a separate function ResetView()
     ResetCamera();
-
-    m_proj = glm::ortho(f[0]*1.f, f[2]*1.f, f[3]*1.f, f[1]*1.f);
+    m_proj = glm::ortho(
+            static_cast<float>(f[0]),
+            static_cast<float>(f[2]),
+            static_cast<float>(f[3]),
+            static_cast<float>(f[1])
+            );
     GL_CALL(BeginBatch());
 }
 
@@ -218,157 +223,23 @@ void Renderer::BeginBatch()
     m_vertexData.clear();
     m_indexData.clear();
     m_textures.clear();
+    m_vertexBuffer->Flush();
+    m_indexBuffer->Flush();
 }
 
 void Renderer::Draw(Rectangle& r)
 {
-    ui32 currentElements = m_vertexData.size();
-    if(currentElements >= MAX_VERTEX_COUNT - 4)
-    {
-        EndBatch();
-        currentElements = 0;
-    }
-    if(r.m_tex.HasData() && m_textures.size() >= MAX_TEXTURE_COUNT - 2)
-    {
-        EndBatch();
-        currentElements = 0;
-    }
-    
-    const Color c = r.m_color * 0.003921568f;
-    Vector2 origin;
-    origin.x = (r.m_pos.x + r.m_pos.x + r.m_size.x) * 0.5f;
-    origin.y = (r.m_pos.y + r.m_pos.y + r.m_size.y) * 0.5f;
-
-    m_vertexData.push_back({Util::Rotate(origin, r.m_pos, r.m_rotation),                          c, Vector2{0,0}, 0, r.m_rotation, Vertex::RECTANGLE});
-    m_vertexData.push_back({Util::Rotate(origin, r.m_pos+Vector2{r.m_size.x, 0.0f}, r.m_rotation),c, Vector2{1,0}, 0, r.m_rotation, Vertex::RECTANGLE});
-    m_vertexData.push_back({Util::Rotate(origin, r.m_pos+Vector2{0.0f, r.m_size.y},r.m_rotation), c, Vector2{0,1}, 0, r.m_rotation, Vertex::RECTANGLE});
-    m_vertexData.push_back({Util::Rotate(origin, r.m_pos+r.m_size, r.m_rotation),                 c, Vector2{1,1}, 0, r.m_rotation, Vertex::RECTANGLE});
-
-    m_indexData.push_back(currentElements + 0);
-    m_indexData.push_back(currentElements + 1);
-    m_indexData.push_back(currentElements + 2);
-
-    m_indexData.push_back(currentElements + 1);
-    m_indexData.push_back(currentElements + 3);
-    m_indexData.push_back(currentElements + 2);
+    PushQuad(r.m_pos, r.m_size, r.m_color, r.m_tex, r.m_rotation, Vertex::RECTANGLE);
 }
 
 void Renderer::Draw(Circle& r)
 {
-    ui32 currentElements = m_vertexData.size();
-    if(currentElements >= MAX_VERTEX_COUNT - 4)
-    {
-        EndBatch();
-        currentElements = 0;
-    }
-    if(m_textures.size() > MAX_TEXTURE_COUNT - 1)
-    {
-        EndBatch();
-        currentElements = 0;
-    }
-
-    ui32 tex = 0;
-    bool already_in_m_textures = false;
-    auto id = CircleTexture->GetID();
-    ui32 index = 0;
-    for(auto i : m_textures)
-    {
-        if(i == id)
-        {
-            already_in_m_textures = true;
-            break;
-        }
-        ++index;
-    }
-    if(!already_in_m_textures)
-    {
-        tex = 1 + m_textures.size();
-        CircleTexture->Bind(tex);
-        m_textures.push_back(CircleTexture->GetID());
-    }
-    else
-    {
-        tex = index+1;
-        CircleTexture->Bind(tex);
-    }
-        
-    const Color c = r.m_color * 0.003921568f;
-
-    m_vertexData.push_back({r.m_pos+Vector2{-r.m_size.x, -r.m_size.x},  c, Vector2{0,1}, tex, 0, Vertex::CIRCLE});
-    m_vertexData.push_back({r.m_pos+Vector2{r.m_size.x, -r.m_size.x},   c, Vector2{1,1}, tex, 0, Vertex::CIRCLE});
-    m_vertexData.push_back({r.m_pos+Vector2{-r.m_size.x, r.m_size.x},   c, Vector2{0,0}, tex, 0, Vertex::CIRCLE});
-    m_vertexData.push_back({r.m_pos+r.m_size,                                c, Vector2{1,0}, tex, 0, Vertex::CIRCLE});
-
-    m_indexData.push_back(currentElements + 0);
-    m_indexData.push_back(currentElements + 1);
-    m_indexData.push_back(currentElements + 2);
-
-    m_indexData.push_back(currentElements + 1);
-    m_indexData.push_back(currentElements + 3);
-    m_indexData.push_back(currentElements + 2);
+    PushQuad(r.m_pos - (r.m_size / 2), r.m_size, r.m_color, *CircleTexture,Vertex::CIRCLE);
 }
 
 void Renderer::Draw(Sprite& r)
 {
-    ui32 currentElements = m_vertexData.size();
-    if(currentElements >= MAX_VERTEX_COUNT - 4)
-    {
-        EndBatch();
-        currentElements = 0;
-    }
-    if(m_textures.size() >= MAX_TEXTURE_COUNT - 1)
-    {
-        EndBatch();
-        currentElements = 0;
-    }
-    
-    ui32 tex = 0;
-    if(r.m_tex.GetID() != UINT_MAX)
-    {
-        bool already_in_m_textures = false;
-        auto id = r.m_tex.GetID();
-        ui32 index = 0;
-        for(auto i : m_textures)
-        {
-            if(i == id)
-            {
-                already_in_m_textures = true;
-                break;
-            }
-            ++index;
-        }
-        if(!already_in_m_textures)
-        {
-            tex = 1 + m_textures.size();
-            r.m_tex.Bind(tex);
-            m_textures.push_back(r.m_tex.GetID());
-        }
-        else
-        {
-            tex = index+1;
-            r.m_tex.Bind(tex);
-        }
-    }
-    else {
-        return;
-    }
-    Vector2 origin;
-    origin.x = (r.m_pos.x + r.m_pos.x + r.m_size.x) * 0.5f;
-    origin.y = (r.m_pos.y + r.m_pos.y + r.m_size.y) * 0.5f;
-    const Vector2 v = Vector2{1.f,1.f} / r.m_tex.GetSize();
-
-    m_vertexData.push_back({Util::Rotate(origin, r.m_pos, r.m_rotation),                          {0}, r.m_rect.pos * v, tex, r.m_rotation, Vertex::TEXTURE});
-    m_vertexData.push_back({Util::Rotate(origin, r.m_pos+Vector2{r.m_size.x, 0.0f}, r.m_rotation),{0}, (r.m_rect.pos + Vector2{r.m_rect.size.x, 0}) * v, tex, r.m_rotation, Vertex::TEXTURE});
-    m_vertexData.push_back({Util::Rotate(origin, r.m_pos+Vector2{0.0f, r.m_size.y},r.m_rotation), {0}, (r.m_rect.pos + Vector2{0, r.m_rect.size.y}) * v, tex, r.m_rotation, Vertex::TEXTURE});
-    m_vertexData.push_back({Util::Rotate(origin, r.m_pos+r.m_size, r.m_rotation),                 {0}, (r.m_rect.pos + r.m_rect.size) * v, tex, r.m_rotation, Vertex::TEXTURE});
-
-    m_indexData.push_back(currentElements + 0);
-    m_indexData.push_back(currentElements + 1);
-    m_indexData.push_back(currentElements + 2);
-
-    m_indexData.push_back(currentElements + 1);
-    m_indexData.push_back(currentElements + 3);
-    m_indexData.push_back(currentElements + 2);
+    PushQuad(r.m_pos, r.m_size, r.m_color, r.m_tex, r.m_rotation, Vertex::TEXTURE);
 }
 
 void Renderer::Draw(Text& r)
@@ -415,6 +286,7 @@ void Renderer::Draw(Text& r)
     else {
         return;
     }
+
     for(auto& v : r.m_vertexData)
     {
         v.tex = tex;
@@ -426,66 +298,9 @@ void Renderer::Draw(Text& r)
 
 void Renderer::Draw(Video& r)
 {
-    ui32 currentElements = m_vertexData.size();
-    if(currentElements >= MAX_VERTEX_COUNT - 4)
-    {
-        EndBatch();
-        currentElements = 0;
-    }
-    if(m_textures.size() >= MAX_TEXTURE_COUNT - 1)
-    {
-        EndBatch();
-        currentElements = 0;
-    }
-
-    ui32 tex = 0;
-    if(r.m_tex.GetID() != UINT_MAX)
-    {
-        bool already_in_m_textures = false;
-        auto id = r.m_tex.GetID();
-        ui32 index = 0;
-        for(auto i : m_textures)
-        {
-            if(i == id)
-            {
-                already_in_m_textures = true;
-                break;
-            }
-            ++index;
-        }
-        if(!already_in_m_textures)
-        {
-            tex = 1 + m_textures.size();
-            r.m_tex.Bind(tex);
-            m_textures.push_back(r.m_tex.GetID());
-        }
-        else
-        {
-            tex = index+1;
-            r.m_tex.Bind(tex);
-        }
-    }
-    else {
-        return;
-    }
-    Vector2 origin;
-    origin.x = (r.m_pos.x + r.m_pos.x + r.m_size.x) * 0.5f;
-    origin.y = (r.m_pos.y + r.m_pos.y + r.m_size.y) * 0.5f;
-    const Vector2 v = Vector2{1.f,1.f} / r.m_tex.GetSize();
-
-    m_vertexData.push_back({Util::Rotate(origin, r.m_pos, r.m_rotation),                          {0}, {0,0}, tex, r.m_rotation, Vertex::TEXTURE});
-    m_vertexData.push_back({Util::Rotate(origin, r.m_pos+Vector2{r.m_size.x, 0.0f}, r.m_rotation),{0}, {1,0}, tex, r.m_rotation, Vertex::TEXTURE});
-    m_vertexData.push_back({Util::Rotate(origin, r.m_pos+Vector2{0.0f, r.m_size.y},r.m_rotation), {0}, {0,1}, tex, r.m_rotation, Vertex::TEXTURE});
-    m_vertexData.push_back({Util::Rotate(origin, r.m_pos+r.m_size, r.m_rotation),                 {0}, {1,1}, tex, r.m_rotation, Vertex::TEXTURE});
-
-    m_indexData.push_back(currentElements + 0);
-    m_indexData.push_back(currentElements + 1);
-    m_indexData.push_back(currentElements + 2);
-
-    m_indexData.push_back(currentElements + 1);
-    m_indexData.push_back(currentElements + 3);
-    m_indexData.push_back(currentElements + 2);
+    PushQuad(r.m_pos, r.m_size, r.m_color, r.m_tex,Vertex::TEXTURE);
 }
+
 void Renderer::DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Color color, bool rounded)
 {
     ui32 currentElements = m_vertexData.size();
@@ -500,10 +315,10 @@ void Renderer::DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Col
     const Color bColor = color; // Needed non normalized
     color = color * 0.003921568f;
 
-    m_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness * 0.5f) + a, color, {0,0}, 0, 0, Vertex::RECTANGLE});
-    m_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness * 0.5f) + a, color, {0,0}, 0, 0, Vertex::RECTANGLE});
-    m_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness * 0.5f) + b, color, {0,0}, 0, 0, Vertex::RECTANGLE});
-    m_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness * 0.5f) + b, color, {0,0}, 0, 0, Vertex::RECTANGLE});
+    m_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness * 0.5f) + a, color, {0,0}, 0, Vertex::RECTANGLE});
+    m_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness * 0.5f) + a, color, {0,0}, 0, Vertex::RECTANGLE});
+    m_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness * 0.5f) + b, color, {0,0}, 0, Vertex::RECTANGLE});
+    m_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness * 0.5f) + b, color, {0,0}, 0, Vertex::RECTANGLE});
 
     m_indexData.push_back(currentElements + 0);
     m_indexData.push_back(currentElements + 1);
@@ -533,10 +348,10 @@ void Renderer::p_DrawRect(const Vector2& pos, const Vector2& dimensions, const C
     origin.x = (pos.x + pos.x + dimensions.x) * 0.5f;
     origin.y = (pos.y + pos.y + dimensions.y) * 0.5f;
 
-    m_vertexData.push_back({Util::Rotate(origin, pos, rotation),                          c, Vector2{0,0}, 0, rotation, Vertex::RECTANGLE});
-    m_vertexData.push_back({Util::Rotate(origin, pos+Vector2{dimensions.x, 0.0f},rotation),c, Vector2{1,0}, 0, rotation, Vertex::RECTANGLE});
-    m_vertexData.push_back({Util::Rotate(origin, pos+Vector2{0.0f, dimensions.y},rotation), c, Vector2{0,1}, 0, rotation, Vertex::RECTANGLE});
-    m_vertexData.push_back({Util::Rotate(origin, pos+dimensions, rotation),                 c, Vector2{1,1}, 0, rotation, Vertex::RECTANGLE});
+    m_vertexData.push_back({Util::Rotate(origin, pos, rotation),                          c, Vector2{0,0}, 0, Vertex::RECTANGLE});
+    m_vertexData.push_back({Util::Rotate(origin, pos+Vector2{dimensions.x, 0.0f},rotation),c, Vector2{1,0}, 0, Vertex::RECTANGLE});
+    m_vertexData.push_back({Util::Rotate(origin, pos+Vector2{0.0f, dimensions.y},rotation), c, Vector2{0,1}, 0, Vertex::RECTANGLE});
+    m_vertexData.push_back({Util::Rotate(origin, pos+dimensions, rotation),                 c, Vector2{1,1}, 0, Vertex::RECTANGLE});
 
     m_indexData.push_back(currentElements + 0);
     m_indexData.push_back(currentElements + 1);
@@ -556,8 +371,8 @@ void Renderer::DrawRect(const Vector2& pos, const Vector2& dimensions, const Col
         Vector2 origin =
                 {origin.x = (pos.x + pos.x + dimensions.x) * 0.5f,
                  origin.y = (pos.y + pos.y + dimensions.y) * 0.5f};
-        p_DrawRect(pos+Vector2{0, roundness}, dimensions - Vector2{0, roundness*2}, color, rotation);
-        p_DrawRect(pos+Vector2{roundness, 0}, dimensions - Vector2{roundness*2, 0}, color, rotation);
+        p_DrawRect(pos+Vector2{0.f, roundness}, dimensions - Vector2{0.f, roundness*2}, color, rotation);
+        p_DrawRect(pos+Vector2{roundness, 0.f}, dimensions - Vector2{roundness*2, 0.f}, color, rotation);
 
         DrawCircle(Util::Rotate(origin, pos+Vector2{roundness, roundness}, rotation), roundness, color);
         DrawCircle(Util::Rotate(origin, pos+Vector2{dimensions.x - roundness, roundness}, rotation), roundness, color);
@@ -568,52 +383,7 @@ void Renderer::DrawRect(const Vector2& pos, const Vector2& dimensions, const Col
 
 void Renderer::DrawCircle(const Vector2& pos, float radius, const Color& color)
 {
-    ui32 currentElements = m_vertexData.size();
-    if(currentElements >= (MAX_VERTEX_COUNT - 4))
-    {
-        EndBatch();
-        currentElements = 0;
-    }
-
-    ui32 tex = 0;
-    bool already_in_m_textures = false;
-    auto id = CircleTexture->GetID();
-    ui32 index = 0;
-    for(auto i : m_textures)
-    {
-        if(i == id)
-        {
-            already_in_m_textures = true;
-            break;
-        }
-        ++index;
-    }
-    if(!already_in_m_textures)
-    {
-        tex = 1 + m_textures.size();
-        CircleTexture->Bind(tex);
-        m_textures.push_back(CircleTexture->GetID());
-    }
-    else
-    {
-        tex = index+1;
-        CircleTexture->Bind(tex);
-    }
-
-    const Color ncolor = color * 0.003921568f;
-
-    m_vertexData.push_back({pos+Vector2{-radius, -radius},  ncolor, Vector2{0,1}, tex, 0, Vertex::CIRCLE});
-    m_vertexData.push_back({pos+Vector2{radius, -radius},   ncolor, Vector2{1,1}, tex, 0, Vertex::CIRCLE});
-    m_vertexData.push_back({pos+Vector2{-radius, radius},   ncolor, Vector2{0,0}, tex, 0, Vertex::CIRCLE});
-    m_vertexData.push_back({pos+Vector2{radius, radius},    ncolor, Vector2{1,0}, tex, 0, Vertex::CIRCLE});
-
-    m_indexData.push_back(currentElements + 0);
-    m_indexData.push_back(currentElements + 1);
-    m_indexData.push_back(currentElements + 2);
-
-    m_indexData.push_back(currentElements + 1);
-    m_indexData.push_back(currentElements + 3);
-    m_indexData.push_back(currentElements + 2);
+    PushQuad(pos - Vector2{radius,radius}, {radius*2}, color, *CircleTexture,Vertex::CIRCLE);
 }
 
 void Renderer::DrawBezier(const Vector2 &a, const Vector2 &cp1, const Vector2 &b, const Vector2 &cp2, float thickness,
@@ -640,27 +410,146 @@ void Renderer::DrawBezier(const Vector2 &a, const Vector2 &cp, const Vector2 &b,
     }
 }
 
+void Renderer::DrawGrid(const Vector2 &top_left, const Vector2 &size, ui32 rows, ui32 columns, const Color &color,
+                        float thickness, bool rounded)
+{
+    for(int i = 0; i <= rows; ++i)
+    {
+        DrawLine(top_left + Vector2{0.f,(size.y / rows) * i},
+                 top_left + Vector2{size.x, (size.y / rows) * i}, thickness, color, ((i == 0) || (i == rows)));
+    }
+    for(int i = 0; i <= columns; ++i)
+        DrawLine(top_left + Vector2{(size.x / rows) * i,0.f},
+                 top_left + Vector2{(size.x / rows) * i, size.y}, thickness, color, false);
+}
+
+void Renderer::DrawTexture(Texture &tex, const Vector2 &pos, const Vector2 &size)
+{
+    PushQuad(pos, size, TRANSPARENT, tex, Vertex::TEXTURE);
+}
+
+void
+Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& texture, Vertex::Drawable_Type type)
+{
+    ui32 currentElements = m_vertexData.size();
+    if(currentElements >= MAX_VERTEX_COUNT - 4 || m_textures.size() > MAX_TEXTURE_COUNT - 1)
+    {
+        EndBatch();
+        currentElements = 0;
+    }
+
+    ui32 tex = 0;
+    if(type != Vertex::RECTANGLE)
+    {
+        bool already_in_m_textures = false;
+        auto id = texture.GetID();
+        ui32 index = 0;
+        for(auto i : m_textures)
+        {
+            if(i == id)
+            {
+                already_in_m_textures = true;
+                break;
+            }
+            ++index;
+        }
+        if(!already_in_m_textures)
+        {
+            tex = 1 + m_textures.size();
+            texture.Bind(tex);
+            m_textures.push_back(tex);
+        }
+        else
+        {
+            tex = index+1;
+            texture.Bind(tex);
+        }
+    }
+
+    m_vertexData.push_back({pos,                                col * 0.003921568f, {0.f,0.f}, tex, type});
+    m_vertexData.push_back({pos+Vector2{size.x, 0.f},   col * 0.003921568f, {1.f,0.f}, tex, type});
+    m_vertexData.push_back({pos+Vector2{0.f, size.y},   col * 0.003921568f, {0.f,1.f}, tex, type});
+    m_vertexData.push_back({pos+size,                           col * 0.003921568f, {1.f,1.f}, tex, type});
+
+    m_indexData.push_back(currentElements + 0);
+    m_indexData.push_back(currentElements + 1);
+    m_indexData.push_back(currentElements + 2);
+
+    m_indexData.push_back(currentElements + 1);
+    m_indexData.push_back(currentElements + 3);
+    m_indexData.push_back(currentElements + 2);
+}
+
+void
+Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& texture, float rotation, Vertex::Drawable_Type type)
+{
+    ui32 currentElements = m_vertexData.size();
+    if(currentElements >= MAX_VERTEX_COUNT - 4 || m_textures.size() > MAX_TEXTURE_COUNT - 1)
+    {
+        EndBatch();
+        currentElements = 0;
+    }
+
+    ui32 tex = 0;
+    if(type != Vertex::RECTANGLE)
+    {
+        bool already_in_m_textures = false;
+        auto id = texture.GetID();
+        ui32 index = 0;
+        for(auto i : m_textures)
+        {
+            if(i == id)
+            {
+                already_in_m_textures = true;
+                break;
+            }
+            ++index;
+        }
+        if(!already_in_m_textures)
+        {
+            tex = 1 + m_textures.size();
+            texture.Bind(tex);
+            m_textures.push_back(tex);
+        }
+        else
+        {
+            tex = index+1;
+            texture.Bind(tex);
+        }
+    }
+//    const Vector2 origin = (pos+size) * 0.5f;
+    const Vector2 origin = (pos + pos + size) * 0.5f;
+    m_vertexData.push_back({Util::Rotate(origin,pos,rotation),                                col * 0.003921568f, {0.f,0.f}, tex, type});
+    m_vertexData.push_back({Util::Rotate(origin,pos+Vector2{size.x, 0.f},rotation),   col * 0.003921568f, {1.f,0.f}, tex, type});
+    m_vertexData.push_back({Util::Rotate(origin,pos+Vector2{0.f, size.y},rotation),   col * 0.003921568f, {0.f,1.f}, tex, type});
+    m_vertexData.push_back({Util::Rotate(origin,pos+size,rotation),                           col * 0.003921568f, {1.f,1.f}, tex, type});
+
+    m_indexData.push_back(currentElements + 0);
+    m_indexData.push_back(currentElements + 1);
+    m_indexData.push_back(currentElements + 2);
+
+    m_indexData.push_back(currentElements + 1);
+    m_indexData.push_back(currentElements + 3);
+    m_indexData.push_back(currentElements + 2);
+}
+
 void Renderer::EndBatch()
 {
-    if(m_vertexData.size() < 3)
-        return;
     GL_CALL(m_shader->Bind());
     GL_CALL(m_shader->SetVec2("uViewSize", m_viewSize));
-    GL_CALL(m_shader->SetVec2("uCamPos", m_camPos));
+    GL_CALL(m_shader->SetVec2("uCamPos", m_camera.GetPosition()));
     GL_CALL(m_shader->UniformMat4fv("uView", 1, 0, &m_view[0][0]));
     GL_CALL(m_shader->UniformMat4fv("uProj", 1, 0, &m_proj[0][0]));
     GL_CALL(m_shader->UniformMat4fv("uScale", 1, 0, &m_scale[0][0]));
     GL_CALL(m_shader->Uniform1f("uZoom", m_zoom));
 
 
-    for(i32 i = 1; i < MAX_TEXTURE_COUNT; i++)
-        GL_CALL(m_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i));
-
-    m_vertexBuffer->SetData(m_vertexData.data(), sizeof(Vertex), m_vertexData.size());
-    m_indexBuffer->SetData(m_indexData.data(), m_indexData.size());
+    m_vertexBuffer->PushData(m_vertexData.data(), sizeof(Vertex), m_vertexData.size());
+    m_indexBuffer->PushData(m_indexData.data(), m_indexData.size());
     m_vao->BufferData(*m_vertexBuffer, *m_indexBuffer, m_layout);
     m_vao->Bind();
-    GL_CALL(glad_glDrawElements(GL_TRIANGLES, m_indexData.size(), GL_UNSIGNED_INT, 0));
+
+    GL_CALL(glad_glDrawElements(GL_TRIANGLES, m_indexBuffer->Elements(), GL_UNSIGNED_INT, nullptr));
 
     Renderer::BeginBatch();
     ++batch_count;

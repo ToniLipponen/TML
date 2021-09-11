@@ -1,7 +1,7 @@
-#include "../include/Texture.h"
+#include "../include/TML/Texture.h"
 #include "../external-headers/glad/glad.h"
-#include "../include/GlDebug.h"
-#include "../include/Utilities/Copy.h"
+#include "internal/GlDebug.h"
+#include <TML/Utilities/Copy.h>
 #include "../src/internal/Assert.h"
 #include <climits>
 #define STB_IMAGE_IMPLEMENTATION
@@ -16,14 +16,14 @@ Texture::Texture()
     GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
 }
 
-Texture::Texture(cstring filename)
+[[maybe_unused]] Texture::Texture(cstring filename)
 : m_width(0), m_height(0), m_bpp(0), m_pixeldata(nullptr)
 {
 	GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
 	LoadFromFile(filename);
 }
 
-Texture::Texture(i32 w, i32 h, ui8 bpp, ui8* data)
+[[maybe_unused]] Texture::Texture(i32 w, i32 h, ui8 bpp, ui8* data)
 : m_width(w), m_height(h), m_bpp(bpp)
 {
     GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
@@ -63,7 +63,7 @@ void Texture::LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data)
     Generate();
 }
 
-void Texture::CopyFromMemory(i32 w, i32 h, ui8 bpp, ui8* data)
+[[maybe_unused]] void Texture::CopyFromMemory(i32 w, i32 h, ui8 bpp, ui8* data)
 {
     if(m_pixeldata && m_allocated)
         delete[] m_pixeldata;
@@ -76,12 +76,12 @@ void Texture::CopyFromMemory(i32 w, i32 h, ui8 bpp, ui8* data)
 	Generate();
 }
 
-void Texture::Bind(ui32 slot)
+void Texture::Bind(ui32 slot) const
 {
     GL_CALL(glBindTextureUnit(slot, m_id));
 }
 
-void Texture::SetMipMapLevel(ui8 level)
+[[maybe_unused]] void Texture::SetMipMapLevel(ui8 level)
 {
 	m_mipmap_level = level;
 }
@@ -97,7 +97,7 @@ void Texture::SetClampMode(ClampMode mode)
 	m_clampmode = mode;
 }
 
-void Texture::Generate(void)
+void Texture::Generate()
 {
     GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, m_clampmode));
     GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, m_clampmode));
