@@ -156,7 +156,7 @@ void PrintInformation()
     tml::Logger::InfoMessage("Available GPU texture units: %d", MAX_TEXTURE_COUNT);
 }
 
-void Renderer::Init()
+bool Renderer::Init()
 {
     s_vertexData.reserve(MAX_VERTEX_COUNT);
     s_indexData.reserve(MAX_VERTEX_COUNT * 1.5);
@@ -188,6 +188,7 @@ void Renderer::Init()
 
     for(i32 i = 1; i < MAX_TEXTURE_COUNT; i++)
         GL_CALL(s_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i));
+    return true;
 }
 
 void Renderer::SetClearColor(const Color &color)
