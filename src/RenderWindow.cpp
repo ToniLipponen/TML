@@ -186,6 +186,8 @@ void Renderer::Init()
     GL_CALL(glad_glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     GL_CALL(glad_glDisable(GL_DEPTH_TEST));
 
+    for(i32 i = 1; i < MAX_TEXTURE_COUNT; i++)
+        GL_CALL(s_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i));
 }
 
 void Renderer::SetClearColor(const Color &color)
@@ -217,7 +219,6 @@ void Renderer::Clear()
 	static int f[4];
 	GL_CALL(glad_glGetIntegerv(GL_VIEWPORT, f));
     s_viewSize = Vector2{static_cast<float>(f[2]), static_cast<float>(f[3])};
-    ResetCamera();
     s_proj = glm::ortho(
             static_cast<float>(f[0]),
             static_cast<float>(f[2]),
@@ -225,6 +226,7 @@ void Renderer::Clear()
             static_cast<float>(f[1])
             );
     GL_CALL(BeginBatch());
+    ResetCamera();
 }
 
 void Renderer::BeginBatch()
@@ -425,8 +427,8 @@ void Renderer::DrawGrid(const Vector2 &top_left, const Vector2 &size, ui32 rows,
                  top_left + Vector2{size.x, (size.y / rows) * i}, thickness, color, ((i == 0) || (i == rows)));
     }
     for(int i = 0; i <= columns; ++i)
-        DrawLine(top_left + Vector2{(size.x / rows) * i,0.f},
-                 top_left + Vector2{(size.x / rows) * i, size.y}, thickness, color, false);
+        DrawLine(top_left + Vector2{(size.x / columns) * i,0.f},
+                 top_left + Vector2{(size.x / columns) * i, size.y}, thickness, color, false);
 }
 
 void Renderer::DrawTexture(Texture &tex, const Vector2 &pos, const Vector2 &size)
@@ -461,13 +463,13 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
         }
         if(!already_in_m_textures)
         {
-            tex = 1 + s_textures.size();
+            tex = 1 + index;
             texture.Bind(tex);
-            s_textures.push_back(tex);
+            s_textures.push_back(id);
         }
         else
         {
-            tex = index+1;
+            tex = index + 1;
             texture.Bind(tex);
         }
     }
@@ -501,7 +503,7 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
     {
         bool already_in_m_textures = false;
         auto id = texture.GetID();
-        ui32 index= 0;
+        ui32 index = 0;
         for(auto i : s_textures)
         {
             if(i == id)
@@ -513,9 +515,9 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
         }
         if(!already_in_m_textures)
         {
-            tex = 1 + s_textures.size();
+            tex = 1 + index;
             texture.Bind(tex);
-            s_textures.push_back(tex);
+            s_textures.push_back(id);
         }
         else
         {
@@ -552,15 +554,14 @@ void Renderer::DrawText(const std::string &text, const Vector2 &pos, float size,
 
 void Renderer::EndBatch()
 {
+    if(s_vertexData.size() < 4)
+        return;
     GL_CALL(s_shader->Bind());
     GL_CALL(s_shader->SetVec2("uViewSize", s_viewSize));
     GL_CALL(s_shader->UniformMat4fv("uView", 1, 0, &s_view[0][0]));
     GL_CALL(s_shader->UniformMat4fv("uProj", 1, 0, &s_proj[0][0]));
     GL_CALL(s_shader->UniformMat4fv("uScale", 1, 0, &s_scale[0][0]));
     GL_CALL(s_shader->Uniform1f("uZoom", s_camera.GetZoom()));
-
-    for(i32 i = 1; i < MAX_TEXTURE_COUNT; i++)
-        GL_CALL(s_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i));
 
     s_vertexBuffer->PushData(s_vertexData.data(), sizeof(Vertex), s_vertexData.size());
     s_indexBuffer->PushData(s_indexData.data(), s_indexData.size());
