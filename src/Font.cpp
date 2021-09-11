@@ -1,8 +1,7 @@
-#include "../include/TML/Font.h"
+#include <TML/Font.h>
 #include "internal/Assert.h"
 #define STB_TRUETYPE_IMPLEMENTATION 1
-#include "../external-headers/stb/stb_truetype.h"
-#include "../external-headers/stb/stb_image_write.h"
+#include <stb/stb_truetype.h>
 #include <fstream>
 
 #define ATLAS_SIZE 2048

@@ -1,6 +1,6 @@
 #include <TML/Drawable/Text.h>
+#include <stb/stb_truetype.h>
 #include "internal/Default_font.h"
-#include "../external-headers/stb/stb_truetype.h"
 
 using namespace tml;
 
@@ -94,16 +94,15 @@ void Text::Generate() noexcept
     int count = 0;
     m_vertexData.clear();
     m_indexData.clear();
-    const Color col = m_color * 0.003921568f;
     stbtt_aligned_quad q;
     for(auto c : m_string)
     {
         stbtt_GetBakedQuad((stbtt_bakedchar*)m_font.m_cdata, 2048, 2048,int(c-32), &x, &y,&q, 1);
         NormalizeQuad(q, m_size.x);
-        m_vertexData.push_back({{q.x0, q.y0}, col, {q.s0, q.t0}, 0, Vertex::TEXT});
-        m_vertexData.push_back({{q.x1, q.y0}, col, {q.s1, q.t0}, 0, Vertex::TEXT});
-        m_vertexData.push_back({{q.x0, q.y1}, col, {q.s0, q.t1}, 0, Vertex::TEXT});
-        m_vertexData.push_back({{q.x1, q.y1}, col, {q.s1, q.t1}, 0, Vertex::TEXT});
+        m_vertexData.push_back({{q.x0, q.y0}, m_color.Hex(), {q.s0, q.t0}, 0, Vertex::TEXT});
+        m_vertexData.push_back({{q.x1, q.y0}, m_color.Hex(), {q.s1, q.t0}, 0, Vertex::TEXT});
+        m_vertexData.push_back({{q.x0, q.y1}, m_color.Hex(), {q.s0, q.t1}, 0, Vertex::TEXT});
+        m_vertexData.push_back({{q.x1, q.y1}, m_color.Hex(), {q.s1, q.t1}, 0, Vertex::TEXT});
 
         m_indexData.push_back(count + 0);
         m_indexData.push_back(count + 1);

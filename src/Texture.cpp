@@ -1,9 +1,11 @@
-#include "../include/TML/Texture.h"
-#include "../external-headers/glad/glad.h"
-#include "internal/GlDebug.h"
+#include <TML/Texture.h>
 #include <TML/Utilities/Copy.h>
-#include "../src/internal/Assert.h"
+#include <glad/glad.h>
+
+#include "internal/GlDebug.h"
+#include "internal/Assert.h"
 #include <climits>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "../external-headers/stb/stb_image.h"
 

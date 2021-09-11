@@ -1,21 +1,24 @@
 #include "../include/TML/RenderWindow.h"
-#include <TML/Utilities/Bezier.h>
-#include "../external-headers/glad/glad.h"
 #include "internal/GlDebug.h"
 #include "internal/Assert.h"
 #include "internal/Circle_texture.h"
+#include "internal/Buffers.h"
+#include "internal/Shader.h"
 
+#include <TML/Utilities/Bezier.h>
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <stb/stb_image.h>
+
 #include <string>
-#include "../external-headers/stb/stb_image.h"
 
 
 const static std::string VERTEX_STRING =
 R"END(
 #version 450 core
 layout (location = 0) in vec2 Pos;
-layout (location = 1) in vec4 Color;
+layout (location = 1) in uint Color;
 layout (location = 2) in vec2 UV;
 layout (location = 3) in uint TexID;
 layout (location = 4) in uint type;
@@ -31,11 +34,20 @@ uniform mat4 uView;
 uniform mat4 uProj;
 uniform mat4 uScale;
 
+vec4 IntToVec4(uint c)
+{
+    return vec4(
+        (c & 0xff000000) >> 24,
+        (c & 0x00ff0000) >> 16,
+        (c & 0x0000ff00) >> 8,
+        (c & 0x000000ff)) * 0.003921568;
+}
+
 void main()
 {
     vec4 r = uView * vec4(Pos-(uViewSize*0.5), 1, 1);
     gl_Position = uProj * (uScale * vec4(r.xy + (uViewSize*0.5), 0, 1));
-    vColor = Color;
+    vColor = IntToVec4(Color);
     vUV = UV;
     vTexID = TexID;
     vType = type;
@@ -160,7 +172,7 @@ void Renderer::Init()
 
     m_vao->Bind();
     m_layout.Push(2, 4);
-    m_layout.Push(4, 4);
+    m_layout.Push(1, 4);
     m_layout.Push(2, 4);
     m_layout.Push(1, 4);
     m_layout.Push(1, 4);
@@ -312,13 +324,11 @@ void Renderer::DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Col
     // dx and dy for normals
     const float dx = b.x - a.x;
     const float dy = b.y - a.y;
-    const Color bColor = color; // Needed non normalized
-    color = color * 0.003921568f;
 
-    m_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness * 0.5f) + a, color, {0,0}, 0, Vertex::RECTANGLE});
-    m_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness * 0.5f) + a, color, {0,0}, 0, Vertex::RECTANGLE});
-    m_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness * 0.5f) + b, color, {0,0}, 0, Vertex::RECTANGLE});
-    m_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness * 0.5f) + b, color, {0,0}, 0, Vertex::RECTANGLE});
+    m_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness * 0.5f) + a, color.Hex(), {0,0}, 0, Vertex::RECTANGLE});
+    m_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness * 0.5f) + a, color.Hex(), {0,0}, 0, Vertex::RECTANGLE});
+    m_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness * 0.5f) + b, color.Hex(), {0,0}, 0, Vertex::RECTANGLE});
+    m_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness * 0.5f) + b, color.Hex(), {0,0}, 0, Vertex::RECTANGLE});
 
     m_indexData.push_back(currentElements + 0);
     m_indexData.push_back(currentElements + 1);
@@ -329,8 +339,8 @@ void Renderer::DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Col
     m_indexData.push_back(currentElements + 2);
     if(rounded)
     {
-        Renderer::DrawCircle(a, thickness/2, bColor);
-        Renderer::DrawCircle(b, thickness/2, bColor);
+        Renderer::DrawCircle(a, thickness/2, color);
+        Renderer::DrawCircle(b, thickness/2, color);
     }
 }
 
@@ -343,15 +353,15 @@ void Renderer::p_DrawRect(const Vector2& pos, const Vector2& dimensions, const C
         currentElements = 0;
     }
 
-    const Color c = color * 0.003921568f;
+    const Color c = color;
     Vector2 origin;
     origin.x = (pos.x + pos.x + dimensions.x) * 0.5f;
     origin.y = (pos.y + pos.y + dimensions.y) * 0.5f;
-
-    m_vertexData.push_back({Util::Rotate(origin, pos, rotation),                          c, Vector2{0,0}, 0, Vertex::RECTANGLE});
-    m_vertexData.push_back({Util::Rotate(origin, pos+Vector2{dimensions.x, 0.0f},rotation),c, Vector2{1,0}, 0, Vertex::RECTANGLE});
-    m_vertexData.push_back({Util::Rotate(origin, pos+Vector2{0.0f, dimensions.y},rotation), c, Vector2{0,1}, 0, Vertex::RECTANGLE});
-    m_vertexData.push_back({Util::Rotate(origin, pos+dimensions, rotation),                 c, Vector2{1,1}, 0, Vertex::RECTANGLE});
+    // Clean this up
+    m_vertexData.push_back({Util::Rotate(origin, pos, rotation),                          c.Hex(), Vector2{0,0}, 0, Vertex::RECTANGLE});
+    m_vertexData.push_back({Util::Rotate(origin, pos+Vector2{dimensions.x, 0.0f},rotation),c.Hex(), Vector2{1,0}, 0, Vertex::RECTANGLE});
+    m_vertexData.push_back({Util::Rotate(origin, pos+Vector2{0.0f, dimensions.y},rotation), c.Hex(), Vector2{0,1}, 0, Vertex::RECTANGLE});
+    m_vertexData.push_back({Util::Rotate(origin, pos+dimensions, rotation),                 c.Hex(), Vector2{1,1}, 0, Vertex::RECTANGLE});
 
     m_indexData.push_back(currentElements + 0);
     m_indexData.push_back(currentElements + 1);
@@ -466,10 +476,10 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
         }
     }
 
-    m_vertexData.push_back({pos,                                col * 0.003921568f, {0.f,0.f}, tex, type});
-    m_vertexData.push_back({pos+Vector2{size.x, 0.f},   col * 0.003921568f, {1.f,0.f}, tex, type});
-    m_vertexData.push_back({pos+Vector2{0.f, size.y},   col * 0.003921568f, {0.f,1.f}, tex, type});
-    m_vertexData.push_back({pos+size,                           col * 0.003921568f, {1.f,1.f}, tex, type});
+    m_vertexData.push_back({pos,                                col.Hex(), {0.f,0.f}, tex, type});
+    m_vertexData.push_back({pos+Vector2{size.x, 0.f},   col.Hex(), {1.f,0.f}, tex, type});
+    m_vertexData.push_back({pos+Vector2{0.f, size.y},   col.Hex(), {0.f,1.f}, tex, type});
+    m_vertexData.push_back({pos+size,                           col.Hex(), {1.f,1.f}, tex, type});
 
     m_indexData.push_back(currentElements + 0);
     m_indexData.push_back(currentElements + 1);
@@ -519,10 +529,10 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
     }
 //    const Vector2 origin = (pos+size) * 0.5f;
     const Vector2 origin = (pos + pos + size) * 0.5f;
-    m_vertexData.push_back({Util::Rotate(origin,pos,rotation),                                col * 0.003921568f, {0.f,0.f}, tex, type});
-    m_vertexData.push_back({Util::Rotate(origin,pos+Vector2{size.x, 0.f},rotation),   col * 0.003921568f, {1.f,0.f}, tex, type});
-    m_vertexData.push_back({Util::Rotate(origin,pos+Vector2{0.f, size.y},rotation),   col * 0.003921568f, {0.f,1.f}, tex, type});
-    m_vertexData.push_back({Util::Rotate(origin,pos+size,rotation),                           col * 0.003921568f, {1.f,1.f}, tex, type});
+    m_vertexData.push_back({Util::Rotate(origin,pos,rotation),                                col.Hex(), {0.f,0.f}, tex, type});
+    m_vertexData.push_back({Util::Rotate(origin,pos+Vector2{size.x, 0.f},rotation),     col.Hex(), {1.f,0.f}, tex, type});
+    m_vertexData.push_back({Util::Rotate(origin,pos+Vector2{0.f, size.y},rotation),     col.Hex(), {0.f,1.f}, tex, type});
+    m_vertexData.push_back({Util::Rotate(origin,pos+size,rotation),                           col.Hex(), {1.f,1.f}, tex, type});
 
     m_indexData.push_back(currentElements + 0);
     m_indexData.push_back(currentElements + 1);

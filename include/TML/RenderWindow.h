@@ -1,6 +1,5 @@
 #pragma once
 #include "Window.h"
-#include "../../src/internal/Shader.h"
 #include "Drawable/Rectangle.h"
 #include "Drawable/Circle.h"
 #include "Drawable/Sprite.h"
