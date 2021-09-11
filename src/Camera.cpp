@@ -1,4 +1,4 @@
-#include "../include/TML/Camera.h"
+#include <TML/Camera.h>
 
 namespace tml
 {

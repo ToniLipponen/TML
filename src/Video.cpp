@@ -1,7 +1,7 @@
 #include <TML/Drawable/Video.h>
-#include "../src/internal/Assert.h"
+#include "internal/Assert.h"
 #define PL_MPEG_IMPLEMENTATION 1
-#include "../external-headers/PL_MPEG/pl_mpeg.h"
+#include <PL_MPEG/pl_mpeg.h>
 
 using namespace tml;
 

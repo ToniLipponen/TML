@@ -1,6 +1,6 @@
 #include "internal/GlDebug.h"
 #include "internal/Assert.h"
-#include "../external-headers//glad/glad.h"
+#include <glad/glad.h>
 
 int CheckGLError()
 {

@@ -1,5 +1,5 @@
+#include <glad/glad.h>
 #include "../internal/Buffers.h"
-#include "../../external-headers//glad/glad.h"
 #include "../internal/GlDebug.h"
 using namespace tml;
 

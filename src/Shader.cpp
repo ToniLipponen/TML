@@ -1,10 +1,10 @@
+#include "internal/Assert.h"
+#include "internal/GlDebug.h"
 #include "internal/Shader.h"
-#include "../external-headers/glad/glad.h"
+#include <glad/glad.h>
 #include <string>
 #include <fstream>
 #include <iostream>
-#include "internal/Assert.h"
-#include "internal/GlDebug.h"
 
 using namespace tml;
 

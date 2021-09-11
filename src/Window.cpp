@@ -1,9 +1,9 @@
-#include "../include/TML/Window.h"
+#include <TML/Window.h>
 #include "internal/Assert.h"
 #include <TML/Utilities/Condition.h>
-#include "../external-headers/glad/glad.h"
+#include <glad/glad.h>
 #define GLFW_INCLUDE_NONE
-#include "../external-headers/GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION 1
 #include "../external-headers/stb/stb_image_write.h"
