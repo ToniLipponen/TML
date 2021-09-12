@@ -22,30 +22,25 @@ layout (location = 2) in vec2 UV;
 layout (location = 3) in uint Tex;
 layout (location = 4) in uint Type;
 
-out vec4  vColor;
+out flat vec4  vColor;
 out vec2  vUV;
-out uint  vTexID;
-out uint  vType;
+out flat uint  vTexID;
+out flat uint  vType;
 
 uniform vec2 uViewSize;
 uniform mat4 uView;
 uniform mat4 uProj;
 uniform mat4 uScale;
 
-vec4 IntToVec4(uint c)
-{
-    return vec4(
-        (c & 0xff000000) >> 24,
-        (c & 0x00ff0000) >> 16,
-        (c & 0x0000ff00) >> 8,
-        (c & 0x000000ff)) * 0.003921568;
-}
-
 void main()
 {
     vec4 r = uView * vec4(Pos-(uViewSize*0.5), 1, 1);
     gl_Position = uProj * (uScale * vec4(r.xy + (uViewSize*0.5), 0, 1));
-    vColor = IntToVec4(Color);
+    vColor = vec4(
+        (Color & 0xff000000) >> 24,
+        (Color & 0x00ff0000) >> 16,
+        (Color & 0x0000ff00) >> 8,
+        (Color & 0x000000ff)) * 0.003921568;
     vUV = UV;
     vTexID = Tex;
     vType = Type;
@@ -185,6 +180,7 @@ bool Renderer::Init()
     GL_CALL(glad_glEnable(GL_BLEND));
     GL_CALL(glad_glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     GL_CALL(glad_glDisable(GL_DEPTH_TEST));
+    GL_CALL(glad_glDisable(GL_CULL_FACE));
 
     for(i32 i = 1; i < MAX_TEXTURE_COUNT; i++)
         GL_CALL(s_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i));
@@ -452,7 +448,7 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
     {
         bool already_in_m_textures = false;
         auto id = texture.GetID();
-        ui32 index= 0;
+        ui32 index = 0;
         for(auto i : s_textures)
         {
             if(i == id)
@@ -522,7 +518,7 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
         }
         else
         {
-            tex = index+1;
+            tex = index + 1;
             texture.Bind(tex);
         }
     }

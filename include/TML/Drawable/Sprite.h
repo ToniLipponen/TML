@@ -1,6 +1,6 @@
 #pragma once
 #include "Drawable.h"
-
+#include "../Image.h"
 
 namespace tml {
 // Rectangle for selecting a part of a texture to draw
@@ -16,22 +16,15 @@ namespace tml {
                       {0, 0}};
         }
 
-        Sprite(const std::string &filename) {
-            m_tex.LoadFromFile(filename.c_str());
-            m_pos = {0, 0};
-            m_size = m_tex.GetSize();
-            m_rect = {m_pos, m_size};
-        }
-
-        Sprite(Texture &texture) {
-            m_tex = texture;
-            m_pos = {0, 0};
-            m_size = m_tex.GetSize();
-            m_rect = {m_pos, m_size};
-        }
-
         void SetRect(const TexRect &r) {
             m_rect = r;
+        }
+
+        void LoadFromFile(const std::string& filename)
+        {
+            Image img(filename);
+            m_size = Vector2(img.GetWidth(), img.GetHeight());
+            m_tex.LoadFromMemory(img.GetWidth(), img.GetHeight(), img.GetBpp(), img.GetData());
         }
 
         friend class Renderer;

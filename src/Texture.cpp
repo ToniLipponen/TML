@@ -1,81 +1,50 @@
 #include <TML/Texture.h>
-#include <TML/Utilities/Copy.h>
 #include <glad/glad.h>
-
+#include <stb/stb_image.h>
+#include <climits>
+#include <algorithm>
 #include "internal/GlDebug.h"
 #include "internal/Assert.h"
-#include <climits>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "../external-headers/stb/stb_image.h"
-
-#include <algorithm>
 using namespace tml;
 
 Texture::Texture()
-: m_width(0), m_height(0), m_bpp(0), m_pixeldata(nullptr)
+: m_width(0), m_height(0), m_bpp(0), m_pixeldata(nullptr), m_id(UINT_MAX)
 {
-    GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
-}
 
-[[maybe_unused]] Texture::Texture(cstring filename)
-: m_width(0), m_height(0), m_bpp(0), m_pixeldata(nullptr)
-{
-	GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
-	LoadFromFile(filename);
-}
-
-[[maybe_unused]] Texture::Texture(i32 w, i32 h, ui8 bpp, ui8* data)
-: m_width(w), m_height(h), m_bpp(bpp)
-{
-    GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
-    LoadFromMemory(w,h,bpp,data);
-	Generate();
 }
 
 Texture::~Texture()
 {
     GL_CALL(glDeleteTextures(1, &m_id));
-    if(m_pixeldata != nullptr)
-    {
-        delete[] m_pixeldata;
-        m_pixeldata = nullptr;
-    }
 }
 
-void Texture::LoadFromFile(cstring filename)
+void Texture::LoadFromImage(Image& image)
 {
-	if(m_id == UINT_MAX)
+    if(m_id == UINT_MAX)
         GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
-	m_pixeldata = stbi_load(filename, &m_width, &m_height, &m_bpp, 0);
-	if(m_pixeldata == nullptr)
-		tml::Logger::WarningMessage("Failed to load texture -> %s", filename);
+    m_width = image.GetWidth();
+    m_height = image.GetHeight();
+    m_bpp = image.GetBpp();
+    m_pixeldata = image.GetData();
+    Generate();
+}
+
+void Texture::LoadFromFile(const std::string& filename)
+{
+    Image img(filename);
+    LoadFromImage(img);
 	Generate();
 }
 
 void Texture::LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data)
 {
-    if(m_allocated) // If memory has been allocated internally, delete the memory
-        delete[] m_pixeldata;
+    if(m_id == UINT_MAX)
+        GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
     m_pixeldata = data;
     m_width 	= w;
     m_height 	= h;
     m_bpp 		= bpp;
-    m_allocated = false;
     Generate();
-}
-
-[[maybe_unused]] void Texture::CopyFromMemory(i32 w, i32 h, ui8 bpp, ui8* data)
-{
-    if(m_pixeldata && m_allocated)
-        delete[] m_pixeldata;
-	m_pixeldata = new ui8[w*h*bpp];
-	tl::copy(m_pixeldata, data, w*h*bpp);
-	m_width 	= w;
-	m_height 	= h;
-	m_bpp 		= bpp;
-    m_allocated = true;
-	Generate();
 }
 
 void Texture::Bind(ui32 slot) const
@@ -83,20 +52,23 @@ void Texture::Bind(ui32 slot) const
     GL_CALL(glBindTextureUnit(slot, m_id));
 }
 
-[[maybe_unused]] void Texture::SetMipMapLevel(ui8 level)
+void Texture::SetMipMapLevel(ui8 level)
 {
 	m_mipmap_level = level;
+    Generate();
 }
 
 void Texture::SetMinMagFilter(Filter min, Filter mag)
 {
 	m_minfilter = min;
 	m_magfilter = mag;
+    Generate();
 }
 
 void Texture::SetClampMode(ClampMode mode)
 {
 	m_clampmode = mode;
+    Generate();
 }
 
 void Texture::Generate()

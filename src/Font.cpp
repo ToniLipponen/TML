@@ -13,20 +13,6 @@ Font::Font()
     m_font_info = new stbtt_fontinfo;
 }
 
-Font::Font(const std::string& filename)
-{
-    m_cdata = new stbtt_bakedchar[96];
-    m_font_info = new stbtt_fontinfo;
-    LoadFromFile(filename);
-}
-
-Font::Font(const ui8* data, ui32 datasize)
-{
-    m_cdata = new stbtt_bakedchar[96];
-    m_font_info = new stbtt_fontinfo;
-    LoadFromMemory(data, datasize);
-}
-
 void Font::LoadFromFile(const std::string& filename)
 {
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
@@ -54,4 +40,5 @@ void Font::LoadFromMemory(const ui8* data, ui32 size)
     m_texture.LoadFromMemory(ATLAS_SIZE, ATLAS_SIZE, 1, bitmap);
     m_texture.SetClampMode(Texture::ClampToEdge);
     m_texture.SetMinMagFilter(Texture::Filter::LinearMipmapLinear, Texture::Filter::LinearMipmapLinear);
+    delete[] bitmap;
 }

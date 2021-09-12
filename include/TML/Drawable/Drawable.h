@@ -36,11 +36,11 @@ namespace tml {
             m_pos += {x,y};
         }
 
-        const Vector2 &GetSize() const noexcept {
+        const Vector2& GetSize() const noexcept {
             return m_size;
         }
 
-        const Vector2 &GetPosition() const noexcept {
+        const Vector2& GetPosition() const noexcept {
             return m_pos;
         }
         constexpr float GetRotation() const noexcept

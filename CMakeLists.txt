@@ -1,12 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(TML)
 
-option(TML_USE_OPENGL_VERSION_330 "[Not working]Use opengl version 3.3. Else use version 4.5." no)
 option(TML_DEBUG_OPENGL_CALLS "Applies error checking around opengl function calls." no)
 
-if(TML_USE_OPENGL_VERSION_330)
-    add_compile_definitions(TML_GL_VERSION_330=1)
-endif()
 if(!TML_DEBUG_OPENGL_CALLS)
     add_compile_definitions(NO_GL_DEBUGGING=1)
 endif()

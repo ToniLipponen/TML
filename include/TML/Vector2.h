@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <ostream>
 
 namespace tml {
     class Vector2 {
@@ -67,6 +68,7 @@ namespace tml {
             this->y /= rhs;
             return *this;
         }
+        friend std::ostream& operator<<(std::ostream& s, const Vector2& v);
 
         inline float Length() const noexcept {
             return sqrtf(x * x + y * y);
@@ -86,4 +88,10 @@ namespace tml {
 
         float x, y;
     };
+
+    inline std::ostream& operator<<(std::ostream &out, const Vector2& v)
+    {
+        out << v.x << std::string(" - ") << v.y;
+        return out;
+    }
 }

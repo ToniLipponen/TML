@@ -1,13 +1,14 @@
 #include <TML/Window.h>
-#include "internal/Assert.h"
 #include <TML/Utilities/Condition.h>
-#include <glad/glad.h>
+
 #define GLFW_INCLUDE_NONE
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION 1
-#include "../external-headers/stb/stb_image_write.h"
-#include "../external-headers/stb/stb_image.h"
+#include <stb/stb_image_write.h>
+#include <stb/stb_image.h>
+
+#include "internal/Assert.h"
 #include "internal/Default_icon.h"
 #include "internal/Default_cursor.h"
 
@@ -31,10 +32,7 @@ namespace tml {
         glfwWindowHint(GLFW_DOUBLEBUFFER, (settings & Settings::VSync) != 0);
         glfwWindowHint(GLFW_SAMPLES, static_cast<int>((settings & Settings::Antialias) * 4));
 
-        if (settings & Settings::Fullscreen)
-            m_handle = glfwCreateWindow(w, h, title, glfwGetPrimaryMonitor(), nullptr);
-        else
-            m_handle = glfwCreateWindow(w, h, title, nullptr, nullptr);
+        m_handle = glfwCreateWindow(w, h, title,(settings & Settings::Fullscreen) ? glfwGetPrimaryMonitor() : nullptr, nullptr);
         TML_ASSERT(m_handle != nullptr, "Failed to create a window handle.");
         glfwMakeContextCurrent(reinterpret_cast<GLFWwindow *>(m_handle));
         glfwShowWindow(reinterpret_cast<GLFWwindow *>(m_handle));
