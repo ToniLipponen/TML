@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "../Types.h"
+#include <TML/Types.h>
 
 namespace tml
 {
@@ -19,12 +19,14 @@ namespace tml
         void SetPitch(float pitch);
         void SetVolume(float volume);
         bool IsPlaying() const { return m_state == Playing; }
-
+        void* GetDecoder() { return m_decoder; }
     private:
+        ui32 m_id;
         void* m_decoder;
         State m_state = Stopped;
         float m_pitch = 1.f;
         float m_speed = 1.f;
         bool m_looping = false;
+        static ui32 s_soundCount;
     };
 };

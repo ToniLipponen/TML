@@ -1,4 +1,4 @@
-#include <TML/RenderWindow.h>
+#include <TML/Renderer.h>
 #include <TML/Utilities/Bezier.h>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
