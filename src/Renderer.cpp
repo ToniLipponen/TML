@@ -128,6 +128,8 @@ static Vector2  s_viewSize   = {0, 0};
 
 static Camera s_camera;
 
+
+// Render batch related stuff
 constexpr static ui32 MAX_VERTEX_COUNT  = 100000;
 static i32 MAX_TEXTURE_COUNT = 8;
 
@@ -163,18 +165,18 @@ bool Renderer::Init()
     s_indexBuffer   = new IndexBuffer(nullptr, MAX_VERTEX_COUNT * 1.5);
     s_shader        = new Shader();
     s_text          = new Text();
+    s_circleTexture = new Texture();
 
     s_vao->Bind();
-    s_layout.Push(2, 4);
-    s_layout.Push(1, 4);
-    s_layout.Push(2, 4);
-    s_layout.Push(1, 4);
-    s_layout.Push(1, 4);
+    s_layout.Push(2, 4, BufferLayout::VERTEX_FLOAT);
+    s_layout.Push(1, 4, BufferLayout::VERTEX_FLOAT);
+    s_layout.Push(2, 4, BufferLayout::VERTEX_FLOAT);
+    s_layout.Push(1, 4, BufferLayout::VERTEX_FLOAT);
+    s_layout.Push(1, 4, BufferLayout::VERTEX_FLOAT);
     s_shader->FromString(VERTEX_STRING, FRAGMENT_STRING);
     s_shader->Bind();
     int w = 0,h = 0,bpp = 0;
     ui8* circleData = stbi_load_from_memory(CIRCLE_TEXTURE_DATA.data(), static_cast<int>(CIRCLE_TEXTURE_DATA.size()), &w, &h, &bpp, 1);
-    s_circleTexture = new Texture();
     s_circleTexture->LoadFromMemory(w, h, bpp, circleData);
     delete[] circleData;
     GL_CALL(glad_glEnable(GL_BLEND));
@@ -258,38 +260,11 @@ void Renderer::Draw(Text& r)
         EndBatch();
         currentElements = 0;
     }
-    else if(s_textures.size() >= (MAX_TEXTURE_COUNT - 1))
-    {
-        EndBatch();
-        currentElements = 0;
-    }
     
     ui32 tex = 0;
     if(r.m_font.m_texture.GetID() != UINT_MAX)
     {
-        bool already_in_m_textures = false;
-        auto id = r.m_font.m_texture.GetID();
-        ui32 index = 0;
-        for(auto i : s_textures)
-        {
-            if(i == id)
-            {
-                already_in_m_textures = true;
-                break;
-            }
-            ++index;
-        }
-        if(!already_in_m_textures)
-        {
-            tex = 1 + s_textures.size();
-            r.m_font.m_texture.Bind(tex);
-            s_textures.push_back(r.m_font.m_texture.GetID());
-        }
-        else
-        {
-            tex = index+1;
-            r.m_font.m_texture.Bind(tex);
-        }
+        tex = PushTexture(r.m_font.m_texture);
     }
     else {
         return;
@@ -437,7 +412,7 @@ void
 Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& texture, Vertex::Drawable_Type type)
 {
     ui32 currentElements = s_vertexData.size();
-    if(currentElements >= MAX_VERTEX_COUNT - 4 || s_textures.size() >= MAX_TEXTURE_COUNT - 1)
+    if(currentElements >= MAX_VERTEX_COUNT - 4)
     {
         EndBatch();
         currentElements = 0;
@@ -446,29 +421,7 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
     ui32 tex = 0;
     if(type != Vertex::RECTANGLE)
     {
-        bool already_in_m_textures = false;
-        auto id = texture.GetID();
-        ui32 index = 0;
-        for(auto i : s_textures)
-        {
-            if(i == id)
-            {
-                already_in_m_textures = true;
-                break;
-            }
-            ++index;
-        }
-        if(!already_in_m_textures)
-        {
-            tex = index + 1;
-            texture.Bind(tex);
-            s_textures.push_back(id);
-        }
-        else
-        {
-            tex = index + 1;
-            texture.Bind(tex);
-        }
+        tex = PushTexture(texture);
     }
 
     s_vertexData.emplace_back(Vertex{pos, col.Hex(), {0.f, 0.f}, tex, type});
@@ -489,7 +442,7 @@ void
 Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& texture, float rotation, Vertex::Drawable_Type type)
 {
     ui32 currentElements = s_vertexData.size();
-    if(currentElements >= MAX_VERTEX_COUNT - 4 || s_textures.size() >= MAX_TEXTURE_COUNT - 1)
+    if(currentElements >= MAX_VERTEX_COUNT - 4)
     {
         EndBatch();
         currentElements = 0;
@@ -498,30 +451,9 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
     ui32 tex = 0;
     if(type != Vertex::RECTANGLE)
     {
-        bool already_in_m_textures = false;
-        auto id = texture.GetID();
-        ui32 index = 0;
-        for(auto i : s_textures)
-        {
-            if(i == id)
-            {
-                already_in_m_textures = true;
-                break;
-            }
-            ++index;
-        }
-        if(!already_in_m_textures)
-        {
-            tex = index + 1;
-            texture.Bind(tex);
-            s_textures.push_back(id);
-        }
-        else
-        {
-            tex = index + 1;
-            texture.Bind(tex);
-        }
+        tex = PushTexture(texture);
     }
+    currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again
 
     const Vector2 origin = (pos + pos + size) * 0.5f;
     s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos, rotation), col.Hex(), {0.f, 0.f}, tex, type});
@@ -545,6 +477,38 @@ void Renderer::DrawText(const std::string &text, const Vector2 &pos, float size,
     s_text->SetColor(color);
     s_text->SetPosition(pos);
     Draw(*s_text);
+}
+
+// Finds a parking spot for the texture.
+ui32 Renderer::PushTexture(Texture &texture)
+{
+    if(s_textures.size() >= MAX_TEXTURE_COUNT - 1)
+    {
+        EndBatch();
+    }
+    bool already_in_m_textures = false;
+    const auto id = texture.GetID();
+    ui32 index = 0;
+    for(auto i : s_textures)
+    {
+        if(i == id)
+        {
+            already_in_m_textures = true;
+            break;
+        }
+        ++index;
+    }
+    index += 1;
+    if(!already_in_m_textures)
+    {
+        texture.Bind(index);
+        s_textures.push_back(id);
+    }
+    else
+    {
+        texture.Bind(index);
+    }
+    return index;
 }
 
 void Renderer::EndBatch()

@@ -57,5 +57,7 @@ namespace tml {
 
         static void
         p_DrawRect(const Vector2 &pos, const Vector2 &dimensions, const Color &color, float rotation = 0.0f);
+
+        static ui32 PushTexture(Texture& tex);
     };
 };

@@ -3,7 +3,7 @@
 
 namespace tml {
     struct Vertex {
-        enum Drawable_Type{
+        enum Drawable_Type : ui32 {
             CIRCLE, RECTANGLE, TEXTURE, TEXT, VIDEO
         };
         Vector2 pos;

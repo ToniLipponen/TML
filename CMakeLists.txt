@@ -1,6 +1,5 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 project(TML)
-
 option(TML_DEBUG_OPENGL_CALLS "Applies error checking around opengl function calls." no)
 
 if(!TML_DEBUG_OPENGL_CALLS)
@@ -12,6 +11,8 @@ add_subdirectory(external/glfw/)
 include_directories(external/glm)
 
 add_library(TML SHARED ${SRC_FILES})
+target_compile_features(TML PUBLIC cxx_std_14)
+
 if(WIN32 OR MSVC)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
     target_link_libraries(TML glfw)

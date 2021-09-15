@@ -2,6 +2,7 @@
 #include "../../include/TML/Types.h"
 #include <utility>
 #include <vector>
+#include <tuple>
 
 namespace tml {
     class VertexBuffer {
@@ -52,12 +53,24 @@ namespace tml {
 
     class BufferLayout {
     public:
+        enum DataType
+        {
+            VERTEX_BYTE = 0x1400,
+            VERTEX_UNSIGNED_BYTE  = 0x1401,
+            VERTEX_SHORT = 0x1402,
+            VERTEX_UNSIGNED_SHORT = 0x1403,
+            VERTEX_INT = 0x1404,
+            VERTEX_UNSIGNED_INT = 0x1405,
+            VERTEX_FLOAT = 0x1406,
+        };
+    public:
         BufferLayout() : m_stride(0) {}
 
-        explicit BufferLayout(std::vector<std::pair<ui32, ui32>> layout) : m_layout(std::move(layout)), m_stride(0) {}
+        explicit BufferLayout(std::vector<std::tuple<ui32, ui32, DataType>> layout)
+        : m_layout(std::move(layout)), m_stride(0) {}
 
-        void Push(ui32 elements, ui32 size) {
-            m_layout.emplace_back(std::pair<ui32,ui32>{elements, size});
+        void Push(ui32 elements, ui32 size, DataType type) {
+            m_layout.push_back(std::tuple<ui32,ui32,DataType>(elements, size, type));
             m_stride += elements * size;
         }
 
@@ -66,7 +79,7 @@ namespace tml {
             m_stride = 0;
         }
 
-        constexpr std::vector<std::pair<ui32, ui32>> const &GetData() const {
+        constexpr std::vector<std::tuple<ui32, ui32, DataType>> const &GetData() const {
             return m_layout;
         }
 
@@ -76,7 +89,7 @@ namespace tml {
 
     private:
         //				 Elements | size
-        std::vector<std::pair<ui32, ui32>> m_layout;
+        std::vector<std::tuple<ui32, ui32, DataType>> m_layout;
         ui32 m_stride;
     };
 
@@ -86,7 +99,7 @@ namespace tml {
 
         VertexArray(VertexBuffer &vb, BufferLayout &layout);
 
-        // ~VertexArray();
+        ~VertexArray();
         void BufferData(VertexBuffer &vb, BufferLayout &layout) noexcept;
 
         void BufferData(VertexBuffer &vb, IndexBuffer &ib, BufferLayout &layout) noexcept;
