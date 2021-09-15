@@ -38,7 +38,5 @@ void Font::LoadFromMemory(const ui8* data, ui32 size)
     stbtt_InitFont((stbtt_fontinfo*)m_font_info, data, 0);
     stbtt_BakeFontBitmap(data, 0, 256.0, bitmap, ATLAS_SIZE, ATLAS_SIZE, 32, 96, (stbtt_bakedchar*)m_cdata);
     m_texture.LoadFromMemory(ATLAS_SIZE, ATLAS_SIZE, 1, bitmap);
-    m_texture.SetClampMode(Texture::ClampToEdge);
-    m_texture.SetMinMagFilter(Texture::Filter::LinearMipmapLinear, Texture::Filter::LinearMipmapLinear);
     delete[] bitmap;
 }

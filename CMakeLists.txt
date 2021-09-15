@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 project(TML)
-option(TML_DEBUG_OPENGL_CALLS "Applies error checking around opengl function calls." no)
+option(TML_DEBUG_OPENGL_CALLS "Applies error checking around opengl function calls." yes)
 
-if(!TML_DEBUG_OPENGL_CALLS)
-    add_compile_definitions(NO_GL_DEBUGGING=1)
+if(NOT TML_DEBUG_OPENGL_CALLS)
+    add_compile_definitions(TML_NO_GL_DEBUGGING=1)
 endif()
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp src/glad.c)

@@ -8,26 +8,26 @@ namespace tml {
     class VertexBuffer {
     public:
         VertexBuffer();
-        VertexBuffer(const void *data, ui32 vertexsize, ui32 numofvertices);
+        VertexBuffer(const void *data, ui32 vertexSize, ui32 numOfVertices);
         ~VertexBuffer();
-        void BufferData(void *data, ui32 vertexsize, ui32 numofvertices);
-        void PushData(void *data, ui32 vertexsize, ui32 numofversices);
-        void SetData(void *data, ui32 vertexsize, ui32 numofvertices);
+        void BufferData(void *data, ui32 vertexSize, ui32 numOfVertices);
+        void PushData(void *data, ui32 vertexSize, ui32 numOfVertices);
+        void SetData(void *data, ui32 vertexSize, ui32 numOfVertices);
         void Flush();
 
-        [[maybe_unused]] constexpr ui32 DataSize() const {
-            return m_datasize;
+        constexpr ui32 DataSize() const {
+            return m_dataSize;
         }
 
         constexpr ui32 VertexCount() const {
-            return m_vertex_count;
+            return m_vertexCount;
         }
 
     public:
         friend class VertexArray;
 
     protected:
-        ui32 m_id, m_datasize, m_vertex_count;
+        ui32 m_id, m_dataSize, m_vertexCount;
     };
 
     class IndexBuffer {
@@ -88,7 +88,7 @@ namespace tml {
         }
 
     private:
-        //				 Elements | size
+        //				  Elements | size | GL_TYPE
         std::vector<std::tuple<ui32, ui32, DataType>> m_layout;
         ui32 m_stride;
     };
@@ -96,23 +96,17 @@ namespace tml {
     class VertexArray {
     public:
         VertexArray();
-
         VertexArray(VertexBuffer &vb, BufferLayout &layout);
-
         ~VertexArray();
         void BufferData(VertexBuffer &vb, BufferLayout &layout) noexcept;
-
         void BufferData(VertexBuffer &vb, IndexBuffer &ib, BufferLayout &layout) noexcept;
-
         void Bind() const noexcept;
-
         void Unbind() const noexcept;
-
         constexpr ui32 VertexCount() const noexcept {
-            return m_vertex_count;
+            return m_vertexCount;
         }
 
     private:
-        ui32 m_id, m_vertex_count;
+        ui32 m_id, m_vertexCount;
     };
 }

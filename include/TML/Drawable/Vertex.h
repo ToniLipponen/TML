@@ -7,9 +7,9 @@ namespace tml {
             CIRCLE, RECTANGLE, TEXTURE, TEXT, VIDEO
         };
         Vector2 pos;
-        ui32 color;
         Vector2 uv;
-        ui32 tex; // TODO: Merge tex & type into one ui32
+        ui32 color;
+        ui32 tex; // TODO: Merge tex & type into one ui32 to save 4 bytes
         Drawable_Type type;
     };
 }

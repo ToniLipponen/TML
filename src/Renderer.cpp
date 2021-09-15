@@ -12,13 +12,12 @@
 #include "internal/Buffers.h"
 #include "internal/Shader.h"
 
-
 const static std::string VERTEX_STRING =
 R"END(
 #version 450 core
 layout (location = 0) in vec2 Pos;
-layout (location = 1) in uint Color;
-layout (location = 2) in vec2 UV;
+layout (location = 1) in vec2 UV;
+layout (location = 2) in uint Color;
 layout (location = 3) in uint Tex;
 layout (location = 4) in uint Type;
 
@@ -125,9 +124,7 @@ static glm::mat4 s_view = glm::mat4(1.f);
 static glm::mat4 s_proj = glm::mat4(1.f);
 static glm::mat4 s_scale = glm::mat4(1.f);
 static Vector2  s_viewSize   = {0, 0};
-
 static Camera s_camera;
-
 
 // Render batch related stuff
 constexpr static ui32 MAX_VERTEX_COUNT  = 100000;
@@ -140,17 +137,57 @@ int Renderer::batch_count = 0;
 
 void PrintInformation()
 {
-    glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MAX_TEXTURE_COUNT);
+    GL_CALL(glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MAX_TEXTURE_COUNT));
     const GLubyte* vendor = glad_glGetString(GL_VENDOR);
     const GLubyte* renderer = glad_glGetString(GL_RENDERER);
     const GLubyte* version = glad_glGetString(GL_VERSION);
 
-    i32 max_tex_size = 0;
-    glad_glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
+    i32 max_tex_size = 0, gpu_texture_units = 0;
+    GL_CALL(glad_glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size));
+    GL_CALL(glad_glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &gpu_texture_units));
     tml::Logger::InfoMessage("GPU: %s %s", vendor, renderer);
     tml::Logger::InfoMessage("OpenGL version: %s", version);
-    tml::Logger::InfoMessage("GPU max texture size: %d", max_tex_size);
-    tml::Logger::InfoMessage("Available GPU texture units: %d", MAX_TEXTURE_COUNT);
+    tml::Logger::InfoMessage("GPU max texture size: %dx%d", max_tex_size, max_tex_size);
+    tml::Logger::InfoMessage("GPU available texture units: %d", gpu_texture_units);
+}
+
+void gl_message_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
+{
+    auto const src_str = [source]() {
+        switch (source)
+        {
+            case GL_DEBUG_SOURCE_API: return "API";
+            case GL_DEBUG_SOURCE_WINDOW_SYSTEM: return "WINDOW SYSTEM";
+            case GL_DEBUG_SOURCE_SHADER_COMPILER: return "SHADER COMPILER";
+            case GL_DEBUG_SOURCE_THIRD_PARTY: return "THIRD PARTY";
+            case GL_DEBUG_SOURCE_APPLICATION: return "APPLICATION";
+            case GL_DEBUG_SOURCE_OTHER: return "OTHER";
+        }
+    }();
+
+    auto const type_str = [type]() {
+        switch (type)
+        {
+            case GL_DEBUG_TYPE_ERROR: return "ERROR";
+            case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "DEPRECATED_BEHAVIOR";
+            case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: return "UNDEFINED_BEHAVIOR";
+            case GL_DEBUG_TYPE_PORTABILITY: return "PORTABILITY";
+            case GL_DEBUG_TYPE_PERFORMANCE: return "PERFORMANCE";
+            case GL_DEBUG_TYPE_MARKER: return "MARKER";
+            case GL_DEBUG_TYPE_OTHER: return "OTHER";
+        }
+    }();
+
+    auto const severity_str = [severity]() {
+        switch (severity) {
+            case GL_DEBUG_SEVERITY_NOTIFICATION: return "NOTIFICATION";
+            case GL_DEBUG_SEVERITY_LOW: return "LOW";
+            case GL_DEBUG_SEVERITY_MEDIUM: return "MEDIUM";
+            case GL_DEBUG_SEVERITY_HIGH: return "HIGH";
+        }
+    }();
+
+    std::cout << src_str << ", " << type_str << ", " << severity_str << ", " << id << ": " << message << '\n';
 }
 
 bool Renderer::Init()
@@ -169,12 +206,14 @@ bool Renderer::Init()
 
     s_vao->Bind();
     s_layout.Push(2, 4, BufferLayout::VERTEX_FLOAT);
-    s_layout.Push(1, 4, BufferLayout::VERTEX_FLOAT);
     s_layout.Push(2, 4, BufferLayout::VERTEX_FLOAT);
-    s_layout.Push(1, 4, BufferLayout::VERTEX_FLOAT);
-    s_layout.Push(1, 4, BufferLayout::VERTEX_FLOAT);
+    s_layout.Push(1, 4, BufferLayout::VERTEX_UNSIGNED_INT);
+    s_layout.Push(1, 4, BufferLayout::VERTEX_UNSIGNED_INT);
+    s_layout.Push(1, 4, BufferLayout::VERTEX_UNSIGNED_INT);
+
     s_shader->FromString(VERTEX_STRING, FRAGMENT_STRING);
     s_shader->Bind();
+
     int w = 0,h = 0,bpp = 0;
     ui8* circleData = stbi_load_from_memory(CIRCLE_TEXTURE_DATA.data(), static_cast<int>(CIRCLE_TEXTURE_DATA.size()), &w, &h, &bpp, 1);
     s_circleTexture->LoadFromMemory(w, h, bpp, circleData);
@@ -183,8 +222,11 @@ bool Renderer::Init()
     GL_CALL(glad_glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     GL_CALL(glad_glDisable(GL_DEPTH_TEST));
     GL_CALL(glad_glDisable(GL_CULL_FACE));
-
-    for(i32 i = 0; i < MAX_TEXTURE_COUNT-1; i++)
+    #ifndef TML_NO_GL_DEBUGGING
+        glEnable(GL_DEBUG_OUTPUT);
+        glDebugMessageCallback(gl_message_callback, nullptr);
+    #endif
+    for(i32 i = 0; i < MAX_TEXTURE_COUNT; i++)
         GL_CALL(s_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i));
     return true;
 }
@@ -269,6 +311,7 @@ void Renderer::Draw(Text& r)
     else {
         return;
     }
+    currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again
 
     for(auto& v : r.m_vertexData)
     {
@@ -296,10 +339,10 @@ void Renderer::DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Col
     const float dx = b.x - a.x;
     const float dy = b.y - a.y;
 
-    s_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness * 0.5f) + a, color.Hex(), {0, 0}, 0, Vertex::RECTANGLE});
-    s_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness * 0.5f) + a, color.Hex(), {0, 0}, 0, Vertex::RECTANGLE});
-    s_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness * 0.5f) + b, color.Hex(), {0, 0}, 0, Vertex::RECTANGLE});
-    s_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness * 0.5f) + b, color.Hex(), {0, 0}, 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness * 0.5f) + a, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness * 0.5f) + a, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness * 0.5f) + b, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness * 0.5f) + b, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
 
     s_indexData.push_back(currentElements + 0);
     s_indexData.push_back(currentElements + 1);
@@ -328,10 +371,10 @@ void Renderer::p_DrawRect(const Vector2& pos, const Vector2& dimensions, const C
     Vector2 origin = {(pos.x + pos.x + dimensions.x) * 0.5f,
                       (pos.y + pos.y + dimensions.y) * 0.5f};
     // Clean this up
-    s_vertexData.push_back({Util::Rotate(origin, pos, rotation), c.Hex(), Vector2{0, 0}, 0, Vertex::RECTANGLE});
-    s_vertexData.push_back({Util::Rotate(origin, pos + Vector2{dimensions.x, 0.0f}, rotation), c.Hex(), Vector2{1, 0}, 0, Vertex::RECTANGLE});
-    s_vertexData.push_back({Util::Rotate(origin, pos + Vector2{0.0f, dimensions.y}, rotation), c.Hex(), Vector2{0, 1}, 0, Vertex::RECTANGLE});
-    s_vertexData.push_back({Util::Rotate(origin, pos + dimensions, rotation), c.Hex(), Vector2{1, 1}, 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({Util::Rotate(origin, pos, rotation), Vector2{0, 0}, c.Hex(), 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({Util::Rotate(origin, pos + Vector2{dimensions.x, 0.0f}, rotation), Vector2{1, 0},c.Hex(), 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({Util::Rotate(origin, pos + Vector2{0.0f, dimensions.y}, rotation), Vector2{0, 1},c.Hex(), 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({Util::Rotate(origin, pos + dimensions, rotation), Vector2{1, 1},c.Hex(), 0, Vertex::RECTANGLE});
 
     s_indexData.push_back(currentElements + 0);
     s_indexData.push_back(currentElements + 1);
@@ -423,11 +466,12 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
     {
         tex = PushTexture(texture);
     }
+    currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again
 
-    s_vertexData.emplace_back(Vertex{pos, col.Hex(), {0.f, 0.f}, tex, type});
-    s_vertexData.emplace_back(Vertex{pos + Vector2{size.x, 0.f}, col.Hex(), {1.f, 0.f}, tex, type});
-    s_vertexData.emplace_back(Vertex{pos + Vector2{0.f, size.y}, col.Hex(), {0.f, 1.f}, tex, type});
-    s_vertexData.emplace_back(Vertex{pos + size, col.Hex(), {1.f, 1.f}, tex, type});
+    s_vertexData.emplace_back(Vertex{pos,  {0.f, 0.f},col.Hex(), tex, type});
+    s_vertexData.emplace_back(Vertex{pos + Vector2{size.x, 0.f}, {1.f, 0.f}, col.Hex(), tex, type});
+    s_vertexData.emplace_back(Vertex{pos + Vector2{0.f, size.y}, {0.f, 1.f}, col.Hex(), tex, type});
+    s_vertexData.emplace_back(Vertex{pos + size, {1.f, 1.f}, col.Hex(), tex, type});
 
     s_indexData.emplace_back(currentElements + 0);
     s_indexData.emplace_back(currentElements + 1);
@@ -456,10 +500,10 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
     currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again
 
     const Vector2 origin = (pos + pos + size) * 0.5f;
-    s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos, rotation), col.Hex(), {0.f, 0.f}, tex, type});
-    s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos + Vector2{size.x, 0.f}, rotation), col.Hex(), {1.f, 0.f}, tex, type});
-    s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos + Vector2{0.f, size.y}, rotation), col.Hex(), {0.f, 1.f}, tex, type});
-    s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos + size, rotation), col.Hex(), {1.f, 1.f}, tex, type});
+    s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos, rotation), {0.f, 0.f}, col.Hex(), tex, type});
+    s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos + Vector2{size.x, 0.f}, rotation), {1.f, 0.f}, col.Hex(), tex, type});
+    s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos + Vector2{0.f, size.y}, rotation), {0.f, 1.f}, col.Hex(), tex, type});
+    s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos + size, rotation), {1.f, 1.f}, col.Hex(), tex, type});
 
     s_indexData.emplace_back(currentElements + 0);
     s_indexData.emplace_back(currentElements + 1);
@@ -498,22 +542,22 @@ ui32 Renderer::PushTexture(Texture &texture)
         }
         ++index;
     }
-    index += 1;
+//    index += 1;
     if(!already_in_m_textures)
     {
         texture.Bind(index);
         s_textures.push_back(id);
     }
-    else
-    {
-        texture.Bind(index);
-    }
+    // I think this is unnecessary
+//    else
+//    {
+//        texture.Bind(index);
+//    }
     return index;
 }
 
 void Renderer::EndBatch()
 {
-    GL_CALL(s_shader->Bind());
     GL_CALL(s_shader->SetVec2("uViewSize", s_viewSize));
     GL_CALL(s_shader->UniformMat4fv("uView", 1, 0, &s_view[0][0]));
     GL_CALL(s_shader->UniformMat4fv("uProj", 1, 0, &s_proj[0][0]));
