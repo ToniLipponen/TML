@@ -4,6 +4,6 @@ Simple library for making multimedia applications.
 
 <h1>Features</h1>
 <li>OpenGL 4.5</li>
-<li>Everything batch renderer</li>
+<li>Everything batch rendered</li>
 <li>Simple audio interface</li>
 <li>Video playback support using mpeg-1</li>
