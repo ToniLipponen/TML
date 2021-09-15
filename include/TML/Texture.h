@@ -39,7 +39,7 @@ namespace tml {
             return m_id;
         }
     private:
-        ClampMode m_clampmode = Repeat;
+        ClampMode m_clampmode = ClampToBorder;
         Filter m_minfilter = LinearMipmapLinear;
         Filter m_magfilter = Linear;
         ui32 m_id;

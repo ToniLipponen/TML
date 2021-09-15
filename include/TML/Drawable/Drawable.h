@@ -28,6 +28,10 @@ namespace tml {
             m_rotation += d;
         }
 
+        void SetRotation(float d) noexcept {
+            m_rotation = d;
+        }
+
         void Translate(const Vector2 &offset) noexcept {
             m_pos += offset;
         }

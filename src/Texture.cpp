@@ -77,6 +77,7 @@ void Texture::Generate()
     GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, m_clampmode));
     GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, m_minfilter));
     GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, m_magfilter));
+    GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MAX_LEVEL, 8));
 	
 	if(m_width > 0 && m_height > 0)
 	{

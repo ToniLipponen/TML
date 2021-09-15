@@ -57,7 +57,7 @@ namespace tml {
 
         inline Vector2 AngleToHeading(float degrees) noexcept
         {
-            return {cosf(degrees * 0.01745329f), sinf(degrees * 0.01745329f)};
+            return Vector2(std::cos(degrees * 0.01745329f), std::sin(degrees * 0.01745329f)).Normalized();
         }
 
         // TODO

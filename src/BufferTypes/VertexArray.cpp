@@ -59,8 +59,8 @@ void VertexArray::BufferData(VertexBuffer& vb, IndexBuffer& ib, BufferLayout& la
 	    GL_CALL(glVertexArrayVertexBuffer(m_id, i, vb.m_id, prevsize, layout.GetStride()));
 		prevsize = lo.at(i).second;
 		GL_CALL(glVertexArrayAttribBinding(m_id, i, 0));
-		GL_CALL(glVertexArrayAttribFormat(m_id, i, lo.at(i).first, GL_FLOAT, GL_FALSE, offset));
-		offset += lo.at(i).first * lo.at(i).second;
+        GL_CALL(glVertexArrayAttribFormat(m_id, i, lo.at(i).first, GL_FLOAT, GL_FALSE, offset));
+        offset += lo.at(i).first * lo.at(i).second;
 	}
 	GL_CALL(glVertexArrayElementBuffer(m_id, ib.m_id));
 	m_vertex_count = ib.Elements();

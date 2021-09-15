@@ -9,7 +9,7 @@ namespace tml {
         Vector2 pos;
         ui32 color;
         Vector2 uv;
-        ui32 tex; // Merge tex & type into one ui32
-        ui32 type;
+        ui32 tex; // TODO: Merge tex & type into one ui32
+        Drawable_Type type;
     };
 }

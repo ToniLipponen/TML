@@ -12,10 +12,11 @@
 
 ma_device OUTPUT_DEVICE;
 
-ma_event s_stopEvent; /* <-- Signaled by the audio thread, waited on by the main thread. */
-
 static float s_gain = 1.f;
-std::map<tml::ui32, tml::Sound*> s_sounds;
+static float s_current_sound_volume = 1.f;
+static tml::ui32 s_current_sound_id = -1;
+static std::map<tml::ui32, tml::Sound*> s_sounds;
+
 ma_uint32 read_and_mix_pcm_frames_f32(ma_decoder* pDecoder, float* pOutputF32, ma_uint32 frameCount)
 {
     float temp[4096];
@@ -37,7 +38,7 @@ ma_uint32 read_and_mix_pcm_frames_f32(ma_decoder* pDecoder, float* pOutputF32, m
         }
 
         for (iSample = 0; iSample < framesReadThisIteration*pDecoder->outputChannels; ++iSample) {
-            pOutputF32[totalFramesRead*pDecoder->outputChannels + iSample] += temp[iSample];
+            pOutputF32[totalFramesRead*pDecoder->outputChannels + iSample] += temp[iSample] * s_gain * s_current_sound_volume;
         }
 
         totalFramesRead += framesReadThisIteration;
@@ -46,7 +47,6 @@ ma_uint32 read_and_mix_pcm_frames_f32(ma_decoder* pDecoder, float* pOutputF32, m
             break;
         }
     }
-
     return totalFramesRead;
 }
 
@@ -57,21 +57,27 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
     {
         for(auto sound : s_sounds)
         {
-            if(sound.second->IsPlaying())
+            if(sound.second->GetDecoder() == nullptr)
+                continue;
+            else if(sound.second->IsPlaying())
             {
+                s_current_sound_id = sound.first;
+                s_current_sound_volume = sound.second->GetVolume();
                 ma_uint32 frames = read_and_mix_pcm_frames_f32((ma_decoder*)sound.second->GetDecoder(), pOutputF32, frameCount);
                 if(frames < frameCount)
                 {
                     sound.second->Stop();
-                    s_sounds.erase(sound.first);
+//                    s_sounds.erase(sound.first);
                 }
             }
         }
     }
 }
 
+
 namespace tml
 {
+    ma_decoder_config s_decoder_config;
     namespace Mixer
     {
         bool Init()
@@ -79,14 +85,18 @@ namespace tml
             ma_device_config config     = ma_device_config_init(ma_device_type_playback);
             config.playback.format      = ma_format_f32;
             config.playback.channels    = 2;
-            config.sampleRate           = 44100;
+            config.sampleRate           = 48000;
             config.dataCallback         = data_callback;
             config.stopCallback         = nullptr;
             config.pUserData            = nullptr;
+
+            s_decoder_config.format = ma_format_unknown;
+            s_decoder_config.channels = 0;
+            s_decoder_config.sampleRate = 48000;
+
             auto result = ma_device_init(NULL, &config, &OUTPUT_DEVICE);
             if(result == MA_SUCCESS)
             {
-                ma_event_init(&s_stopEvent);
                 ma_device_start(&OUTPUT_DEVICE);
                 return true;
             }
@@ -101,7 +111,7 @@ namespace tml
         void AddSound(ui32 id, Sound* snd)
         {
             s_sounds.insert({id, snd});
-            OUTPUT_DEVICE.pUserData = snd->GetDecoder();
+//            OUTPUT_DEVICE.pUserData = snd->GetDecoder();
         }
 
     }
