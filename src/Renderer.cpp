@@ -16,7 +16,7 @@ const static std::string VERTEX_STRING =
 R"END(
 #version 450 core
 layout (location = 0) in vec2 Pos;
-layout (location = 1) in vec2 UV;
+layout (location = 1) in highp vec2 UV;
 layout (location = 2) in uint Color;
 layout (location = 3) in uint Tex;
 layout (location = 4) in uint Type;
@@ -111,6 +111,7 @@ void main()
 )END";
 using namespace tml;
 extern std::vector<ui8> DEFAULT_FONT_DATA;
+extern Text*            DEFAULT_TEXT;
 
 static Texture*         s_circleTexture = nullptr;
 static VertexArray*     s_vao = nullptr;
@@ -118,7 +119,7 @@ static VertexBuffer*    s_vertexBuffer = nullptr;
 static IndexBuffer*     s_indexBuffer = nullptr;
 static BufferLayout     s_layout;
 static Shader*          s_shader = nullptr;
-static Text*            s_text = nullptr;
+//static Text*            s_text = nullptr;
 
 static glm::mat4 s_view = glm::mat4(1.f);
 static glm::mat4 s_proj = glm::mat4(1.f);
@@ -163,6 +164,7 @@ void gl_message_callback(GLenum source, GLenum type, GLuint id, GLenum severity,
             case GL_DEBUG_SOURCE_APPLICATION: return "APPLICATION";
             case GL_DEBUG_SOURCE_OTHER: return "OTHER";
         }
+        return "UNKNOWN";
     }();
 
     auto const type_str = [type]() {
@@ -176,6 +178,7 @@ void gl_message_callback(GLenum source, GLenum type, GLuint id, GLenum severity,
             case GL_DEBUG_TYPE_MARKER: return "MARKER";
             case GL_DEBUG_TYPE_OTHER: return "OTHER";
         }
+        return "UNKNOWN";
     }();
 
     auto const severity_str = [severity]() {
@@ -185,6 +188,7 @@ void gl_message_callback(GLenum source, GLenum type, GLuint id, GLenum severity,
             case GL_DEBUG_SEVERITY_MEDIUM: return "MEDIUM";
             case GL_DEBUG_SEVERITY_HIGH: return "HIGH";
         }
+        return "UNKNOWN";
     }();
 
     std::cout << src_str << ", " << type_str << ", " << severity_str << ", " << id << ": " << message << '\n';
@@ -201,7 +205,7 @@ bool Renderer::Init()
     s_vertexBuffer  = new VertexBuffer(nullptr, sizeof(Vertex), MAX_VERTEX_COUNT);
     s_indexBuffer   = new IndexBuffer(nullptr, MAX_VERTEX_COUNT * 1.5);
     s_shader        = new Shader();
-    s_text          = new Text();
+    DEFAULT_TEXT    = new Text();
     s_circleTexture = new Texture();
 
     s_vao->Bind();
@@ -516,11 +520,11 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
 
 void Renderer::DrawText(const std::string &text, const Vector2 &pos, float size, const Color &color)
 {
-    s_text->SetString(text);
-    s_text->SetSize(size);
-    s_text->SetColor(color);
-    s_text->SetPosition(pos);
-    Draw(*s_text);
+    DEFAULT_TEXT->SetString(text);
+    DEFAULT_TEXT->SetSize(size);
+    DEFAULT_TEXT->SetColor(color);
+    DEFAULT_TEXT->SetPosition(pos);
+    Draw(*DEFAULT_TEXT);
 }
 
 // Finds a parking spot for the texture.

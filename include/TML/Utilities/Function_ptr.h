@@ -7,20 +7,19 @@ namespace tml
     class Function_ptr
     {
     public:
+        Function_ptr(){}
         constexpr Function_ptr(return_value (*func_ptr)(arguments ...))
-        : m_func_ptr(func_ptr)
+        : m_funcPtr(func_ptr)
         {
 
         }
         return_value operator()(arguments ... b) const noexcept
         {
-            return m_func_ptr(b ...);
+            return m_funcPtr(b ...);
         }
-        return_value (*)(args ...) GetRawPointer() const noexcept
-        {
-            return m_func_ptr;
-        }
+        bool IsNull() const { return (m_funcPtr == nullptr); }
+        bool IsNotNull() const { return (m_funcPtr != nullptr); }
     private:
-        return_value (*m_func_ptr)(arguments ...);
+        return_value (*m_funcPtr)(arguments ...) = nullptr;
     };
 }

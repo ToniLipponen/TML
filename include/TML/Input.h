@@ -3,7 +3,7 @@
 namespace tml {
     class Keyboard {
     public:
-        enum [[maybe_unused]] Key {
+        enum Key {
             KEY_SPACE = 32,
             KEY_APOSTROPHE = 39,  /* ' */
             KEY_COMMA = 44,  /* , */
@@ -126,17 +126,21 @@ namespace tml {
             KEY_RIGHT_SUPER = 347,
             KEY_MENU = 348
         };
-
+        static void BeginString();
+        static std::string EndString();
+        static const std::string& GetString();
         static bool IsKeyPressed(Key key);
         static bool IsKeyDown(Key key);
         static void Initialize();
+        static ui32 GetChar();
     };
 
     class Mouse {
     public:
-        enum [[maybe_unused]] Button {Left, Right, Middle, Four, Five, Six, Seven, Last};
+        enum Button {Left, Right, Middle, Four, Five, Six, Seven, Last};
 
         static Vector2 GetPosition();
-        static bool ButtonPressed(Button button);
+        static bool ButtonClicked(Button button);
+        static bool ButtonDown(Button button);
     };
 };
