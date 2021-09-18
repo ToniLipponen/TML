@@ -44,7 +44,6 @@ namespace tml {
     {
         m_state = Playing;
         Mixer::AddSound(m_id, this);
-        ma_waveform
     }
 
     void Sound::Stop() {

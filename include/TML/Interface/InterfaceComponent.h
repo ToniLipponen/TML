@@ -40,11 +40,18 @@ namespace tml
             void SetOnDrag(UIFunc function)  { m_onDragFunc         = function; }
             void SetOnUpdate(UIFunc function){ m_onUpdate           = function; }
             void AddChild(BaseComponent* component, const std::string& name = "");
+            const BaseComponent* FindChild(const std::string& name) const; // DANGER! Returns nullptr if not found.
             virtual bool ContainsPoint(const Vector2& p) = 0;
-            void Update(BaseComponent* parent);
+            virtual void Update(BaseComponent* parent, float dt = (1.0f / 60.f));
         protected:
             virtual void Draw() = 0;
-//            virtual Vector2 GetChildPosition(BaseComponent* child);
+            // Internal events
+            virtual void OnMouseClick(const Vector2& mousePos);
+            virtual void OnMouseHover();
+            virtual void OnMouseEnter();
+            virtual void OnMouseExit();
+            virtual void OnUpdate(float dt);
+
             UIFunc m_onClickFunc;
             UIFunc m_onHoverFunc;
             UIFunc m_onMouseEnterFunc;
@@ -65,6 +72,8 @@ namespace tml
             Vector2 m_mousePos;
             bool m_mouseClicked = false;
 
+            // Visual
+            float m_animSpeed = 2.f;
             Color m_pColor, m_sColor; // Primary and secondary color.
             std::unordered_map<std::string, BaseComponent*> m_children;
         };

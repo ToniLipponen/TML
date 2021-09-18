@@ -55,7 +55,14 @@ void BaseComponent::AddChild(BaseComponent *component, const std::string &name)
     m_children.insert(std::pair<std::string, BaseComponent*>(_name, component));
 }
 
-void BaseComponent::Update(BaseComponent* parent)
+const BaseComponent* BaseComponent::FindChild(const std::string& name) const
+{
+    if(m_children.find(name) != m_children.end())
+        return m_children.at(name);
+    return nullptr;
+}
+
+void BaseComponent::Update(BaseComponent* parent, float dt)
 {
     if(!BITSET(m_state, Enabled))
         return;
@@ -72,35 +79,57 @@ void BaseComponent::Update(BaseComponent* parent)
     }
     else
     {
+        m_mousePos = parent->m_mousePos;
+        m_mouseClicked = parent->m_mouseClicked;
         bool oldMouseOver = BITSET(m_eventStatus, MouseOver);
         SETBIT(m_eventStatus, 5, ContainsPoint(parent->m_mousePos));
         SETBIT(m_eventStatus, 3, (!BITSET(m_eventStatus, MouseEnter) && BITSET(m_eventStatus, MouseOver)));
         SETBIT(m_eventStatus, 4, (oldMouseOver && !BITSET(m_eventStatus, MouseOver)));
         SETBIT(m_eventStatus, 2, (BITSET(m_eventStatus, MouseOver) && parent->m_mouseClicked));
     }
-    if(BITSET(m_eventStatus, Click) && m_onClickFunc.IsNotNull())
-        m_onClickFunc(this);
 
-    if(BITSET(m_eventStatus, MouseEnter) && m_onMouseEnterFunc.IsNotNull())
-        m_onMouseEnterFunc(this);
+    if(BITSET(m_eventStatus, Click))
+    {
+        OnMouseClick(m_mousePos);
+        if(m_onClickFunc.IsNotNull())
+            m_onClickFunc(this);
+    }
 
-    if(BITSET(m_eventStatus, MouseExit) && m_onMouseExitFunc.IsNotNull())
-        m_onMouseExitFunc(this);
+    if(BITSET(m_eventStatus, MouseEnter))
+    {
+        OnMouseEnter();
+        if(m_onMouseEnterFunc.IsNotNull())
+            m_onMouseEnterFunc(this);
+    }
 
-    if(BITSET(m_eventStatus, MouseOver) && m_onHoverFunc.IsNotNull())
-        m_onHoverFunc(this);
+    if(BITSET(m_eventStatus, MouseExit))
+    {
+        OnMouseExit();
+        if(m_onMouseExitFunc.IsNotNull())
+            m_onMouseExitFunc(this);
+    }
 
+    if(BITSET(m_eventStatus, MouseOver))
+    {
+        OnMouseHover();
+        if(m_onHoverFunc.IsNotNull())
+            m_onHoverFunc(this);
+    }
+
+    OnUpdate(dt);
     if(m_onUpdate.IsNotNull())
         m_onUpdate(this);
     Draw();
     for(auto& i : m_children)
     {
-        i.second->Update(this);
+        i.second->Update(this, dt);
         i.second->Draw();
     }
 }
-//
-//Vector2 BaseComponent::GetChildPosition(BaseComponent* child)
-//{
-//    return Vector2(0,0);
-//}
+
+// Override these in derived classes to add internal functionality.
+void BaseComponent::OnMouseClick(const Vector2& mp){}
+void BaseComponent::OnMouseHover(){}
+void BaseComponent::OnMouseEnter(){}
+void BaseComponent::OnMouseExit(){}
+void BaseComponent::OnUpdate(float){}
