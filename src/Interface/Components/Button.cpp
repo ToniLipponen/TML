@@ -12,12 +12,6 @@ Button::Button(ui32 x, ui32 y, ui32 w, ui32 h)
     m_relSize = m_absSize;
 }
 
-bool Button::ContainsPoint(const Vector2 &p)
-{
-    return (p.x > m_absPos.x && p.x < (m_absPos.x + m_absSize.x)
-    && p.y > m_absPos.y && p.y < (m_absPos.y + m_absSize.y));
-}
-
 void Button::SetText(const std::string &str)
 {
     m_text = str;
@@ -35,5 +29,5 @@ void Button::Draw()
     else
         Renderer::DrawRect(m_absPos, m_absSize, m_pColor);
     Renderer::DrawText(m_text, m_absPos + (m_absSize * (2.f / 3.f)) - (size * (2.f / 3.f)), m_absSize.y  * (2.f / 3.f), BLACK);
-    Renderer::DrawGrid(m_absPos, m_absSize, 1, 1, m_sColor);
+    Renderer::DrawGrid(m_absPos, m_absSize, 1, 1, BLUE);
 }

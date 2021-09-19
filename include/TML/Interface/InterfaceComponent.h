@@ -12,11 +12,11 @@ namespace tml
         public:
             enum Event : ui32
             {
-                Click       = (1 << 2),
-                MouseEnter  = (1 << 3),
-                MouseExit   = (1 << 4),
-                MouseOver   = (1 << 5),
-                Drag        = (1 << 6)
+                Click       = (1 << 1),
+                MouseEnter  = (1 << 2),
+                MouseExit   = (1 << 3),
+                MouseOver   = (1 << 4),
+                Drag        = (1 << 5)
             };
             enum StateFlag : ui32
             {
@@ -41,9 +41,11 @@ namespace tml
             void SetOnUpdate(UIFunc function){ m_onUpdate           = function; }
             void AddChild(BaseComponent* component, const std::string& name = "");
             const BaseComponent* FindChild(const std::string& name) const; // DANGER! Returns nullptr if not found.
-            virtual bool ContainsPoint(const Vector2& p) = 0;
-            virtual void Update(BaseComponent* parent, float dt = (1.0f / 60.f));
+            virtual bool ContainsPoint(const Vector2& p);
+            virtual void Update(float dt = (1.0f / 60.f));
+            static BaseComponent* ActiveComponent;
         protected:
+            void _Update(float dt);
             virtual void Draw() = 0;
             // Internal events
             virtual void OnMouseClick(const Vector2& mousePos);
@@ -75,7 +77,8 @@ namespace tml
             // Visual
             float m_animSpeed = 2.f;
             Color m_pColor, m_sColor; // Primary and secondary color.
-            std::unordered_map<std::string, BaseComponent*> m_children;
+            std::pair<std::string, BaseComponent*> m_parent;
+            std::pair<std::string, BaseComponent*> m_child;
         };
     }
 }

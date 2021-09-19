@@ -126,8 +126,8 @@ void Text::Generate() noexcept
         m_indexData.push_back(count + 2);
         
         count += 4;
-        width = q.x1;
-        height = q.y1;
+        width = q.x1 - m_pos.x;
+        height = q.y1 - m_pos.y;
     }
     m_dimensions.x = Util::Min(width, m_dimensions.x);
     m_dimensions.y = Util::Min(height, m_dimensions.y);

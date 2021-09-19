@@ -39,11 +39,6 @@ void Slider::OnUpdate(float dt)
     if(m_target <= m_value)
         m_value = Util::Clamp(m_value -= dt * m_animSpeed * m_max, m_min, m_max);
 }
-bool Slider::ContainsPoint(const Vector2 &p)
-{
-    return (p.x > m_absPos.x && p.x < (m_absPos.x + m_absSize.x)
-            && p.y > m_absPos.y && p.y < (m_absPos.y + m_absSize.y));
-}
 
 void Slider::Draw()
 {
@@ -51,16 +46,26 @@ void Slider::Draw()
     {
         const Vector2 a = m_absPos + Vector2{m_thickness, m_thickness} / 2;
         const Vector2 b = a + Vector2(m_size - m_thickness / 2.f,0);
+        Renderer::DrawLine(a,b,m_thickness*1.1f,BLUE);
         Renderer::DrawLine(a,b,m_thickness,m_pColor);
-        Renderer::DrawLine(a,Util::Lerp(a,b,m_value / m_max),m_thickness,GREEN);
+        Renderer::DrawLine(a,Util::Lerp(a,b,m_value / m_max),m_thickness,BLUE);
+        if(ActiveComponent == this)
+            Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_thickness * 1.25f,RED);
+        else
+            Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_thickness * 1.25f,BLUE);
         Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_thickness * 1.2f,m_sColor);
     }
     else
     {
         const Vector2 a = m_absPos + Vector2(m_thickness, m_thickness) / 2.f;
         const Vector2 b = a + Vector2(0, m_size - m_thickness / 2.f);
+        Renderer::DrawLine(a,b,m_thickness*1.1f,BLUE);
         Renderer::DrawLine(a, b,m_thickness,m_pColor);
         Renderer::DrawLine(b, Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness,BLUE);
+        if(ActiveComponent == this)
+            Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness * 1.25f,RED);
+        else
+            Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness * 1.25f,BLUE);
         Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness * 1.2f,m_sColor);
     }
 }

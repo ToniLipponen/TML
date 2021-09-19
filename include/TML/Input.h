@@ -129,10 +129,11 @@ namespace tml {
         static void BeginString();
         static std::string EndString();
         static const std::string& GetString();
+        static i8 GetChar();
+        static ui32 GetKey();
         static bool IsKeyPressed(Key key);
         static bool IsKeyDown(Key key);
         static void Initialize();
-        static ui32 GetChar();
     };
 
     class Mouse {

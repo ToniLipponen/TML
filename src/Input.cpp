@@ -6,8 +6,8 @@
 #include <iostream>
 // Keycode and action
 
-static tml::i32 KEYBOARD_LAST_KEY = -1;
-static tml::ui32 KEYBOARD_CHAR = 0;
+static tml::ui32 KEYBOARD_LAST_KEY = -1;
+static tml::i8 KEYBOARD_CHAR = 0;
 static std::map<tml::i32, tml::i32> KEYS_MAP;
 static std::map<tml::i32, tml::i32> MOUSE_BUTTON_MAP;
 static std::string s_string;
@@ -16,7 +16,7 @@ static std::string s_string;
 static void char_callback(GLFWwindow* window, unsigned int code)
 {
     s_string.push_back(char(code));
-    KEYBOARD_CHAR = code;
+    KEYBOARD_CHAR = char(code);
 }
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -49,6 +49,18 @@ namespace tml {
     const std::string& Keyboard::GetString() {
         return s_string;
     }
+
+    i8 Keyboard::GetChar()
+    {
+        auto c = KEYBOARD_CHAR;
+        return c;
+    }
+    ui32 Keyboard::GetKey()
+    {
+        auto key = KEYBOARD_LAST_KEY;
+        KEYBOARD_LAST_KEY = -1;
+        return key;
+    }
     bool Keyboard::IsKeyPressed(Key key) {
         bool state = KEYS_MAP[key] == GLFW_PRESS;
         if(state)
@@ -66,13 +78,6 @@ namespace tml {
         glfwSetCharCallback(glfwGetCurrentContext(), char_callback);
         glfwSetKeyCallback(glfwGetCurrentContext(), key_callback);
         glfwSetMouseButtonCallback(glfwGetCurrentContext(), mouse_button_callback);
-    }
-
-    ui32 Keyboard::GetChar()
-    {
-        auto c = KEYBOARD_CHAR;
-        KEYBOARD_CHAR = 0;
-        return c;
     }
 
     Vector2 Mouse::GetPosition() {
