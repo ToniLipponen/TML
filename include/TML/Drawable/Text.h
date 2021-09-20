@@ -18,10 +18,10 @@ namespace tml
         void SetPosition(const Vector2 &pos) noexcept override;
         void SetSize(float s);
         void SetColor(const Color &color) noexcept override;
-        [[maybe_unused]] void SetString(std::string string);
+        void SetString(std::string string);
         void SetFont(const Font &font);
-        [[maybe_unused]] void SetSpacing(ui32 s);
-        [[maybe_unused]] inline Vector2 GetSize() const noexcept { return {m_width, m_height}; }
+        void SetSpacing(ui32 s);
+        inline Vector2 GetDimensions() const noexcept { return m_dimensions; }
         friend class Renderer;
 
     private:
@@ -30,7 +30,8 @@ namespace tml
         std::string m_string;
         std::vector<Vertex> m_vertexData;
         std::vector<ui32> m_indexData;
-        ui32 m_spacing = 1;
-        float m_width = 0, m_height = 0;
+        float m_lineSpacing = 0;
+        float m_kerning = 0;
+        Vector2 m_dimensions;
     };
 }

@@ -1,8 +1,10 @@
 #include <TML/Drawable/Text.h>
+#include <TML/Utilities/Utilities.h>
 #include <stb/stb_truetype.h>
 #include "internal/Default_font.h"
 
 using namespace tml;
+Text* DEFAULT_TEXT;
 
 Text::Text()
 {
@@ -62,7 +64,7 @@ void Text::SetColor(const Color& color) noexcept
     Generate();
 }
 
-[[maybe_unused]] void Text::SetString(std::string string)
+void Text::SetString(std::string string)
 {
     m_string = std::move(string);
     Generate();
@@ -74,30 +76,43 @@ void Text::SetFont(const Font &font)
     Generate();
 }
 
-[[maybe_unused]] void Text::SetSpacing(ui32 s)
+void Text::SetSpacing(ui32 s)
 {
-    m_spacing = s;
+    m_lineSpacing = s;
     Generate();
 }
 
-constexpr void NormalizeQuad(stbtt_aligned_quad& q, float s, float x, float y) noexcept
+
+// First normalizes the quad coordinates, then scales them to size and translates them to xy.
+inline constexpr void NormalizeQuad(stbtt_aligned_quad& q, float s, float x, float y) noexcept
 {
-    (q.x0 *= (s / 256.0)) += x;
-    (q.x1 *= (s / 256.0)) += x;
-    (q.y0 *= (s / 256.0)) += y;
-    (q.y1 *= (s / 256.0)) += y;
+    (q.x0 = (q.x0 * (s / 128.0))) += x;
+    (q.x1 = (q.x1 * (s / 128.0))) += x;
+    (q.y0 = (q.y0 * (s / 128.0))) += y - (s / 3.f);
+    (q.y1 = (q.y1 * (s / 128.0))) += y - (s / 3.f);
 }
 
 void Text::Generate() noexcept
 {
-    float x = 0, y = 256.f;
-    int count = 0;
+    m_dimensions = {0,m_size.y};
+    float x = 0, y = 128.f;
+    float width = 0, height = 0;
+    ui32 count = 0;
     m_vertexData.clear();
     m_indexData.clear();
-    stbtt_aligned_quad q;
     for(auto c : m_string)
     {
-        stbtt_GetBakedQuad((stbtt_bakedchar*)m_font.m_cdata, 2048, 2048,int(c-32), &x, &y,&q, 1);
+        stbtt_aligned_quad q;
+        if(c == '\n')
+        {
+            m_dimensions.x = Util::Min(width, m_dimensions.x);
+            m_dimensions.y = Util::Min(height, m_dimensions.y);
+            y += 128.f;
+            x = 0;
+            width = 0;
+            continue;
+        }
+        stbtt_GetBakedQuad((stbtt_bakedchar*)m_font.m_cdata, 1024, 1024,int(c-32), &x, &y,&q, 1);
         NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
         m_vertexData.push_back({{q.x0, q.y0}, {q.s0, q.t0}, m_color.Hex(), 0, Vertex::TEXT});
         m_vertexData.push_back({{q.x1, q.y0}, {q.s1, q.t0}, m_color.Hex(), 0, Vertex::TEXT});
@@ -113,6 +128,9 @@ void Text::Generate() noexcept
         m_indexData.push_back(count + 2);
         
         count += 4;
+        width = q.x1 - m_pos.x;
+        height = q.y1 - m_pos.y;
     }
-    m_width     = x;
+    m_dimensions.x = Util::Min(width, m_dimensions.x);
+    m_dimensions.y = Util::Min(height, m_dimensions.y);
 }

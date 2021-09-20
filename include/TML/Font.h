@@ -11,6 +11,7 @@ namespace tml {
     class Font {
     public:
         Font();
+        ~Font();
         void LoadFromFile(const std::string &filename);
         void LoadFromMemory(const ui8 *data, ui32 size);
         friend class Text;

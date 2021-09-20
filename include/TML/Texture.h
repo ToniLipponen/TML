@@ -40,7 +40,7 @@ namespace tml {
         }
     private:
         ClampMode m_clampmode = ClampToBorder;
-        Filter m_minfilter = LinearMipmapNearest;
+        Filter m_minfilter = LinearMipmapLinear;
         Filter m_magfilter = Linear;
         ui32 m_id;
         i32 m_width, m_height, m_bpp;
