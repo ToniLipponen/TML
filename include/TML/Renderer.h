@@ -15,7 +15,7 @@ namespace tml {
         static void SetCamera(Camera& cam);
         static void ResetCamera();
         static void Clear();
-        static void BeginBatch();
+        static void BeginBatch(); // Maybe make this private?
         static void Draw(Rectangle &rectangle);
         static void Draw(Circle &circle);
         static void Draw(Sprite &sprite);

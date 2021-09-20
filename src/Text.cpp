@@ -82,7 +82,9 @@ void Text::SetSpacing(ui32 s)
     Generate();
 }
 
-constexpr void NormalizeQuad(stbtt_aligned_quad& q, float s, float x, float y) noexcept
+
+// First normalizes the quad coordinates, then scales them to size and translates them to xy.
+inline constexpr void NormalizeQuad(stbtt_aligned_quad& q, float s, float x, float y) noexcept
 {
     (q.x0 = (q.x0 * (s / 128.0))) += x;
     (q.x1 = (q.x1 * (s / 128.0))) += x;
