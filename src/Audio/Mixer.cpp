@@ -114,5 +114,10 @@ namespace tml
 //            OUTPUT_DEVICE.pUserData = snd->GetDecoder();
         }
 
+        void RemoveSound(ui32 id)
+        {
+            s_sounds.erase(id);
+        }
+
     }
 }

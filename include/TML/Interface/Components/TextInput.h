@@ -13,9 +13,10 @@ namespace tml
             std::string GetValue() const { return m_value; }
         private:
             virtual void OnMouseClick(const Vector2& p) override;
-            virtual void OnUpdate(float dt);
-            void Draw();
+            virtual void OnUpdate(float dt) override;
+            void Draw() override;
             std::string m_value;
+            float m_repeatTimer;
         };
     }
 }

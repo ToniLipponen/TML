@@ -23,11 +23,10 @@ void Button::Draw()
     DEFAULT_TEXT->SetString(m_text);
     DEFAULT_TEXT->SetSize(m_absSize.y * (2.f / 3.f));
     Vector2 size = DEFAULT_TEXT->GetDimensions();
-
     if((m_eventStatus & Click) > 0)
-        Renderer::DrawRect(m_absPos, m_absSize, RED);
+        Renderer::DrawRect(m_absPos, m_absSize, m_activeColor);
     else
         Renderer::DrawRect(m_absPos, m_absSize, m_pColor);
     Renderer::DrawText(m_text, m_absPos + (m_absSize * (2.f / 3.f)) - (size * (2.f / 3.f)), m_absSize.y  * (2.f / 3.f), BLACK);
-    Renderer::DrawGrid(m_absPos, m_absSize, 1, 1, BLUE);
+    Renderer::DrawGrid(m_absPos, m_absSize, 1, 1, m_sColor,1);
 }

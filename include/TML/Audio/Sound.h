@@ -17,7 +17,6 @@ namespace tml
         void Pause();
         void Resume();
         void SetLooping(bool loop);
-        void SetPitch(float pitch);
         void SetVolume(float volume);
         float GetVolume() const { return m_volume;           }
         bool IsPlaying() const  { return m_state == Playing; }

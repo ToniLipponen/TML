@@ -1,5 +1,6 @@
 #include <TML/Interface/Components/TextInput.h>
 #include <TML/Renderer.h>
+#include <TML/IO/Clipboard.h>
 
 // Sets a given bit
 #define SETBIT(value, bit, state) (value ^= (-state ^ value) & (1UL << bit))
@@ -25,10 +26,20 @@ void TextInput::OnMouseClick(const Vector2 &p)
 
 void TextInput::OnUpdate(float dt)
 {
+    m_repeatTimer = Util::Max(m_repeatTimer += dt, 0.11f);
     if(ActiveComponent == this)
     {
-        if(Keyboard::IsKeyPressed(Keyboard::KEY_BACKSPACE) && !m_value.empty())
+        if(Keyboard::IsKeyDown(Keyboard::KEY_LEFT_CONTROL)
+        && Keyboard::IsKeyDown(Keyboard::KEY_V)
+        && !Clipboard::IsEmpty())
+            m_value = Clipboard::GetString();
+        else if(Keyboard::IsKeyDown(Keyboard::KEY_BACKSPACE)
+        && !m_value.empty()
+        && m_repeatTimer > 0.1f)
+        {
             m_value.pop_back();
+            m_repeatTimer = 0;
+        }
         else
             m_value += Keyboard::EndString();
     }

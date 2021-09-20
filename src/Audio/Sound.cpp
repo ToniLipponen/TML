@@ -2,9 +2,9 @@
 #include <miniaudio/miniaudio.h>
 #include "Mixer.h"
 #include "../internal/Assert.h"
-#include <fstream>
 
-namespace tml {
+namespace tml
+{
     extern ma_decoder_config s_decoder_config;
     volatile bool AudioInitialized = Mixer::Init();
     ui32 Sound::s_soundCount = 0;
@@ -23,8 +23,20 @@ namespace tml {
         m_id = s_soundCount++;
     }
 
+    Sound::~Sound()
+    {
+        Mixer::RemoveSound(m_id);
+        ma_decoder_uninit((ma_decoder*)m_decoder);
+        delete (ma_decoder*)m_decoder;
+    }
+
     bool Sound::LoadFromFile(const std::string &filename)
     {
+        auto len = ma_decoder_get_length_in_pcm_frames((ma_decoder*)m_decoder);
+        tml::Logger::InfoMessage("Sound len = %d", len);
+        m_state = Stopped;
+        Mixer::RemoveSound(m_id);
+        ma_decoder_uninit((ma_decoder*)m_decoder);
         ma_result result = ma_decoder_init_file(filename.c_str(), &s_decoder_config, (ma_decoder*)m_decoder);
         if (result != MA_SUCCESS)
         {
@@ -34,12 +46,6 @@ namespace tml {
         return true;
     }
 
-    Sound::~Sound()
-    {
-        ma_decoder_uninit((ma_decoder*)m_decoder);
-        delete (ma_decoder*)m_decoder;
-    }
-
     void Sound::Play()
     {
         m_state = Playing;
@@ -47,6 +53,7 @@ namespace tml {
     }
 
     void Sound::Stop() {
+        Mixer::RemoveSound(m_id);
         ma_decoder_seek_to_pcm_frame((ma_decoder*)m_decoder, 0);
         m_state = Stopped;
     }
@@ -61,10 +68,6 @@ namespace tml {
 
     void Sound::SetLooping(bool loop) {
         m_looping = loop;
-    }
-
-    void Sound::SetPitch(float pitch) {
-
     }
 
     void Sound::SetVolume(float volume) {

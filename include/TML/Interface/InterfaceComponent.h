@@ -43,6 +43,8 @@ namespace tml
             const BaseComponent* FindChild(const std::string& name) const; // DANGER! Returns nullptr if not found.
             virtual bool ContainsPoint(const Vector2& p);
             virtual void Update(float dt = (1.0f / 60.f));
+
+            Vector2 GetBounds();
             static BaseComponent* ActiveComponent;
         protected:
             void _Update(float dt);
@@ -65,20 +67,23 @@ namespace tml
             ui32 m_state = 0;
 
             Vector2 m_absPos = {0,0},   // Actual position
-            m_absSize = {0, 0},         // Actual size
-            m_relPos = {0,0},           // Position relative to the parent
-            m_relSize = {0,0};          // Size relative to the parent
+            m_absSize        = {0,0},   // Actual size
+            m_relPos         = {0,0},   // Position relative to the parent
+            m_relSize        = {0,0};   // Size relative to the parent
 
             // Parent object checks these, and the children can check the parents m_mousePos or m_mouseClicked.
-            // This is to avoid polling mouse position and click state on each child object.
+            // This is to avoid polling mouse position and click state on each node.
             Vector2 m_mousePos;
             bool m_mouseClicked = false;
 
             // Visual
             float m_animSpeed = 2.f;
-            Color m_pColor, m_sColor; // Primary and secondary color.
-            std::pair<std::string, BaseComponent*> m_parent;
-            std::pair<std::string, BaseComponent*> m_child;
+            Color m_pColor, m_sColor, m_activeColor; // Primary and secondary color.
+
+            /**************************************************/
+            BaseComponent* m_parent = nullptr;
+            BaseComponent* m_child = nullptr;
+            std::string m_name; // This is for finding a specific component from the list.
         };
     }
 }

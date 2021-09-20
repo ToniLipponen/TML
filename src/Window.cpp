@@ -12,6 +12,7 @@
 #include "internal/Default_icon.h"
 #include "internal/Default_cursor.h"
 
+extern void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);
 
 void WindowResizeCallback(__attribute__((unused)) GLFWwindow* f, int x, int y)
 {
@@ -37,6 +38,7 @@ namespace tml {
         glfwMakeContextCurrent(reinterpret_cast<GLFWwindow *>(m_handle));
         glfwShowWindow(reinterpret_cast<GLFWwindow *>(m_handle));
         glfwSetWindowSizeCallback(reinterpret_cast<GLFWwindow *>(m_handle), WindowResizeCallback);
+        glfwSetDropCallback(reinterpret_cast<GLFWwindow *>(m_handle), DragAndDropCallback);
         Keyboard::Initialize();
 
         GLFWimage img, img2;

@@ -11,5 +11,6 @@ namespace tml
         bool Init();
         void SetGain(float gain);
         void AddSound(ui32 id, Sound* snd);
+        void RemoveSound(ui32 id);
     };
 }

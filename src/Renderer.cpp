@@ -16,7 +16,7 @@ const static std::string VERTEX_STRING =
 R"END(
 #version 450 core
 layout (location = 0) in vec2 Pos;
-layout (location = 1) in highp vec2 UV;
+layout (location = 1) in vec2 UV;
 layout (location = 2) in uint Color;
 layout (location = 3) in uint Tex;
 layout (location = 4) in uint Type;
@@ -39,7 +39,7 @@ void main()
         int((Color & 0xff000000) >> 24),
         int((Color & 0x00ff0000) >> 16),
         int((Color & 0x0000ff00) >> 8),
-        int((Color & 0x000000ff)) * 0.003921568);
+        int((Color & 0x000000ff))) * 0.003921568;
     vUV = UV;
     vTexID = Tex;
     vType = Type;
@@ -343,10 +343,10 @@ void Renderer::DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Col
     const float dx = b.x - a.x;
     const float dy = b.y - a.y;
 
-    s_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness * 0.5f) + a, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
-    s_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness * 0.5f) + a, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
-    s_vertexData.push_back({Vector2(-dy, dx).Normalized() * (thickness * 0.5f) + b, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
-    s_vertexData.push_back({Vector2(dy, -dx).Normalized() * (thickness * 0.5f) + b, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({(Vector2(-dy, dx).Normalized() * thickness * 0.5f) + a, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({(Vector2(dy, -dx).Normalized() * thickness * 0.5f) + a, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({(Vector2(-dy, dx).Normalized() * thickness * 0.5f) + b, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({(Vector2(dy, -dx).Normalized() * thickness * 0.5f) + b, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
 
     s_indexData.push_back(currentElements + 0);
     s_indexData.push_back(currentElements + 1);
@@ -357,8 +357,8 @@ void Renderer::DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Col
     s_indexData.push_back(currentElements + 2);
     if(rounded)
     {
-        Renderer::DrawCircle(a, thickness/2, color);
-        Renderer::DrawCircle(b, thickness/2, color);
+        Renderer::DrawCircle(a, thickness * 0.5f, color);
+        Renderer::DrawCircle(b, thickness * 0.5f, color);
     }
 }
 

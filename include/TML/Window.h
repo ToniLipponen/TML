@@ -1,6 +1,6 @@
 #pragma once
 #include "Types.h"
-#include "Input.h"
+#include "TML/IO/Input.h"
 #include <string>
 
 namespace tml {
