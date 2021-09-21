@@ -9,6 +9,7 @@
 <li>Video playback support using mpeg-1</li>
 <li>Custom GUI implementation</li><br>
 
-Simple GUI app:
+Example GUI app:
 
-![image](https://user-images.githubusercontent.com/86045205/134245453-6712b38e-7f81-4073-8916-6d9391e08861.png)
+https://user-images.githubusercontent.com/86045205/134245816-cbd7b539-4f22-44a5-ac87-f27a9991320b.mp4
+
