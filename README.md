@@ -7,3 +7,9 @@
 <li>Everything batch rendered</li>
 <li>Simple audio interface</li>
 <li>Video playback support using mpeg-1</li>
+<li>Custom GUI implementation</li>
+
+
+Simple GUI app example:
+https://user-images.githubusercontent.com/86045205/134241976-d4103949-30b4-4255-989a-e5840f61aff9.mp4
+
