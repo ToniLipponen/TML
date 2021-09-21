@@ -34,10 +34,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-    if(MOUSE_BUTTON_MAP[button] == GLFW_PRESS && action == GLFW_PRESS)
-        MOUSE_BUTTON_MAP[button] = MOUSE_CLICK;
-    else
-        MOUSE_BUTTON_MAP[button] = action;
+    MOUSE_BUTTON_MAP[button] = action;
 }
 
 namespace tml {
@@ -45,16 +42,13 @@ namespace tml {
     {
         s_string.clear();
     }
-
     std::string Keyboard::EndString()
     {
         std::string s = s_string;
         s_string.clear();
         return s;
     }
-
-    const std::string& Keyboard::GetString()
-    {
+    const std::string& Keyboard::GetString() {
         return s_string;
     }
 
@@ -69,37 +63,32 @@ namespace tml {
         KEYBOARD_LAST_KEY = -1;
         return key;
     }
-    bool Keyboard::IsKeyPressed(Key key)
-    {
+    bool Keyboard::IsKeyPressed(Key key) {
         bool state = KEYS_MAP[key] == GLFW_PRESS;
         if(state)
             KEYS_MAP[key] = GLFW_RELEASE;
         return state;
     }
 
-    bool Keyboard::IsKeyDown(Key key)
-    {
+    bool Keyboard::IsKeyDown(Key key) {
         return KEYS_MAP[key] == GLFW_REPEAT || KEYS_MAP[key] == GLFW_PRESS;
     }
 
-    void Keyboard::Initialize() // Initializes input
+    void Keyboard::Initialize()
     {
+        glfwSetInputMode(glfwGetCurrentContext(), GLFW_STICKY_KEYS, GLFW_TRUE);
         glfwSetCharCallback(glfwGetCurrentContext(), char_callback);
         glfwSetKeyCallback(glfwGetCurrentContext(), key_callback);
-
         glfwSetMouseButtonCallback(glfwGetCurrentContext(), mouse_button_callback);
-        glfwSetScrollCallback(glfwGetCurrentContext(), scroll_callback);
     }
 
-    Vector2 Mouse::GetPosition()
-    {
+    Vector2 Mouse::GetPosition() {
         double x = 0, y = 0;
         glfwGetCursorPos(glfwGetCurrentContext(), &x, &y);
         return {static_cast<float>(x), static_cast<float>(y)};
     }
 
-    bool Mouse::ButtonClicked(Button button)
-    {
+    bool Mouse::ButtonClicked(Button button) {
         bool state = MOUSE_BUTTON_MAP[button] == GLFW_PRESS;
         if(state)
             MOUSE_BUTTON_MAP[button] = GLFW_RELEASE;
@@ -108,11 +97,10 @@ namespace tml {
 
     bool Mouse::ButtonDown(Button button)
     {
-        return MOUSE_BUTTON_MAP[button] = GLFW_PRESS;
+        return glfwGetMouseButton(glfwGetCurrentContext(), button) == GLFW_PRESS;
     }
 
-    double Mouse::GetScrollValue()
-    {
-        return s_mouseScrollValue;
+    double Mouse::GetScrollValue() {
+        return 0;
     }
 };

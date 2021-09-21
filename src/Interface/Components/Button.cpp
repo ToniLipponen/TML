@@ -1,5 +1,6 @@
 #include <TML/Interface/Components/Button.h>
 #include <TML/Renderer.h>
+#include <iostream>
 
 using namespace tml::Interface;
 extern tml::Text* DEFAULT_TEXT;
@@ -23,10 +24,13 @@ void Button::Draw()
     DEFAULT_TEXT->SetString(m_text);
     DEFAULT_TEXT->SetSize(m_textSize);
     Vector2 size = DEFAULT_TEXT->GetDimensions();
-    if((m_eventStatus & Click) > 0)
+    if((m_eventStatus & MouseDown) > 0)
         Renderer::DrawRect(m_absPos, m_absSize, m_activeColor);
     else
         Renderer::DrawRect(m_absPos, m_absSize, m_pColor);
     Renderer::DrawText(m_text, m_absPos + (m_absSize / 2.f) - (size / 2.f), m_textSize, BLACK);
-    Renderer::DrawGrid(m_absPos, m_absSize, 1, 1, m_sColor,1);
+    if(ActiveComponent == this)
+        Renderer::DrawGrid(m_absPos, m_absSize, 1, 1, m_activeColor,2);
+    else
+        Renderer::DrawGrid(m_absPos, m_absSize, 1, 1, m_sColor,2);
 }

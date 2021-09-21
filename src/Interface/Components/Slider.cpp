@@ -32,6 +32,13 @@ void Slider::SetValue(float value)
 
 void Slider::OnMouseClick(const Vector2& mp)
 {
+//    if(m_type == Horizontal)
+//        m_target = (mp.x - m_absPos.x) / m_absSize.x * m_max;
+//    else
+//        m_target = m_max - ((mp.y - m_absPos.y) / m_absSize.y * m_max);
+}
+void Slider::OnMouseDown(const Vector2& mp)
+{
     if(m_type == Horizontal)
         m_target = (mp.x - m_absPos.x) / m_absSize.x * m_max;
     else
@@ -50,7 +57,7 @@ void Slider::Draw()
     if(m_type == Horizontal)
     {
         const Vector2 a = m_absPos + Vector2{m_thickness, m_thickness} / 2;
-        const Vector2 b = a + Vector2(m_size - m_thickness / 2.f,0);
+        const Vector2 b = a + Vector2(m_size - m_thickness,0);
         Renderer::DrawLine(a,b,m_thickness*1.1f,m_sColor);
         Renderer::DrawLine(a,b,m_thickness,m_pColor);
         Renderer::DrawLine(a,Util::Lerp(a,b,m_value / m_max),m_thickness,m_sColor);
@@ -63,7 +70,7 @@ void Slider::Draw()
     else
     {
         const Vector2 a = m_absPos + Vector2(m_thickness, m_thickness) / 2.f;
-        const Vector2 b = a + Vector2(0, m_size - m_thickness / 2.f);
+        const Vector2 b = a + Vector2(0, m_size - m_thickness);
         Renderer::DrawLine(a,b,m_thickness*1.1f,m_sColor);
         Renderer::DrawLine(a, b,m_thickness,m_pColor);
         Renderer::DrawLine(b, Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness,m_sColor);

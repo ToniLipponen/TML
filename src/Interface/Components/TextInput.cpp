@@ -53,7 +53,7 @@ void TextInput::Draw()
 //    Renderer::DrawText(m_value, m_absPos, m_absSize.y, BLACK);
     Renderer::DrawTextCropped(m_value, m_absPos,m_absSize.y, BLACK, m_absPos, m_absPos + m_absSize);
     if(ActiveComponent == this)
-        Renderer::DrawGrid(m_absPos, m_absSize, 1, 1,0xaaaaffff);
+        Renderer::DrawGrid(m_absPos, m_absSize, 1, 1,m_activeColor, 2);
     else
-        Renderer::DrawGrid(m_absPos, m_absSize, 1, 1,m_sColor);
+        Renderer::DrawGrid(m_absPos, m_absSize, 1, 1,m_sColor,2);
 }

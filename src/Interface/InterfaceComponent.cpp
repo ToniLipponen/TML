@@ -1,10 +1,11 @@
 #include <TML/Interface/InterfaceComponent.h>
 #include <TML/IO/Input.h>
+#include <iostream>
 
 // Sets a given bit
 #define SETBIT(value, bit, state) (value ^= (-state ^ value) & (1UL << bit))
 // Checks whether a bit is set or not
-#define BITSET(value, bit) ((value & bit) > 0)
+#define BITSET(value, bit) ((value & bit) != 0)
 
 using namespace tml::Interface;
 BaseComponent* BaseComponent::ActiveComponent = nullptr;
@@ -12,7 +13,7 @@ BaseComponent::BaseComponent()
 {
     m_pColor = WHITE;
     m_sColor = 0xc7c7c7ff;
-    m_activeColor = Color(100,100,255, 255);
+    m_activeColor = 0x4d8be4ff;
     SETBIT(m_state, 1, 1);
 }
 
@@ -96,8 +97,9 @@ void BaseComponent::_Update(float dt)
         // TODO: Fix events checking
         m_mousePos = Mouse::GetPosition();
         m_mouseClicked = Mouse::ButtonClicked(Mouse::Left);
-
         bool oldMouseOver = BITSET(m_eventStatus, MouseOver);
+
+        SETBIT(m_eventStatus, 6, int(ContainsPoint(m_mousePos) && Mouse::ButtonDown(Mouse::Left)));
         SETBIT(m_eventStatus, 4, ContainsPoint(m_mousePos));
         SETBIT(m_eventStatus, 2, (!BITSET(m_eventStatus, MouseEnter) && BITSET(m_eventStatus, MouseOver)));
         SETBIT(m_eventStatus, 3, (oldMouseOver && !BITSET(m_eventStatus, MouseOver)));
@@ -108,6 +110,8 @@ void BaseComponent::_Update(float dt)
         m_mousePos = m_child->m_mousePos;
         m_mouseClicked = m_child->m_mouseClicked;
         bool oldMouseOver = BITSET(m_eventStatus, MouseOver);
+
+        SETBIT(m_eventStatus, 6, int(ContainsPoint(m_mousePos) && Mouse::ButtonDown(Mouse::Left)));
         SETBIT(m_eventStatus, 4, ContainsPoint(m_child->m_mousePos));
         SETBIT(m_eventStatus, 2, (!BITSET(m_eventStatus, MouseEnter) && BITSET(m_eventStatus, MouseOver)));
         SETBIT(m_eventStatus, 3, (oldMouseOver && !BITSET(m_eventStatus, MouseOver)));
@@ -121,7 +125,12 @@ void BaseComponent::_Update(float dt)
         if(m_onClickFunc.IsNotNull())
             m_onClickFunc(this);
     }
-
+    else if(BITSET(m_eventStatus, MouseDown))
+    {
+        OnMouseDown(m_mousePos);
+        if(m_onMouseDownFunc.IsNotNull())
+            m_onMouseDownFunc(this);
+    }
     if(BITSET(m_eventStatus, MouseEnter))
     {
         OnMouseEnter();
@@ -152,6 +161,7 @@ void BaseComponent::_Update(float dt)
 
 // Override these in derived classes to add internal functionality.
 void BaseComponent::OnMouseClick(const Vector2& mp){}
+void BaseComponent::OnMouseDown(const Vector2& mousePos){}
 void BaseComponent::OnMouseHover(){}
 void BaseComponent::OnMouseEnter(){}
 void BaseComponent::OnMouseExit(){}

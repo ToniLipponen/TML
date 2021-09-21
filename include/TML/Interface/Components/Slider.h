@@ -15,6 +15,7 @@ namespace tml
             float GetValue() const { return m_value; }
         private:
             virtual void OnMouseClick(const Vector2& mp) override;
+            virtual void OnMouseDown(const Vector2& mp) override;
             virtual void OnUpdate(float dt);
             void Draw();
             float m_min, m_max, m_value, m_target;

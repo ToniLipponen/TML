@@ -79,9 +79,12 @@ void Listbox::Draw()
     for(int i = 0; i < m_values.size(); i++)
     {
         if(i == m_selectedIndex)
-            Renderer::DrawRect(m_absPos + Vector2(5, i * 20 - m_scrollDist), {m_absSize.x - 10, 20.f}, m_activeColor);
+            Renderer::DrawRect(m_absPos + Vector2(0, i * 20 - m_scrollDist), {m_absSize.x, 20.f}, m_activeColor);
         Renderer::DrawTextCropped(m_values.at(i), m_absPos + Vector2(5, i * 20 - m_scrollDist),20,
                                   BLACK, m_absPos, m_absPos + m_absSize);
     }
-    Renderer::DrawGrid(m_absPos, m_absSize, 1, 1, m_sColor);
+    if(ActiveComponent == this)
+        Renderer::DrawGrid(m_absPos, m_absSize, 1, 1, m_activeColor, 2);
+    else
+        Renderer::DrawGrid(m_absPos, m_absSize, 1, 1, m_sColor, 2);
 }

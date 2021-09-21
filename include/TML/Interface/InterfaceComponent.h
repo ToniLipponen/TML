@@ -16,7 +16,8 @@ namespace tml
                 MouseEnter  = (1 << 2),
                 MouseExit   = (1 << 3),
                 MouseOver   = (1 << 4),
-                Drag        = (1 << 5)
+                Drag        = (1 << 5),
+                MouseDown   = (1 << 6)
             };
             enum StateFlag : ui32
             {
@@ -33,12 +34,13 @@ namespace tml
             void UnFocus();
             void Enable();
             void Disable();
-            void SetOnClick(UIFunc function) { m_onClickFunc        = function; }
-            void SetOnHover(UIFunc function) { m_onHoverFunc        = function; }
-            void SetOnEnter(UIFunc function) { m_onMouseEnterFunc   = function; }
-            void SetOnExit(UIFunc function)  { m_onMouseExitFunc    = function; }
-            void SetOnDrag(UIFunc function)  { m_onDragFunc         = function; }
-            void SetOnUpdate(UIFunc function){ m_onUpdate           = function; }
+            void SetOnClick(UIFunc function)    { m_onClickFunc        = function; }
+            void SetOnMouseDown(UIFunc function){ m_onMouseDownFunc    = function; }
+            void SetOnHover(UIFunc function)    { m_onHoverFunc        = function; }
+            void SetOnEnter(UIFunc function)    { m_onMouseEnterFunc   = function; }
+            void SetOnExit(UIFunc function)     { m_onMouseExitFunc    = function; }
+            void SetOnDrag(UIFunc function)     { m_onDragFunc         = function; }
+            void SetOnUpdate(UIFunc function)   { m_onUpdate           = function; }
             void AddChild(BaseComponent* component, const std::string& name = "");
             const BaseComponent* FindChild(const std::string& name) const; // DANGER! Returns nullptr if not found.
             const BaseComponent* GetHead() const;
@@ -52,12 +54,14 @@ namespace tml
             virtual void Draw() = 0;
             // Internal events
             virtual void OnMouseClick(const Vector2& mousePos);
+            virtual void OnMouseDown(const Vector2& mousePos);
             virtual void OnMouseHover();
             virtual void OnMouseEnter();
             virtual void OnMouseExit();
             virtual void OnUpdate(float dt);
 
             UIFunc m_onClickFunc;
+            UIFunc m_onMouseDownFunc;
             UIFunc m_onHoverFunc;
             UIFunc m_onMouseEnterFunc;
             UIFunc m_onMouseExitFunc;
