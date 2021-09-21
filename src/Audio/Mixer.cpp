@@ -67,7 +67,6 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
                 if(frames < frameCount)
                 {
                     sound.second->Stop();
-//                    s_sounds.erase(sound.first);
                 }
             }
         }

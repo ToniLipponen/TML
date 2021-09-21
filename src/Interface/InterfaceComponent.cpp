@@ -64,6 +64,13 @@ const BaseComponent* BaseComponent::FindChild(const std::string& name) const
         return m_child->FindChild(name);
 }
 
+const BaseComponent* BaseComponent::GetHead() const
+{
+    if(m_parent)
+        return m_parent->GetHead();
+    return this;
+}
+
 bool BaseComponent::ContainsPoint(const Vector2 &p)
 {
     return (p.x > m_absPos.x && p.x < (m_absPos.x + m_absSize.x)

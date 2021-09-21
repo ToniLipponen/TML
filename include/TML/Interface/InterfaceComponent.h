@@ -41,6 +41,7 @@ namespace tml
             void SetOnUpdate(UIFunc function){ m_onUpdate           = function; }
             void AddChild(BaseComponent* component, const std::string& name = "");
             const BaseComponent* FindChild(const std::string& name) const; // DANGER! Returns nullptr if not found.
+            const BaseComponent* GetHead() const;
             virtual bool ContainsPoint(const Vector2& p);
             virtual void Update(float dt = (1.0f / 60.f));
 

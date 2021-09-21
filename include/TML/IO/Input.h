@@ -143,5 +143,6 @@ namespace tml {
         static Vector2 GetPosition();
         static bool ButtonClicked(Button button);
         static bool ButtonDown(Button button);
+        static double GetScrollValue();
     };
 };

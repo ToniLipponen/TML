@@ -32,8 +32,6 @@ namespace tml
 
     bool Sound::LoadFromFile(const std::string &filename)
     {
-        auto len = ma_decoder_get_length_in_pcm_frames((ma_decoder*)m_decoder);
-        tml::Logger::InfoMessage("Sound len = %d", len);
         m_state = Stopped;
         Mixer::RemoveSound(m_id);
         ma_decoder_uninit((ma_decoder*)m_decoder);
@@ -53,7 +51,7 @@ namespace tml
     }
 
     void Sound::Stop() {
-        Mixer::RemoveSound(m_id);
+//        Mixer::RemoveSound(m_id); // Currently causes a segfault
         ma_decoder_seek_to_pcm_frame((ma_decoder*)m_decoder, 0);
         m_state = Stopped;
     }

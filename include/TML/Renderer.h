@@ -40,11 +40,22 @@ namespace tml {
         static void
         DrawBezier(const Vector2 &a, const Vector2 &cp, const Vector2 &b, float thickness, const Color &color,
                    bool rounded = true, float step = 0.01f);
+
         // @brief Draws a grid. The rows and columns mean how many cells the grid should contain horizontally and vertically.
         static void DrawGrid(const Vector2& top_left, const Vector2& size, ui32 rows, ui32 columns,
                              const Color& color, float thickness = 1.f, bool rounded = false);
+
         static void DrawTexture(Texture& tex, const Vector2& pos, const Vector2& size);
-        static void DrawText(const std::string& text, const Vector2& pos, float size, const Color& color = WHITE);
+
+        static void
+        DrawText(const std::string& text, const Vector2& pos, float size, const Color& color = WHITE);
+
+        // @brief Draws text within given area. Anything outside this area is discarded.
+        // NOT WORKING RIGHT AT THE MOMENT.
+        // TODO: Fix
+        static void
+        DrawTextCropped(const std::string& text, const Vector2& pos, float size, const Color& color,
+                                    const Vector2& topLeft, const Vector2& bottomRight);
         static void EndBatch();
         static int batch_count;
 

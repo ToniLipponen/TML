@@ -50,9 +50,10 @@ void TextInput::Draw()
     DEFAULT_TEXT->SetPosition(m_absPos);
     DEFAULT_TEXT->SetString(m_value);
     Renderer::DrawRect(m_absPos, m_absSize, m_pColor);
-    Renderer::DrawText(m_value, m_absPos, m_absSize.y, BLACK);
+//    Renderer::DrawText(m_value, m_absPos, m_absSize.y, BLACK);
+    Renderer::DrawTextCropped(m_value, m_absPos,m_absSize.y, BLACK, m_absPos, m_absPos + m_absSize);
     if(ActiveComponent == this)
-        Renderer::DrawGrid(m_absPos, m_absSize, 1, 1,RED);
+        Renderer::DrawGrid(m_absPos, m_absSize, 1, 1,0xaaaaffff);
     else
-        Renderer::DrawGrid(m_absPos, m_absSize, 1, 1,BLUE);
+        Renderer::DrawGrid(m_absPos, m_absSize, 1, 1,m_sColor);
 }

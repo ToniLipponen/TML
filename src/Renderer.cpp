@@ -230,8 +230,6 @@ bool Renderer::Init()
         glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageCallback(gl_message_callback, nullptr);
     #endif
-    for(i32 i = 0; i < MAX_TEXTURE_COUNT; i++)
-        GL_CALL(s_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i));
     return true;
 }
 
@@ -371,14 +369,13 @@ void Renderer::p_DrawRect(const Vector2& pos, const Vector2& dimensions, const C
         currentElements = 0;
     }
 
-    const Color c = color;
     Vector2 origin = {(pos.x + pos.x + dimensions.x) * 0.5f,
                       (pos.y + pos.y + dimensions.y) * 0.5f};
     // Clean this up
-    s_vertexData.push_back({Util::Rotate(origin, pos, rotation), Vector2{0, 0}, c.Hex(), 0, Vertex::RECTANGLE});
-    s_vertexData.push_back({Util::Rotate(origin, pos + Vector2{dimensions.x, 0.0f}, rotation), Vector2{1, 0},c.Hex(), 0, Vertex::RECTANGLE});
-    s_vertexData.push_back({Util::Rotate(origin, pos + Vector2{0.0f, dimensions.y}, rotation), Vector2{0, 1},c.Hex(), 0, Vertex::RECTANGLE});
-    s_vertexData.push_back({Util::Rotate(origin, pos + dimensions, rotation), Vector2{1, 1},c.Hex(), 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({Util::Rotate(origin, pos, rotation), Vector2{0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({Util::Rotate(origin, pos + Vector2{dimensions.x, 0.0f}, rotation), Vector2{1, 0},color.Hex(), 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({Util::Rotate(origin, pos + Vector2{0.0f, dimensions.y}, rotation), Vector2{0, 1},color.Hex(), 0, Vertex::RECTANGLE});
+    s_vertexData.push_back({Util::Rotate(origin, pos + dimensions, rotation), Vector2{1, 1},color.Hex(), 0, Vertex::RECTANGLE});
 
     s_indexData.push_back(currentElements + 0);
     s_indexData.push_back(currentElements + 1);
@@ -527,6 +524,42 @@ void Renderer::DrawText(const std::string &text, const Vector2 &pos, float size,
     Draw(*DEFAULT_TEXT);
 }
 
+
+// This doesn't remove any quads, even if they are out of bounds. The vertices of quads only get clamped. Maybe improve this in the future.
+void Renderer::DrawTextCropped(const std::string &text, const Vector2 &pos, float size, const Color &color,
+                               const Vector2 &topLeft, const Vector2 &bottomRight)
+{
+    DEFAULT_TEXT->SetString(text);
+    DEFAULT_TEXT->SetSize(size);
+    DEFAULT_TEXT->SetColor(color);
+    DEFAULT_TEXT->SetPosition(pos);
+
+    ui32 currentElements = s_vertexData.size();
+    if(currentElements >= MAX_VERTEX_COUNT - 4)
+    {
+        EndBatch();
+        currentElements = 0;
+    }
+
+    ui32 tex = PushTexture(DEFAULT_TEXT->m_font.m_texture);
+    currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again.
+    auto clamp_vertex = [&topLeft, &bottomRight](Vertex& v)
+    {
+        const float x_clamped = Util::Clamp(v.pos.x, topLeft.x, bottomRight.x);
+        const float y_clamped = Util::Clamp(v.pos.y, topLeft.y, bottomRight.y);
+        const float xm = x_clamped / v.pos.x;
+        const float ym = y_clamped / v.pos.y;
+
+        v.pos = {x_clamped, y_clamped};
+        v.uv = v.uv * Vector2(xm, ym);
+    };
+    for(auto& v : DEFAULT_TEXT->m_vertexData)
+    {
+        clamp_vertex(v);
+    }
+    Draw(*DEFAULT_TEXT);
+}
+
 // Finds a parking spot for the texture.
 ui32 Renderer::PushTexture(Texture &texture)
 {
@@ -562,10 +595,13 @@ ui32 Renderer::PushTexture(Texture &texture)
 
 void Renderer::EndBatch()
 {
-    GL_CALL(s_shader->SetVec2("uViewSize", s_viewSize));
-    GL_CALL(s_shader->UniformMat4fv("uView", 1, 0, &s_view[0][0]));
-    GL_CALL(s_shader->UniformMat4fv("uProj", 1, 0, &s_proj[0][0]));
-    GL_CALL(s_shader->UniformMat4fv("uScale", 1, 0, &s_scale[0][0]));
+    s_shader->Bind();
+    for(i32 i = 0; i < MAX_TEXTURE_COUNT; i++)
+        s_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i);
+    s_shader->SetVec2("uViewSize", s_viewSize);
+    s_shader->UniformMat4fv("uView", 1, false, &s_view[0][0]);
+    s_shader->UniformMat4fv("uProj", 1, false, &s_proj[0][0]);
+    s_shader->UniformMat4fv("uScale", 1, false, &s_scale[0][0]);
 
     s_vertexBuffer->PushData(s_vertexData.data(), sizeof(Vertex), s_vertexData.size());
     s_indexBuffer->PushData(s_indexData.data(), s_indexData.size());

@@ -86,6 +86,16 @@ namespace tml {
             return sqrtf(powf(b.x - a.x, 2) + powf(b.y - a.y, 2));
         }
 
+        inline bool operator<(const Vector2& rhs) const
+        {
+            return (x < rhs.x && y < rhs.y);
+        }
+
+        inline bool operator>(const Vector2& rhs) const
+        {
+            return (x > rhs.x && y > rhs.y);
+        }
+
         float x, y;
     };
 
