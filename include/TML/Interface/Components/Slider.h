@@ -16,8 +16,8 @@ namespace tml
         private:
             virtual void OnMouseClick(const Vector2& mp) override;
             virtual void OnMouseDown(const Vector2& mp) override;
-            virtual void OnUpdate(float dt);
-            void Draw();
+            virtual void OnUpdate(float dt) override;
+            void Draw() override;
             float m_min, m_max, m_value, m_target;
             float m_thickness, m_size;
             ui32 m_type; // Vertical, Horizontal
