@@ -43,6 +43,16 @@ void BaseComponent::Disable()
     SETBIT(m_state, 1, 0);
 }
 
+void BaseComponent::SetPosition(const Vector2 &pos)
+{
+    m_absPos = pos;
+}
+
+void BaseComponent::SetSize(const Vector2 &size)
+{
+    m_absSize = size;
+}
+
 void BaseComponent::AddChild(BaseComponent *component, const std::string &name)
 {
     if(m_child == nullptr)
@@ -80,6 +90,8 @@ bool BaseComponent::ContainsPoint(const Vector2 &p)
 
 void BaseComponent::Update(float dt)
 {
+    if(!BITSET(m_state, Enabled))
+        return;
     // Find the end of the linked list
     Draw();
     if(m_child)
@@ -90,8 +102,6 @@ void BaseComponent::Update(float dt)
 
 void BaseComponent::_Update(float dt)
 {
-    if(!BITSET(m_state, Enabled))
-        return;
     if(!m_child)
     {
         // TODO: Fix events checking

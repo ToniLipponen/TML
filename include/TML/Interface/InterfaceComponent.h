@@ -41,6 +41,10 @@ namespace tml
             void SetOnExit(UIFunc function)     { m_onMouseExitFunc    = function; }
             void SetOnDrag(UIFunc function)     { m_onDragFunc         = function; }
             void SetOnUpdate(UIFunc function)   { m_onUpdate           = function; }
+            void SetPosition(const Vector2& pos);
+            void SetSize(const Vector2& size);
+            inline constexpr Vector2 GetPosition() const { return m_absPos; }
+            inline constexpr Vector2 GetSize() const { return m_absSize; }
             void AddChild(BaseComponent* component, const std::string& name = "");
             const BaseComponent* FindChild(const std::string& name) const; // DANGER! Returns nullptr if not found.
             const BaseComponent* GetHead() const;
