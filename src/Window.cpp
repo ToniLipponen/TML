@@ -14,7 +14,7 @@
 
 extern void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);
 
-void WindowResizeCallback(__attribute__((unused)) GLFWwindow* f, int x, int y)
+void WindowResizeCallback(GLFWwindow* f, int x, int y)
 {
     glViewport(0, 0, x, y);
 }
