@@ -65,7 +65,7 @@ void Slider::Draw()
             Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_thickness * 1.25f,m_activeColor);
         else
             Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_thickness * 1.25f,m_sColor);
-        Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_thickness * 1.2f,m_pColor);
+        Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_thickness * 1.05f,m_pColor);
     }
     else
     {
@@ -78,6 +78,6 @@ void Slider::Draw()
             Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness * 1.25f,m_activeColor);
         else
             Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness * 1.25f,m_sColor);
-        Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness * 1.2f,m_pColor);
+        Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness * 1.05f,m_pColor);
     }
 }

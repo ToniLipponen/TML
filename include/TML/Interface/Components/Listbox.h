@@ -9,7 +9,6 @@ namespace tml
         class Listbox : public BaseComponent
         {
         public:
-            Listbox(){}
             Listbox(i32 x, i32 y, ui32 width, ui32 height);
             void AddValue(std::string value);
             void SetValue(ui32 index, std::string value); // Set index to value.

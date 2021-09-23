@@ -1,6 +1,7 @@
 #include <TML/Interface/Components/Dropmenu.h>
 #include <TML/Renderer.h>
 
+extern tml::Text* DEFAULT_TEXT;
 namespace tml
 {
     namespace Interface
@@ -12,43 +13,47 @@ namespace tml
 
             m_absSize = Vector2(width, height);
             m_relSize = m_absSize;
-            m_list = Listbox(x, y + height, width, 0);
+            AddChild(new Listbox(x, y + height + 2, width, 0));
+            m_child->Disable();
         }
 
         void DropMenu::AddValue(std::string value)
         {
-            m_list.AddValue(value);
-            m_list.SetSize(Vector2(m_absSize.x, m_list.GetElementsCount() * 20.f));
+            ((Listbox*)m_child)->AddValue(value);
+            ((Listbox*)m_child)->SetSize(Vector2(m_absSize.x, ((Listbox*)m_child)->GetElementsCount() * 20.f));
         }
 
         void DropMenu::SetValue(ui32 index, std::string value)
         {
-            m_list.SetValue(index, value);
+            ((Listbox*)m_child)->SetValue(index, value);
         }
 
         std::string DropMenu::GetValue(ui32 index)
         {
-            return m_list.GetValue(index);
+            return ((Listbox*)m_child)->GetValue(index);
         }
 
         std::string DropMenu::GetSelectedValue() const
         {
-            return m_list.GetSelectedValue();
+            return ((Listbox*)m_child)->GetSelectedValue();
         }
 
         tml::i32 DropMenu::GetSelectedIndex() const
         {
-            return m_list.GetSelectedIndex();
+            return ((Listbox*)m_child)->GetSelectedIndex();
         }
 
         void DropMenu::Clear()
         {
-            m_list.Clear();
+            ((Listbox*)m_child)->Clear();
         }
 
         void DropMenu::Draw()
         {
-            const auto& selected_value = m_list.GetSelectedValue();
+            std::string selected_value;
+            if(m_child)
+                selected_value = ((Listbox*)m_child)->GetSelectedValue();
+
             Renderer::DrawRect(m_absPos, m_absSize, m_pColor);
             Renderer::DrawText(selected_value, m_absPos, m_absSize.y, BLACK);
             if(ActiveComponent == this)
@@ -58,13 +63,29 @@ namespace tml
 
         }
 
+        void DropMenu::OnMouseClick(const Vector2 &mousePos)
+        {
+
+        }
+
+        void DropMenu::OnMouseDown(const Vector2 &mousePos)
+        {
+
+        }
+
         void DropMenu::OnUpdate(float dt)
         {
-            if(ActiveComponent == this)
-            {
-                m_list.Update(dt);
-                printf("Dropmenu update\n");
-            }
+
+        }
+
+        void DropMenu::OnFocusLost()
+        {
+            m_child->Disable();
+        }
+
+        void DropMenu::OnFocused()
+        {
+            m_child->Enable();
         }
     }
 }
