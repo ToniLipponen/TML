@@ -24,7 +24,7 @@ void Button::Draw()
     DEFAULT_TEXT->SetString(m_text);
     DEFAULT_TEXT->SetSize(m_textSize);
     Vector2 size = DEFAULT_TEXT->GetDimensions();
-    if((m_eventStatus & MouseDown) > 0)
+    if(m_eventStatus.MouseDown)
         Renderer::DrawRect(m_absPos, m_absSize, m_activeColor);
     else
         Renderer::DrawRect(m_absPos, m_absSize, m_pColor);

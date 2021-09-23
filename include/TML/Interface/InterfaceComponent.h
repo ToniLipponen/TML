@@ -10,21 +10,23 @@ namespace tml
         class BaseComponent
         {
         public:
-            enum Event : ui32
+            struct Events
             {
-                Click       = (1 << 1),
-                MouseEnter  = (1 << 2),
-                MouseExit   = (1 << 3),
-                MouseOver   = (1 << 4),
-                Drag        = (1 << 5),
-                MouseDown   = (1 << 6)
+                bool Click       = false;
+                bool MouseEnter  = false;
+                bool MouseExit   = false;
+                bool MouseOver   = false;
+                bool Drag        = false;
+                bool MouseDown   = false;
+                bool LostFocus   = false;
+                bool GainedFocus = false;
             };
-            enum StateFlag : ui32
+            struct StateFlag
             {
-                Enabled     = (1 << 1),
-                Focused     = (1 << 2),
-                Resizeable  = (1 << 3),
-                Movable     = (1 << 4)
+                bool Enabled     = true;
+                bool Focused     = false;
+                bool Resizeable  = false;
+                bool Movable     = false;
             };
             using UIFunc = Function_ptr<void, BaseComponent*>;
         public:
@@ -34,13 +36,22 @@ namespace tml
             void UnFocus();
             void Enable();
             void Disable();
-            void SetOnClick(UIFunc function)    { m_onClickFunc        = function; }
-            void SetOnMouseDown(UIFunc function){ m_onMouseDownFunc    = function; }
-            void SetOnHover(UIFunc function)    { m_onHoverFunc        = function; }
-            void SetOnEnter(UIFunc function)    { m_onMouseEnterFunc   = function; }
-            void SetOnExit(UIFunc function)     { m_onMouseExitFunc    = function; }
-            void SetOnDrag(UIFunc function)     { m_onDragFunc         = function; }
-            void SetOnUpdate(UIFunc function)   { m_onUpdate           = function; }
+            void ToggleEnabled();
+
+            void SetOnClick(UIFunc function)        { m_onClickFunc        = function; }
+            void SetOnMouseDown(UIFunc function)    { m_onMouseDownFunc    = function; }
+            void SetOnHover(UIFunc function)        { m_onHoverFunc        = function; }
+            void SetOnEnter(UIFunc function)        { m_onMouseEnterFunc   = function; }
+            void SetOnExit(UIFunc function)         { m_onMouseExitFunc    = function; }
+            void SetOnDrag(UIFunc function)         { m_onDragFunc         = function; }
+            void SetOnUpdate(UIFunc function)       { m_onUpdate           = function; }
+            void SetOnFocusGained(UIFunc function)  { m_onFocused          = function; }
+            void SetOnFocusLost(UIFunc function)    { m_onFocusLost        = function; }
+
+            virtual void SetPosition(const Vector2& pos);
+            virtual void SetSize(const Vector2& size);
+            inline constexpr Vector2 GetPosition() const { return m_absPos; }
+            inline constexpr Vector2 GetSize() const { return m_absSize; }
             void AddChild(BaseComponent* component, const std::string& name = "");
             const BaseComponent* FindChild(const std::string& name) const; // DANGER! Returns nullptr if not found.
             const BaseComponent* GetHead() const;
@@ -59,6 +70,8 @@ namespace tml
             virtual void OnMouseEnter();
             virtual void OnMouseExit();
             virtual void OnUpdate(float dt);
+            virtual void OnFocused();
+            virtual void OnFocusLost();
 
             UIFunc m_onClickFunc;
             UIFunc m_onMouseDownFunc;
@@ -67,9 +80,11 @@ namespace tml
             UIFunc m_onMouseExitFunc;
             UIFunc m_onDragFunc;
             UIFunc m_onUpdate;
+            UIFunc m_onFocused;
+            UIFunc m_onFocusLost;
 
-            ui32 m_eventStatus = 0;
-            ui32 m_state = 0;
+            Events m_eventStatus;
+            StateFlag m_state;
 
             Vector2 m_absPos = {0,0},   // Actual position
             m_absSize        = {0,0},   // Actual size

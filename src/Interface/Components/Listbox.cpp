@@ -46,6 +46,11 @@ tml::i32 Listbox::GetSelectedIndex() const
     return m_selectedIndex;
 }
 
+tml::ui32 Listbox::GetElementsCount() const
+{
+    return m_values.size();
+}
+
 void Listbox::Clear()
 {
     m_values.clear();

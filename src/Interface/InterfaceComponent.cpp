@@ -5,7 +5,8 @@
 // Sets a given bit
 #define SETBIT(value, bit, state) (value ^= (-state ^ value) & (1UL << bit))
 // Checks whether a bit is set or not
-#define BITSET(value, bit) ((value & bit) != 0)
+#define FLAGSET(value, bit) ((value & bit) != 0)
+#define TOGGLEBIT(value, bit) (value ^= 1UL << bit)
 
 using namespace tml::Interface;
 BaseComponent* BaseComponent::ActiveComponent = nullptr;
@@ -14,33 +15,49 @@ BaseComponent::BaseComponent()
     m_pColor = WHITE;
     m_sColor = 0xc7c7c7ff;
     m_activeColor = 0x4d8be4ff;
-    SETBIT(m_state, 1, 1);
+    m_state.Enabled = true;
+//    SETBIT(m_state, 1, 1);
 }
 
 BaseComponent::~BaseComponent()
 {
-//    for(auto& i : m_children)
-//        delete i.second;
+    if(m_child)
+        delete m_child;
 }
 
 void BaseComponent::Focus()
 {
-    SETBIT(m_state, 2, 1);
+    m_state.Focused = true;
 }
 
 void BaseComponent::UnFocus()
 {
-    SETBIT(m_state, 2, 0);
+    m_state.Focused = false;
 }
 
 void BaseComponent::Enable()
 {
-    SETBIT(m_state, 1, 1);
+    m_state.Enabled = true;
 }
 
 void BaseComponent::Disable()
 {
-    SETBIT(m_state, 1, 0);
+    m_state.Enabled = false;
+}
+
+void BaseComponent::ToggleEnabled()
+{
+    m_state.Enabled = !m_state.Enabled;
+}
+
+void BaseComponent::SetPosition(const Vector2 &pos)
+{
+    m_absPos = pos;
+}
+
+void BaseComponent::SetSize(const Vector2 &size)
+{
+    m_absSize = size;
 }
 
 void BaseComponent::AddChild(BaseComponent *component, const std::string &name)
@@ -82,7 +99,7 @@ void BaseComponent::Update(float dt)
 {
     // Find the end of the linked list
     Draw();
-    if(m_child)
+    if(m_child && m_child->m_state.Enabled)
         m_child->Update(dt);
     else
         _Update(dt);
@@ -90,66 +107,80 @@ void BaseComponent::Update(float dt)
 
 void BaseComponent::_Update(float dt)
 {
-    if(!BITSET(m_state, Enabled))
-        return;
-    if(!m_child)
+    if(!m_child || !m_child->m_state.Enabled)
     {
         // TODO: Fix events checking
         m_mousePos = Mouse::GetPosition();
         m_mouseClicked = Mouse::ButtonClicked(Mouse::Left);
-        bool oldMouseOver = BITSET(m_eventStatus, MouseOver);
+        bool oldMouseOver = m_eventStatus.MouseOver;
 
-        SETBIT(m_eventStatus, 6, int(ContainsPoint(m_mousePos) && Mouse::ButtonDown(Mouse::Left)));
-        SETBIT(m_eventStatus, 4, ContainsPoint(m_mousePos));
-        SETBIT(m_eventStatus, 2, (!BITSET(m_eventStatus, MouseEnter) && BITSET(m_eventStatus, MouseOver)));
-        SETBIT(m_eventStatus, 3, (oldMouseOver && !BITSET(m_eventStatus, MouseOver)));
-        SETBIT(m_eventStatus, 1, (BITSET(m_eventStatus, MouseOver) && m_mouseClicked));
+        m_eventStatus.MouseDown   = (ContainsPoint(m_mousePos) && Mouse::ButtonDown(Mouse::Left));
+        m_eventStatus.MouseOver   = ContainsPoint(m_mousePos);
+        m_eventStatus.MouseEnter  = (!m_eventStatus.MouseEnter && m_eventStatus.MouseOver);
+        m_eventStatus.MouseExit   = (oldMouseOver && !m_eventStatus.MouseOver);
+        m_eventStatus.Click       = (m_eventStatus.MouseOver && m_mouseClicked);
+        m_eventStatus.LostFocus   = (m_state.Focused && (!m_eventStatus.MouseOver && m_mouseClicked));
+        m_eventStatus.GainedFocus = (!m_state.Focused && (m_eventStatus.MouseOver && m_mouseClicked));
     }
     else
     {
         m_mousePos = m_child->m_mousePos;
         m_mouseClicked = m_child->m_mouseClicked;
-        bool oldMouseOver = BITSET(m_eventStatus, MouseOver);
+        bool oldMouseOver = m_eventStatus.MouseOver;
 
-        SETBIT(m_eventStatus, 6, int(ContainsPoint(m_mousePos) && Mouse::ButtonDown(Mouse::Left)));
-        SETBIT(m_eventStatus, 4, ContainsPoint(m_child->m_mousePos));
-        SETBIT(m_eventStatus, 2, (!BITSET(m_eventStatus, MouseEnter) && BITSET(m_eventStatus, MouseOver)));
-        SETBIT(m_eventStatus, 3, (oldMouseOver && !BITSET(m_eventStatus, MouseOver)));
-        SETBIT(m_eventStatus, 1, (BITSET(m_eventStatus, MouseOver) && m_child->m_mouseClicked));
+        m_eventStatus.MouseDown   = (ContainsPoint(m_mousePos) && Mouse::ButtonDown(Mouse::Left));
+        m_eventStatus.MouseOver   = ContainsPoint(m_child->m_mousePos);
+        m_eventStatus.MouseEnter  = (!m_eventStatus.MouseEnter && m_eventStatus.MouseOver);
+        m_eventStatus.MouseExit   = (oldMouseOver && !m_eventStatus.MouseOver);
+        m_eventStatus.Click       = (m_eventStatus.MouseOver && m_child->m_mouseClicked);
+        m_eventStatus.LostFocus   = (m_state.Focused && (!m_eventStatus.MouseOver && m_mouseClicked));
+        m_eventStatus.GainedFocus = (!m_state.Focused && (m_eventStatus.MouseOver && m_mouseClicked));
     }
 
-    if(BITSET(m_eventStatus, Click))
+    if(m_eventStatus.Click)
     {
         ActiveComponent = this;
         OnMouseClick(m_mousePos);
         if(m_onClickFunc.IsNotNull())
             m_onClickFunc(this);
     }
-    else if(BITSET(m_eventStatus, MouseDown))
+    else if(m_eventStatus.MouseDown)
     {
         OnMouseDown(m_mousePos);
         if(m_onMouseDownFunc.IsNotNull())
             m_onMouseDownFunc(this);
     }
-    if(BITSET(m_eventStatus, MouseEnter))
+    if(m_eventStatus.MouseEnter)
     {
         OnMouseEnter();
         if(m_onMouseEnterFunc.IsNotNull())
             m_onMouseEnterFunc(this);
     }
-
-    if(BITSET(m_eventStatus, MouseExit))
+    if(m_eventStatus.MouseExit)
     {
         OnMouseExit();
         if(m_onMouseExitFunc.IsNotNull())
             m_onMouseExitFunc(this);
     }
-
-    if(BITSET(m_eventStatus, MouseOver))
+    if(m_eventStatus.MouseOver)
     {
         OnMouseHover();
         if(m_onHoverFunc.IsNotNull())
             m_onHoverFunc(this);
+    }
+    if(m_eventStatus.GainedFocus)
+    {
+        m_state.Focused = true;
+        OnFocused();
+        if(m_onFocused.IsNotNull())
+            m_onFocused(this);
+    }
+    if(m_eventStatus.LostFocus)
+    {
+        m_state.Focused = false;
+        OnFocusLost();
+        if(m_onFocusLost.IsNotNull())
+            m_onFocusLost(this);
     }
 
     OnUpdate(dt);
@@ -166,3 +197,5 @@ void BaseComponent::OnMouseHover(){}
 void BaseComponent::OnMouseEnter(){}
 void BaseComponent::OnMouseExit(){}
 void BaseComponent::OnUpdate(float){}
+void BaseComponent::OnFocused() {}
+void BaseComponent::OnFocusLost() {}
