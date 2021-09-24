@@ -8,7 +8,7 @@
 //        class Container
 //        {
 //        public:
-//            enum SizePolicy {None, ScaleXY, ScaleX, ScaleY};
+//            enum SizePolicy { None, ScaleXY, ScaleX, ScaleY };
 //        public:
 //
 //        private:

@@ -28,6 +28,7 @@ namespace tml
                 bool Resizeable  = false;
                 bool Movable     = false;
             };
+            enum SizePolicy { Fixed, Expand, Auto };
             using UIFunc = Function_ptr<void, BaseComponent*>;
         public:
             BaseComponent();
@@ -57,8 +58,6 @@ namespace tml
             const BaseComponent* GetHead() const;
             virtual bool ContainsPoint(const Vector2& p);
             virtual void Update(float dt = (1.0f / 60.f));
-
-            Vector2 GetBounds();
         protected:
             void _Update(float dt);
             virtual void Draw() = 0;
@@ -98,8 +97,10 @@ namespace tml
             // Visual
             float m_animSpeed = 4.f;
             Color m_pColor, m_sColor, m_activeColor; // Primary and secondary color.
+            SizePolicy m_hSizePolicy = Fixed; // Horizontal size policy.
+            SizePolicy m_vSizePolicy = Fixed; // Vertical size policy.
 
-            /**************************************************/
+            // Linked list
             BaseComponent* m_parent = nullptr;
             BaseComponent* m_child = nullptr;
             std::string m_name; // This is for finding a specific component from the list.
