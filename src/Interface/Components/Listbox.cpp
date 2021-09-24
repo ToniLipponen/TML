@@ -88,7 +88,7 @@ void Listbox::Draw()
         Renderer::DrawTextCropped(m_values.at(i), m_absPos + Vector2(5, i * 20 - m_scrollDist),20,
                                   BLACK, m_absPos, m_absPos + m_absSize);
     }
-    if(ActiveComponent == this)
+    if(m_state.Focused)
         Renderer::DrawGrid(m_absPos, m_absSize, 1, 1, m_activeColor, 2);
     else
         Renderer::DrawGrid(m_absPos, m_absSize, 1, 1, m_sColor, 2);

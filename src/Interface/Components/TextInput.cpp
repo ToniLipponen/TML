@@ -27,7 +27,7 @@ void TextInput::OnMouseClick(const Vector2 &p)
 void TextInput::OnUpdate(float dt)
 {
     m_repeatTimer = Util::Max(m_repeatTimer += dt, 0.11f);
-    if(ActiveComponent == this)
+    if(m_state.Focused)
     {
         if(Keyboard::IsKeyDown(Keyboard::KEY_LEFT_CONTROL)
         && Keyboard::IsKeyDown(Keyboard::KEY_V)
@@ -52,7 +52,7 @@ void TextInput::Draw()
     Renderer::DrawRect(m_absPos, m_absSize, m_pColor);
 //    Renderer::DrawText(m_value, m_absPos, m_absSize.y, BLACK);
     Renderer::DrawTextCropped(m_value, m_absPos,m_absSize.y, BLACK, m_absPos, m_absPos + m_absSize);
-    if(ActiveComponent == this)
+    if(m_state.Focused)
         Renderer::DrawGrid(m_absPos, m_absSize, 1, 1,m_activeColor, 2);
     else
         Renderer::DrawGrid(m_absPos, m_absSize, 1, 1,m_sColor,2);

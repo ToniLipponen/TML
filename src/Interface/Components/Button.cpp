@@ -29,7 +29,7 @@ void Button::Draw()
     else
         Renderer::DrawRect(m_absPos, m_absSize, m_pColor);
     Renderer::DrawText(m_text, m_absPos + (m_absSize / 2.f) - (size / 2.f), m_textSize, BLACK);
-    if(ActiveComponent == this)
+    if(m_state.Focused)
         Renderer::DrawGrid(m_absPos, m_absSize, 1, 1, m_activeColor,2);
     else
         Renderer::DrawGrid(m_absPos, m_absSize, 1, 1, m_sColor,2);

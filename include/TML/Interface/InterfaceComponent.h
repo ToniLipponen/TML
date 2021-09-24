@@ -59,7 +59,6 @@ namespace tml
             virtual void Update(float dt = (1.0f / 60.f));
 
             Vector2 GetBounds();
-            static BaseComponent* ActiveComponent;
         protected:
             void _Update(float dt);
             virtual void Draw() = 0;
@@ -97,7 +96,7 @@ namespace tml
             bool m_mouseClicked = false;
 
             // Visual
-            float m_animSpeed = 2.f;
+            float m_animSpeed = 4.f;
             Color m_pColor, m_sColor, m_activeColor; // Primary and secondary color.
 
             /**************************************************/

@@ -17,12 +17,18 @@ Slider::Slider(ui32 type, i32 x, i32 y, ui32 size, ui32 thickness, float min, fl
     m_thickness = thickness;
     m_size = size;
 
-    m_relPos = Vector2(x,y);
-    m_absPos = m_relPos;
     if(type == Horizontal)
+    {
+        m_relPos = Vector2(x,y);
+        m_absPos = m_relPos;
         m_absSize = Vector2(size, thickness);
+    }
     else
+    {
+        m_relPos = Vector2(x,y);
+        m_absPos = m_relPos;
         m_absSize = Vector2(thickness, size);
+    }
 }
 
 void Slider::SetValue(float value)
@@ -30,54 +36,52 @@ void Slider::SetValue(float value)
     m_value = Util::Clamp(value, m_min, m_max);
 }
 
-void Slider::OnMouseClick(const Vector2& mp)
+void Slider::SetSize(const Vector2 &size)
 {
-//    if(m_type == Horizontal)
-//        m_target = (mp.x - m_absPos.x) / m_absSize.x * m_max;
-//    else
-//        m_target = m_max - ((mp.y - m_absPos.y) / m_absSize.y * m_max);
+    if(m_type == Horizontal)
+        m_absSize = {size.x, size.y};
+    else
+        m_absSize = {size.x, size.y};
 }
+
 void Slider::OnMouseDown(const Vector2& mp)
 {
     if(m_type == Horizontal)
-        m_target = (mp.x - m_absPos.x) / m_absSize.x * m_max;
+        m_value = (mp.x - m_absPos.x) / m_absSize.x * m_max;
     else
-        m_target = m_max - ((mp.y - m_absPos.y) / m_absSize.y * m_max);
+        m_value = m_max - ((mp.y - m_absPos.y) / m_absSize.y * m_max);
 }
 void Slider::OnUpdate(float dt)
 {
-    if(m_target >= m_value)
-        m_value = Util::Clamp(m_value += dt * m_animSpeed * m_max, m_min, m_max);
-    if(m_target <= m_value)
-        m_value = Util::Clamp(m_value -= dt * m_animSpeed * m_max, m_min, m_max);
+
 }
 
 void Slider::Draw()
 {
     if(m_type == Horizontal)
     {
-        const Vector2 a = m_absPos + Vector2{m_thickness, m_thickness} / 2;
-        const Vector2 b = a + Vector2(m_size - m_thickness,0);
-        Renderer::DrawLine(a,b,m_thickness*1.1f,m_sColor);
-        Renderer::DrawLine(a,b,m_thickness,m_pColor);
-        Renderer::DrawLine(a,Util::Lerp(a,b,m_value / m_max),m_thickness,m_sColor);
-        if(ActiveComponent == this)
-            Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_thickness * 1.25f,m_activeColor);
+        const Vector2 a = m_absPos + Vector2{m_thickness / 4, m_thickness / 2};
+        const Vector2 b = a + Vector2(m_size - m_thickness / 2, 0);
+        Renderer::DrawLine(a,b,(m_thickness / 2) * 1.1f,m_sColor);
+        Renderer::DrawLine(a,b,m_thickness / 2,m_pColor);
+        Renderer::DrawLine(a,Util::Lerp(a,b,m_value / m_max),m_thickness / 2,m_activeColor);
+        if(m_state.Focused)
+            Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_thickness / 2,m_activeColor);
         else
-            Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_thickness * 1.25f,m_sColor);
-        Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_thickness * 1.05f,m_pColor);
+            Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_thickness / 2,m_sColor);
+        Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max), (m_thickness / 2) * 0.85f,m_pColor);
     }
     else
     {
-        const Vector2 a = m_absPos + Vector2(m_thickness, m_thickness) / 2.f;
-        const Vector2 b = a + Vector2(0, m_size - m_thickness);
-        Renderer::DrawLine(a,b,m_thickness*1.1f,m_sColor);
-        Renderer::DrawLine(a, b,m_thickness,m_pColor);
-        Renderer::DrawLine(b, Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness,m_sColor);
-        if(ActiveComponent == this)
-            Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness * 1.25f,m_activeColor);
+        const Vector2 a = m_absPos + Vector2(m_thickness / 2, m_thickness / 4);
+        const Vector2 b = a + Vector2(0, m_size - m_thickness / 2);
+        Renderer::DrawLine(a,b,(m_thickness / 2) *1.1f,m_sColor);
+        Renderer::DrawLine(a, b,m_thickness / 2,m_pColor);
+        Renderer::DrawLine(b, Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness / 2,m_activeColor);
+        if(m_state.Focused)
+            Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)), m_thickness / 2, m_activeColor);
         else
-            Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness * 1.25f,m_sColor);
-        Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness * 1.05f,m_pColor);
+            Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),m_thickness / 2,m_sColor);
+        Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),(m_thickness / 2) * 0.85f,m_pColor);
     }
 }

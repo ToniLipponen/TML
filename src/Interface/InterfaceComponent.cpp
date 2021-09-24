@@ -2,21 +2,14 @@
 #include <TML/IO/Input.h>
 #include <iostream>
 
-// Sets a given bit
-#define SETBIT(value, bit, state) (value ^= (-state ^ value) & (1UL << bit))
-// Checks whether a bit is set or not
-#define FLAGSET(value, bit) ((value & bit) != 0)
-#define TOGGLEBIT(value, bit) (value ^= 1UL << bit)
-
 using namespace tml::Interface;
-BaseComponent* BaseComponent::ActiveComponent = nullptr;
+
 BaseComponent::BaseComponent()
 {
     m_pColor = WHITE;
     m_sColor = 0xc7c7c7ff;
     m_activeColor = 0x4d8be4ff;
     m_state.Enabled = true;
-//    SETBIT(m_state, 1, 1);
 }
 
 BaseComponent::~BaseComponent()
@@ -95,16 +88,20 @@ bool BaseComponent::ContainsPoint(const Vector2 &p)
             && p.y > m_absPos.y && p.y < (m_absPos.y + m_absSize.y));
 }
 
+// Goes through the linked list drawing everything.
 void BaseComponent::Update(float dt)
 {
-    // Find the end of the linked list
-    Draw();
-    if(m_child && m_child->m_state.Enabled)
-        m_child->Update(dt);
-    else
-        _Update(dt);
+    if(m_state.Enabled)
+    {
+        Draw();
+        if(m_child && m_child->m_state.Enabled)
+            m_child->Update(dt);
+        else
+            _Update(dt);
+    }
 }
 
+// Goes from the end of the linked list to the head updating everything.
 void BaseComponent::_Update(float dt)
 {
     if(!m_child || !m_child->m_state.Enabled)
@@ -114,8 +111,8 @@ void BaseComponent::_Update(float dt)
         m_mouseClicked = Mouse::ButtonClicked(Mouse::Left);
         bool oldMouseOver = m_eventStatus.MouseOver;
 
-        m_eventStatus.MouseDown   = (ContainsPoint(m_mousePos) && Mouse::ButtonDown(Mouse::Left));
         m_eventStatus.MouseOver   = ContainsPoint(m_mousePos);
+        m_eventStatus.MouseDown   = (m_eventStatus.MouseOver && Mouse::ButtonDown(Mouse::Left));
         m_eventStatus.MouseEnter  = (!m_eventStatus.MouseEnter && m_eventStatus.MouseOver);
         m_eventStatus.MouseExit   = (oldMouseOver && !m_eventStatus.MouseOver);
         m_eventStatus.Click       = (m_eventStatus.MouseOver && m_mouseClicked);
@@ -128,18 +125,17 @@ void BaseComponent::_Update(float dt)
         m_mouseClicked = m_child->m_mouseClicked;
         bool oldMouseOver = m_eventStatus.MouseOver;
 
-        m_eventStatus.MouseDown   = (ContainsPoint(m_mousePos) && Mouse::ButtonDown(Mouse::Left));
-        m_eventStatus.MouseOver   = ContainsPoint(m_child->m_mousePos);
+        m_eventStatus.MouseOver   = !m_child->m_eventStatus.MouseOver && ContainsPoint(m_child->m_mousePos);
+        m_eventStatus.MouseDown   = (m_eventStatus.MouseOver && !m_child->m_eventStatus.MouseDown && Mouse::ButtonDown(Mouse::Left));
         m_eventStatus.MouseEnter  = (!m_eventStatus.MouseEnter && m_eventStatus.MouseOver);
         m_eventStatus.MouseExit   = (oldMouseOver && !m_eventStatus.MouseOver);
-        m_eventStatus.Click       = (m_eventStatus.MouseOver && m_child->m_mouseClicked);
+        m_eventStatus.Click       = (m_eventStatus.MouseOver && !m_child->m_eventStatus.Click && m_mouseClicked);
         m_eventStatus.LostFocus   = (m_state.Focused && (!m_eventStatus.MouseOver && m_mouseClicked));
         m_eventStatus.GainedFocus = (!m_state.Focused && (m_eventStatus.MouseOver && m_mouseClicked));
     }
 
     if(m_eventStatus.Click)
     {
-        ActiveComponent = this;
         OnMouseClick(m_mousePos);
         if(m_onClickFunc.IsNotNull())
             m_onClickFunc(this);
