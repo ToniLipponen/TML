@@ -1,13 +1,14 @@
 #pragma once
 #include <TML/Types.h>
 #include <TML/Utilities/Function_ptr.h>
+#include <TML/Interface/Object.h>
 #include <unordered_map>
 
 namespace tml
 {
     namespace Interface
     {
-        class BaseComponent
+        class BaseComponent : public Object
         {
         public:
             struct Events
@@ -49,15 +50,20 @@ namespace tml
             void SetOnFocusGained(UIFunc function)  { m_onFocused          = function; }
             void SetOnFocusLost(UIFunc function)    { m_onFocusLost        = function; }
 
-            virtual void SetPosition(const Vector2& pos);
-            virtual void SetSize(const Vector2& size);
-            inline constexpr Vector2 GetPosition() const { return m_absPos; }
-            inline constexpr Vector2 GetSize() const { return m_absSize; }
             void AddChild(BaseComponent* component, const std::string& name = "");
             const BaseComponent* FindChild(const std::string& name) const; // DANGER! Returns nullptr if not found.
             const BaseComponent* GetHead() const;
             virtual bool ContainsPoint(const Vector2& p);
             virtual void Update(float dt = (1.0f / 60.f));
+
+            inline SizePolicy GetHorizontalSizePolicy() const { return m_hSizePolicy; }
+            inline SizePolicy GetVerticalSizePolicy() const { return m_vSizePolicy; }
+
+            void SetSizePolicy(SizePolicy horizontal, SizePolicy vertical)
+            {
+                m_hSizePolicy = horizontal;
+                m_vSizePolicy = vertical;
+            }
         protected:
             void _Update(float dt);
             virtual void Draw() = 0;
@@ -83,11 +89,6 @@ namespace tml
 
             Events m_eventStatus;
             StateFlag m_state;
-
-            Vector2 m_absPos = {0,0},   // Actual position
-            m_absSize        = {0,0},   // Actual size
-            m_relPos         = {0,0},   // Position relative to the parent
-            m_relSize        = {0,0};   // Size relative to the parent
 
             // Parent object checks these, and the children can check the parents m_mousePos or m_mouseClicked.
             // This is to avoid polling mouse position and click state on each node.

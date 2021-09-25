@@ -13,6 +13,11 @@
 #include "internal/Default_cursor.h"
 
 extern void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);
+extern void MouseMoveCallback(GLFWwindow* window, double x, double y);
+extern void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+extern void CharCallback(GLFWwindow* window, unsigned int code);
+extern void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+extern void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
 void WindowResizeCallback(GLFWwindow* f, int x, int y)
 {
@@ -39,7 +44,11 @@ namespace tml {
         glfwShowWindow(reinterpret_cast<GLFWwindow *>(m_handle));
         glfwSetWindowSizeCallback(reinterpret_cast<GLFWwindow *>(m_handle), WindowResizeCallback);
         glfwSetDropCallback(reinterpret_cast<GLFWwindow *>(m_handle), DragAndDropCallback);
-        Keyboard::Initialize();
+
+        glfwSetCharCallback(reinterpret_cast<GLFWwindow *>(m_handle), CharCallback);
+        glfwSetKeyCallback(reinterpret_cast<GLFWwindow *>(m_handle), KeyCallback);
+        glfwSetMouseButtonCallback(reinterpret_cast<GLFWwindow *>(m_handle), MouseButtonCallback);
+        glfwSetCursorPosCallback(reinterpret_cast<GLFWwindow *>(m_handle), MouseMoveCallback);
 
         GLFWimage img, img2;
         int channels = 4;

@@ -1,7 +1,9 @@
 #pragma once
 #include "TML/Types.h"
-namespace tml {
-    class Keyboard {
+namespace tml
+{
+    class Keyboard
+    {
     public:
         enum Key {
             KEY_SPACE = 32,
@@ -133,16 +135,15 @@ namespace tml {
         static ui32 GetKey();
         static bool IsKeyPressed(Key key);
         static bool IsKeyDown(Key key);
-        static void Initialize();
     };
 
-    class Mouse {
+    class Mouse
+    {
     public:
         enum Button {Left, Right, Middle, Four, Five, Six, Seven, Last};
 
         static Vector2 GetPosition();
-        static bool ButtonClicked(Button button);
         static bool ButtonDown(Button button);
         static double GetScrollValue();
     };
-};
+}

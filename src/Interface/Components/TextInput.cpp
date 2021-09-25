@@ -2,21 +2,13 @@
 #include <TML/Renderer.h>
 #include <TML/IO/Clipboard.h>
 
-// Sets a given bit
-#define SETBIT(value, bit, state) (value ^= (-state ^ value) & (1UL << bit))
-// Checks whether a bit is set or not
-#define BITSET(value, bit) ((value & bit) > 0)
-
 using namespace tml::Interface;
 extern tml::Text* DEFAULT_TEXT;
 
 TextInput::TextInput(i32 x, i32 y, i32 width, i32 height)
 {
-    m_relPos = Vector2(x,y);
-    m_absPos = m_relPos;
-
-    m_relSize = Vector2(width, height);
-    m_absSize = m_relSize;
+    m_pos = Vector2(x,y);
+    m_size = Vector2(width, height);
 }
 
 void TextInput::OnMouseClick(const Vector2 &p)
@@ -47,13 +39,13 @@ void TextInput::OnUpdate(float dt)
 
 void TextInput::Draw()
 {
-    DEFAULT_TEXT->SetPosition(m_absPos);
+    DEFAULT_TEXT->SetPosition(m_pos);
     DEFAULT_TEXT->SetString(m_value);
-    Renderer::DrawRect(m_absPos, m_absSize, m_pColor);
-//    Renderer::DrawText(m_value, m_absPos, m_absSize.y, BLACK);
-    Renderer::DrawTextCropped(m_value, m_absPos,m_absSize.y, BLACK, m_absPos, m_absPos + m_absSize);
+    Renderer::DrawRect(m_pos, m_size, m_pColor);
+//    Renderer::DrawText(m_value, m_pos, m_size.y, BLACK);
+    Renderer::DrawTextCropped(m_value, m_pos,m_size.y, BLACK, m_pos, m_pos + m_size);
     if(m_state.Focused)
-        Renderer::DrawGrid(m_absPos, m_absSize, 1, 1,m_activeColor, 2);
+        Renderer::DrawGrid(m_pos, m_size, 1, 1,m_activeColor, 2);
     else
-        Renderer::DrawGrid(m_absPos, m_absSize, 1, 1,m_sColor,2);
+        Renderer::DrawGrid(m_pos, m_size, 1, 1,m_sColor,2);
 }

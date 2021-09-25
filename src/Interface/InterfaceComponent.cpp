@@ -5,17 +5,14 @@
 using namespace tml::Interface;
 
 BaseComponent::BaseComponent()
+: m_mousePos(0), m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff)
 {
-    m_pColor = WHITE;
-    m_sColor = 0xc7c7c7ff;
-    m_activeColor = 0x4d8be4ff;
     m_state.Enabled = true;
 }
 
 BaseComponent::~BaseComponent()
 {
-    if(m_child)
-        delete m_child;
+    delete m_child;
 }
 
 void BaseComponent::Focus()
@@ -41,16 +38,6 @@ void BaseComponent::Disable()
 void BaseComponent::ToggleEnabled()
 {
     m_state.Enabled = !m_state.Enabled;
-}
-
-void BaseComponent::SetPosition(const Vector2 &pos)
-{
-    m_absPos = pos;
-}
-
-void BaseComponent::SetSize(const Vector2 &size)
-{
-    m_absSize = size;
 }
 
 void BaseComponent::AddChild(BaseComponent *component, const std::string &name)
@@ -84,8 +71,8 @@ const BaseComponent* BaseComponent::GetHead() const
 
 bool BaseComponent::ContainsPoint(const Vector2 &p)
 {
-    return (p.x > m_absPos.x && p.x < (m_absPos.x + m_absSize.x)
-            && p.y > m_absPos.y && p.y < (m_absPos.y + m_absSize.y));
+    return (p.x > m_pos.x && p.x < (m_pos.x + m_size.x)
+         && p.y > m_pos.y && p.y < (m_pos.y + m_size.y));
 }
 
 // Goes through the linked list drawing everything.
@@ -104,34 +91,32 @@ void BaseComponent::Update(float dt)
 // Goes from the end of the linked list to the head updating everything.
 void BaseComponent::_Update(float dt)
 {
+    const bool oldMouseOver = m_eventStatus.MouseOver;
+    const bool mouseDown = Mouse::ButtonDown(Mouse::Left);
     if(!m_child || !m_child->m_state.Enabled)
     {
         // TODO: Fix events checking
         m_mousePos = Mouse::GetPosition();
-        m_mouseClicked = Mouse::ButtonClicked(Mouse::Left);
-        bool oldMouseOver = m_eventStatus.MouseOver;
 
         m_eventStatus.MouseOver   = ContainsPoint(m_mousePos);
-        m_eventStatus.MouseDown   = (m_eventStatus.MouseOver && Mouse::ButtonDown(Mouse::Left));
         m_eventStatus.MouseEnter  = (!m_eventStatus.MouseEnter && m_eventStatus.MouseOver);
         m_eventStatus.MouseExit   = (oldMouseOver && !m_eventStatus.MouseOver);
-        m_eventStatus.Click       = (m_eventStatus.MouseOver && m_mouseClicked);
-        m_eventStatus.LostFocus   = (m_state.Focused && (!m_eventStatus.MouseOver && m_mouseClicked));
-        m_eventStatus.GainedFocus = (!m_state.Focused && (m_eventStatus.MouseOver && m_mouseClicked));
+        m_eventStatus.Click       = (!m_eventStatus.MouseDown && m_eventStatus.MouseOver && mouseDown);
+        m_eventStatus.MouseDown   = (m_eventStatus.MouseOver && mouseDown);
+        m_eventStatus.LostFocus   = (m_state.Focused && (!m_eventStatus.MouseOver && mouseDown));
+        m_eventStatus.GainedFocus = (!m_state.Focused && (m_eventStatus.MouseOver && m_eventStatus.Click));
     }
     else
     {
         m_mousePos = m_child->m_mousePos;
-        m_mouseClicked = m_child->m_mouseClicked;
-        bool oldMouseOver = m_eventStatus.MouseOver;
 
         m_eventStatus.MouseOver   = !m_child->m_eventStatus.MouseOver && ContainsPoint(m_child->m_mousePos);
-        m_eventStatus.MouseDown   = (m_eventStatus.MouseOver && !m_child->m_eventStatus.MouseDown && Mouse::ButtonDown(Mouse::Left));
         m_eventStatus.MouseEnter  = (!m_eventStatus.MouseEnter && m_eventStatus.MouseOver);
         m_eventStatus.MouseExit   = (oldMouseOver && !m_eventStatus.MouseOver);
-        m_eventStatus.Click       = (m_eventStatus.MouseOver && !m_child->m_eventStatus.Click && m_mouseClicked);
-        m_eventStatus.LostFocus   = (m_state.Focused && (!m_eventStatus.MouseOver && m_mouseClicked));
-        m_eventStatus.GainedFocus = (!m_state.Focused && (m_eventStatus.MouseOver && m_mouseClicked));
+        m_eventStatus.Click       = (!m_child->m_eventStatus.Click && !m_eventStatus.MouseDown && m_eventStatus.MouseOver && mouseDown);
+        m_eventStatus.MouseDown   = (m_eventStatus.MouseOver && !m_child->m_eventStatus.MouseDown && mouseDown);
+        m_eventStatus.LostFocus   = (m_state.Focused && (!m_eventStatus.MouseOver && mouseDown));
+        m_eventStatus.GainedFocus = (!m_state.Focused && (m_eventStatus.MouseOver && m_eventStatus.MouseDown));
     }
 
     if(m_eventStatus.Click)
