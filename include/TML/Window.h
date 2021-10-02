@@ -7,34 +7,37 @@ namespace tml {
     class Window {
     public:
         enum Settings {
-            None = 0x0,
-            Fullscreen = 0x1,
-            Resizeable = 0x2,
-            Maximized = 0x4,
-            VSync = 0x8,
-            Antialias = 0x10
+            None        = 0,
+            Fullscreen  = (1 << 0),
+            Resizeable  = (1 << 1),
+            Maximized   = (1 << 2),
+            VSync       = (1 << 3),
+            Antialias   = (1 << 4),
+            NoTopBar    = (1 << 5)
         };
     public:
-        Window(i32 width, i32 height, cstring title, ui32 settings);
+        Window(i32 width, i32 height, cstring title, ui32 settings = None);
         Window(const Window &) = delete;
+        Window(const Window&&) = delete;
         Window &operator=(const Window &) = delete;
         virtual ~Window();
         virtual void Display();
         void Close() const noexcept;
-        [[maybe_unused]] bool ShouldClose() const noexcept;
+        bool ShouldClose() const noexcept;
         
         void *GetHandle() noexcept;
         i32 GetWidth() const noexcept;
         i32 GetHeight() const noexcept;
-        [[maybe_unused]] i32 GetX() const noexcept;
-        [[maybe_unused]] i32 GetY() const noexcept;
-        [[maybe_unused]] double GetTime() const noexcept;
+        i32 GetX() const noexcept;
+        i32 GetY() const noexcept;
+        double GetTime() const noexcept;
 
         void SetSize(ui32 width, ui32 height) noexcept;
+        void SetFpsLimit(ui32 fps);
         void SetTitle(cstring title);
         void Maximize();
-        [[maybe_unused]] void SetFullscreen(bool fullscreen, i32 w = -1, i32 h = -1);
-        [[maybe_unused]] void Screenshot(cstring filename);
+        void SetFullscreen(bool fullscreen, i32 w = -1, i32 h = -1);
+        void Screenshot(cstring filename);
     private:
         std::string m_title;
         void *m_handle;

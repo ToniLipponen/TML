@@ -9,6 +9,7 @@ endif()
 file(GLOB_RECURSE SRC_FILES src/*.cpp src/glad.c)
 add_subdirectory(external/glfw/)
 include_directories(external/glm external/glfw/include include external)
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
 # I'm sick of dealing with linking dlls on windows.
 if(WIN32 OR MSVC)

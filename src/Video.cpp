@@ -54,7 +54,6 @@ void Video::Advance(f64 step) noexcept
     if(m_one_divided_by_frame_rate < (m_timer += step)
     && plm_has_ended(reinterpret_cast<plm_t*>(m_stream)) != 1)
     {
-        // Todo: Fix whatever is causing GL_INVALID_OPERATION in Texture::Generate()
         plm_frame_t* frame = plm_decode_video(reinterpret_cast<plm_t*>(m_stream));
         plm_frame_to_rgb(frame, m_frame_data, m_stream_width * 3);
         m_tex.LoadFromMemory(m_stream_width, m_stream_height, 3, m_frame_data);

@@ -14,24 +14,24 @@ static std::string s_string;
 static double s_mouseScrollValue = 0;
 static tml::Vector2 s_mousePos;
 
-static void MouseMoveCallback(GLFWwindow* window, double x, double y)
+extern "C" void MouseMoveCallback(GLFWwindow* window, double x, double y)
 {
     s_mousePos.x = x;
     s_mousePos.y = y;
 }
 
-static void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+extern "C" void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
     s_mouseScrollValue = yoffset;
 }
 
-static void CharCallback(GLFWwindow* window, unsigned int code)
+extern "C" void CharCallback(GLFWwindow* window, unsigned int code)
 {
     s_string.push_back(char(code));
     KEYBOARD_CHAR = char(code);
 }
 
-static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+extern "C" void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if(key == GLFW_KEY_BACKSPACE && !s_string.empty())
         s_string.pop_back();
@@ -39,7 +39,7 @@ static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
     KEYS_MAP[key] = action;
 }
 
-static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+extern "C" void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
     MOUSE_BUTTON_MAP[button] = action;
 }

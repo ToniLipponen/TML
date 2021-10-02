@@ -2,16 +2,16 @@
 
 namespace tml::Interface
 {
-    Layout::Layout(const Vector2 &position, const Vector2 &size)
-    {
-        m_pos = position;
-        m_size = size;
-    }
-
     void Layout::AddComponent(BaseComponent *component)
     {
         m_components.push_back(component);
         UpdateComponents();
+    }
+
+    void Layout::ForEachComponent(Function_ptr<void, BaseComponent *> func)
+    {
+        for(auto i : m_components)
+            func(i);
     }
 
     void Layout::Update()

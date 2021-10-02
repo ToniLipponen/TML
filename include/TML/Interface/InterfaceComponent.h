@@ -64,6 +64,11 @@ namespace tml
                 m_hSizePolicy = horizontal;
                 m_vSizePolicy = vertical;
             }
+
+            void SetPrimaryColor(const Color& color)    { m_pColor = color;      }
+            void SetSecondaryColor(const Color& color)  { m_sColor = color;      }
+            void SetActiveColor(const Color& color)     { m_activeColor = color; }
+
         protected:
             void _Update(float dt);
             virtual void Draw() = 0;

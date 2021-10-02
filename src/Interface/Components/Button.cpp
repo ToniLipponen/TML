@@ -6,7 +6,7 @@ using namespace tml::Interface;
 extern tml::Text* DEFAULT_TEXT;
 
 Button::Button(ui32 x, ui32 y, ui32 w, ui32 h, std::string str)
-: m_text(std::move(str))
+: m_text(std::move(str)), m_tColor(BLACK)
 {
     m_size = Vector2(w,h);
     m_pos = Vector2(x,y);
@@ -26,7 +26,7 @@ void Button::Draw()
         Renderer::DrawRect(m_pos, m_size, m_activeColor);
     else
         Renderer::DrawRect(m_pos, m_size, m_pColor);
-    Renderer::DrawText(m_text, m_pos + (m_size / 2.f) - (size / 2.f), m_textSize, BLACK);
+    Renderer::DrawText(m_text, m_pos + (m_size / 2.f) - (size / 2.f), m_textSize, m_tColor);
     if(m_state.Focused)
         Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor,2);
     else

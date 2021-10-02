@@ -12,12 +12,12 @@
 #include "internal/Default_icon.h"
 #include "internal/Default_cursor.h"
 
-extern void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);
-extern void MouseMoveCallback(GLFWwindow* window, double x, double y);
-extern void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-extern void CharCallback(GLFWwindow* window, unsigned int code);
-extern void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-extern void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+extern "C" void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);
+extern "C" void MouseMoveCallback(GLFWwindow* window, double x, double y);
+extern "C" void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+extern "C" void CharCallback(GLFWwindow* window, unsigned int code);
+extern "C" void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+extern "C" void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
 void WindowResizeCallback(GLFWwindow* f, int x, int y)
 {
@@ -33,6 +33,7 @@ namespace tml {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+        glfwWindowHint(GLFW_DECORATED, (settings & Settings::NoTopBar) == 0);
         glfwWindowHint(GLFW_RESIZABLE, (settings & Settings::Resizeable) != 0);
         glfwWindowHint(GLFW_MAXIMIZED, (settings & Settings::Maximized) != 0);
         glfwWindowHint(GLFW_DOUBLEBUFFER, (settings & Settings::VSync) != 0);
@@ -126,6 +127,12 @@ namespace tml {
     void Window::SetSize(ui32 w, ui32 h) noexcept {
         glfwRestoreWindow(reinterpret_cast<GLFWwindow *>(m_handle));
         glfwSetWindowSize(reinterpret_cast<GLFWwindow *>(m_handle), static_cast<int>(w), static_cast<int>(h));
+    }
+
+    void Window::SetFpsLimit(ui32 fps)
+    {
+
+        glfwSwapInterval(1);
     }
 
     void Window::SetTitle(cstring title) {

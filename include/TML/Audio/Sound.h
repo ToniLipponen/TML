@@ -12,14 +12,15 @@ namespace tml
         Sound(const std::string &filename);
         ~Sound();
         bool LoadFromFile(const std::string& filename);
+        bool LoadFromData(void* data, ui32 bytes);
         void Play();
         void Stop();
         void Pause();
         void Resume();
         void SetLooping(bool loop);
         void SetVolume(float volume);
-        float GetVolume() const { return m_volume;           }
-        bool IsPlaying() const  { return m_state == Playing; }
+        float GetVolume() const { return m_volume; }
+        bool IsPlaying() const { return m_state == Playing; }
         void* GetDecoder() { return m_decoder; }
     private:
         ui32 m_id;

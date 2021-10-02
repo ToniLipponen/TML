@@ -21,7 +21,7 @@ void Clipboard::Clear()
 // Drag and drop
 static std::vector<std::string> s_droppedFiles;
 
-void DragAndDropCallback(GLFWwindow* window, int count, const char* files[])
+extern "C" void DragAndDropCallback(GLFWwindow* window, int count, const char* files[])
 {
     s_droppedFiles.clear();
     for(int i = 0; i < count; i++)

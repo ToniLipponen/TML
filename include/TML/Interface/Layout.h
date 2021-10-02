@@ -8,9 +8,10 @@ namespace tml::Interface
     class Layout : public Object
     {
     public:
-        Layout(const Vector2& position, const Vector2& size);
+        using Object::Object;
         void Update();
         void AddComponent(BaseComponent* component);
+        void ForEachComponent(Function_ptr<void, BaseComponent*> func);
     private:
         virtual void UpdateComponents() = 0;
     protected:

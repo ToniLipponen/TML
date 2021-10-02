@@ -4,7 +4,7 @@
 #include <stb/stb_truetype.h>
 #include <fstream>
 
-#define ATLAS_SIZE 1024
+#define ATLAS_SIZE 512
 using namespace tml;
 
 Font::Font()
@@ -42,7 +42,7 @@ void Font::LoadFromMemory(const ui8* data, ui32 size)
 {
     auto* bitmap = new unsigned char[ATLAS_SIZE*ATLAS_SIZE];
     stbtt_InitFont((stbtt_fontinfo*)m_font_info, data, 0);
-    stbtt_BakeFontBitmap(data, 0, 128.0, bitmap, ATLAS_SIZE, ATLAS_SIZE, 32, 96, (stbtt_bakedchar*)m_cdata);
+    stbtt_BakeFontBitmap(data, 0, 96.0, bitmap, ATLAS_SIZE, ATLAS_SIZE, 32, 96, (stbtt_bakedchar*)m_cdata);
     m_texture.LoadFromMemory(ATLAS_SIZE, ATLAS_SIZE, 1, bitmap);
     delete[] bitmap;
 }

@@ -44,6 +44,20 @@ namespace tml
         return true;
     }
 
+    bool Sound::LoadFromData(void *data, ui32 bytes)
+    {
+        m_state = Stopped;
+        Mixer::RemoveSound(m_id);
+        ma_decoder_uninit((ma_decoder*)m_decoder);
+        ma_result result = ma_decoder_init_memory(data, bytes, &s_decoder_config, (ma_decoder*)m_decoder);
+        if (result != MA_SUCCESS)
+        {
+            tml::Logger::ErrorMessage("Failed to load sound from memory.");
+            return false;
+        }
+        return true;
+    }
+
     void Sound::Play()
     {
         m_state = Playing;
