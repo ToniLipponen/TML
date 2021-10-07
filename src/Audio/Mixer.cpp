@@ -67,6 +67,8 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
                 if(frames < frameCount)
                 {
                     sound.second->Stop();
+                    if(sound.second->IsLooping())
+                        sound.second->Play();
                 }
             }
         }
