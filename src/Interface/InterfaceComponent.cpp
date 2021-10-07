@@ -71,6 +71,7 @@ const BaseComponent* BaseComponent::GetHead() const
 
 bool BaseComponent::ContainsPoint(const Vector2 &p)
 {
+    return (p > m_pos && p < m_pos + m_size);
     return (p.x > m_pos.x && p.x < (m_pos.x + m_size.x)
          && p.y > m_pos.y && p.y < (m_pos.y + m_size.y));
 }

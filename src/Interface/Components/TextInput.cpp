@@ -9,6 +9,9 @@ TextInput::TextInput(i32 x, i32 y, i32 width, i32 height)
 {
     m_pos = Vector2(x,y);
     m_size = Vector2(width, height);
+
+    m_hSizePolicy = Expand;
+    m_vSizePolicy = Expand;
 }
 
 void TextInput::OnMouseClick(const Vector2 &p)

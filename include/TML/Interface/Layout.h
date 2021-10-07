@@ -5,16 +5,29 @@
 
 namespace tml::Interface
 {
-    class Layout : public Object
+    class Layout : public BaseComponent
     {
     public:
-        using Object::Object;
-        void Update();
+        using BaseComponent::BaseComponent;
+        virtual void Update(float dt) override;
         void AddComponent(BaseComponent* component);
         void ForEachComponent(Function_ptr<void, BaseComponent*> func);
+        void SetOnClick(UIFunc) = delete;
+        void SetOnMouseDown(UIFunc) = delete;
+        void SetOnHover(UIFunc) = delete;
+        void SetOnEnter(UIFunc) = delete;
+        void SetOnExit(UIFunc) = delete;
+        void SetOnDrag(UIFunc) = delete;
+        void SetOnUpdate(UIFunc) = delete;
+        void SetOnFocusGained(UIFunc) = delete;
+        void SetOnFocusLost(UIFunc) = delete;
+        virtual bool ContainsPoint(const Vector2& p) override { return false; }
+
     private:
         virtual void UpdateComponents() = 0;
     protected:
+        SizePolicy m_hSizePolicy = Expand;
+        SizePolicy m_vSizePolicy = Expand;
         std::vector<BaseComponent*> m_components;
     };
 }

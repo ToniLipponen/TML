@@ -14,11 +14,15 @@ namespace tml::Interface
         {
             m_pos = Vector2(x,y);
             m_size = Vector2(size, thickness);
+            m_vSizePolicy = Fixed;
+            m_hSizePolicy = Expand;
         }
         else
         {
             m_pos = Vector2(x,y);
             m_size = Vector2(thickness, size);
+            m_vSizePolicy = Expand;
+            m_hSizePolicy = Fixed;
         }
     }
 

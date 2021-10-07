@@ -11,6 +11,9 @@ Button::Button(ui32 x, ui32 y, ui32 w, ui32 h, std::string str, Function_ptr<voi
     m_size = Vector2(w,h);
     m_pos = Vector2(x,y);
     m_onClickFunc = onClick;
+
+    m_hSizePolicy = Expand;
+    m_vSizePolicy = Expand;
 }
 
 void Button::SetText(const std::string &str)

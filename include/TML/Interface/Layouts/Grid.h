@@ -14,6 +14,10 @@ namespace tml::Interface
         }
 
     private:
+        virtual void Draw()
+        {
+
+        }
         virtual void UpdateComponents()
         {
             const auto cw = (m_size.x / Columns);

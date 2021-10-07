@@ -3,7 +3,7 @@
 
 namespace tml::Interface
 {
-    class VerticalLayout : public Layout
+    class HorizontalLayout : public Layout
     {
     public:
         using Layout::Layout;

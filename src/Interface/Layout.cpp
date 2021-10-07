@@ -14,7 +14,7 @@ namespace tml::Interface
             func(i);
     }
 
-    void Layout::Update()
+    void Layout::Update(float dt)
     {
         UpdateComponents();
         for(auto i : m_components)

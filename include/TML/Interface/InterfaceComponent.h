@@ -33,6 +33,7 @@ namespace tml
             using UIFunc = Function_ptr<void, BaseComponent*>;
         public:
             BaseComponent();
+            using Object::Object;
             virtual ~BaseComponent();
             void Focus();
             void UnFocus();
