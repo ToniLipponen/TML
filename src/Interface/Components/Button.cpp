@@ -5,11 +5,12 @@
 using namespace tml::Interface;
 extern tml::Text* DEFAULT_TEXT;
 
-Button::Button(ui32 x, ui32 y, ui32 w, ui32 h, std::string str)
+Button::Button(ui32 x, ui32 y, ui32 w, ui32 h, std::string str, Function_ptr<void, BaseComponent*> onClick)
 : m_text(std::move(str)), m_tColor(BLACK)
 {
     m_size = Vector2(w,h);
     m_pos = Vector2(x,y);
+    m_onClickFunc = onClick;
 }
 
 void Button::SetText(const std::string &str)

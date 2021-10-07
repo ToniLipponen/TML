@@ -293,7 +293,36 @@ void Renderer::Draw(Circle& r)
 
 void Renderer::Draw(Sprite& r)
 {
-    PushQuad(r.m_pos, r.m_size, r.m_color, r.m_tex, r.m_rotation, Vertex::TEXTURE);
+    ui32 currentElements = s_vertexData.size();
+    if((currentElements + 4) >= MAX_VERTEX_COUNT)
+    {
+        EndBatch();
+        currentElements = 0;
+    }
+
+    ui32 tex = 0;
+    if(r.m_tex.GetID() != UINT_MAX)
+        tex = PushTexture(r.m_tex);
+    else
+        return;
+
+    currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again
+    Vector2 tl = r.m_rect.pos / r.m_texSize;
+    Vector2 br = (r.m_rect.pos + r.m_rect.size) / r.m_texSize;
+    const Vector2 origin = (r.m_pos + r.m_pos + r.m_size) * 0.5f;
+    s_vertexData.emplace_back(Vertex{Util::Rotate(origin, r.m_pos, r.m_rotation),                            tl, r.m_color.Hex(), tex, Vertex::TEXTURE});
+    s_vertexData.emplace_back(Vertex{Util::Rotate(origin, r.m_pos + Vector2{r.m_size.x, 0.f}, r.m_rotation), {br.x, tl.y}, r.m_color.Hex(), tex, Vertex::TEXTURE});
+    s_vertexData.emplace_back(Vertex{Util::Rotate(origin, r.m_pos + Vector2{0.f, r.m_size.y}, r.m_rotation), {tl.x, br.y}, r.m_color.Hex(), tex, Vertex::TEXTURE});
+    s_vertexData.emplace_back(Vertex{Util::Rotate(origin, r.m_pos + r.m_size, r.m_rotation),                 br, r.m_color.Hex(), tex, Vertex::TEXTURE});
+
+    s_indexData.emplace_back(currentElements + 0);
+    s_indexData.emplace_back(currentElements + 1);
+    s_indexData.emplace_back(currentElements + 2);
+
+    s_indexData.emplace_back(currentElements + 1);
+    s_indexData.emplace_back(currentElements + 3);
+    s_indexData.emplace_back(currentElements + 2);
+//    PushQuad(r.m_pos, r.m_size, r.m_color, r.m_tex, r.m_rotation, Vertex::TEXTURE);
 }
 
 void Renderer::Draw(Text& r)

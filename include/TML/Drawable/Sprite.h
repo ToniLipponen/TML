@@ -24,6 +24,7 @@ namespace tml {
         {
             Image img(filename);
             m_size = Vector2(img.GetWidth(), img.GetHeight());
+            m_texSize = m_size;
             m_tex.LoadFromMemory(img.GetWidth(), img.GetHeight(), img.GetBpp(), img.GetData());
         }
 
@@ -31,5 +32,6 @@ namespace tml {
 
     private:
         TexRect m_rect;
+        Vector2 m_texSize;
     };
 };
