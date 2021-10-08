@@ -21,7 +21,7 @@ extern "C" void MouseButtonCallback(GLFWwindow* window, int button, int action, 
 
 void WindowResizeCallback(GLFWwindow* f, int x, int y)
 {
-    glViewport(0, 0, x, y);
+    glad_glViewport(0, 0, x, y);
 }
 
 namespace tml {
