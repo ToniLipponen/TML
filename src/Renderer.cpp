@@ -544,7 +544,7 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
     s_indexData.emplace_back(currentElements + 2);
 }
 
-void Renderer::DrawText(const std::string &text, const Vector2 &pos, float size, const Color &color)
+void Renderer::DrawText(const std::wstring &text, const Vector2 &pos, float size, const Color &color)
 {
     DEFAULT_TEXT->SetString(text);
     DEFAULT_TEXT->SetSize(size);
@@ -555,7 +555,7 @@ void Renderer::DrawText(const std::string &text, const Vector2 &pos, float size,
 
 
 // This doesn't remove any quads, even if they are out of bounds. The vertices of quads only get clamped. Maybe improve this in the future.
-void Renderer::DrawTextCropped(const std::string &text, const Vector2 &pos, float size, const Color &color,
+void Renderer::DrawTextCropped(const std::wstring &text, const Vector2 &pos, float size, const Color &color,
                                const Vector2 &topLeft, const Vector2 &bottomRight)
 {
     DEFAULT_TEXT->SetString(text);

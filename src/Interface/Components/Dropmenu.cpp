@@ -12,23 +12,23 @@ namespace tml::Interface
         m_child->Disable();
     }
 
-    void DropMenu::AddValue(std::string value)
+    void DropMenu::AddValue(std::wstring value)
     {
         ((Listbox*)m_child)->AddValue(value);
         ((Listbox*)m_child)->SetSize(Vector2(m_size.x, ((Listbox*)m_child)->GetElementsCount() * 20.f));
     }
 
-    void DropMenu::SetValue(ui32 index, std::string value)
+    void DropMenu::SetValue(ui32 index, std::wstring value)
     {
         ((Listbox*)m_child)->SetValue(index, value);
     }
 
-    std::string DropMenu::GetValue(ui32 index)
+    std::wstring DropMenu::GetValue(ui32 index)
     {
         return ((Listbox*)m_child)->GetValue(index);
     }
 
-    std::string DropMenu::GetSelectedValue() const
+    std::wstring DropMenu::GetSelectedValue() const
     {
         return ((Listbox*)m_child)->GetSelectedValue();
     }
@@ -45,7 +45,7 @@ namespace tml::Interface
 
     void DropMenu::Draw()
     {
-        std::string selected_value;
+        std::wstring selected_value;
         if(m_child)
             selected_value = ((Listbox*)m_child)->GetSelectedValue();
 

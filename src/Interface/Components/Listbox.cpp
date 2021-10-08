@@ -9,12 +9,12 @@ Listbox::Listbox(i32 x, i32 y, ui32 width, ui32 height)
     m_size = Vector2(width, height);
 }
 
-void Listbox::AddValue(std::string value)
+void Listbox::AddValue(std::wstring value)
 {
     m_values.push_back(std::move(value));
 }
 
-void Listbox::SetValue(ui32 index, std::string value)
+void Listbox::SetValue(ui32 index, std::wstring value)
 {
     if(index > m_values.size() - 1)
         return;
@@ -22,21 +22,21 @@ void Listbox::SetValue(ui32 index, std::string value)
         m_values.at(index) = std::move(value);
 }
 
-std::string Listbox::GetValue(ui32 index)
+std::wstring Listbox::GetValue(ui32 index)
 {
     if(index >= m_values.size())
-        return "";
+        return L"";
     else
         return m_values.at(index);
 }
 
-std::string Listbox::GetSelectedValue() const
+std::wstring Listbox::GetSelectedValue() const
 {
     if(m_selectedIndex != -1 && m_selectedIndex < m_values.size())
     {
         return m_values.at(m_selectedIndex);
     }
-    return "";
+    return L"";
 }
 
 tml::i32 Listbox::GetSelectedIndex() const

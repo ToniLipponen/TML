@@ -129,8 +129,8 @@ namespace tml
             KEY_MENU = 348
         };
         static void BeginString();
-        static std::string EndString();
-        static const std::string& GetString();
+        static std::wstring EndString();
+        static const std::wstring& GetString();
         static i8 GetChar();
         static ui32 GetKey();
         static bool IsKeyPressed(Key key);

@@ -10,7 +10,7 @@ static tml::i8 KEYBOARD_CHAR = 0;
 static std::map<tml::i32, tml::i32> KEYS_MAP;
 
 static std::map<tml::i32, tml::i32> MOUSE_BUTTON_MAP;
-static std::string s_string;
+static std::wstring s_string;
 static double s_mouseScrollValue = 0;
 static tml::Vector2 s_mousePos;
 
@@ -27,7 +27,7 @@ extern "C" void MouseScrollCallback(GLFWwindow* window, double xoffset, double y
 
 extern "C" void CharCallback(GLFWwindow* window, unsigned int code)
 {
-    s_string.push_back(char(code));
+    s_string.push_back(code);
     KEYBOARD_CHAR = char(code);
 }
 
@@ -49,13 +49,13 @@ namespace tml {
     {
         s_string.clear();
     }
-    std::string Keyboard::EndString()
+    std::wstring Keyboard::EndString()
     {
-        std::string s = s_string;
+        std::wstring s = s_string;
         s_string.clear();
         return s;
     }
-    const std::string& Keyboard::GetString()
+    const std::wstring& Keyboard::GetString()
     {
         return s_string;
     }
