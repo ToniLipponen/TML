@@ -4,7 +4,7 @@
 #include "../../include/TML/Types.h"
 #include <cstdio>
 
-#if (TL_NO_DEBUGGING != 1)
+#if (TML_NO_DEBUGGING != 1)
 	#include <cassert>
 	#ifndef TML_ASSERT
 		#define TML_ASSERT(expr, msg) if(!(expr)){ \

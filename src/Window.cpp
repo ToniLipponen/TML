@@ -1,8 +1,8 @@
 #include <TML/Window.h>
 #include <TML/Utilities/Condition.h>
 
-#define GLFW_INCLUDE_NONE
 #include <glad/glad.h>
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 #include <stb/stb_image_write.h>

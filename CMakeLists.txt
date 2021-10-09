@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
 project(TML)
 option(TML_DEBUG_OPENGL_CALLS "Applies error checking around opengl function calls." no)
+option(TML_ASSERT "Applies asserts around important functions" yes)
 
+if(NOT TML_ASSERT)
+    add_compile_definitions(TML_NO_DEBUGGING=1)
+endif()
 if(NOT TML_DEBUG_OPENGL_CALLS)
     add_compile_definitions(TML_NO_GL_DEBUGGING=1)
 endif()
