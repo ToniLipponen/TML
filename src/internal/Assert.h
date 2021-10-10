@@ -15,7 +15,7 @@
 		}
 	#endif
 #else
-	#define TML_ASSERT(expr, msd)
+	#define TML_ASSERT(expr, msd) expr
 #endif
 
 #include <iostream>
