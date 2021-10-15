@@ -22,37 +22,38 @@ void TextInput::OnMouseClick(const Vector2 &p)
 void TextInput::OnUpdate(float dt)
 {
     m_repeatTimer = Util::Max(m_repeatTimer += dt, 0.11f);
-    if(m_state.Focused && m_repeatTimer > 0.1f)
+
+    if(m_state.Focused)
     {
-        if(Keyboard::IsKeyDown(Keyboard::KEY_LEFT_CONTROL)
-        && Keyboard::IsKeyDown(Keyboard::KEY_V)
-        && !Clipboard::IsEmpty())
-            m_value = Clipboard::GetString();
-        else if(Keyboard::IsKeyDown(Keyboard::KEY_BACKSPACE)
-        && !m_value.empty())
+        if(m_repeatTimer > 0.1f)
         {
-            m_value.erase(Util::Clamp<ui32>(m_cursorIndex-1, 0, m_value.length() -1), 1);
-            m_cursorIndex--;
-        }
-        if(Keyboard::IsKeyDown(Keyboard::KEY_LEFT))
-        {
-            m_cursorIndex--;
-        }
-        else if(Keyboard::IsKeyDown(Keyboard::KEY_RIGHT))
-        {
-            m_cursorIndex++;
-        }
-        else
-        {
-            const auto str = Keyboard::EndString();
-            if(!str.empty())
+            if(Keyboard::IsKeyDown(Keyboard::KEY_LEFT_CONTROL)
+            && Keyboard::IsKeyDown(Keyboard::KEY_V)
+            && !Clipboard::IsEmpty())
+                m_value = Clipboard::GetString();
+            else if(Keyboard::IsKeyDown(Keyboard::KEY_BACKSPACE)
+            && !m_value.empty())
             {
-                m_value.insert(m_cursorIndex, str);
+                m_value.erase(Util::Clamp<ui32>(m_cursorIndex-1, 0, m_value.length() -1), 1);
+                m_cursorIndex--;
+            }
+            else if(Keyboard::IsKeyDown(Keyboard::KEY_LEFT))
+            {
+                m_cursorIndex--;
+            }
+            else if(Keyboard::IsKeyDown(Keyboard::KEY_RIGHT))
+            {
                 m_cursorIndex++;
             }
+            m_repeatTimer = 0;
+        }
+        const auto str = Keyboard::EndString();
+        if(!str.empty())
+        {
+            m_value.insert(m_cursorIndex, str);
+            m_cursorIndex++;
         }
         m_cursorIndex = Util::Clamp<ui32>(m_cursorIndex, 0, m_value.size());
-        m_repeatTimer = 0;
     }
 }
 

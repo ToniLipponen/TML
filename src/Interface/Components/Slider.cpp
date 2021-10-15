@@ -33,10 +33,18 @@ namespace tml::Interface
 
     void Slider::OnMouseDown(const Vector2& mp)
     {
+//        if(m_type == Horizontal)
+//            m_value = (mp.x - m_pos.x) / m_size.x * m_max;
+//        else
+//            m_value = m_max - ((mp.y - m_pos.y) / m_size.y * m_max);
+    }
+
+    void Slider::OnMouseDrag(const Vector2& mp)
+    {
         if(m_type == Horizontal)
-            m_value = (mp.x - m_pos.x) / m_size.x * m_max;
+            m_value = Util::Clamp((mp.x - m_pos.x) / m_size.x * m_max, m_min, m_max);
         else
-            m_value = m_max - ((mp.y - m_pos.y) / m_size.y * m_max);
+            m_value = Util::Clamp(m_max - ((mp.y - m_pos.y) / m_size.y * m_max), m_min, m_max);
     }
 
     void Slider::Draw()
@@ -46,7 +54,7 @@ namespace tml::Interface
         {
             const Vector2 a = m_pos + Vector2{m_size.y / 4, m_size.y / 2};
             const Vector2 b = a + Vector2(m_size.x - m_size.y / 2, 0);
-            Renderer::DrawLine(a,b,(m_size.y / 2) * 1.1f,m_sColor);
+            Renderer::DrawLine(a,b,(m_size.y / 2) * 1.25f,m_sColor);
             Renderer::DrawLine(a,b,m_size.y / 2,m_pColor);
             Renderer::DrawLine(a,Util::Lerp(a,b,m_value / m_max),m_size.y / 2,m_activeColor);
             if(m_state.Focused)
@@ -59,7 +67,7 @@ namespace tml::Interface
         {
             const Vector2 a = m_pos + Vector2(m_size.x / 2, m_size.x / 4);
             const Vector2 b = a + Vector2(0, m_size.y - m_size.x / 2);
-            Renderer::DrawLine(a,b,(m_size.x / 2) * 1.1f,m_sColor);
+            Renderer::DrawLine(a,b,(m_size.x / 2) * 1.25f,m_sColor);
             Renderer::DrawLine(a, b,m_size.x / 2,m_pColor);
             Renderer::DrawLine(b, Util::Lerp(a, b, 1.f - (m_value / m_max)),m_size.x / 2,m_activeColor);
             if(m_state.Focused)

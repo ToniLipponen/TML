@@ -41,15 +41,16 @@ namespace tml {
 
         m_handle = glfwCreateWindow(w, h, title,(settings & Settings::Fullscreen) ? glfwGetPrimaryMonitor() : nullptr, nullptr);
         TML_ASSERT(m_handle != nullptr, "Failed to create a window handle.");
-        glfwMakeContextCurrent(reinterpret_cast<GLFWwindow *>(m_handle));
-        glfwShowWindow(reinterpret_cast<GLFWwindow *>(m_handle));
-        glfwSetWindowSizeCallback(reinterpret_cast<GLFWwindow *>(m_handle), WindowResizeCallback);
-        glfwSetDropCallback(reinterpret_cast<GLFWwindow *>(m_handle), DragAndDropCallback);
+        auto handle = reinterpret_cast<GLFWwindow *>(m_handle);
+        glfwMakeContextCurrent(handle);
+        glfwShowWindow(handle);
+        glfwSetWindowSizeCallback(handle, WindowResizeCallback);
+        glfwSetDropCallback(handle, DragAndDropCallback);
 
-        glfwSetCharCallback(reinterpret_cast<GLFWwindow *>(m_handle), CharCallback);
-        glfwSetKeyCallback(reinterpret_cast<GLFWwindow *>(m_handle), KeyCallback);
-        glfwSetMouseButtonCallback(reinterpret_cast<GLFWwindow *>(m_handle), MouseButtonCallback);
-        glfwSetCursorPosCallback(reinterpret_cast<GLFWwindow *>(m_handle), MouseMoveCallback);
+        glfwSetCharCallback(handle, CharCallback);
+        glfwSetKeyCallback(handle, KeyCallback);
+        glfwSetMouseButtonCallback(handle, MouseButtonCallback);
+        glfwSetCursorPosCallback(handle, MouseMoveCallback);
 
         GLFWimage img, img2;
         int channels = 4;

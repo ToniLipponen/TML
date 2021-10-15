@@ -3,10 +3,11 @@
 (Work in progress) Simple library for making multimedia applications.
 
 <h1>Features</h1>
-<li>OpenGL 4.5</li>
+<li>OpenGL 4.5 core</li>
+<li>C++ 17</li>
 <li>Everything batch rendered</li>
 <li>Simple audio interface</li>
-<li>Video playback support using mpeg-1</li>
+<li>Video playback support using MPEG-1</li>
 <li>Custom GUI implementation</li><br>
 
 Example GUI app:

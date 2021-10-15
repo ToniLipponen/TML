@@ -79,6 +79,7 @@ namespace tml
             virtual void OnMouseHover();
             virtual void OnMouseEnter();
             virtual void OnMouseExit();
+            virtual void OnMouseDrag(const Vector2& mousePos);
             virtual void OnUpdate(float dt);
             virtual void OnFocused();
             virtual void OnFocusLost();

@@ -10,24 +10,30 @@ namespace tml::Interface
     {
         m_pos.x = x;
         m_pos.y = y;
-        m_size = s;
+        m_fontSize = s;
+
+        DEFAULT_TEXT->SetString(m_text);
+        DEFAULT_TEXT->SetSize(m_fontSize);
+        m_size = DEFAULT_TEXT->GetDimensions();
     }
 
     void Label::SetValue(std::wstring str)
     {
         m_text = std::move(str);
+        DEFAULT_TEXT->SetString(m_text);
+        DEFAULT_TEXT->SetSize(m_fontSize);
+        m_size = DEFAULT_TEXT->GetDimensions();
     }
 
     bool Label::ContainsPoint(const Vector2 &p)
     {
         DEFAULT_TEXT->SetString(m_text);
-        DEFAULT_TEXT->SetSize(m_size);
-        const auto bounds = DEFAULT_TEXT->GetDimensions();
-        return (p > m_pos && p < (m_pos + bounds));
+        DEFAULT_TEXT->SetSize(m_fontSize);
+        return (p > m_pos && p < (m_pos + m_size));
     }
 
     void Label::Draw()
     {
-        Renderer::DrawText(m_text, m_pos, m_size, m_pColor);
+        Renderer::DrawText(m_text, m_pos, m_fontSize, m_pColor);
     }
 }

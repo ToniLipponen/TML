@@ -14,6 +14,7 @@ namespace tml::Interface
         inline float GetValue() const { return m_value; }
     private:
         void OnMouseDown(const Vector2& mp) override;
+        void OnMouseDrag(const Vector2& mousePos) override;
         void Draw() override;
         float m_min, m_max, m_value;
         ui32 m_type; // Vertical, Horizontal

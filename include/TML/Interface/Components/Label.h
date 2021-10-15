@@ -12,6 +12,6 @@ namespace tml::Interface
     private:
         virtual void Draw() override;
         std::wstring m_text;
-        float m_size = 20;
+        float m_fontSize = 20;
     };
 }

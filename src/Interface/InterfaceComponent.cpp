@@ -104,20 +104,30 @@ void BaseComponent::_Update(float dt)
         m_eventStatus.MouseExit   = (oldMouseOver && !m_eventStatus.MouseOver);
         m_eventStatus.Click       = (!m_eventStatus.MouseDown && m_eventStatus.MouseOver && mouseDown);
         m_eventStatus.MouseDown   = (m_eventStatus.MouseOver && mouseDown);
+        if(m_eventStatus.MouseDown)
+            m_eventStatus.Drag = true;
+        else if(!mouseDown)
+            m_eventStatus.Drag = false;
         m_eventStatus.LostFocus   = (m_state.Focused && (!m_eventStatus.MouseOver && mouseDown));
         m_eventStatus.GainedFocus = (!m_state.Focused && (m_eventStatus.MouseOver && m_eventStatus.Click));
     }
     else
     {
-        m_mousePos = m_child->m_mousePos;
-
-        m_eventStatus.MouseOver   = !m_child->m_eventStatus.MouseOver && ContainsPoint(m_child->m_mousePos);
-        m_eventStatus.MouseEnter  = (!m_eventStatus.MouseEnter && m_eventStatus.MouseOver);
-        m_eventStatus.MouseExit   = (oldMouseOver && !m_eventStatus.MouseOver);
-        m_eventStatus.Click       = (!m_child->m_eventStatus.Click && !m_eventStatus.MouseDown && m_eventStatus.MouseOver && mouseDown);
-        m_eventStatus.MouseDown   = (m_eventStatus.MouseOver && !m_child->m_eventStatus.MouseDown && mouseDown);
-        m_eventStatus.LostFocus   = (m_state.Focused && (!m_eventStatus.MouseOver && mouseDown));
-        m_eventStatus.GainedFocus = (!m_state.Focused && (m_eventStatus.MouseOver && m_eventStatus.MouseDown));
+        if(!m_child->m_eventStatus.Drag)
+        {
+            m_mousePos = m_child->m_mousePos;
+            m_eventStatus.MouseOver   = !m_child->m_eventStatus.MouseOver && ContainsPoint(m_child->m_mousePos);
+            m_eventStatus.MouseEnter  = (!m_eventStatus.MouseEnter && m_eventStatus.MouseOver);
+            m_eventStatus.MouseExit   = (oldMouseOver && !m_eventStatus.MouseOver);
+            m_eventStatus.Click       = (!m_child->m_eventStatus.Click && !m_eventStatus.MouseDown && m_eventStatus.MouseOver && mouseDown);
+            m_eventStatus.MouseDown   = (m_eventStatus.MouseOver && !m_child->m_eventStatus.MouseDown && mouseDown);
+            if(m_eventStatus.MouseDown)
+                m_eventStatus.Drag = true;
+            else if(!mouseDown)
+                m_eventStatus.Drag = false;
+            m_eventStatus.LostFocus   = (m_state.Focused && (!m_eventStatus.MouseOver && mouseDown));
+            m_eventStatus.GainedFocus = (!m_state.Focused && (m_eventStatus.MouseOver && m_eventStatus.MouseDown));
+        }
     }
 
     if(m_eventStatus.Click)
@@ -164,6 +174,12 @@ void BaseComponent::_Update(float dt)
         if(m_onFocusLost.IsNotNull())
             m_onFocusLost(this);
     }
+    if(m_eventStatus.Drag)
+    {
+        OnMouseDrag(m_mousePos);
+        if(m_onDragFunc.IsNotNull())
+            m_onDragFunc(this);
+    }
 
     OnUpdate(dt);
     if(m_onUpdate.IsNotNull())
@@ -178,6 +194,7 @@ void BaseComponent::OnMouseDown(const Vector2& mousePos){}
 void BaseComponent::OnMouseHover(){}
 void BaseComponent::OnMouseEnter(){}
 void BaseComponent::OnMouseExit(){}
+void BaseComponent::OnMouseDrag(const Vector2& mousePos){}
 void BaseComponent::OnUpdate(float){}
 void BaseComponent::OnFocused() {}
 void BaseComponent::OnFocusLost() {}

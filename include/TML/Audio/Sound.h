@@ -21,6 +21,7 @@ namespace tml
         void SetVolume(float volume);
         float GetVolume() const { return m_volume; }
         bool IsPlaying() const { return m_state == Playing; }
+        bool IsLooping() const { return m_looping; }
         void* GetDecoder() { return m_decoder; }
     private:
         ui32 m_id;

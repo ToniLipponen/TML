@@ -4,6 +4,7 @@ namespace tml::Interface
 {
     void Layout::AddComponent(BaseComponent *component)
     {
+        ((Layout*)component)->m_parent = this;
         m_components.push_back(component);
         UpdateComponents();
     }
