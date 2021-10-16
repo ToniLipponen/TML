@@ -2,7 +2,7 @@
 #include <TML/Types.h>
 #include <TML/Utilities/Function_ptr.h>
 #include <TML/Interface/Object.h>
-#include <unordered_map>
+#include <deque>
 
 namespace tml
 {
@@ -33,6 +33,7 @@ namespace tml
             using UIFunc = Function_ptr<void, BaseComponent*>;
         public:
             BaseComponent();
+            BaseComponent(BaseComponent* parent);
             using Object::Object;
             virtual ~BaseComponent();
             void Focus();
@@ -52,8 +53,10 @@ namespace tml
             void SetOnFocusLost(UIFunc function)    { m_onFocusLost        = function; }
 
             void AddChild(BaseComponent* component, const std::string& name = "");
-            const BaseComponent* FindChild(const std::string& name) const; // DANGER! Returns nullptr if not found.
-            const BaseComponent* GetHead() const;
+            const BaseComponent* FindComponent(const std::string& name) const; // DANGER! Returns nullptr if not found.
+            const BaseComponent* FindComponent(unsigned long hash) const; // DANGER! Returns nullptr if not found.
+
+            const BaseComponent* GetParent() const;
             virtual bool ContainsPoint(const Vector2& p);
             virtual void Update(float dt = (1.0f / 60.f));
 
@@ -70,13 +73,16 @@ namespace tml
             void SetSecondaryColor(const Color& color)  { m_sColor = color;      }
             void SetActiveColor(const Color& color)     { m_activeColor = color; }
 
+        private:
+            void ProcessEvents(const Vector2& mp, bool& mouseDown, Events& events, const Events& childEvents);
+
         protected:
-            void _Update(float dt);
+            void _Update(float dt, const Vector2& mp, bool& clicked, const Events& childEvents);
             virtual void Draw() = 0;
             // Internal events
             virtual void OnMouseClick(const Vector2& mousePos);
             virtual void OnMouseDown(const Vector2& mousePos);
-            virtual void OnMouseHover();
+            virtual void OnMouseHover(const Vector2& mousePos);
             virtual void OnMouseEnter();
             virtual void OnMouseExit();
             virtual void OnMouseDrag(const Vector2& mousePos);
@@ -97,21 +103,18 @@ namespace tml
             Events m_eventStatus;
             StateFlag m_state;
 
-            // Parent object checks these, and the children can check the parents m_mousePos or m_mouseClicked.
-            // This is to avoid polling mouse position and click state on each node.
-            Vector2 m_mousePos;
-            bool m_mouseClicked = false;
-
             // Visual
             float m_animSpeed = 4.f;
             Color m_pColor, m_sColor, m_activeColor; // Primary and secondary color.
             SizePolicy m_hSizePolicy = Fixed; // Horizontal size policy.
             SizePolicy m_vSizePolicy = Fixed; // Vertical size policy.
 
-            // Linked list
-            BaseComponent* m_parent = nullptr;
-            BaseComponent* m_child = nullptr;
-            std::string m_name; // This is for finding a specific component from the list.
+            std::deque<std::pair<unsigned long, BaseComponent*>> m_children;
+//            std::unordered_map<std::string, BaseComponent*> m_children;
+            BaseComponent* m_parent;
+
+            static BaseComponent* s_activeComponent;
+            static std::hash<std::string> s_hash;
         };
     }
 }

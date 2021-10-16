@@ -1,18 +1,32 @@
 #include <TML/Interface/InterfaceComponent.h>
 #include <TML/IO/Input.h>
 #include <iostream>
+#include <map>
+#include <stack>
+#include <functional>
+
 
 using namespace tml::Interface;
+BaseComponent* BaseComponent::s_activeComponent = nullptr;
+std::hash<std::string> BaseComponent::s_hash = std::hash<std::string>();
 
 BaseComponent::BaseComponent()
-: m_mousePos(0), m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff)
+: m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr)
 {
     m_state.Enabled = true;
 }
 
+BaseComponent::BaseComponent(BaseComponent* parent)
+: m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(parent)
+{
+    m_state.Enabled = true;
+    m_parent->AddChild(this);
+}
+
 BaseComponent::~BaseComponent()
 {
-    delete m_child;
+    for(auto& child : m_children)
+        delete child.second;
 }
 
 void BaseComponent::Focus()
@@ -42,105 +56,134 @@ void BaseComponent::ToggleEnabled()
 
 void BaseComponent::AddChild(BaseComponent *component, const std::string &name)
 {
-    if(m_child == nullptr)
+    if(component)
     {
-        m_child = component;
-        m_child->m_name = name;
-        m_child->m_parent = this;
-    }
-    else
-    {
-        m_child->AddChild(component, name);
+        if(name == "")
+        {
+            component->m_parent = this;
+            m_children.push_front({s_hash(std::to_string(m_children.size())), component});
+        }
+        else
+        {
+            component->m_parent = this;
+            m_children.push_front({s_hash(name), component});
+        }
     }
 }
 
-const BaseComponent* BaseComponent::FindChild(const std::string& name) const
+const BaseComponent* BaseComponent::FindComponent(const std::string& name) const
 {
-    if(m_name == name)
-        return this;
-    else
-        return m_child->FindChild(name);
+    const auto nameHash = s_hash(name);
+    return FindComponent(nameHash);
 }
 
-const BaseComponent* BaseComponent::GetHead() const
+const BaseComponent* BaseComponent::FindComponent(unsigned long nameHash) const
+{
+    if(m_children.empty())
+        return nullptr;
+    const auto result = std::find_if(m_children.begin(), m_children.end(), [nameHash](std::pair<unsigned long, BaseComponent*> p){return p.first == nameHash;});
+    if(result == m_children.end())
+        for(auto i : m_children)
+        {
+            auto child_result = i.second->FindComponent(nameHash);
+            if(child_result)
+                return child_result;
+        }
+    else
+        return result->second;
+
+    return nullptr;
+}
+
+const BaseComponent* BaseComponent::GetParent() const
 {
     if(m_parent)
-        return m_parent->GetHead();
-    return this;
+        return m_parent;
+    return nullptr;
 }
 
 bool BaseComponent::ContainsPoint(const Vector2 &p)
 {
     return (p > m_pos && p < m_pos + m_size);
-    return (p.x > m_pos.x && p.x < (m_pos.x + m_size.x)
-         && p.y > m_pos.y && p.y < (m_pos.y + m_size.y));
 }
 
-// Goes through the linked list drawing everything.
-void BaseComponent::Update(float dt)
+void BaseComponent::ProcessEvents(const Vector2& mp, bool& mouseDown, Events &events, const Events &childEvents)
 {
-    if(m_state.Enabled)
+    if(!childEvents.Drag)
     {
-        Draw();
-        if(m_child && m_child->m_state.Enabled)
-            m_child->Update(dt);
-        else
-            _Update(dt);
+        const auto oldMouseOver   = events.MouseOver;
+        events.MouseOver   = (!childEvents.MouseOver && ContainsPoint(mp));
+        events.MouseEnter  = (!events.MouseEnter && events.MouseOver);
+        events.MouseExit   = (oldMouseOver && !events.MouseOver);
+        events.Click       = (!childEvents.Click && !events.MouseDown && events.MouseOver && mouseDown);
+        events.MouseDown   = (events.MouseOver && !childEvents.MouseDown && mouseDown);
+
+        if(events.MouseDown)
+            events.Drag = true;
+        else if(!mouseDown)
+            events.Drag = false;
+        events.LostFocus   = (m_state.Focused && (!events.MouseOver && mouseDown));
+        events.GainedFocus = (!m_state.Focused && (events.MouseOver && events.MouseDown));
     }
 }
 
-// Goes from the end of the linked list to the head updating everything.
-void BaseComponent::_Update(float dt)
+void BaseComponent::Update(float dt)
 {
-    const bool oldMouseOver = m_eventStatus.MouseOver;
-    const bool mouseDown = Mouse::ButtonDown(Mouse::Left);
-    if(!m_child || !m_child->m_state.Enabled)
+    static bool s_clicked;
+    static Vector2 s_mousePos;
+    if(!m_parent)
     {
-        // TODO: Fix events checking
-        m_mousePos = Mouse::GetPosition();
-
-        m_eventStatus.MouseOver   = ContainsPoint(m_mousePos);
-        m_eventStatus.MouseEnter  = (!m_eventStatus.MouseEnter && m_eventStatus.MouseOver);
-        m_eventStatus.MouseExit   = (oldMouseOver && !m_eventStatus.MouseOver);
-        m_eventStatus.Click       = (!m_eventStatus.MouseDown && m_eventStatus.MouseOver && mouseDown);
-        m_eventStatus.MouseDown   = (m_eventStatus.MouseOver && mouseDown);
-        if(m_eventStatus.MouseDown)
-            m_eventStatus.Drag = true;
-        else if(!mouseDown)
-            m_eventStatus.Drag = false;
-        m_eventStatus.LostFocus   = (m_state.Focused && (!m_eventStatus.MouseOver && mouseDown));
-        m_eventStatus.GainedFocus = (!m_state.Focused && (m_eventStatus.MouseOver && m_eventStatus.Click));
+        if(m_state.Enabled)
+        {
+            s_clicked = Mouse::ButtonDown(Mouse::Left);
+            s_mousePos = Mouse::GetPosition();
+            Draw();
+        }
+    }
+    if(!m_children.empty())
+    {
+        for (auto child = m_children.rbegin(); child != m_children.rend(); ++child)
+            if(child->second->m_state.Enabled)
+                child->second->Draw();
+        bool enabled = false;
+        for(auto child : m_children)
+        {
+            if(child.second->m_state.Enabled)
+            {
+                child.second->Update(dt);
+                enabled = true;
+            }
+        }
+        if(!enabled) // No children enabled. Start going up the tree.
+            _Update(dt, s_mousePos, s_clicked, m_eventStatus);
     }
     else
     {
-        if(!m_child->m_eventStatus.Drag)
-        {
-            m_mousePos = m_child->m_mousePos;
-            m_eventStatus.MouseOver   = !m_child->m_eventStatus.MouseOver && ContainsPoint(m_child->m_mousePos);
-            m_eventStatus.MouseEnter  = (!m_eventStatus.MouseEnter && m_eventStatus.MouseOver);
-            m_eventStatus.MouseExit   = (oldMouseOver && !m_eventStatus.MouseOver);
-            m_eventStatus.Click       = (!m_child->m_eventStatus.Click && !m_eventStatus.MouseDown && m_eventStatus.MouseOver && mouseDown);
-            m_eventStatus.MouseDown   = (m_eventStatus.MouseOver && !m_child->m_eventStatus.MouseDown && mouseDown);
-            if(m_eventStatus.MouseDown)
-                m_eventStatus.Drag = true;
-            else if(!mouseDown)
-                m_eventStatus.Drag = false;
-            m_eventStatus.LostFocus   = (m_state.Focused && (!m_eventStatus.MouseOver && mouseDown));
-            m_eventStatus.GainedFocus = (!m_state.Focused && (m_eventStatus.MouseOver && m_eventStatus.MouseDown));
-        }
+        _Update(dt, s_mousePos, s_clicked, m_eventStatus);
     }
+}
+
+void BaseComponent::_Update(float dt, const Vector2& mp, bool& clicked, const Events& childEvents)
+{
+    if(m_children.empty())
+        ProcessEvents(mp, clicked, m_eventStatus, {0});
+    else
+        ProcessEvents(mp, clicked, m_eventStatus, childEvents);
 
     if(m_eventStatus.Click)
     {
-        OnMouseClick(m_mousePos);
+        OnMouseClick(mp);
         if(m_onClickFunc.IsNotNull())
             m_onClickFunc(this);
+        clicked = false;
+        s_activeComponent = this;
     }
     else if(m_eventStatus.MouseDown)
     {
-        OnMouseDown(m_mousePos);
+        OnMouseDown(mp);
         if(m_onMouseDownFunc.IsNotNull())
             m_onMouseDownFunc(this);
+        clicked = false;
     }
     if(m_eventStatus.MouseEnter)
     {
@@ -156,7 +199,7 @@ void BaseComponent::_Update(float dt)
     }
     if(m_eventStatus.MouseOver)
     {
-        OnMouseHover();
+        OnMouseHover(mp);
         if(m_onHoverFunc.IsNotNull())
             m_onHoverFunc(this);
     }
@@ -176,22 +219,23 @@ void BaseComponent::_Update(float dt)
     }
     if(m_eventStatus.Drag)
     {
-        OnMouseDrag(m_mousePos);
+        OnMouseDrag(mp);
         if(m_onDragFunc.IsNotNull())
             m_onDragFunc(this);
+        clicked = false;
     }
 
     OnUpdate(dt);
     if(m_onUpdate.IsNotNull())
         m_onUpdate(this);
     if(m_parent)
-        m_parent->_Update(dt);
+        m_parent->_Update(dt, mp, clicked, m_eventStatus);
 }
 
 // Override these in derived classes to add internal functionality.
 void BaseComponent::OnMouseClick(const Vector2& mp){}
 void BaseComponent::OnMouseDown(const Vector2& mousePos){}
-void BaseComponent::OnMouseHover(){}
+void BaseComponent::OnMouseHover(const Vector2& mousePos){}
 void BaseComponent::OnMouseEnter(){}
 void BaseComponent::OnMouseExit(){}
 void BaseComponent::OnMouseDrag(const Vector2& mousePos){}

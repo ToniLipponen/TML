@@ -21,13 +21,11 @@ namespace tml::Interface
         void SetOnUpdate(UIFunc) = delete;
         void SetOnFocusGained(UIFunc) = delete;
         void SetOnFocusLost(UIFunc) = delete;
-        virtual bool ContainsPoint(const Vector2& p) override { return false; }
 
     private:
         virtual void UpdateComponents() = 0;
     protected:
         SizePolicy m_hSizePolicy = Expand;
         SizePolicy m_vSizePolicy = Expand;
-        std::vector<BaseComponent*> m_components;
     };
 }

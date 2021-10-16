@@ -8,50 +8,50 @@ namespace tml::Interface
     {
         m_pos = Vector2(x,y);
         m_size = Vector2(width, height);
-        AddChild(new Listbox(x, y + height + 2, width, 0));
-        m_child->Disable();
+        AddChild(m_listComponent = new Listbox(x, y + height + 2, width, 0));
+        m_listComponent->Disable();
     }
 
     void DropMenu::AddValue(std::wstring value)
     {
-        ((Listbox*)m_child)->AddValue(value);
-        ((Listbox*)m_child)->SetSize(Vector2(m_size.x, ((Listbox*)m_child)->GetElementsCount() * 20.f));
+        ((Listbox*)m_listComponent)->AddValue(value);
+        ((Listbox*)m_listComponent)->SetSize(Vector2(m_size.x, ((Listbox*)m_listComponent)->GetElementsCount() * 20.f));
     }
 
     void DropMenu::SetValue(ui32 index, std::wstring value)
     {
-        ((Listbox*)m_child)->SetValue(index, value);
+        ((Listbox*)m_listComponent)->SetValue(index, value);
     }
 
     std::wstring DropMenu::GetValue(ui32 index)
     {
-        return ((Listbox*)m_child)->GetValue(index);
+        return ((Listbox*)m_listComponent)->GetValue(index);
     }
 
     std::wstring DropMenu::GetSelectedValue() const
     {
-        return ((Listbox*)m_child)->GetSelectedValue();
+        return ((Listbox*)m_listComponent)->GetSelectedValue();
     }
 
     tml::i32 DropMenu::GetSelectedIndex() const
     {
-        return ((Listbox*)m_child)->GetSelectedIndex();
+        return ((Listbox*)m_listComponent)->GetSelectedIndex();
     }
 
     void DropMenu::Clear()
     {
-        ((Listbox*)m_child)->Clear();
+        ((Listbox*)m_listComponent)->Clear();
     }
 
     void DropMenu::Draw()
     {
         std::wstring selected_value;
-        if(m_child)
-            selected_value = ((Listbox*)m_child)->GetSelectedValue();
+        if(m_listComponent)
+            selected_value = ((Listbox*)m_listComponent)->GetSelectedValue();
 
         Renderer::DrawRect(m_pos, m_size, m_pColor);
         Renderer::DrawText(selected_value, m_pos, m_size.y, BLACK);
-        if(m_state.Focused)
+        if(s_activeComponent == this)
             Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 2);
         else
             Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor, 2);
@@ -75,11 +75,11 @@ namespace tml::Interface
 
     void DropMenu::OnFocusLost()
     {
-        m_child->Disable();
+        m_listComponent->Disable();
     }
 
     void DropMenu::OnFocused()
     {
-        m_child->Enable();
+        m_listComponent->Enable();
     }
 }

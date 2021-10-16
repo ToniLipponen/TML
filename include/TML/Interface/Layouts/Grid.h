@@ -25,12 +25,12 @@ namespace tml::Interface
             const auto cw = (m_size.x / Columns);
             const auto ch = (m_size.y / Rows);
             ui32 row = 0;
-            for(int i = 0; i < m_components.size(); i++)
+            for(int i = 0; i < m_children.size(); i++)
             {
                 if((i % Columns) == 0 && i != 0)
                     ++row;
-                m_components.at(i)->SetSize({cw-2, ch-2});
-                m_components.at(i)->SetPosition(m_pos + Vector2(((i % Columns)*cw) + 1, (row*ch) + 1));
+                m_children.at(i).second->SetSize({cw-2, ch-2});
+                m_children.at(i).second->SetPosition(m_pos + Vector2(((i % Columns)*cw) + 1, (row*ch) + 1));
             }
         }
     };

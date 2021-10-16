@@ -24,6 +24,8 @@ namespace tml
             virtual void OnMouseDown(const Vector2& mousePos) override;
             virtual void OnFocused() override;
             virtual void OnFocusLost() override;
+
+            Listbox* m_listComponent;
         };
     }
 }

@@ -5,12 +5,12 @@ namespace tml::Interface
     void VerticalLayout::UpdateComponents()
     {
         Vector2 m_offset = {1, 0};
-        for(auto i : m_components)
+        for(auto i : m_children)
         {
-            i->SetPosition(m_pos + m_offset);
-            if(i->GetHorizontalSizePolicy() == BaseComponent::SizePolicy::Expand)
-                i->SetSize({m_size.x - 2, i->GetSize().y});
-            m_offset.y += i->GetSize().y + 4; // 4 is for padding
+            i.second->SetPosition(m_pos + m_offset);
+            if(i.second->GetHorizontalSizePolicy() == BaseComponent::SizePolicy::Expand)
+                i.second->SetSize({m_size.x - 2, i.second->GetSize().y});
+            m_offset.y += i.second->GetSize().y + 4; // 4 is for padding
         }
     }
 

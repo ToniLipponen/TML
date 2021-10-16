@@ -33,6 +33,6 @@ namespace tml::Interface
     {
         m_layout->SetPosition(m_pos + Vector2(10,50));
         m_layout->SetSize(m_size - Vector2(20,20));
-        m_layout->Update(0);
+        m_layout->Update(dt);
     }
 }
