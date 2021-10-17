@@ -14,8 +14,8 @@ Text::Text()
     m_font.LoadFromMemory(DEFAULT_FONT_DATA.data(), DEFAULT_FONT_DATA.size());
 }
 
-Text::Text(std::string text)
-: m_string(std::move(text))
+Text::Text(const std::string& text)
+: m_string(Util::stringToWstring(text))
 {
     m_color = {255,255,255};
     m_pos = {0,0};
@@ -24,8 +24,8 @@ Text::Text(std::string text)
     Generate();
 }
 
-Text::Text(std::string text, const std::string& font_file_name)
-: m_string(std::move(text))
+Text::Text(const std::string& text, const std::string& font_file_name)
+: m_string(Util::stringToWstring(text))
 {
     m_font.LoadFromFile(font_file_name);
     m_color = {255,255,255};
@@ -34,8 +34,8 @@ Text::Text(std::string text, const std::string& font_file_name)
     Generate();
 }
 
-Text::Text(std::string text, Font& font)
-: m_string(std::move(text))
+Text::Text(const std::string& text, Font& font)
+: m_string(Util::stringToWstring(text))
 {
     m_font = font;
     m_color = {255,255,255};
@@ -64,9 +64,15 @@ void Text::SetColor(const Color& color) noexcept
     Generate();
 }
 
-void Text::SetString(std::string string)
+void Text::SetString(const std::string& string)
 {
-    m_string = std::move(string);
+    m_string = Util::stringToWstring(string);
+    Generate();
+}
+
+void Text::SetString(const std::wstring& string)
+{
+    m_string = string;
     Generate();
 }
 
@@ -84,18 +90,18 @@ void Text::SetSpacing(ui32 s)
 
 
 // First normalizes the quad coordinates, then scales them to size and translates them to xy.
-inline constexpr void NormalizeQuad(stbtt_aligned_quad& q, float s, float x, float y) noexcept
+inline constexpr void NormalizeQuad(stbtt_aligned_quad& q, double s, double x, double y) noexcept
 {
-    (q.x0 = (q.x0 * (s / 128.0))) += x;
-    (q.x1 = (q.x1 * (s / 128.0))) += x;
-    (q.y0 = (q.y0 * (s / 128.0))) += y - (s / 3.f);
-    (q.y1 = (q.y1 * (s / 128.0))) += y - (s / 3.f);
+    (q.x0 = (q.x0 * (s / 64.0))) += x;
+    (q.x1 = (q.x1 * (s / 64.0))) += x;
+    (q.y0 = (q.y0 * (s / 64.0))) += y - (s / 3.f);
+    (q.y1 = (q.y1 * (s / 64.0))) += y - (s / 3.f);
 }
 
 void Text::Generate() noexcept
 {
-    m_dimensions = {0,m_size.y};
-    float x = 0, y = 128.f;
+    m_dimensions = {0, m_size.y};
+    float x = 0, y = 64.f;
     float width = 0, height = 0;
     ui32 count = 0;
     m_vertexData.clear();
@@ -107,7 +113,7 @@ void Text::Generate() noexcept
         {
             m_dimensions.x = Util::Min(width, m_dimensions.x);
             m_dimensions.y = Util::Min(height, m_dimensions.y);
-            y += 128.f;
+            y += 64.f;
             x = 0;
             width = 0;
             continue;

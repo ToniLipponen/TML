@@ -1,4 +1,8 @@
 #include <TML/Camera.h>
+#include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 namespace tml
 {
@@ -53,5 +57,34 @@ namespace tml
     float Camera::GetRotation() const noexcept
     {
         return m_rotation;
+    }
+    void PrintMat(const glm::mat4& m)
+    {
+        for(auto i = 0; i < 4; i++)
+        {
+            for(auto j = 0; j < 4; j++)
+            {
+                std::cout << m[j][i] << " - ";
+            }
+            std::cout << std::endl;
+        }
+    }
+    Vector2 Camera::ScreenToWorld(const Vector2 &point)
+    {
+        /*
+         * This is just terrible. Please send help.
+         */
+        static int f[4];
+        glad_glGetIntegerv(GL_VIEWPORT, f);
+        glm::mat4 m = glm::mat4(1.0f);
+        const auto t = glm::translate(glm::mat4(1.0f), glm::vec3(-m_pos.x, -m_pos.y, 0));
+        const auto r = glm::rotate(glm::mat4(1.0f), m_rotation, glm::vec3(0.f, 0.f, 1.f));
+        const auto s = glm::scale(glm::mat4(1.0f), glm::vec3(m_zoom, m_zoom, 1.f));
+        const auto o = glm::translate(glm::mat4(1.0f), glm::vec3(f[2]/2.f, f[3]/2.f, 0));
+        m = t*o*s*r;
+        m = glm::inverse(m);
+        auto res = m * glm::vec4(point.x, point.y, -1, 1);
+
+        return Vector2{res.x, res.y} + (m_pos - (m_pos / m_zoom));
     }
 }

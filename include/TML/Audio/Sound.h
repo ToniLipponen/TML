@@ -12,6 +12,7 @@ namespace tml
         Sound(const std::string &filename);
         ~Sound();
         bool LoadFromFile(const std::string& filename);
+        bool LoadFromData(void* data, ui32 bytes);
         void Play();
         void Stop();
         void Pause();
