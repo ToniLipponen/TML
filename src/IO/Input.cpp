@@ -96,6 +96,8 @@ namespace tml {
 
     double Mouse::GetScrollValue()
     {
-        return s_mouseScrollValue;
+        auto r = s_mouseScrollValue;
+        s_mouseScrollValue = 0;
+        return r;
     }
 };

@@ -42,6 +42,9 @@ namespace tml
             void Disable();
             void ToggleEnabled();
 
+            bool Focused() const { return m_state.Focused; }
+            bool Enabled() const { return m_state.Enabled; }
+
             void SetOnClick(UIFunc function)        { m_onClickFunc        = function; }
             void SetOnMouseDown(UIFunc function)    { m_onMouseDownFunc    = function; }
             void SetOnHover(UIFunc function)        { m_onHoverFunc        = function; }
@@ -56,7 +59,8 @@ namespace tml
             const BaseComponent* FindComponent(const std::string& name) const; // DANGER! Returns nullptr if not found.
             const BaseComponent* FindComponent(unsigned long hash) const; // DANGER! Returns nullptr if not found.
 
-            const BaseComponent* GetParent() const;
+            const BaseComponent* GetParent() const; // DANGER! Returns nullptr if the component doesn't have a parent.
+            const BaseComponent* GetRoot() const;
             virtual bool ContainsPoint(const Vector2& p);
             virtual void Update(float dt = (1.0f / 60.f));
 
@@ -110,7 +114,6 @@ namespace tml
             SizePolicy m_vSizePolicy = Fixed; // Vertical size policy.
 
             std::deque<std::pair<unsigned long, BaseComponent*>> m_children;
-//            std::unordered_map<std::string, BaseComponent*> m_children;
             BaseComponent* m_parent;
 
             static BaseComponent* s_activeComponent;

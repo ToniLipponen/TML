@@ -14,8 +14,8 @@ Text::Text()
     m_font.LoadFromMemory(DEFAULT_FONT_DATA.data(), DEFAULT_FONT_DATA.size());
 }
 
-Text::Text(std::wstring text)
-: m_string(std::move(text))
+Text::Text(const std::string& text)
+: m_string(Util::stringToWstring(text))
 {
     m_color = {255,255,255};
     m_pos = {0,0};
@@ -24,8 +24,8 @@ Text::Text(std::wstring text)
     Generate();
 }
 
-Text::Text(std::wstring text, const std::string& font_file_name)
-: m_string(std::move(text))
+Text::Text(const std::string& text, const std::string& font_file_name)
+: m_string(Util::stringToWstring(text))
 {
     m_font.LoadFromFile(font_file_name);
     m_color = {255,255,255};
@@ -34,8 +34,8 @@ Text::Text(std::wstring text, const std::string& font_file_name)
     Generate();
 }
 
-Text::Text(std::wstring text, Font& font)
-: m_string(std::move(text))
+Text::Text(const std::string& text, Font& font)
+: m_string(Util::stringToWstring(text))
 {
     m_font = font;
     m_color = {255,255,255};
@@ -64,9 +64,15 @@ void Text::SetColor(const Color& color) noexcept
     Generate();
 }
 
-void Text::SetString(std::wstring string)
+void Text::SetString(const std::string& string)
 {
-    m_string = std::move(string);
+    m_string = Util::stringToWstring(string);
+    Generate();
+}
+
+void Text::SetString(const std::wstring& string)
+{
+    m_string = string;
     Generate();
 }
 

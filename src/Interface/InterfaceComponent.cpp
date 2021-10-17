@@ -102,6 +102,13 @@ const BaseComponent* BaseComponent::GetParent() const
     return nullptr;
 }
 
+const BaseComponent* BaseComponent::GetRoot() const
+{
+    if(!m_parent)
+        return this;
+    return m_parent->GetRoot();
+}
+
 bool BaseComponent::ContainsPoint(const Vector2 &p)
 {
     return (p > m_pos && p < m_pos + m_size);
@@ -166,7 +173,11 @@ void BaseComponent::Update(float dt)
 void BaseComponent::_Update(float dt, const Vector2& mp, bool& clicked, const Events& childEvents)
 {
     if(m_children.empty())
+    {
         ProcessEvents(mp, clicked, m_eventStatus, {0});
+        if(!m_eventStatus.MouseDown && clicked)
+            s_activeComponent = nullptr;
+    }
     else
         ProcessEvents(mp, clicked, m_eventStatus, childEvents);
 

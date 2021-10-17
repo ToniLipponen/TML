@@ -21,16 +21,15 @@ void TextInput::OnMouseClick(const Vector2 &p)
 
 void TextInput::OnUpdate(float dt)
 {
-    m_repeatTimer = Util::Max(m_repeatTimer += dt, 0.11f);
-
-    if(s_activeComponent == this)
+    m_repeatTimer = Util::Max(m_repeatTimer += dt, 0.21f);
+    if(m_state.Focused)
     {
-        if(m_repeatTimer > 0.1f)
+        if(m_repeatTimer > 0.2f)
         {
             if(Keyboard::IsKeyDown(Keyboard::KEY_LEFT_CONTROL)
             && Keyboard::IsKeyDown(Keyboard::KEY_V)
             && !Clipboard::IsEmpty())
-                m_value = Clipboard::GetString();
+                SetValue(Util::wstringToString(Clipboard::GetString()));
             else if(Keyboard::IsKeyDown(Keyboard::KEY_BACKSPACE)
             && !m_value.empty())
             {
@@ -51,7 +50,7 @@ void TextInput::OnUpdate(float dt)
         if(!str.empty())
         {
             m_value.insert(m_cursorIndex, str);
-            m_cursorIndex++;
+            m_cursorIndex += str.size();
         }
         m_cursorIndex = Util::Clamp<ui32>(m_cursorIndex, 0, m_value.size());
     }
@@ -67,9 +66,9 @@ void TextInput::Draw()
     DEFAULT_TEXT->SetString(m_value);
 
     Renderer::DrawRect(m_pos, m_size, m_pColor);
-    Renderer::DrawTextCropped(m_value, m_pos,m_size.y, BLACK, m_pos, m_pos + m_size);
+    Renderer::DrawTextCropped(Util::wstringToString(m_value), m_pos,m_size.y, BLACK, m_pos, m_pos + m_size);
     Renderer::DrawLine({cursorX, m_pos.y + (m_size.y / 10.0f)}, {cursorX, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
-    if(s_activeComponent == this)
+    if(m_state.Focused)
         Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 2);
     else
         Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor, 2);

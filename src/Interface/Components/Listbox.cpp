@@ -9,12 +9,12 @@ Listbox::Listbox(i32 x, i32 y, ui32 width, ui32 height)
     m_size = Vector2(width, height);
 }
 
-void Listbox::AddValue(std::wstring value)
+void Listbox::AddValue(std::string value)
 {
     m_values.push_back(std::move(value));
 }
 
-void Listbox::SetValue(ui32 index, std::wstring value)
+void Listbox::SetValue(ui32 index, std::string value)
 {
     if(index > m_values.size() - 1)
         return;
@@ -22,21 +22,21 @@ void Listbox::SetValue(ui32 index, std::wstring value)
         m_values.at(index) = std::move(value);
 }
 
-std::wstring Listbox::GetValue(ui32 index)
+std::string Listbox::GetValue(ui32 index)
 {
     if(index >= m_values.size())
-        return L"";
+        return "";
     else
         return m_values.at(index);
 }
 
-std::wstring Listbox::GetSelectedValue() const
+std::string Listbox::GetSelectedValue() const
 {
     if(m_selectedIndex != -1 && m_selectedIndex < m_values.size())
     {
         return m_values.at(m_selectedIndex);
     }
-    return L"";
+    return "";
 }
 
 tml::i32 Listbox::GetSelectedIndex() const
@@ -47,6 +47,15 @@ tml::i32 Listbox::GetSelectedIndex() const
 tml::ui32 Listbox::GetElementsCount() const
 {
     return m_values.size();
+}
+
+void Listbox::RemoveValue(ui32 index)
+{
+    if(index >= 0 && index < m_values.size())
+    {
+        m_values.erase(m_values.begin() + index);
+        m_selectedIndex = -1;
+    }
 }
 
 void Listbox::Clear()

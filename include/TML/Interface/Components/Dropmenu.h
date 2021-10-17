@@ -11,11 +11,11 @@ namespace tml
         {
         public:
             DropMenu(i32 x, i32 y, ui32 width, ui32 height = 20);
-            void AddValue(std::wstring value);
-            void SetValue(ui32 index, std::wstring value);
+            void AddValue(std::string value);
+            void SetValue(ui32 index, std::string value);
             i32 GetSelectedIndex() const;
-            std::wstring GetValue(ui32 index);
-            std::wstring GetSelectedValue() const;
+            std::string GetValue(ui32 index);
+            std::string GetSelectedValue() const;
             void Clear();
         private:
             void Draw() override;

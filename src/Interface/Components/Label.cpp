@@ -5,7 +5,7 @@ extern tml::Text* DEFAULT_TEXT;
 
 namespace tml::Interface
 {
-    Label::Label(i32 x, i32 y, ui32 s, std::wstring str)
+    Label::Label(i32 x, i32 y, ui32 s, std::string str)
     : m_text(std::move(str))
     {
         m_pos.x = x;
@@ -17,7 +17,7 @@ namespace tml::Interface
         m_size = DEFAULT_TEXT->GetDimensions();
     }
 
-    void Label::SetValue(std::wstring str)
+    void Label::SetValue(std::string str)
     {
         m_text = std::move(str);
         DEFAULT_TEXT->SetString(m_text);

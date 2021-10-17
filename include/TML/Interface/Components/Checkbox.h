@@ -10,7 +10,7 @@ namespace tml
         public:
             Checkbox(i32 x, i32 y, ui32 size, bool checked = false);
             bool GetValue() const { return m_value; }
-            void SetLabel(const std::wstring& labelString)
+            void SetLabel(const std::string& labelString)
             {
                 m_label = labelString;
             }
@@ -18,7 +18,7 @@ namespace tml
             virtual void Draw();
             virtual void OnMouseClick(const Vector2& mousePos);
             bool m_value = false;
-            std::wstring m_label;
+            std::string m_label;
         };
     }
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "../InterfaceComponent.h"
+#include <TML/Utilities/Utilities.h>
 
 namespace tml::Interface
 {
@@ -7,8 +8,8 @@ namespace tml::Interface
     {
     public:
         TextInput(i32 x, i32 y, i32 width, i32 height = 30);
-        void SetValue(std::wstring string){ m_value = std::move(string); m_cursorIndex = string.size()-1; }
-        std::wstring GetValue() const { return m_value; }
+        void SetValue(const std::string& string){ m_value = Util::stringToWstring(string); m_cursorIndex = string.size() - 1; }
+        std::string GetValue() const { return Util::wstringToString(m_value); }
     private:
         void OnMouseClick(const Vector2& p) override;
         void OnUpdate(float dt) override;

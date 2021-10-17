@@ -51,6 +51,7 @@ namespace tml {
         glfwSetKeyCallback(handle, KeyCallback);
         glfwSetMouseButtonCallback(handle, MouseButtonCallback);
         glfwSetCursorPosCallback(handle, MouseMoveCallback);
+        glfwSetScrollCallback(handle, MouseScrollCallback);
 
         GLFWimage img, img2;
         int channels = 4;

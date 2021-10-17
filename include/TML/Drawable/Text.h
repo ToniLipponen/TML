@@ -12,13 +12,14 @@ namespace tml
         // Initializes a Text with the default font and no string content.
         Text();
         // Initializes a Text with the default font
-        explicit Text(std::wstring text);
-        Text(std::wstring text, const std::string &font_file_name);
-        Text(std::wstring text, Font &font);
+        explicit Text(const std::string& text);
+        Text(const std::string& text, const std::string &font_file_name);
+        Text(const std::string& text, Font &font);
         void SetPosition(const Vector2 &pos) noexcept override;
         void SetSize(float s);
         void SetColor(const Color &color) noexcept override;
-        void SetString(std::wstring string);
+        void SetString(const std::string& string);
+        void SetString(const std::wstring& string);
         void SetFont(const Font &font);
         void SetSpacing(ui32 s);
         inline Vector2 GetDimensions() const noexcept { return m_dimensions; }

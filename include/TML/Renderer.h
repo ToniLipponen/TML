@@ -48,13 +48,13 @@ namespace tml {
         static void DrawTexture(Texture& tex, const Vector2& pos, const Vector2& size);
 
         static void
-        DrawText(const std::wstring& text, const Vector2& pos, float size, const Color& color = WHITE);
+        DrawText(const std::string& text, const Vector2& pos, float size, const Color& color = WHITE);
 
         // @brief Draws text within given area. Anything outside this area is discarded.
         // NOT WORKING RIGHT AT THE MOMENT.
         // TODO: Fix
         static void
-        DrawTextCropped(const std::wstring& text, const Vector2& pos, float size, const Color& color,
+        DrawTextCropped(const std::string& text, const Vector2& pos, float size, const Color& color,
                                     const Vector2& topLeft, const Vector2& bottomRight);
         static void EndBatch();
         static int batch_count;

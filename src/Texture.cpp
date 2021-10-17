@@ -38,8 +38,8 @@ void Texture::LoadFromFile(const std::string& filename)
 
 void Texture::LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data)
 {
-    if(m_id == UINT_MAX)
-        GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
+    GL_CALL(glDeleteTextures(1, &m_id));
+    GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
     m_pixeldata = data;
     m_width 	= w;
     m_height 	= h;
