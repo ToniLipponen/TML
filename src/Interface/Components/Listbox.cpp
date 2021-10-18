@@ -49,6 +49,16 @@ tml::ui32 Listbox::GetElementsCount() const
     return m_values.size();
 }
 
+bool Listbox::ContainsValue(const std::string& value) const
+{
+    for(auto& i : m_values)
+    {
+        if(i == value)
+            return true;
+    }
+    return false;
+}
+
 void Listbox::RemoveValue(ui32 index)
 {
     if(index >= 0 && index < m_values.size())

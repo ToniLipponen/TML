@@ -16,7 +16,7 @@ namespace tml {
             NoTopBar    = (1 << 5)
         };
     public:
-        Window(i32 width, i32 height, cstring title, ui32 settings = None);
+        Window(i32 width, i32 height, const std::string& title, ui32 settings = None);
         Window(const Window &) = delete;
         Window(const Window&&) = delete;
         Window &operator=(const Window &) = delete;
@@ -37,7 +37,7 @@ namespace tml {
         void SetTitle(cstring title);
         void Maximize();
         void SetFullscreen(bool fullscreen, i32 w = -1, i32 h = -1);
-        void Screenshot(cstring filename);
+        void Screenshot(const std::string& filename);
     private:
         std::string m_title;
         void *m_handle;

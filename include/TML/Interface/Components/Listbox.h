@@ -16,6 +16,7 @@ namespace tml
             std::string GetSelectedValue() const;
             i32 GetSelectedIndex() const;
             ui32 GetElementsCount() const;
+            bool ContainsValue(const std::string& value) const;
             void RemoveValue(ui32 index);
             void Clear();
             friend class DropMenu;

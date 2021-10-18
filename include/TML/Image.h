@@ -10,7 +10,12 @@ namespace tml
         Image();
         Image(i32 w, i32 h, i32 Bpp, ui8* data);
         Image(const std::string& filename);
+        Image(const Image& image);
+        Image(Image&& image);
         ~Image();
+
+        Image& operator=(const Image& rhs);
+        Image& operator=(Image&& rhs);
 
         inline constexpr i32  GetWidth()             const noexcept { return m_width;  }
         inline constexpr i32  GetHeight()            const noexcept { return m_height; }

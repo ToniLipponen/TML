@@ -30,7 +30,6 @@ namespace tml {
             m_texSize = m_size;
             m_rect = {{0,0}, m_size};
             m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
-            std::this_thread::sleep_for(std::chrono::microseconds(500));
         }
 
         void LoadFromImage(const Image& image)
@@ -40,7 +39,6 @@ namespace tml {
             m_texSize = m_size;
             m_rect = {{0,0}, m_size};
             m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
-            std::this_thread::sleep_for(std::chrono::microseconds(500));
         }
 
         void SetInterpolation(bool interpolate)

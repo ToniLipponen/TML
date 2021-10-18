@@ -1,8 +1,6 @@
 #include <TML/Texture.h>
 #include <glad/glad.h>
-#include <stb/stb_image.h>
 #include <climits>
-#include <algorithm>
 #include "internal/GlDebug.h"
 #include "internal/Assert.h"
 using namespace tml;
@@ -20,8 +18,8 @@ Texture::~Texture()
 
 void Texture::LoadFromImage(Image& image)
 {
-    if(m_id == UINT_MAX)
-        GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
+    GL_CALL(glDeleteTextures(1, &m_id));
+    GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
     m_width = image.GetWidth();
     m_height = image.GetHeight();
     m_bpp = image.GetBpp();

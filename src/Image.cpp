@@ -24,9 +24,62 @@ namespace tml
     {
         m_data = stbi_load(filename.c_str(), &m_width, &m_height, &m_Bpp, 0);
     }
+
+    Image::Image(const Image& image)
+    {
+        this->m_width = image.m_width;
+        this->m_height = image.m_height;
+        this->m_Bpp = image.m_Bpp;
+
+        delete[] m_data;
+        m_data = new ui8[m_width*m_height*m_Bpp];
+        memcpy(m_data, image.m_data, m_width*m_height*m_Bpp);
+    }
+
+    Image::Image(Image&& image)
+    {
+        this->m_width = image.m_width;
+        this->m_height = image.m_height;
+        this->m_Bpp = image.m_Bpp;
+        delete[] m_data;
+
+        this->m_data = image.m_data;
+        image.m_data = nullptr;
+        image.m_width = 0;
+        image.m_height = 0;
+        image.m_Bpp = 0;
+    }
+
     Image::~Image()
     {
         delete[] m_data;
+    }
+
+    Image& Image::operator=(const Image& rhs)
+    {
+        this->m_width = rhs.m_width;
+        this->m_height = rhs.m_height;
+        this->m_Bpp = rhs.m_Bpp;
+
+        delete[] m_data;
+        m_data = new ui8[m_width*m_height*m_Bpp];
+        memcpy(m_data,rhs.m_data, m_width*m_height*m_Bpp);
+        return *this;
+    }
+
+    Image& Image::operator=(Image&& rhs)
+    {
+        this->m_width = rhs.m_width;
+        this->m_height = rhs.m_height;
+        this->m_Bpp = rhs.m_Bpp;
+        delete[] m_data;
+
+        this->m_data = rhs.m_data;
+        rhs.m_data = nullptr;
+        rhs.m_width = 0;
+        rhs.m_height = 0;
+        rhs.m_Bpp = 0;
+        return *this;
     }
 
     bool Image::LoadFromFile(const std::string& filename)
