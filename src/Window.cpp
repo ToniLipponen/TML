@@ -33,7 +33,6 @@ namespace tml {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-        glfwWindowHint(GLFW_REFRESH_RATE, 60);
         glfwWindowHint(GLFW_DECORATED, (settings & Settings::NoTopBar) == 0);
         glfwWindowHint(GLFW_RESIZABLE, (settings & Settings::Resizeable) != 0);
         glfwWindowHint(GLFW_MAXIMIZED, (settings & Settings::Maximized) != 0);
@@ -52,28 +51,28 @@ namespace tml {
         glfwSetMouseButtonCallback(handle, MouseButtonCallback);
         glfwSetCursorPosCallback(handle, MouseMoveCallback);
         glfwSetScrollCallback(handle, MouseScrollCallback);
-
-        GLFWimage img, img2;
-        int channels = 4;
-        img.pixels = stbi_load_from_memory(
-                DEFAULT_ICON_DATA.data(),
-                static_cast<int>(DEFAULT_ICON_DATA.size()),
-                &img.width,
-                &img.height,
-                &channels,
-                4);
-        glfwSetWindowIcon(handle,1, &img);
-        img2.pixels = stbi_load_from_memory(
-                DEFAULT_CURSOR_DATA.data(),
-                static_cast<int>(DEFAULT_CURSOR_DATA.size()),
-                &img2.width,
-                &img2.height,
-                &channels,
-                4);
-        auto cursor = glfwCreateCursor(&img2, 0,0);
-        glfwSetCursor(handle, cursor);
-        delete[] img.pixels;
-        delete[] img2.pixels;
+//
+//        GLFWimage img, img2;
+//        int channels = 4;
+//        img.pixels = stbi_load_from_memory(
+//                DEFAULT_ICON_DATA.data(),
+//                static_cast<int>(DEFAULT_ICON_DATA.size()),
+//                &img.width,
+//                &img.height,
+//                &channels,
+//                4);
+//        glfwSetWindowIcon(handle,1, &img);
+//        img2.pixels = stbi_load_from_memory(
+//                DEFAULT_CURSOR_DATA.data(),
+//                static_cast<int>(DEFAULT_CURSOR_DATA.size()),
+//                &img2.width,
+//                &img2.height,
+//                &channels,
+//                4);
+//        auto cursor = glfwCreateCursor(&img2, 0,0);
+//        glfwSetCursor(handle, cursor);
+//        delete[] img.pixels;
+//        delete[] img2.pixels;
     }
 
     Window::~Window() {
