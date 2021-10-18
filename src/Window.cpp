@@ -9,8 +9,13 @@
 #include <stb/stb_image.h>
 
 #include "internal/Assert.h"
-#include <incbin/incbin.h>
-INCBIN(TML_ICON, "../res/Logo.png");
+
+#ifndef _WIN32
+    #include <incbin/incbin.h>
+    INCBIN(TML_ICON, "../res/Logo.png");
+#else
+    #include <Logo.h>
+#endif
 
 extern "C" void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);
 extern "C" void MouseMoveCallback(GLFWwindow* window, double x, double y);
@@ -54,13 +59,24 @@ namespace tml {
 
         GLFWimage img;
         int channels = 4;
-        img.pixels = stbi_load_from_memory(
+
+        #ifndef _WIN32
+            img.pixels = stbi_load_from_memory(
                 gTML_ICONData,
                 static_cast<int>(gTML_ICONSize),
                 &img.width,
                 &img.height,
                 &channels,
                 4);
+        #else
+            img.pixels = stbi_load_from_memory(
+                LOGO_DATA.data(),
+                static_cast<int>(LOGO_DATA.size()),
+                &img.width,
+                &img.height,
+                &channels,
+                4);
+        #endif
         glfwSetWindowIcon(handle,1, &img);
         delete[] img.pixels;
     }

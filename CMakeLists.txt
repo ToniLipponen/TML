@@ -17,17 +17,16 @@ endif()
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp src/glad.c external/incbin/incbin.c)
 add_subdirectory(external/glfw/)
-include_directories(external/glm external/glfw/include include external)
+include_directories(external/glm external/glfw/include include external res)
 
+set(GLFW_LIBARY_TYPE OBJECT)
 # I'm sick of dealing with linking dlls on windows.
 if(WIN32 OR MSVC)
-    set(GLFW_LIBARY_TYPE OBJECT)
     add_library(TML STATIC ${SRC_FILES})
     target_compile_features(TML PUBLIC cxx_std_17)
     target_compile_options(TML INTERFACE /arch:SSE3)
     target_link_libraries(TML glfw)
 elseif(UNIX)
-    set(GLFW_LIBARY_TYPE STATIC)
     set(CMAKE_INSTALL_PREFIX /usr)
 
     if(TML_MAKE_STATIC)

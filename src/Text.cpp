@@ -1,8 +1,13 @@
 #include <TML/Drawable/Text.h>
 #include <TML/Utilities/Utilities.h>
 #include <stb/stb_truetype.h>
-#include <incbin/incbin.h>
-INCBIN(DEFAULT_FONT, "../res/SF-UI-Text-Regular.otf");
+
+#ifndef _WIN32
+    #include <incbin/incbin.h>
+    INCBIN(DEFAULT_FONT, "../res/SF-UI-Text-Regular.otf");
+#else
+    #include <Font.h>
+#endif
 
 tml::Text* DEFAULT_TEXT;
 
@@ -13,7 +18,11 @@ namespace tml
         m_color = {255,255,255};
         m_pos = {0,0};
         m_size = {32,32};
-        m_font.LoadFromMemory(gDEFAULT_FONTData, gDEFAULT_FONTSize);
+        #ifndef _WIN32
+            m_font.LoadFromMemory(gDEFAULT_FONTData, gDEFAULT_FONTSize);
+        #else
+            m_font.LoadFromMemory(DEFAULT_FONT.data(), DEFAULT_FONT.size());
+        #endif
     }
 
     Text::Text(const std::string& text)
@@ -22,7 +31,11 @@ namespace tml
         m_color = {255,255,255};
         m_pos = {0,0};
         m_size = {32,32};
-        m_font.LoadFromMemory(gDEFAULT_FONTData, gDEFAULT_FONTSize);
+        #ifndef _WIN32
+            m_font.LoadFromMemory(gDEFAULT_FONTData, gDEFAULT_FONTSize);
+        #else
+            m_font.LoadFromMemory(DEFAULT_FONT.data(), DEFAULT_FONT.size());
+        #endif
         Generate();
     }
 

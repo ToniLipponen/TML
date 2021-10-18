@@ -12,7 +12,7 @@
 #include "internal/Shader.h"
 #include <incbin/incbin.h>
 
-INCBIN(CIRCLE_TEXTURE, "../res/Circle.png");
+#include <Circle.h>
 
 const static std::string VERTEX_STRING =
 R"END(
@@ -220,7 +220,7 @@ bool Renderer::Init()
     s_shader->Bind();
 
     int w = 0,h = 0,bpp = 0;
-    ui8* circleData = stbi_load_from_memory(gCIRCLE_TEXTUREData, static_cast<int>(gCIRCLE_TEXTURESize), &w, &h, &bpp, 1);
+    ui8* circleData = stbi_load_from_memory(CIRCLE.data(), static_cast<int>(CIRCLE.size()), &w, &h, &bpp, 1);
     s_circleTexture->LoadFromMemory(w, h, bpp, circleData);
     delete[] circleData;
     GL_CALL(glad_glEnable(GL_BLEND));
