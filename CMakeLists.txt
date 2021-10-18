@@ -33,7 +33,7 @@ elseif(UNIX)
     if(TML_MAKE_STATIC)
         add_library(TML STATIC ${SRC_FILES})
     else()
-        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+#        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
         add_library(TML SHARED ${SRC_FILES})
     endif()
 
