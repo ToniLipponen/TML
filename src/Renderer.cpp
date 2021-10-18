@@ -8,9 +8,11 @@
 
 #include "internal/GlDebug.h"
 #include "internal/Assert.h"
-#include "internal/Circle_texture.h"
 #include "internal/Buffers.h"
 #include "internal/Shader.h"
+#include <incbin/incbin.h>
+
+INCBIN(CIRCLE_TEXTURE, "../res/Circle.png");
 
 const static std::string VERTEX_STRING =
 R"END(
@@ -119,7 +121,6 @@ static VertexBuffer*    s_vertexBuffer = nullptr;
 static IndexBuffer*     s_indexBuffer = nullptr;
 static BufferLayout     s_layout;
 static Shader*          s_shader = nullptr;
-//static Text*            s_text = nullptr;
 
 static glm::mat4 s_view = glm::mat4(1.f);
 static glm::mat4 s_proj = glm::mat4(1.f);
@@ -219,7 +220,7 @@ bool Renderer::Init()
     s_shader->Bind();
 
     int w = 0,h = 0,bpp = 0;
-    ui8* circleData = stbi_load_from_memory(CIRCLE_TEXTURE_DATA.data(), static_cast<int>(CIRCLE_TEXTURE_DATA.size()), &w, &h, &bpp, 1);
+    ui8* circleData = stbi_load_from_memory(gCIRCLE_TEXTUREData, static_cast<int>(gCIRCLE_TEXTURESize), &w, &h, &bpp, 1);
     s_circleTexture->LoadFromMemory(w, h, bpp, circleData);
     delete[] circleData;
     GL_CALL(glad_glEnable(GL_BLEND));
