@@ -9,8 +9,8 @@
 #include <stb/stb_image.h>
 
 #include "internal/Assert.h"
-#include "internal/Default_icon.h"
-#include "internal/Default_cursor.h"
+#include <incbin/incbin.h>
+INCBIN(TML_ICON, "../res/Logo.png");
 
 extern "C" void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);
 extern "C" void MouseMoveCallback(GLFWwindow* window, double x, double y);
@@ -51,28 +51,18 @@ namespace tml {
         glfwSetMouseButtonCallback(handle, MouseButtonCallback);
         glfwSetCursorPosCallback(handle, MouseMoveCallback);
         glfwSetScrollCallback(handle, MouseScrollCallback);
-//
-//        GLFWimage img, img2;
-//        int channels = 4;
-//        img.pixels = stbi_load_from_memory(
-//                DEFAULT_ICON_DATA.data(),
-//                static_cast<int>(DEFAULT_ICON_DATA.size()),
-//                &img.width,
-//                &img.height,
-//                &channels,
-//                4);
-//        glfwSetWindowIcon(handle,1, &img);
-//        img2.pixels = stbi_load_from_memory(
-//                DEFAULT_CURSOR_DATA.data(),
-//                static_cast<int>(DEFAULT_CURSOR_DATA.size()),
-//                &img2.width,
-//                &img2.height,
-//                &channels,
-//                4);
-//        auto cursor = glfwCreateCursor(&img2, 0,0);
-//        glfwSetCursor(handle, cursor);
-//        delete[] img.pixels;
-//        delete[] img2.pixels;
+
+        GLFWimage img;
+        int channels = 4;
+        img.pixels = stbi_load_from_memory(
+                gTML_ICONData,
+                static_cast<int>(gTML_ICONSize),
+                &img.width,
+                &img.height,
+                &channels,
+                4);
+        glfwSetWindowIcon(handle,1, &img);
+        delete[] img.pixels;
     }
 
     Window::~Window() {
