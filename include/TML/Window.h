@@ -1,12 +1,14 @@
 #pragma once
 #include "Types.h"
 #include "TML/IO/Input.h"
-#include <string>
 
-namespace tml {
-    class Window {
+namespace tml
+{
+    class Window
+    {
     public:
-        enum Settings {
+        enum Settings
+        {
             None        = 0,
             Fullscreen  = (1 << 0),
             Resizeable  = (1 << 1),
@@ -19,7 +21,8 @@ namespace tml {
         Window(i32 width, i32 height, const std::string& title, ui32 settings = None);
         Window(const Window &) = delete;
         Window(const Window&&) = delete;
-        Window &operator=(const Window &) = delete;
+        Window &operator=(const Window&) = delete;
+        Window &operator=(Window&&) = delete;
         virtual ~Window();
         virtual void Display();
         void Close() const noexcept;
@@ -37,6 +40,7 @@ namespace tml {
         void SetTitle(cstring title);
         void Maximize();
         void SetFullscreen(bool fullscreen, i32 w = -1, i32 h = -1);
+        void SetActive();
         void Screenshot(const std::string& filename);
     private:
         std::string m_title;

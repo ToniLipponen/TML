@@ -12,11 +12,16 @@ namespace tml
 
     }
 
-    Image::Image(i32 w, i32 h, i32 Bpp, ui8* data)
+    Image::Image(i32 w, i32 h, i32 Bpp, const ui8* data)
     : m_width(w), m_height(h), m_Bpp(Bpp), m_data(nullptr)
     {
         m_data = new ui8[w*h*Bpp];
         memcpy(m_data, data, w*h*Bpp);
+    }
+
+    Image::Image(ui32 s, const ui8* data)
+    {
+        LoadFromData(s, data);
     }
 
     Image::Image(const std::string& filename)
@@ -89,7 +94,7 @@ namespace tml
         return (m_data != nullptr);
     }
 
-    void Image::LoadFromMemory(i32 w, i32 h, i32 Bpp, ui8* data)
+    void Image::LoadFromMemory(i32 w, i32 h, i32 Bpp, const ui8* data)
     {
         delete[] m_data;
         m_data = new ui8[w*h*Bpp];
@@ -99,7 +104,7 @@ namespace tml
         m_Bpp = Bpp;
     }
 
-    bool Image::LoadFromData(ui32 data_size, ui8 *data)
+    bool Image::LoadFromData(ui32 data_size, const ui8 *data)
     {
         delete[] m_data; m_data = nullptr;
         m_data = stbi_load_from_memory(data, data_size,&m_width, &m_height, &m_Bpp, 0);

@@ -18,4 +18,20 @@ namespace tml::Util
         std::wstring_convert<convert_type, wchar_t> converter;
         return converter.from_bytes(str);
     }
+
+    template<typename T>
+    inline constexpr T StringToType(const std::string& str) noexcept
+    {
+        if(str.length() == 0 || str.length() > 10)
+            return 0;
+        if constexpr(std::is_integral<T>::value)
+        {
+            return std::stol(str);
+        }
+        else if constexpr(std::is_floating_point<T>::value)
+        {
+            return std::stod(str);
+        }
+        return std::stoi(str);
+    }
 }

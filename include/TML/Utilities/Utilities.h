@@ -3,11 +3,11 @@
 #include "Condition.h"
 #include "String.h"
 #include "../Vector2.h"
-#include "../Camera.h"
 
 namespace tml::Util
 {
-    inline Vector2 Rotate(const Vector2 &origin, Vector2 p, float r) {
+    inline Vector2 Rotate(const Vector2 &origin, Vector2 p, float r)
+    {
         r = (r * 0.01745329f);
         p -= origin;
         const float cos_r = cosf(r);
@@ -17,7 +17,8 @@ namespace tml::Util
     }
 
     template<typename T>
-    inline constexpr T Clamp(T value, T min, T max) noexcept {
+    inline constexpr T Clamp(T value, T min, T max) noexcept
+    {
         if (value > max)
             return max;
         if (value < min)
@@ -26,14 +27,16 @@ namespace tml::Util
     }
 
     template<typename T>
-    inline constexpr T Min(T value, T min) noexcept {
+    inline constexpr T Min(T value, T min) noexcept
+    {
         if (value < min)
             return min;
         return value;
     }
 
     template<typename T>
-    [[maybe_unused]] inline constexpr T Max(T value, T max) noexcept {
+    inline constexpr T Max(T value, T max) noexcept
+    {
         if (value > max)
             return max;
         return value;
@@ -44,12 +47,32 @@ namespace tml::Util
     // T operator-(const T& rhs)
     // T operator*(float rhs)
     template<typename T>
-    inline constexpr T Lerp(const T &a, const T &b, float m) noexcept {
+    inline constexpr T Lerp(const T &a, const T &b, float m) noexcept
+    {
         return a + ((b - a) * m);
     }
+
+    template<typename T>
+    inline constexpr T Quadratic(const T &p0, const T &p1, const T &p2, const float t) noexcept
+    {
+        return Util::Lerp(
+                Util::Lerp(p0, p1, t),
+                Util::Lerp(p1, p2, t),
+                t);
+    }
+
+    template<typename T>
+    inline constexpr T Cubic(const T &p0, const T &p1, const T &p2, const T &p3, const float t) noexcept
+    {
+        return Util::Lerp(
+                Quadratic(p0, p1, p2, t),
+                Quadratic(p1, p2, p3, t),
+                t);
+    }
+
     // @brief Checks whether a value is withing given range
     template <typename T>
-    [[maybe_unused]] inline constexpr bool InRange(const T& min, const T& value, const T& max) noexcept
+    inline constexpr bool InRange(const T& min, const T& value, const T& max) noexcept
     {
         if(value >= min && value <= max)
             return true;

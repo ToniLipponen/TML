@@ -20,22 +20,20 @@ add_subdirectory(external/glfw/)
 include_directories(external/glm external/glfw/include include external res)
 
 set(GLFW_LIBARY_TYPE OBJECT)
-# I'm sick of dealing with linking dlls on windows.
-if(WIN32 OR MSVC)
+
+
+if(TML_MAKE_STATIC)
     add_library(TML STATIC ${SRC_FILES})
+else()
+    add_library(TML SHARED ${SRC_FILES})
+endif()
+
+if(WIN32 OR MSVC)
     target_compile_features(TML PUBLIC cxx_std_17)
     target_compile_options(TML INTERFACE /arch:SSE3)
     target_link_libraries(TML glfw)
 elseif(UNIX)
     set(CMAKE_INSTALL_PREFIX /usr)
-
-    if(TML_MAKE_STATIC)
-        add_library(TML STATIC ${SRC_FILES})
-    else()
-#        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-        add_library(TML SHARED ${SRC_FILES})
-    endif()
-
     target_compile_features(TML PUBLIC cxx_std_17)
     target_compile_options(TML INTERFACE -msse3)
     target_link_libraries(TML glfw dl pthread)

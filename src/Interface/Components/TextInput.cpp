@@ -21,10 +21,10 @@ void TextInput::OnMouseClick(const Vector2 &p)
 
 void TextInput::OnUpdate(float dt)
 {
-    m_repeatTimer = Util::Max(m_repeatTimer += dt, 0.21f);
+    m_repeatTimer = Util::Max(m_repeatTimer += dt, 0.11f);
     if(m_state.Focused)
     {
-        if(m_repeatTimer > 0.2f)
+        if(m_repeatTimer > 0.1f)
         {
             if(Keyboard::IsKeyDown(Keyboard::KEY_LEFT_CONTROL)
             && Keyboard::IsKeyDown(Keyboard::KEY_V)
@@ -46,13 +46,29 @@ void TextInput::OnUpdate(float dt)
             }
             m_repeatTimer = 0;
         }
+        else
+        {
+            if(Keyboard::IsKeyPressed(Keyboard::KEY_BACKSPACE) && !m_value.empty())
+            {
+                m_value.erase(Util::Clamp<ui32>(m_cursorIndex-1, 0, m_value.length() -1), 1);
+                m_cursorIndex--;
+            }
+            else if(Keyboard::IsKeyPressed(Keyboard::KEY_LEFT))
+            {
+                m_cursorIndex--;
+            }
+            else if(Keyboard::IsKeyPressed(Keyboard::KEY_RIGHT))
+            {
+                m_cursorIndex++;
+            }
+        }
         const auto str = Keyboard::EndString();
         if(!str.empty())
         {
             m_value.insert(m_cursorIndex, str);
             m_cursorIndex += str.size();
         }
-        m_cursorIndex = Util::Clamp<ui32>(m_cursorIndex, 0, m_value.size());
+        m_cursorIndex = Util::Clamp<i32>(m_cursorIndex, 0, m_value.size());
     }
 }
 
@@ -67,9 +83,11 @@ void TextInput::Draw()
 
     Renderer::DrawRect(m_pos, m_size, m_pColor);
     Renderer::DrawTextCropped(Util::wstringToString(m_value), m_pos,m_size.y, BLACK, m_pos, m_pos + m_size);
-    Renderer::DrawLine({cursorX, m_pos.y + (m_size.y / 10.0f)}, {cursorX, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
     if(m_state.Focused)
+    {
+        Renderer::DrawLine({cursorX, m_pos.y + (m_size.y / 10.0f)}, {cursorX, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
         Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 2);
+    }
     else
         Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor, 2);
 }

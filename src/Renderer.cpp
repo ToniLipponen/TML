@@ -1,5 +1,5 @@
 #include <TML/Renderer.h>
-#include <TML/Utilities/Bezier.h>
+#include <TML/Utilities/Utilities.h>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -10,7 +10,6 @@
 #include "internal/Assert.h"
 #include "internal/Buffers.h"
 #include "internal/Shader.h"
-#include <incbin/incbin.h>
 
 #include <Circle.h>
 
@@ -446,7 +445,7 @@ void Renderer::DrawBezier(const Vector2 &a, const Vector2 &cp1, const Vector2 &b
     Vector2 begin = a;
     for(float i = 0; i < 1.f; i += step)
     {
-        const Vector2 end = Cubic(a,cp1,cp2,b,i);
+        const Vector2 end = Util::Cubic(a,cp1,cp2,b,i);
         DrawLine(begin, end, thickness, color, rounded);
         begin = end;
     }
@@ -458,7 +457,7 @@ void Renderer::DrawBezier(const Vector2 &a, const Vector2 &cp, const Vector2 &b,
     Vector2 begin = a;
     for(float i = 0; i < 1.f; i += step)
     {
-        const Vector2 end = Quadratic(a,cp,b,i);
+        const Vector2 end = Util::Quadratic(a,cp,b,i);
         DrawLine(begin, end, thickness, color, rounded);
         begin = end;
     }

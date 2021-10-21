@@ -29,7 +29,8 @@ void WindowResizeCallback(GLFWwindow* f, int x, int y)
     glad_glViewport(0, 0, x, y);
 }
 
-namespace tml {
+namespace tml
+{
     Window::Window(i32 w, i32 h, const std::string& title, ui32 settings)
     : m_handle(nullptr), m_title(title)
     {
@@ -37,7 +38,7 @@ namespace tml {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+        
         glfwWindowHint(GLFW_DECORATED, (settings & Settings::NoTopBar) == 0);
         glfwWindowHint(GLFW_RESIZABLE, (settings & Settings::Resizeable) != 0);
         glfwWindowHint(GLFW_MAXIMIZED, (settings & Settings::Maximized) != 0);
@@ -81,59 +82,70 @@ namespace tml {
         delete[] img.pixels;
     }
 
-    Window::~Window() {
-        glfwDestroyWindow(reinterpret_cast<GLFWwindow *>(m_handle));
+    Window::~Window()
+    {
+        glfwDestroyWindow(reinterpret_cast<GLFWwindow*>(m_handle));
         glfwTerminate();
     }
 
-    void Window::Display() {
-        glfwSwapBuffers(reinterpret_cast<GLFWwindow *>(m_handle));
+    void Window::Display()
+    {
+        glfwSwapBuffers(reinterpret_cast<GLFWwindow*>(m_handle));
         glfwPollEvents();
     }
 
-    void Window::Close() const noexcept {
-        glfwSetWindowShouldClose(reinterpret_cast<GLFWwindow *>(m_handle), 1);
+    void Window::Close() const noexcept
+    {
+        glfwSetWindowShouldClose(reinterpret_cast<GLFWwindow*>(m_handle), 1);
     }
 
-    bool Window::ShouldClose() const noexcept {
-        return static_cast<bool>(glfwWindowShouldClose(reinterpret_cast<GLFWwindow *>(m_handle)));
+    bool Window::ShouldClose() const noexcept
+    {
+        return static_cast<bool>(glfwWindowShouldClose(reinterpret_cast<GLFWwindow*>(m_handle)));
     }
 
-    void *Window::GetHandle() noexcept {
+    void *Window::GetHandle() noexcept
+    {
         return m_handle;
     }
 
-    i32 Window::GetWidth() const noexcept {
+    i32 Window::GetWidth() const noexcept
+    {
         i32 w, h;
-        glfwGetWindowSize(static_cast<GLFWwindow *>(m_handle), &w, &h);
+        glfwGetWindowSize(static_cast<GLFWwindow*>(m_handle), &w, &h);
         return w;
     }
 
-    i32 Window::GetHeight() const noexcept {
+    i32 Window::GetHeight() const noexcept
+    {
         i32 w, h;
-        glfwGetWindowSize(static_cast<GLFWwindow *>(m_handle), &w, &h);
+        glfwGetWindowSize(static_cast<GLFWwindow*>(m_handle), &w, &h);
         return h;
     }
 
-    i32 Window::GetX() const noexcept {
+    i32 Window::GetX() const noexcept
+    {
         i32 x, y;
-        glfwGetWindowPos(static_cast<GLFWwindow *>(m_handle), &x, &y);
+        glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &x, &y);
         return x;
     }
 
-    i32 Window::GetY() const noexcept {
+    i32 Window::GetY() const noexcept
+    {
         i32 x, y;
-        glfwGetWindowPos(static_cast<GLFWwindow *>(m_handle), &x, &y);
+        glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &x, &y);
         return y;
     }
 
-    double Window::GetTime() const noexcept {
+    double Window::GetTime() const noexcept
+    {
         return glfwGetTime();
     }
 
-    void Window::SetSize(ui32 w, ui32 h) noexcept {
-        glfwRestoreWindow(static_cast<GLFWwindow *>(m_handle));
-        glfwSetWindowSize(static_cast<GLFWwindow *>(m_handle), static_cast<int>(w), static_cast<int>(h));
+    void Window::SetSize(ui32 w, ui32 h) noexcept
+    {
+        glfwRestoreWindow(static_cast<GLFWwindow*>(m_handle));
+        glfwSetWindowSize(static_cast<GLFWwindow*>(m_handle), static_cast<int>(w), static_cast<int>(h));
     }
 
     void Window::SetFpsLimit(ui32 fps)
@@ -141,11 +153,13 @@ namespace tml {
         glfwSwapInterval(1);
     }
 
-    void Window::SetTitle(cstring title) {
+    void Window::SetTitle(cstring title)
+    {
         glfwSetWindowTitle(static_cast<GLFWwindow *>(m_handle), title);
     }
 
-    void Window::Maximize() {
+    void Window::Maximize()
+    {
         glfwMaximizeWindow(static_cast<GLFWwindow *>(m_handle));
     }
 
@@ -174,6 +188,12 @@ namespace tml {
         glfwSetCursorPosCallback(handle, MouseMoveCallback);
         glfwSetScrollCallback(handle, MouseScrollCallback);
     }
+
+    void Window::SetActive()
+    {
+        glfwMakeContextCurrent((GLFWwindow*)m_handle);
+    }
+
     void Window::Screenshot(const std::string& filename) {
         const i32 w = GetWidth(), h = GetHeight();
         ui8* pixels = new ui8[3 * w * h];
@@ -182,4 +202,4 @@ namespace tml {
         stbi_write_png(filename.c_str(), w, h, 3, pixels, 0);
         delete[] pixels;
     }
-};
+}
