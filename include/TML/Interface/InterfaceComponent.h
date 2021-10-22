@@ -54,10 +54,10 @@ namespace tml::Interface
         void SetOnFocusLost(UIFunc function)    { m_onFocusLost        = function; }
 
         void AddChild(BaseComponent* component, const std::string& name = "");
-        const BaseComponent* FindComponent(const std::string& name) const; // DANGER! Returns nullptr if not found.
-        const BaseComponent* FindComponent(unsigned long hash) const; // DANGER! Returns nullptr if not found.
+        BaseComponent* FindComponent(const std::string& name); // DANGER! Returns nullptr if not found.
+        BaseComponent* FindComponent(unsigned long hash); // DANGER! Returns nullptr if not found.
 
-        const BaseComponent* GetParent() const; // DANGER! Returns nullptr if the component doesn't have a parent.
+        BaseComponent* GetParent(); // DANGER! Returns nullptr if the component doesn't have a parent.
         BaseComponent* GetRoot();
         virtual bool ContainsPoint(const Vector2& p);
         virtual void Update(float dt = (1.0f / 60.f));

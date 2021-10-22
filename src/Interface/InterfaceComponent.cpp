@@ -71,13 +71,13 @@ namespace tml::Interface
         }
     }
 
-    const BaseComponent* BaseComponent::FindComponent(const std::string& name) const
+    BaseComponent* BaseComponent::FindComponent(const std::string& name)
     {
         const auto nameHash = s_hash(name);
         return FindComponent(nameHash);
     }
 
-    const BaseComponent* BaseComponent::FindComponent(unsigned long nameHash) const
+    BaseComponent* BaseComponent::FindComponent(unsigned long nameHash)
     {
         if(m_children.empty())
             return nullptr;
@@ -95,7 +95,7 @@ namespace tml::Interface
         return nullptr;
     }
 
-    const BaseComponent* BaseComponent::GetParent() const
+    BaseComponent* BaseComponent::GetParent()
     {
         if(m_parent)
             return m_parent;
@@ -116,7 +116,7 @@ namespace tml::Interface
 
     void BaseComponent::ProcessEvents(const Vector2& mp, bool mouseDown, Events &childEvents)
     {
-        if(!childEvents.Drag)
+        if(!m_eventStatus.Drag || !childEvents.Drag)
         {
             const auto oldMouseOver   = m_eventStatus.MouseOver;
             m_eventStatus.MouseOver   = (!childEvents.MouseOver && ContainsPoint(mp) && !childEvents.MouseOver);

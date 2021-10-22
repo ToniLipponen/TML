@@ -21,6 +21,7 @@ namespace tml::Interface
         m_size = Vector2(w,h);
         m_value = value;
         m_valueStr = std::to_string(m_value);
+        m_cursorIndex = m_valueStr.length();
 
         auto buttonPos = m_pos - Vector2(h/2, 0);
         buttonPos.x += m_size.x;
@@ -113,6 +114,14 @@ namespace tml::Interface
                 else if(Keyboard::IsKeyPressed(Keyboard::KEY_RIGHT))
                 {
                     m_cursorIndex++;
+                }
+                else if(Keyboard::IsKeyPressed(Keyboard::KEY_UP))
+                {
+                    Increment();
+                }
+                else if(Keyboard::IsKeyPressed(Keyboard::KEY_DOWN))
+                {
+                    Decrement();
                 }
             }
             const auto str = Util::wstringToString(Keyboard::EndString());
