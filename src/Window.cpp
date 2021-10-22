@@ -1,5 +1,6 @@
 #include <TML/Window.h>
 #include <TML/Utilities/Condition.h>
+#include <TML/Utilities/Platform.h>
 
 #include <glad/glad.h>
 #define GLFW_INCLUDE_NONE
@@ -10,7 +11,7 @@
 
 #include "internal/Assert.h"
 
-#ifndef _WIN32
+#if PLATFORM_UNIX
     #include <incbin/incbin.h>
     INCBIN(TML_ICON, "../res/Logo.png");
 #else
@@ -61,7 +62,7 @@ namespace tml
         GLFWimage img;
         int channels = 4;
 
-        #ifndef _WIN32
+        #if PLATFORM_UNIX
             img.pixels = stbi_load_from_memory(
                 gTML_ICONData,
                 static_cast<int>(gTML_ICONSize),

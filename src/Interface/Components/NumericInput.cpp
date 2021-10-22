@@ -15,7 +15,7 @@ namespace tml::Interface
     }
 
     template<typename T>
-    NumericInput<T>::NumericInput(BaseComponent *parent, i32 x, i32 y, ui32 w, ui32 h, T value)
+    NumericInput<T>::NumericInput(i32 x, i32 y, ui32 w, ui32 h, T value)
     {
         m_pos = Vector2(x,y);
         m_size = Vector2(w,h);
@@ -34,8 +34,6 @@ namespace tml::Interface
         dec->SetTextSize(h * 0.8);
         inc->SetOnClick({[](BaseComponent* c){((NumericInput*)c->GetParent())->Increment();}});
         dec->SetOnClick({[](BaseComponent* c){((NumericInput*)c->GetParent())->Decrement();}});
-        if(parent)
-            parent->AddChild(this);
     }
 
     template<typename T>
@@ -157,7 +155,7 @@ namespace tml::Interface
         Renderer::DrawRect(m_pos, m_size, m_pColor);
         Renderer::DrawTextCropped(m_valueStr, m_pos,m_size.y, BLACK, m_pos, m_pos + m_size);
 
-        if(s_activeComponent == this)
+        if(m_state.Focused)
         {
             Renderer::DrawLine({cursorX, m_pos.y + (m_size.y / 10.0f)}, {cursorX, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
             Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 2);

@@ -7,8 +7,10 @@
 #include "Drawable/Video.h"
 #include "Camera.h"
 
-namespace tml {
-    class Renderer {
+namespace tml
+{
+    class Renderer
+    {
     public:
         static bool Init();
         static void SetClearColor(const Color& color);
@@ -20,9 +22,8 @@ namespace tml {
         static void Draw(Circle &circle);
         static void Draw(Sprite &sprite);
         static void Draw(Text &text);
+        static void Draw(Video& video); // @brief You need to call video.Advance() before drawing
 
-        // @brief You need to call video.Advance() before drawing
-        static void Draw(Video& video);
         static void DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Color color, bool rounded = true);
         static void DrawRect(const Vector2 &pos, const Vector2 &dimensions, const Color &color, float roundness = 0.0f,
                              float rotation = 0.0f);
@@ -57,7 +58,6 @@ namespace tml {
         DrawTextCropped(const std::string& text, const Vector2& pos, float size, const Color& color,
                                     const Vector2& topLeft, const Vector2& bottomRight);
         static void EndBatch();
-        static int batch_count;
 
     private:
         static void

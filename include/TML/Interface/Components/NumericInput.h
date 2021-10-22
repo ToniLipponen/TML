@@ -9,7 +9,7 @@ namespace tml::Interface
     {
     public:
         NumericInput();
-        NumericInput(BaseComponent* parent, i32 x, i32 y, ui32 w, ui32 h, T value = 0);
+        NumericInput(i32 x, i32 y, ui32 w, ui32 h, T value = 0);
         void SetValue(T value);
         T GetValue() const;
 

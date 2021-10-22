@@ -1,21 +1,24 @@
 #pragma once
+#include <cstdint>
 
-namespace tml {
-// Shortened type names
-    typedef unsigned long long ui64;
-    typedef unsigned int ui32;
-    typedef unsigned short ui16;
-    typedef unsigned char ui8;
+namespace tml
+{
+    // Shortened type names
 
-    typedef long long i64;
-    typedef int i32;
-    typedef short i16;
-    typedef char i8;
+    typedef std::uint64_t   ui64;
+    typedef std::uint32_t   ui32;
+    typedef std::uint16_t   ui16;
+    typedef std::uint8_t    ui8;
 
-    typedef float f32;
-    typedef double f64;
+    typedef std::int64_t    i64;
+    typedef std::int32_t    i32;
+    typedef std::int16_t    i16;
+    typedef std::int8_t     i8;
 
-    typedef const char *cstring;
-};
+    typedef float           f32;
+    typedef double          f64;
+
+    typedef const char* cstring;
+}
 #include "Vector2.h"
 #include "Color.h"

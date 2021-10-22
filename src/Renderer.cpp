@@ -11,7 +11,7 @@
 #include "internal/Buffers.h"
 #include "internal/Shader.h"
 
-#include <Circle.h>
+#include <Circle.h> // Circle texture data
 
 const static std::string VERTEX_STRING =
 R"END(
@@ -34,7 +34,7 @@ uniform mat4 uScale;
 
 void main()
 {
-    vec4 r = uView * vec4(Pos-(uViewSize*0.5), 1, 1);
+    const vec4 r = uView * vec4(Pos-(uViewSize*0.5), 1, 1);
     gl_Position = uProj * (uScale * vec4(r.xy + (uViewSize*0.5), 0, 1));
     vColor = vec4(
         int((Color & 0xff000000) >> 24),
@@ -111,7 +111,7 @@ void main()
 }
 )END";
 using namespace tml;
-extern std::vector<ui8> DEFAULT_FONT_DATA;
+
 extern Text*            DEFAULT_TEXT;
 
 static Texture*         s_circleTexture = nullptr;
@@ -134,7 +134,6 @@ static i32 MAX_TEXTURE_COUNT = 8;
 static std::vector<Vertex>  s_vertexData;
 static std::vector<ui32>    s_indexData;
 static std::vector<ui32>    s_textures;
-int Renderer::batch_count = 0;
 
 void PrintInformation()
 {
@@ -257,7 +256,6 @@ void Renderer::ResetCamera()
 
 void Renderer::Clear()
 {
-    batch_count = 0;
     GL_CALL(glad_glClear(GL_COLOR_BUFFER_BIT));
 	static int f[4];
 	GL_CALL(glad_glGetIntegerv(GL_VIEWPORT, f));
@@ -553,7 +551,6 @@ void Renderer::DrawText(const std::string &text, const Vector2 &pos, float size,
     Draw(*DEFAULT_TEXT);
 }
 
-
 // This doesn't remove any quads, even if they are out of bounds. The vertices of quads only get clamped. Maybe improve this in the future.
 void Renderer::DrawTextCropped(const std::string &text, const Vector2 &pos, float size, const Color &color,
                                const Vector2 &topLeft, const Vector2 &bottomRight)
@@ -608,17 +605,11 @@ ui32 Renderer::PushTexture(Texture &texture)
         }
         ++index;
     }
-//    index += 1;
     if(!already_in_m_textures)
     {
         texture.Bind(index);
         s_textures.push_back(id);
     }
-    // I think this is unnecessary
-//    else
-//    {
-//        texture.Bind(index);
-//    }
     return index;
 }
 
@@ -640,5 +631,4 @@ void Renderer::EndBatch()
     GL_CALL(glad_glDrawElements(GL_TRIANGLES, s_indexBuffer->Elements(), GL_UNSIGNED_INT, nullptr));
 
     Renderer::BeginBatch();
-    ++batch_count;
 }
