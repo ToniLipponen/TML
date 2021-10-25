@@ -13,7 +13,7 @@ namespace tml
         void LoadFromFile(cstring filename) noexcept;
         void SetFrameRate(double fps) noexcept;
         void SetLooping(bool loop) const noexcept;
-        void Advance(f64 step) noexcept;
+        void Advance(double step) noexcept;
         friend class Renderer;
     private:
         void* m_stream = nullptr;
