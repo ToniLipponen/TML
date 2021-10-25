@@ -3,12 +3,14 @@
 #include <ostream>
 #include <istream>
 
-namespace tml {
-    class Vector2 {
+namespace tml
+{
+    class Vector2
+    {
     public:
         Vector2() = default;
         Vector2(float v) noexcept : x(v), y(v) {}
-        Vector2(float x, float y) noexcept : x{x}, y{y} {}
+        Vector2(float x, float y) noexcept : x(x), y(y) {}
 
         inline Vector2 operator+(const Vector2 &rhs) const noexcept {
             return {x + rhs.x, y + rhs.y};

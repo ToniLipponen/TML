@@ -79,6 +79,17 @@ namespace tml::Util
         return false;
     }
 
+    inline bool PointInRect(const Vector2& point, const Vector2& p, const Vector2& s, float rotation)
+    {
+        const auto npoint = Rotate(p + (s*0.5), point, -rotation);
+        return (p < npoint && npoint < p+s);
+    }
+
+    inline bool PointInCircle(const Vector2& point, const Vector2& p, float r)
+    {
+        return (Vector2::Distance(point, p) <= r);
+    }
+
     inline Vector2 AngleToHeading(float degrees) noexcept
     {
         return Vector2(std::cos(degrees * 0.01745329f), std::sin(degrees * 0.01745329f)).Normalized();

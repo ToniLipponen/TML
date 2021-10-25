@@ -44,7 +44,7 @@ namespace tml
         glfwWindowHint(GLFW_RESIZABLE, (settings & Settings::Resizeable) != 0);
         glfwWindowHint(GLFW_MAXIMIZED, (settings & Settings::Maximized) != 0);
         glfwWindowHint(GLFW_DOUBLEBUFFER, (settings & Settings::VSync) != 0);
-        glfwWindowHint(GLFW_SAMPLES, static_cast<int>((settings & Settings::Antialias) * 4));
+        glfwWindowHint(GLFW_SAMPLES, static_cast<int>(((settings & Settings::Antialias) >> 4) * 4));
 
         m_handle = glfwCreateWindow(w, h, title.c_str(),(settings & Settings::Fullscreen) ? glfwGetPrimaryMonitor() : nullptr, nullptr);
         TML_ASSERT(m_handle != nullptr, "Failed to create a window handle.");
@@ -138,9 +138,18 @@ namespace tml
         return y;
     }
 
-    double Window::GetTime() const noexcept
+    Vector2 Window::GetPosition() const noexcept
     {
-        return glfwGetTime();
+        i32 x, y;
+        glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &x, &y);
+        return {static_cast<float>(x),static_cast<float>(y)};
+    }
+
+    Vector2 Window::GetSize() const noexcept
+    {
+        i32 x, y;
+        glfwGetWindowSize(static_cast<GLFWwindow*>(m_handle), &x, &y);
+        return {static_cast<float>(x),static_cast<float>(y)};
     }
 
     void Window::SetSize(ui32 w, ui32 h) noexcept
