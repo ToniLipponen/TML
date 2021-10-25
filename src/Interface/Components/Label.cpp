@@ -15,6 +15,7 @@ namespace tml::Interface
         DEFAULT_TEXT->SetString(m_text);
         DEFAULT_TEXT->SetSize(m_fontSize);
         m_size = DEFAULT_TEXT->GetDimensions();
+        m_pColor = BLACK;
     }
 
     void Label::SetValue(std::string str)

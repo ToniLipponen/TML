@@ -7,7 +7,6 @@
 
 namespace tml::Interface
 {
-    BaseComponent* BaseComponent::s_activeComponent = nullptr;
     std::hash<std::string> BaseComponent::s_hash = std::hash<std::string>();
 
     BaseComponent::BaseComponent()

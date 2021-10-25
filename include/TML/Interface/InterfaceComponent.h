@@ -115,7 +115,6 @@ namespace tml::Interface
         std::deque<std::pair<unsigned long, BaseComponent*>> m_children;
         BaseComponent* m_parent;
 
-        static BaseComponent* s_activeComponent;
         static std::hash<std::string> s_hash;
     };
 }

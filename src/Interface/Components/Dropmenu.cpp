@@ -51,7 +51,7 @@ namespace tml::Interface
 
         Renderer::DrawRect(m_pos, m_size, m_pColor);
         Renderer::DrawText(selected_value, m_pos, m_size.y, BLACK);
-        if(s_activeComponent == this)
+        if(m_state.Focused)
             Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 2);
         else
             Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor, 2);

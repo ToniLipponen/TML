@@ -25,16 +25,16 @@ namespace tml::Interface
 
         auto buttonPos = m_pos - Vector2(h/2, 0);
         buttonPos.x += m_size.x;
-        auto inc = new Button(buttonPos.x, buttonPos.y, h/2, h/2, "+");
-        auto dec = new Button(buttonPos.x, buttonPos.y + h/2, h/2, h/2, "-");
-        AddChild(inc);
-        AddChild(dec);
-        m_size.x -= h/2;
+        m_incrementButton = new Button(buttonPos.x, buttonPos.y, h/2, h/2, "+");
+        m_decrementButton = new Button(buttonPos.x, buttonPos.y + h/2, h/2, h/2, "-");
+        AddChild(m_decrementButton);
+        AddChild(m_incrementButton);
+        m_size.x -= h / 2;
 
-        inc->SetTextSize(h * 0.8);
-        dec->SetTextSize(h * 0.8);
-        inc->SetOnClick({[](BaseComponent* c){((NumericInput*)c->GetParent())->Increment();}});
-        dec->SetOnClick({[](BaseComponent* c){((NumericInput*)c->GetParent())->Decrement();}});
+        m_incrementButton->SetTextSize(h * 0.8);
+        m_decrementButton->SetTextSize(h * 0.8);
+        m_incrementButton->SetOnClick({[](BaseComponent* c){((NumericInput*)c->GetParent())->Increment();}});
+        m_decrementButton->SetOnClick({[](BaseComponent* c){((NumericInput*)c->GetParent())->Decrement();}});
     }
 
     template<typename T>
@@ -75,6 +75,14 @@ namespace tml::Interface
     template<typename T>
     void NumericInput<T>::OnUpdate(float dt)
     {
+        auto buttonPos = m_pos;
+        buttonPos.x += m_size.x + 2;
+
+        m_incrementButton->SetSize({m_size.y / 2, (m_size.y / 2) - 1});
+        m_decrementButton->SetSize({m_size.y / 2, (m_size.y / 2) - 1});
+        m_incrementButton->SetPosition(buttonPos);
+        m_decrementButton->SetPosition({buttonPos.x, buttonPos.y + (m_size.y / 2) + 1});
+
         m_repeatTimer = Util::Max(m_repeatTimer += dt, 0.11f);
         if(m_state.Focused)
         {

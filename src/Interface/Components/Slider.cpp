@@ -57,7 +57,7 @@ namespace tml::Interface
             Renderer::DrawLine(a,b,(m_size.y / 2) * 1.25f,m_sColor);
             Renderer::DrawLine(a,b,m_size.y / 2,m_pColor);
             Renderer::DrawLine(a,Util::Lerp(a,b,m_value / m_max),m_size.y / 2,m_activeColor);
-            if(s_activeComponent == this)
+            if(m_state.Focused)
                 Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_size.y / 2,m_activeColor);
             else
                 Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_size.y / 2,m_sColor);
@@ -70,7 +70,7 @@ namespace tml::Interface
             Renderer::DrawLine(a,b,(m_size.x / 2) * 1.25f,m_sColor);
             Renderer::DrawLine(a, b,m_size.x / 2,m_pColor);
             Renderer::DrawLine(b, Util::Lerp(a, b, 1.f - (m_value / m_max)),m_size.x / 2,m_activeColor);
-            if(s_activeComponent == this)
+            if(m_state.Focused)
                 Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)), m_size.x / 2, m_activeColor);
             else
                 Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),m_size.x / 2,m_sColor);
