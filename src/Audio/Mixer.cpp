@@ -38,7 +38,6 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
     }
 }
 
-
 namespace tml
 {
     ma_decoder_config s_decoder_config;
@@ -75,7 +74,6 @@ namespace tml
         void AddSound(ui32 id, AudioType* snd)
         {
             s_sounds.insert({id, snd});
-//            OUTPUT_DEVICE.pUserData = snd->GetDecoder();
         }
 
         void RemoveSound(ui32 id)

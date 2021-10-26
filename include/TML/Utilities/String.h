@@ -3,35 +3,38 @@
 #include <locale>
 #include <codecvt>
 
-namespace tml::Util
+namespace tml
 {
-    inline std::string wstringToString(const std::wstring& str) noexcept
+    namespace Util
     {
-        using convert_type = std::codecvt_utf8<wchar_t>;
-        std::wstring_convert<convert_type, wchar_t> converter;
-        return converter.to_bytes(str);
-    }
-
-    inline std::wstring stringToWstring(const std::string& str) noexcept
-    {
-        using convert_type = std::codecvt_utf8<wchar_t>;
-        std::wstring_convert<convert_type, wchar_t> converter;
-        return converter.from_bytes(str);
-    }
-
-    template<typename T>
-    inline constexpr T StringToType(const std::string& str) noexcept
-    {
-        if(str.length() == 0 || str.length() > 10)
-            return 0;
-        if constexpr(std::is_integral<T>::value)
+        inline std::string wstringToString(const std::wstring& str) noexcept
         {
-            return std::stol(str);
+            using convert_type = std::codecvt_utf8<wchar_t>;
+            std::wstring_convert<convert_type, wchar_t> converter;
+            return converter.to_bytes(str);
         }
-        else if constexpr(std::is_floating_point<T>::value)
+
+        inline std::wstring stringToWstring(const std::string& str) noexcept
         {
-            return std::stod(str);
+            using convert_type = std::codecvt_utf8<wchar_t>;
+            std::wstring_convert<convert_type, wchar_t> converter;
+            return converter.from_bytes(str);
         }
-        return std::stoi(str);
+
+        template<typename T>
+        inline constexpr T StringToType(const std::string& str) noexcept
+        {
+            if(str.length() == 0 || str.length() > 10)
+                return 0;
+            if(std::is_integral<T>::value)
+            {
+                return std::stol(str);
+            }
+            else if(std::is_floating_point<T>::value)
+            {
+                return std::stod(str);
+            }
+            return std::stoi(str);
+        }
     }
 }

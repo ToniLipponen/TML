@@ -136,7 +136,7 @@ namespace tml::Interface
             if(!str.empty())
             {
                 char c = str.at(0);
-                if constexpr(std::is_integral<T>::value)
+                if(std::is_integral<T>::value)
                 {
                     if(Util::InRange<char>(48, c, 57))
                     {

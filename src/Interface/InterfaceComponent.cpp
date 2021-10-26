@@ -80,16 +80,18 @@ namespace tml::Interface
     {
         if(m_children.empty())
             return nullptr;
-        const auto result = std::find_if(m_children.begin(), m_children.end(), [nameHash](std::pair<unsigned long, BaseComponent*> p){return p.first == nameHash;});
-        if(result == m_children.end())
-            for(auto i : m_children)
-            {
-                auto child_result = i.second->FindComponent(nameHash);
-                if(child_result)
-                    return child_result;
-            }
-        else
-            return result->second;
+//        const auto result = std::find_if(m_children.begin(), m_children.end(), [nameHash](std::pair<unsigned long, BaseComponent*> p){return p.first == nameHash;});
+
+        for(auto& i : m_children)
+            if(nameHash == i.first)
+                return i.second;
+
+        for(auto i : m_children)
+        {
+            auto child_result = i.second->FindComponent(nameHash);
+            if(child_result)
+                return child_result;
+        }
 
         return nullptr;
     }
