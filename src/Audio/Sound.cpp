@@ -1,89 +1,112 @@
 #include <TML/Audio/Sound.h>
 #include <miniaudio/miniaudio.h>
-#include "Mixer.h"
+#include <TML/Utilities/Copy.h>
+#include <TML/Utilities/Utilities.h>
 #include "../internal/Assert.h"
+#include "Mixer.h"
 
 namespace tml
 {
     extern ma_decoder_config s_decoder_config;
-    volatile bool AudioInitialized = Mixer::Init();
-    ui32 Sound::s_soundCount = 0;
+
     Sound::Sound()
+    : m_channels(0), m_readSamples(0), m_samplesCount(0), m_samples(nullptr)
     {
-        m_decoder = new ma_decoder;
-        m_id = s_soundCount++;
+
     }
 
     Sound::Sound(const std::string &filename)
+    : m_channels(0), m_readSamples(0), m_samplesCount(0), m_samples(nullptr)
     {
-        m_decoder = new ma_decoder;
-        ma_result result = ma_decoder_init_file(filename.c_str(), &s_decoder_config, (ma_decoder*)m_decoder);
-        if (result != MA_SUCCESS)
-            tml::Logger::ErrorMessage("Failed to load sound file -> %s", filename.c_str());
-        m_id = s_soundCount++;
+        LoadFromFile(filename);
+    }
+
+    Sound::Sound(const float *data, ui8 channels, ui64 sampleCount)
+    : m_channels(0), m_readSamples(0), m_samplesCount(0), m_samples(nullptr)
+    {
+        LoadFromMemory(data, channels, sampleCount);
     }
 
     Sound::~Sound()
     {
         Mixer::RemoveSound(m_id);
-        ma_decoder_uninit((ma_decoder*)m_decoder);
-        delete (ma_decoder*)m_decoder;
+        delete[] m_samples;
     }
 
     bool Sound::LoadFromFile(const std::string &filename)
     {
-        m_state = Stopped;
-        Mixer::RemoveSound(m_id);
-        ma_decoder_uninit((ma_decoder*)m_decoder);
-        ma_result result = ma_decoder_init_file(filename.c_str(), &s_decoder_config, (ma_decoder*)m_decoder);
-        if (result != MA_SUCCESS)
+        ma_decoder decoder;
+        ma_result result = ma_decoder_init_file(filename.c_str(), &s_decoder_config, &decoder);
+        if(result != MA_SUCCESS)
         {
             tml::Logger::ErrorMessage("Failed to load sound file -> %s", filename.c_str());
             return false;
         }
+        m_samplesCount = ma_decoder_get_length_in_pcm_frames(&decoder) * decoder.outputChannels;
+
+        delete[] m_samples;
+        m_samples = new float[m_samplesCount];
+        ma_decoder_read_pcm_frames(&decoder, m_samples, m_samplesCount);
+
+        m_readSamples = 0;
+        m_channels = decoder.outputChannels;
+
+        ma_decoder_uninit(&decoder);
         return true;
     }
 
-    bool Sound::LoadFromData(void *data, ui32 bytes)
+    bool Sound::LoadFromData(const void *data, ui64 bytes)
     {
-        m_state = Stopped;
-        Mixer::RemoveSound(m_id);
-        ma_decoder_uninit((ma_decoder*)m_decoder);
-
-        ma_result result = ma_decoder_init_memory(data, bytes, &s_decoder_config, (ma_decoder*)m_decoder);
-        if (result != MA_SUCCESS)
+        ma_decoder decoder;
+        ma_result result = ma_decoder_init_memory(data, bytes, &s_decoder_config, &decoder);
+        if(result != MA_SUCCESS)
         {
-            tml::Logger::ErrorMessage("Failed to load sound from memory.");
+            tml::Logger::ErrorMessage("Failed to load sound");
             return false;
         }
+        m_samplesCount = ma_decoder_get_length_in_pcm_frames(&decoder) * decoder.outputChannels;
+
+        delete[] m_samples;
+        m_samples = new float[m_samplesCount];
+        ma_decoder_read_pcm_frames(&decoder, m_samples, m_samplesCount);
+        m_readSamples = 0;
+        m_channels = decoder.outputChannels;
+
+        ma_decoder_uninit(&decoder);
+        return true;
+    }
+
+    bool Sound::LoadFromMemory(const float *data, ui8 channels, ui64 sampleCount)
+    {
+        delete[] m_samples;
+        m_samples = new float[sampleCount];
+        Util::Copy<float>(m_samples, data, sampleCount);
+        m_samplesCount = sampleCount;
+        m_readSamples = 0;
+        m_channels = channels;
         return true;
     }
 
     void Sound::Play()
     {
-        m_state = Playing;
-        Mixer::AddSound(m_id, this);
+        m_readSamples = 0;
+        AudioType::Play();
     }
 
-    void Sound::Stop() {
-//        Mixer::RemoveSound(m_id); // Currently causes a segfault
-        ma_decoder_seek_to_pcm_frame((ma_decoder*)m_decoder, 0);
-        m_state = Stopped;
+    void Sound::Stop()
+    {
+        AudioType::Stop();
+        m_readSamples = 0;
     }
 
-    void Sound::Pause() {
-        m_state = Paused;
+    ui32 Sound::ReadFrames(float *output, ui32 frameCount)
+    {
+        const ui32 readFrames = Util::Clamp<ui32>(frameCount * m_channels, 0, m_samplesCount - m_readSamples);
+        for(ui32 i = 0; i < readFrames; ++i)
+            output[i] += m_samples[m_readSamples+i] * m_volume;
+
+        m_readSamples += readFrames;
+        return frameCount;
     }
 
-    void Sound::Resume() {
-        m_state = Playing;
-    }
-
-    void Sound::SetLooping(bool loop) {
-        m_looping = loop;
-    }
-
-    void Sound::SetVolume(float volume) {
-        m_volume = volume;
-    }
-};
+}

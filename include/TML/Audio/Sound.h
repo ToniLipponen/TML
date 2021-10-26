@@ -1,37 +1,26 @@
 #pragma once
-#include <string>
-#include <TML/Types.h>
+#include "AudioType.h"
 
 namespace tml
 {
-    class Sound
+    class Sound : public AudioType
     {
     public:
-        enum State { Stopped, Playing, Paused, Ended };
-    public:
         Sound();
-        Sound(const std::string &filename);
+        Sound(const std::string& filename);
+        Sound(const float* data, ui8 channels, ui64 sampleCount); // @brief Constructs sound from raw file data.
         ~Sound();
+
         bool LoadFromFile(const std::string& filename);
-        bool LoadFromData(void* data, ui32 bytes);
-        void Play();
-        void Stop();
-        void Pause();
-        void Resume();
-        void SetLooping(bool loop);
-        void SetVolume(float volume);
-        float GetVolume() const { return m_volume; }
-        bool IsPlaying() const { return m_state == Playing; }
-        bool IsLooping() const { return m_looping; }
-        void* GetDecoder() { return m_decoder; }
+        bool LoadFromData(const void* data, ui64 bytes); // @brief Loads sound from raw file data.
+        bool LoadFromMemory(const float* data, ui8 channels, ui64 sampleCount);
+        void Play() override;
+        void Stop() override;
     private:
-        ui32 m_id;
-        void* m_decoder;
-        State m_state = Stopped;
-        float m_pitch = 1.f;
-        float m_speed = 1.f;
-        float m_volume = 1.f;
-        bool m_looping = false;
-        static ui32 s_soundCount;
+        ui32 ReadFrames(float* output, ui32 frameCount) override;
+        float* m_samples;
+        ui64 m_readSamples;
+        ui64 m_samplesCount;
+        ui8 m_channels;
     };
-};
+}
