@@ -2,7 +2,10 @@
 #include "Sound.h"
 #include "Music.h"
 
-namespace tml::Audio
+namespace tml
 {
-    void SetMasterVolume(float volume);
+    namespace Audio 
+    {
+        void SetMasterVolume(float volume);
+    }
 }

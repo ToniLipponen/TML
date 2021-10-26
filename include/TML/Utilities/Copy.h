@@ -1,12 +1,15 @@
 #pragma once
 
-namespace tml::Util
+namespace tml
 {
-    template<typename T>
-    inline constexpr T* Copy(T* dest, const T* source, unsigned int elements) noexcept
+    namespace Util
     {
-        for(auto i = 0; i < elements; ++i)
-            dest[i] = source[i];
-        return dest;
+        template<typename T>
+        inline constexpr T* Copy(T* dest, const T* source, unsigned int elements) noexcept
+        {
+            for(auto i = 0; i < elements; ++i)
+                dest[i] = source[i];
+            return dest;
+        }
     }
 }

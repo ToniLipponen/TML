@@ -49,7 +49,7 @@ namespace tml
             config.playback.format      = ma_format_f32;
             config.playback.channels    = 2;
             config.sampleRate           = 48000;
-            config.dataCallback         = data_callback;
+            config.dataCallback         = (ma_device_callback_proc)data_callback;
             config.stopCallback         = nullptr;
             config.pUserData            = nullptr;
 
