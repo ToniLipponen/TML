@@ -10,7 +10,7 @@ namespace tml
         explicit Video(cstring filename) noexcept;
         virtual ~Video();
 
-        void LoadFromFile(cstring filename) noexcept;
+        bool LoadFromFile(cstring filename) noexcept;
         void SetFrameRate(double fps) noexcept;
         void SetLooping(bool loop) const noexcept;
         void Advance(double step) noexcept;

@@ -19,9 +19,9 @@ namespace tml
         memcpy(m_data, data, w*h*Bpp);
     }
 
-    Image::Image(ui32 s, const ui8* data)
+    Image::Image(const ui8* data, ui32 s)
     {
-        LoadFromData(s, data);
+        LoadFromData(data, s);
     }
 
     Image::Image(const std::string& filename)
@@ -60,7 +60,7 @@ namespace tml
         delete[] m_data;
     }
 
-    Image& Image::operator=(const Image& rhs)
+    Image& Image::operator=(const Image& rhs) noexcept
     {
         this->m_width = rhs.m_width;
         this->m_height = rhs.m_height;
@@ -72,7 +72,7 @@ namespace tml
         return *this;
     }
 
-    Image& Image::operator=(Image&& rhs)
+    Image& Image::operator=(Image&& rhs) noexcept
     {
         this->m_width = rhs.m_width;
         this->m_height = rhs.m_height;
@@ -104,20 +104,17 @@ namespace tml
         m_Bpp = Bpp;
     }
 
-    bool Image::LoadFromData(ui32 data_size, const ui8 *data)
+    bool Image::LoadFromData(const ui8 *data, ui32 data_size)
     {
         delete[] m_data; m_data = nullptr;
-        m_data = stbi_load_from_memory(data, data_size,&m_width, &m_height, &m_Bpp, 0);
+        m_data = stbi_load_from_memory(data, data_size, &m_width, &m_height, &m_Bpp, 0);
         return m_data != nullptr;
     }
 
     bool Image::SaveToFile(const std::string& filename)
     {
-        // A lot of string comparisons. :/
         const auto ending = filename.substr(filename.find_last_of('.'), filename.length());
-        if(ending == "jpg" || ending == "jpeg")
-            return stbi_write_jpg(filename.c_str(), m_width, m_height, m_Bpp, m_data, 90) != 0;
-        else if(ending == "png")
+        if(ending == "png")
             return stbi_write_png(filename.c_str(), m_width, m_height, m_Bpp, m_data, 0) != 0;
         else if(ending == "bmp")
             return stbi_write_bmp(filename.c_str(), m_width, m_height, m_Bpp, m_data) != 0;

@@ -1,9 +1,6 @@
 #pragma once
 
-namespace tml
+namespace tml::Audio
 {
-    namespace Audio
-    {
-        void SetMasterVolume(float volume);
-    }
+    void SetMasterVolume(float volume);
 }

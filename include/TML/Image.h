@@ -9,14 +9,14 @@ namespace tml
     public:
         Image();
         Image(i32 w, i32 h, i32 Bpp, const ui8* data);
-        Image(ui32 data_size, const ui8* data);
+        Image(const ui8* data, ui32 data_size);
         Image(const std::string& filename);
         Image(const Image& image);
         Image(Image&& image);
         ~Image();
 
-        Image& operator=(const Image& rhs);
-        Image& operator=(Image&& rhs);
+        Image& operator=(const Image& rhs) noexcept;
+        Image& operator=(Image&& rhs) noexcept;
 
         inline constexpr i32  GetWidth()             const noexcept { return m_width;  }
         inline constexpr i32  GetHeight()            const noexcept { return m_height; }
@@ -27,7 +27,7 @@ namespace tml
 
         bool LoadFromFile(const std::string& filename);
         void LoadFromMemory(i32 w, i32 h, i32 Bpp, const ui8* data); // @brief Creates image from pixel data in memory
-        bool LoadFromData(ui32 data_size, const ui8* data); // @brief Creates image from raw file data in memory
+        bool LoadFromData(const ui8* data, ui32 data_size); // @brief Creates image from raw file data in memory
 
         bool SaveToFile(const std::string& filename); // @brief Saves image to file. Uses postfix to deduce image file type. eg. .jpg .png ..
     private:

@@ -49,6 +49,7 @@ namespace tml
         m_state = Stopped;
         Mixer::RemoveSound(m_id);
         ma_decoder_uninit((ma_decoder*)m_decoder);
+
         ma_result result = ma_decoder_init_memory(data, bytes, &s_decoder_config, (ma_decoder*)m_decoder);
         if (result != MA_SUCCESS)
         {

@@ -4,7 +4,8 @@
 
 namespace tml
 {
-    class Sound {
+    class Sound
+    {
     public:
         enum State { Stopped, Playing, Paused, Ended };
     public:
