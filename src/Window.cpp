@@ -91,7 +91,8 @@ namespace tml
 
     void Window::Display()
     {
-        glfwSwapBuffers(reinterpret_cast<GLFWwindow*>(m_handle));
+//        glfwSwapBuffers(reinterpret_cast<GLFWwindow*>(m_handle));
+        glad_glFlush();
         glfwPollEvents();
     }
 
