@@ -10,6 +10,6 @@ namespace tml
         double Reset() noexcept; // @brief Resets clock and returns time.
         double GetTime() const noexcept; // @brief Returns time.
     private:
-        std::chrono::time_point<std::chrono::steady_clock> m_begin;
+        std::chrono::time_point<std::chrono::high_resolution_clock> m_begin;
     };
 }
