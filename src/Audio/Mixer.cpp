@@ -1,4 +1,5 @@
 #include "Mixer.h"
+#include "../internal/Assert.h"
 
 #define DR_FLAC_IMPLEMENTATION
 #include <miniaudio/decoders/dr_flac.h>  /* Enables FLAC decoding. */
@@ -10,37 +11,36 @@
 #define MINIAUDIO_IMPLEMENTATION
 #include <miniaudio/miniaudio.h>
 
-ma_device OUTPUT_DEVICE;
-
 static float s_gain = 1.f;
 static std::map<tml::ui32, tml::AudioType*> s_sounds;
-
-void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount)
-{
-    auto* pOutputF32 = (float*)pOutput;
-    if(!s_sounds.empty())
-    {
-        for(auto sound : s_sounds)
-        {
-            if(sound.second->IsPlaying())
-            {
-                const tml::ui32 frames = sound.second->ReadFrames(pOutputF32, frameCount);
-                if(frames < frameCount)
-                {
-                    sound.second->Stop();
-                    if(sound.second->IsLooping())
-                        sound.second->Play();
-                }
-            }
-        }
-        for(tml::ui32 i = 0; i < frameCount; i++)
-            pOutputF32[i] *= s_gain;
-    }
-}
+static ma_device OUTPUT_DEVICE;
 
 namespace tml
 {
     ma_decoder_config s_decoder_config;
+    void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount)
+    {
+        auto* pOutputF32 = (float*)pOutput;
+        if(!s_sounds.empty())
+        {
+            for(auto sound : s_sounds)
+            {
+                if(sound.second->IsPlaying())
+                {
+                    const tml::ui32 frames = sound.second->ReadFrames(pOutputF32, frameCount);
+                    if(frames < frameCount)
+                    {
+                        sound.second->Stop();
+                        if(sound.second->IsLooping())
+                            sound.second->Play();
+                    }
+                }
+            }
+            for(tml::ui32 i = 0; i < frameCount; i++)
+                pOutputF32[i] *= s_gain;
+        }
+    }
+
     namespace Mixer
     {
         bool Init()
@@ -57,12 +57,13 @@ namespace tml
             s_decoder_config.channels = 2;
             s_decoder_config.sampleRate = 48000;
 
-            auto result = ma_device_init(NULL, &config, &OUTPUT_DEVICE);
+            auto result = ma_device_init(nullptr, &config, &OUTPUT_DEVICE);
             if(result == MA_SUCCESS)
             {
                 ma_device_start(&OUTPUT_DEVICE);
                 return true;
             }
+            Logger::ErrorMessage("Failed to initialize audio output device");
             return false;
         }
 
@@ -80,6 +81,5 @@ namespace tml
         {
             s_sounds.erase(id);
         }
-
     }
 }

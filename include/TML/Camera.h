@@ -19,7 +19,7 @@ namespace tml
         Vector2 GetPosition() const noexcept;
         float GetZoom() const noexcept;
         float GetRotation() const noexcept;
-        Vector2 ScreenToWorld(const Vector2& point);
+        Vector2 ScreenToWorld(const Vector2& point) const noexcept;
     private:
         Vector2 m_pos = {0,0}; // Camera is centered on this
         float m_zoom = 1.0f;

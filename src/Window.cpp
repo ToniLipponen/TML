@@ -48,7 +48,7 @@ namespace tml
 
         m_handle = glfwCreateWindow(w, h, title.c_str(),(settings & Settings::Fullscreen) ? glfwGetPrimaryMonitor() : nullptr, nullptr);
         TML_ASSERT(m_handle != nullptr, "Failed to create a window handle.");
-        auto handle = reinterpret_cast<GLFWwindow *>(m_handle);
+        auto handle = static_cast<GLFWwindow *>(m_handle);
         glfwMakeContextCurrent(handle);
         glfwShowWindow(handle);
         glfwSetWindowSizeCallback(handle, WindowResizeCallback);
@@ -85,25 +85,25 @@ namespace tml
 
     Window::~Window()
     {
-        glfwDestroyWindow(reinterpret_cast<GLFWwindow*>(m_handle));
+        glfwDestroyWindow(static_cast<GLFWwindow*>(m_handle));
         glfwTerminate();
     }
 
     void Window::Display()
     {
-//        glfwSwapBuffers(reinterpret_cast<GLFWwindow*>(m_handle));
+//        glfwSwapBuffers(static_cast<GLFWwindow*>(m_handle));
         glad_glFlush();
         glfwPollEvents();
     }
 
     void Window::Close() const noexcept
     {
-        glfwSetWindowShouldClose(reinterpret_cast<GLFWwindow*>(m_handle), 1);
+        glfwSetWindowShouldClose(static_cast<GLFWwindow*>(m_handle), 1);
     }
 
     bool Window::ShouldClose() const noexcept
     {
-        return static_cast<bool>(glfwWindowShouldClose(reinterpret_cast<GLFWwindow*>(m_handle)));
+        return static_cast<bool>(glfwWindowShouldClose(static_cast<GLFWwindow*>(m_handle)));
     }
 
     void *Window::GetHandle() noexcept
@@ -159,14 +159,9 @@ namespace tml
         glfwSetWindowSize(static_cast<GLFWwindow*>(m_handle), static_cast<int>(w), static_cast<int>(h));
     }
 
-    void Window::SetFpsLimit(ui32 fps)
+    void Window::SetTitle(const std::string& title)
     {
-        glfwSwapInterval(1);
-    }
-
-    void Window::SetTitle(cstring title)
-    {
-        glfwSetWindowTitle(static_cast<GLFWwindow *>(m_handle), title);
+        glfwSetWindowTitle(static_cast<GLFWwindow *>(m_handle), title.c_str());
     }
 
     void Window::Maximize()
@@ -205,7 +200,8 @@ namespace tml
         glfwMakeContextCurrent((GLFWwindow*)m_handle);
     }
 
-    void Window::Screenshot(const std::string& filename) {
+    void Window::Screenshot(const std::string& filename) const noexcept
+    {
         const i32 w = GetWidth(), h = GetHeight();
         ui8* pixels = new ui8[3 * w * h];
         glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, pixels);

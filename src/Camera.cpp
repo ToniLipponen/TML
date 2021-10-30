@@ -58,7 +58,7 @@ namespace tml
         return m_rotation;
     }
 
-    Vector2 Camera::ScreenToWorld(const Vector2 &point)
+    Vector2 Camera::ScreenToWorld(const Vector2 &point) const noexcept
     {
         static int f[4];
         glad_glGetIntegerv(GL_VIEWPORT, f);

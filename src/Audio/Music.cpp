@@ -9,14 +9,14 @@ namespace tml
     volatile bool AudioInitialized = Mixer::Init();
 
     Music::Music()
+    : m_decoder(nullptr)
     {
-        m_decoder = new ma_decoder;
         m_id = s_soundCount++;
     }
 
     Music::Music(const std::string &filename)
+    : m_decoder(nullptr)
     {
-        m_decoder = new ma_decoder;
         ma_result result = ma_decoder_init_file(filename.c_str(), &s_decoder_config, (ma_decoder*)m_decoder);
         if (result != MA_SUCCESS)
             tml::Logger::ErrorMessage("Failed to load file -> %s", filename.c_str());
@@ -43,7 +43,10 @@ namespace tml
     {
         m_state = Stopped;
         Mixer::RemoveSound(m_id);
-        ma_decoder_uninit((ma_decoder*)m_decoder);
+        if(!m_decoder)
+            m_decoder = new ma_decoder;
+        else
+            ma_decoder_uninit((ma_decoder*)m_decoder);
         ma_result result = ma_decoder_init_file(filename.c_str(), &s_decoder_config, (ma_decoder*)m_decoder);
         if (result != MA_SUCCESS)
         {
@@ -57,7 +60,10 @@ namespace tml
     {
         m_state = Stopped;
         Mixer::RemoveSound(m_id);
-        ma_decoder_uninit((ma_decoder*)m_decoder);
+        if(!m_decoder)
+            m_decoder = new ma_decoder;
+        else
+            ma_decoder_uninit((ma_decoder*)m_decoder);
 
         ma_result result = ma_decoder_init_memory(data, bytes, &s_decoder_config, (ma_decoder*)m_decoder);
         if (result != MA_SUCCESS)
