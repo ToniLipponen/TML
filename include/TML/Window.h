@@ -38,10 +38,10 @@ namespace tml
         Vector2 GetSize() const noexcept;
 
         void SetSize(ui32 width, ui32 height) noexcept;
-        void SetTitle(const std::string& title);
-        void Maximize();
-        void SetFullscreen(bool fullscreen, i32 w = -1, i32 h = -1);
-        void SetActive();
+        void SetTitle(const std::string& title) noexcept;
+        void Maximize() noexcept;
+        void SetFullscreen(bool fullscreen, i32 w = -1, i32 h = -1) noexcept;
+        void SetActive() noexcept;
         void Screenshot(const std::string& filename) const noexcept;
     private:
         std::string m_title;

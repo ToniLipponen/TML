@@ -2,21 +2,23 @@
 #include "Drawable.h"
 #include "../Image.h"
 #include "../Utilities/Condition.h"
-#include <chrono>
-#include <thread>
 
-namespace tml {
-// Rectangle for selecting a part of a texture to draw
-    struct TexRect {
+namespace tml
+{
+    // Rectangle for selecting a part of a texture to draw
+    struct TexRect
+    {
         Vector2 pos;
         Vector2 size;
     };
 
     class Sprite : public Drawable {
     public:
-        Sprite() {
-            m_rect = {{0, 0},
-                      {0, 0}};
+        Sprite()
+        : m_rect({{0, 0}, {0, 0}}), m_texSize(0)
+        {
+            m_pos = {0,0};
+            m_size = {0,0};
         }
 
         void SetRect(const TexRect &r) {
@@ -45,7 +47,8 @@ namespace tml {
         {
             m_tex.SetMinMagFilter(
                     tml::Condition(interpolate, Texture::Linear, Texture::Nearest),
-                    tml::Condition(interpolate, Texture::Linear, Texture::Nearest));
+                    tml::Condition(interpolate, Texture::Linear, Texture::Nearest)
+            );
         }
 
         friend class Renderer;

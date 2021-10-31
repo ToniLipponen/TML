@@ -5,7 +5,7 @@
 
 namespace tml
 {
-    extern ma_decoder_config s_decoder_config;
+    extern ma_decoder_config s_DecoderConfig;
     volatile bool AudioInitialized = Mixer::Init();
 
     Music::Music()
@@ -17,7 +17,7 @@ namespace tml
     Music::Music(const std::string &filename)
     : m_decoder(nullptr)
     {
-        ma_result result = ma_decoder_init_file(filename.c_str(), &s_decoder_config, (ma_decoder*)m_decoder);
+        ma_result result = ma_decoder_init_file(filename.c_str(), &s_DecoderConfig, (ma_decoder*)m_decoder);
         if (result != MA_SUCCESS)
             tml::Logger::ErrorMessage("Failed to load file -> %s", filename.c_str());
         m_id = s_soundCount++;
@@ -26,7 +26,7 @@ namespace tml
     Music::Music(void *data, ui32 bytes)
     {
         m_decoder = new ma_decoder;
-        ma_result result = ma_decoder_init_memory(data, bytes, &s_decoder_config, (ma_decoder*)m_decoder);
+        ma_result result = ma_decoder_init_memory(data, bytes, &s_DecoderConfig, (ma_decoder*)m_decoder);
         if (result != MA_SUCCESS)
             tml::Logger::ErrorMessage("Failed to load music from memory.");
         m_id = s_soundCount++;
@@ -47,7 +47,7 @@ namespace tml
             m_decoder = new ma_decoder;
         else
             ma_decoder_uninit((ma_decoder*)m_decoder);
-        ma_result result = ma_decoder_init_file(filename.c_str(), &s_decoder_config, (ma_decoder*)m_decoder);
+        ma_result result = ma_decoder_init_file(filename.c_str(), &s_DecoderConfig, (ma_decoder*)m_decoder);
         if (result != MA_SUCCESS)
         {
             tml::Logger::ErrorMessage("Failed to load sound file -> %s", filename.c_str());
@@ -65,7 +65,7 @@ namespace tml
         else
             ma_decoder_uninit((ma_decoder*)m_decoder);
 
-        ma_result result = ma_decoder_init_memory(data, bytes, &s_decoder_config, (ma_decoder*)m_decoder);
+        ma_result result = ma_decoder_init_memory(data, bytes, &s_DecoderConfig, (ma_decoder*)m_decoder);
         if (result != MA_SUCCESS)
         {
             tml::Logger::ErrorMessage("Failed to load sound from memory.");
@@ -113,4 +113,4 @@ namespace tml
         }
         return totalFramesRead;
     }
-};
+}

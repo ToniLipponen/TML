@@ -7,7 +7,7 @@
 
 namespace tml
 {
-    extern ma_decoder_config s_decoder_config;
+    extern ma_decoder_config s_DecoderConfig;
 
     Sound::Sound()
     : m_channels(0), m_readSamples(0), m_samplesCount(0), m_samples(nullptr)
@@ -36,7 +36,7 @@ namespace tml
     bool Sound::LoadFromFile(const std::string &filename)
     {
         ma_decoder decoder;
-        ma_result result = ma_decoder_init_file(filename.c_str(), &s_decoder_config, &decoder);
+        ma_result result = ma_decoder_init_file(filename.c_str(), &s_DecoderConfig, &decoder);
         if(result != MA_SUCCESS)
         {
             tml::Logger::ErrorMessage("Failed to load sound file -> %s", filename.c_str());
@@ -58,7 +58,7 @@ namespace tml
     bool Sound::LoadFromData(const void *data, ui64 bytes)
     {
         ma_decoder decoder;
-        ma_result result = ma_decoder_init_memory(data, bytes, &s_decoder_config, &decoder);
+        ma_result result = ma_decoder_init_memory(data, bytes, &s_DecoderConfig, &decoder);
         if(result != MA_SUCCESS)
         {
             tml::Logger::ErrorMessage("Failed to load sound");

@@ -10,7 +10,7 @@ namespace tml
         Image();
         Image(i32 w, i32 h, i32 Bpp, const ui8* data);
         Image(const ui8* data, ui32 data_size);
-        Image(const std::string& filename);
+        Image(const std::string& fileName);
         Image(const Image& image);
         Image(Image&& image);
         ~Image();
@@ -25,11 +25,11 @@ namespace tml
         inline constexpr ui8* GetData()                    noexcept { return m_data;   }
 
 
-        bool LoadFromFile(const std::string& filename);
+        bool LoadFromFile(const std::string& fileName);
         void LoadFromMemory(i32 w, i32 h, i32 Bpp, const ui8* data); // @brief Creates image from pixel data in memory
-        bool LoadFromData(const ui8* data, ui32 data_size); // @brief Creates image from raw file data in memory
+        bool LoadFromData(const ui8* data, ui32 dataSize); // @brief Creates image from raw file data in memory
 
-        bool SaveToFile(const std::string& filename); // @brief Saves image to file. Uses postfix to deduce image file type. eg. .jpg .png ..
+        bool SaveToFile(const std::string& fileName); // @brief Saves image to file. Uses postfix to deduce image file type. eg. .jpg .png ..
     private:
         i32 m_width, m_height, m_Bpp;
         ui8* m_data;

@@ -159,17 +159,17 @@ namespace tml
         glfwSetWindowSize(static_cast<GLFWwindow*>(m_handle), static_cast<int>(w), static_cast<int>(h));
     }
 
-    void Window::SetTitle(const std::string& title)
+    void Window::SetTitle(const std::string& title) noexcept
     {
         glfwSetWindowTitle(static_cast<GLFWwindow *>(m_handle), title.c_str());
     }
 
-    void Window::Maximize()
+    void Window::Maximize() noexcept
     {
         glfwMaximizeWindow(static_cast<GLFWwindow *>(m_handle));
     }
 
-    void Window::SetFullscreen(bool full, i32 user_w, i32 user_h)
+    void Window::SetFullscreen(bool full, i32 user_w, i32 user_h) noexcept
     {
         int w = 0, h = 0, x = 0, y = 0;
         auto monitor = glfwGetPrimaryMonitor();
@@ -195,7 +195,7 @@ namespace tml
         glfwSetScrollCallback(handle, MouseScrollCallback);
     }
 
-    void Window::SetActive()
+    void Window::SetActive() noexcept
     {
         glfwMakeContextCurrent((GLFWwindow*)m_handle);
     }

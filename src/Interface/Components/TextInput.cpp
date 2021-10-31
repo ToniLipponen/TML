@@ -29,7 +29,7 @@ void TextInput::OnUpdate(float dt)
             if(Keyboard::IsKeyDown(Keyboard::KEY_LEFT_CONTROL)
             && Keyboard::IsKeyDown(Keyboard::KEY_V)
             && !Clipboard::IsEmpty())
-                SetValue(Util::wstringToString(Clipboard::GetString()));
+                SetValue(Clipboard::GetString());
             else if(Keyboard::IsKeyDown(Keyboard::KEY_BACKSPACE)
             && !m_value.empty())
             {
@@ -68,7 +68,7 @@ void TextInput::OnUpdate(float dt)
             m_value.insert(m_cursorIndex, str);
             m_cursorIndex += str.size();
         }
-        m_cursorIndex = Util::Clamp<i32>(m_cursorIndex, 0, m_value.size());
+        m_cursorIndex = Util::Clamp<ui32>(m_cursorIndex, 0, m_value.size());
     }
 }
 

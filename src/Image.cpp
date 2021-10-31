@@ -24,10 +24,10 @@ namespace tml
         LoadFromData(data, s);
     }
 
-    Image::Image(const std::string& filename)
+    Image::Image(const std::string& fileName)
     : m_width(0), m_height(0), m_Bpp(0), m_data(nullptr)
     {
-        m_data = stbi_load(filename.c_str(), &m_width, &m_height, &m_Bpp, 0);
+        m_data = stbi_load(fileName.c_str(), &m_width, &m_height, &m_Bpp, 0);
     }
 
     Image::Image(const Image& image)
@@ -87,10 +87,10 @@ namespace tml
         return *this;
     }
 
-    bool Image::LoadFromFile(const std::string& filename)
+    bool Image::LoadFromFile(const std::string& fileName)
     {
         delete[] m_data; m_data = nullptr;
-        m_data = stbi_load(filename.c_str(), &m_width, &m_height, &m_Bpp, 0);
+        m_data = stbi_load(fileName.c_str(), &m_width, &m_height, &m_Bpp, 0);
         return (m_data != nullptr);
     }
 
@@ -104,23 +104,23 @@ namespace tml
         m_Bpp = Bpp;
     }
 
-    bool Image::LoadFromData(const ui8 *data, ui32 data_size)
+    bool Image::LoadFromData(const ui8 *data, ui32 dataSize)
     {
         delete[] m_data; m_data = nullptr;
-        m_data = stbi_load_from_memory(data, data_size, &m_width, &m_height, &m_Bpp, 0);
+        m_data = stbi_load_from_memory(data, dataSize, &m_width, &m_height, &m_Bpp, 0);
         return m_data != nullptr;
     }
 
-    bool Image::SaveToFile(const std::string& filename)
+    bool Image::SaveToFile(const std::string& fileName)
     {
-        const auto ending = filename.substr(filename.find_last_of('.'), filename.length());
+        const auto ending = fileName.substr(fileName.find_last_of('.'), fileName.length());
         if(ending == "png")
-            return stbi_write_png(filename.c_str(), m_width, m_height, m_Bpp, m_data, 0) != 0;
+            return stbi_write_png(fileName.c_str(), m_width, m_height, m_Bpp, m_data, 0) != 0;
         else if(ending == "bmp")
-            return stbi_write_bmp(filename.c_str(), m_width, m_height, m_Bpp, m_data) != 0;
+            return stbi_write_bmp(fileName.c_str(), m_width, m_height, m_Bpp, m_data) != 0;
         else if(ending == "tga")
-            return stbi_write_tga(filename.c_str(), m_width, m_height, m_Bpp, m_data) != 0;
+            return stbi_write_tga(fileName.c_str(), m_width, m_height, m_Bpp, m_data) != 0;
         else // Default to jpg
-            return stbi_write_jpg(filename.c_str(), m_width, m_height, m_Bpp, m_data, 90) != 0;
+            return stbi_write_jpg(fileName.c_str(), m_width, m_height, m_Bpp, m_data, 90) != 0;
     }
 }

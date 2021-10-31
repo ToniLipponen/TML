@@ -9,7 +9,7 @@ namespace tml
     public:
         static bool IsEmpty();
         static void Clear();
-        static std::wstring GetString();
+        static std::string GetString();
     };
 
     class DragAndDrop // TODO: Maybe change this at some point?
@@ -17,6 +17,6 @@ namespace tml
     public:
         static bool IsEmpty();
         static void Clear(); // Clear list of dropped files.
-        static const std::vector<std::wstring>& GetFiles();
+        static const std::vector<std::string>& GetFiles();
     };
 }

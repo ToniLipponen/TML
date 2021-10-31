@@ -2,12 +2,12 @@
 
 namespace tml
 {
-    Clock::Clock(){}
+    Clock::Clock() = default;
     double Clock::Reset() noexcept
     {
-        const auto new_begin = std::chrono::high_resolution_clock::now();
-        const double time = std::chrono::duration_cast<std::chrono::duration<double>>(new_begin - m_begin).count();
-        m_begin = new_begin;
+        const auto newBegin = std::chrono::high_resolution_clock::now();
+        const double time = std::chrono::duration_cast<std::chrono::duration<double>>(newBegin - m_begin).count();
+        m_begin = newBegin;
         return time;
     }
 

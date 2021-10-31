@@ -12,9 +12,6 @@ namespace tml
 {
     struct Color {
         Color() = default;
-        Color(const Color& c){
-            *this = c;
-        }
         constexpr Color(float r, float g, float b) : r(r), g(g), b(b), a(255.f) {}
         constexpr Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
         explicit constexpr Color(ui32 hex) noexcept

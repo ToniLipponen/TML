@@ -7,13 +7,12 @@
 
 namespace tml
 {
-    class Text : public Drawable {
+    class Text : public Drawable
+    {
     public:
-        // Initializes a Text with the default font and no string content.
         Text();
-        // Initializes a Text with the default font
         explicit Text(const std::string& text);
-        Text(const std::string& text, const std::string &font_file_name);
+        Text(const std::string& text, const std::string &fontFileName);
         Text(const std::string& text, Font &font);
         void SetPosition(const Vector2 &pos) noexcept override;
         void SetSize(float s);

@@ -1,5 +1,6 @@
 #pragma once
 #include "TML/Types.h"
+
 namespace tml
 {
     class Keyboard
@@ -131,7 +132,7 @@ namespace tml
         static void BeginString();
         static std::wstring EndString();
         static const std::wstring& GetString();
-        static i8 GetChar();
+        static ui32 GetChar();
         static ui32 GetKey();
         static bool IsKeyPressed(Key key);
         static bool IsKeyDown(Key key);

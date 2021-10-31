@@ -13,12 +13,12 @@
 
 static float s_gain = 1.f;
 static std::map<tml::ui32, tml::AudioType*> s_sounds;
-static ma_device OUTPUT_DEVICE;
+static ma_device s_outputDevice;
 
 namespace tml
 {
-    ma_decoder_config s_decoder_config;
-    void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount)
+    ma_decoder_config s_DecoderConfig;
+    void data_callback(ma_device*, void* pOutput, const void*, ma_uint32 frameCount)
     {
         auto* pOutputF32 = (float*)pOutput;
         if(!s_sounds.empty())
@@ -53,14 +53,14 @@ namespace tml
             config.stopCallback         = nullptr;
             config.pUserData            = nullptr;
 
-            s_decoder_config.format = ma_format_unknown;
-            s_decoder_config.channels = 2;
-            s_decoder_config.sampleRate = 48000;
+            s_DecoderConfig.format = ma_format_unknown;
+            s_DecoderConfig.channels = 2;
+            s_DecoderConfig.sampleRate = 48000;
 
-            auto result = ma_device_init(nullptr, &config, &OUTPUT_DEVICE);
+            auto result = ma_device_init(nullptr, &config, &s_outputDevice);
             if(result == MA_SUCCESS)
             {
-                ma_device_start(&OUTPUT_DEVICE);
+                ma_device_start(&s_outputDevice);
                 return true;
             }
             Logger::ErrorMessage("Failed to initialize audio output device");

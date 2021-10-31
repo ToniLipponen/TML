@@ -28,3 +28,4 @@
 #include "Audio/Audio.h"
 #include "Utilities/Utilities.h"
 #include "Clock.h"
+#include "Logger.h"

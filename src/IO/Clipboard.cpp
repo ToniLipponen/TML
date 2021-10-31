@@ -1,45 +1,45 @@
 #include <TML/IO/Clipboard.h>
 #include <GLFW/glfw3.h>
-#include <string.h>
-using namespace tml;
 
-bool Clipboard::IsEmpty()
+namespace tml
 {
-    return glfwGetClipboardString(glfwGetCurrentContext()) == nullptr;
-}
+    // Drag and drop
+    static std::vector<std::string> s_droppedFiles;
 
-std::wstring Clipboard::GetString()
-{
-    auto* str = glfwGetClipboardString(glfwGetCurrentContext());
-    return {str, str+std::string(str).length()};
-}
+    bool Clipboard::IsEmpty()
+    {
+        return glfwGetClipboardString(glfwGetCurrentContext()) == nullptr;
+    }
 
-void Clipboard::Clear()
-{
-    glfwSetClipboardString(glfwGetCurrentContext(), "");
-}
+    std::string Clipboard::GetString()
+    {
+        return glfwGetClipboardString(glfwGetCurrentContext());
+    }
 
-// Drag and drop
-static std::vector<std::wstring> s_droppedFiles;
+    void Clipboard::Clear()
+    {
+        glfwSetClipboardString(glfwGetCurrentContext(), "");
+    }
 
-extern "C" void DragAndDropCallback(GLFWwindow* window, int count, const char* files[])
-{
-    s_droppedFiles.clear();
-    for(int i = 0; i < count; i++)
-        s_droppedFiles.push_back({files[i], files[i]+strlen(files[i])});
-}
+    extern "C" void DragAndDropCallback(GLFWwindow*, int count, const char* files[])
+    {
+        s_droppedFiles.clear();
+        for(int i = 0; i < count; i++)
+            s_droppedFiles.emplace_back(files[i]);
+    }
 
-bool DragAndDrop::IsEmpty()
-{
-    return s_droppedFiles.empty();
-}
+    bool DragAndDrop::IsEmpty()
+    {
+        return s_droppedFiles.empty();
+    }
 
-void DragAndDrop::Clear()
-{
-    s_droppedFiles.clear();
-}
+    void DragAndDrop::Clear()
+    {
+        s_droppedFiles.clear();
+    }
 
-const std::vector<std::wstring>& DragAndDrop::GetFiles()
-{
-    return s_droppedFiles;
+    const std::vector<std::string>& DragAndDrop::GetFiles()
+    {
+        return s_droppedFiles;
+    }
 }

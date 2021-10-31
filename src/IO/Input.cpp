@@ -5,11 +5,11 @@
 #include <iostream>
 // Keycode and action
 
-static tml::ui32 KEYBOARD_LAST_KEY = -1;
-static tml::i8 KEYBOARD_CHAR = 0;
-static std::map<tml::i32, tml::i32> KEYS_MAP;
+static tml::ui32 s_keyboardLastKey = -1;
+static tml::ui32 s_keyboardChar = 0; // Last codepoint.
+static std::map<tml::i32, tml::i32> s_keyMap;
 
-static std::map<tml::i32, tml::i32> MOUSE_BUTTON_MAP;
+static std::map<tml::i32, tml::i32> s_mouseButtonMap;
 static std::wstring s_string;
 static double s_mouseScrollValue = 0;
 static tml::Vector2 s_mousePos;
@@ -27,24 +27,25 @@ extern "C" void MouseScrollCallback(GLFWwindow* window, double xoffset, double y
 
 extern "C" void CharCallback(GLFWwindow* window, unsigned int code)
 {
-    s_string.push_back(code);
-    KEYBOARD_CHAR = char(code);
+    s_string.push_back(static_cast<wchar_t>(code));
+    s_keyboardChar = code;
 }
 
 extern "C" void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if(key == GLFW_KEY_BACKSPACE && !s_string.empty())
         s_string.pop_back();
-    KEYBOARD_LAST_KEY = key;
-    KEYS_MAP[key] = action;
+    s_keyboardLastKey = key;
+    s_keyMap[key] = action;
 }
 
 extern "C" void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-    MOUSE_BUTTON_MAP[button] = action;
+    s_mouseButtonMap[button] = action;
 }
 
-namespace tml {
+namespace tml
+{
     void Keyboard::BeginString()
     {
         s_string.clear();
@@ -60,28 +61,28 @@ namespace tml {
         return s_string;
     }
 
-    i8 Keyboard::GetChar()
+    ui32 Keyboard::GetChar()
     {
-        auto c = KEYBOARD_CHAR;
-        return c;
+        return s_keyboardChar;
     }
+
     ui32 Keyboard::GetKey()
     {
-        auto key = KEYBOARD_LAST_KEY;
-        KEYBOARD_LAST_KEY = -1;
+        auto key = s_keyboardLastKey;
+        s_keyboardLastKey = -1;
         return key;
     }
     bool Keyboard::IsKeyPressed(Key key)
     {
-        bool state = KEYS_MAP[key] == GLFW_PRESS;
+        bool state = s_keyMap[key] == GLFW_PRESS;
         if(state)
-            KEYS_MAP[key] = GLFW_RELEASE;
+            s_keyMap[key] = GLFW_RELEASE;
         return state;
     }
 
     bool Keyboard::IsKeyDown(Key key)
     {
-        return KEYS_MAP[key] == GLFW_REPEAT || KEYS_MAP[key] == GLFW_PRESS;
+        return s_keyMap[key] == GLFW_REPEAT || s_keyMap[key] == GLFW_PRESS;
     }
 
     Vector2 Mouse::GetPosition()
@@ -91,7 +92,7 @@ namespace tml {
 
     bool Mouse::ButtonDown(Button button)
     {
-        return MOUSE_BUTTON_MAP[button] == GLFW_PRESS;
+        return s_mouseButtonMap[button] == GLFW_PRESS;
     }
 
     double Mouse::GetScrollValue()
@@ -100,4 +101,4 @@ namespace tml {
         s_mouseScrollValue = 0;
         return r;
     }
-};
+}

@@ -9,11 +9,11 @@ namespace tml
         Camera();
         Camera(const tml::Vector2& pos, float zoom = 1.0f, float rotation = 0.0f);
         void Move(const Vector2& offset);
-        void Zoom(float amount); // Additive
+        void Zoom(float amount);
         void Rotate(float degrees);
 
         void SetPosition(const Vector2& position);
-        void SetZoom(float zoom_level); // 1.0 is normal. Bigger value is more zoom
+        void SetZoom(float zoomLevel); // 1.0 is normal. Bigger value is more zoom.
         void SetRotation(float degrees);
 
         Vector2 GetPosition() const noexcept;

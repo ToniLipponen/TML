@@ -7,8 +7,10 @@
 #include "Vector2.h"
 #include "Texture.h"
 
-namespace tml {
-    class Font {
+namespace tml
+{
+    class Font
+    {
     public:
         Font();
         ~Font();

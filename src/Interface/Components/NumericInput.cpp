@@ -92,9 +92,9 @@ namespace tml
                 if(m_repeatTimer > 0.1f)
                 {
                     if(Keyboard::IsKeyDown(Keyboard::KEY_LEFT_CONTROL)
-                       && Keyboard::IsKeyDown(Keyboard::KEY_V)
-                       && !Clipboard::IsEmpty())
-                        SetValue(Util::StringToType<T>(Util::wstringToString(Clipboard::GetString())));
+                    && Keyboard::IsKeyDown(Keyboard::KEY_V)
+                    && !Clipboard::IsEmpty())
+                        SetValue(Util::StringToType<T>(Clipboard::GetString()));
                     else if(Keyboard::IsKeyDown(Keyboard::KEY_BACKSPACE)
                             && !m_valueStr.empty())
                     {
