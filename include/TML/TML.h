@@ -25,6 +25,7 @@
 #include "Vector2.h"
 #include "TML/IO/Input.h"
 #include "TML/IO/Clipboard.h"
+#include "TML/IO/File.h"
 #include "Audio/Audio.h"
 #include "Utilities/Utilities.h"
 #include "Clock.h"
