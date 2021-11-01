@@ -1,15 +1,23 @@
 #include "Mixer.h"
 #include "../internal/Assert.h"
 
+#define STB_VORBIS_HEADER_ONLY
+#include <miniaudio/decoders/stb_vorbis.c>  /* Enables Vorbis decoding. */
+
 #define DR_FLAC_IMPLEMENTATION
-#include <miniaudio/decoders/dr_flac.h>  /* Enables FLAC decoding. */
+#include <miniaudio/decoders/dr_flac.h>     /* Enables FLAC decoding. */
+
 #define DR_MP3_IMPLEMENTATION
-#include <miniaudio/decoders/dr_mp3.h>   /* Enables MP3 decoding. */
+#include <miniaudio/decoders/dr_mp3.h>      /* Enables MP3 decoding. */
+
 #define DR_WAV_IMPLEMENTATION
-#include <miniaudio/decoders/dr_wav.h>   /* Enables WAV decoding. */
+#include <miniaudio/decoders/dr_wav.h>      /* Enables WAV decoding. */
 
 #define MINIAUDIO_IMPLEMENTATION
 #include <miniaudio/miniaudio.h>
+
+#undef STB_VORBIS_HEADER_ONLY
+#include <miniaudio/decoders/stb_vorbis.c>
 
 static float s_gain = 1.f;
 static std::map<tml::ui32, tml::AudioType*> s_sounds;

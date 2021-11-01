@@ -37,7 +37,8 @@ namespace tml
     {
         ma_decoder decoder;
         ma_result result = ma_decoder_init_file(filename.c_str(), &s_DecoderConfig, &decoder);
-        if(result != MA_SUCCESS)
+        m_valid = (result == MA_SUCCESS);
+        if (!m_valid)
         {
             tml::Logger::ErrorMessage("Failed to load sound file -> %s", filename.c_str());
             return false;
@@ -59,7 +60,8 @@ namespace tml
     {
         ma_decoder decoder;
         ma_result result = ma_decoder_init_memory(data, bytes, &s_DecoderConfig, &decoder);
-        if(result != MA_SUCCESS)
+        m_valid = (result == MA_SUCCESS);
+        if (!m_valid)
         {
             tml::Logger::ErrorMessage("Failed to load sound");
             return false;

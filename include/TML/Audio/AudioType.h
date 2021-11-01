@@ -24,6 +24,7 @@ namespace tml
     protected:
         float m_volume = 1.f;
         bool m_looping = false;
+        bool m_valid = false;
         State m_state = Stopped;
         static ui32 s_soundCount;
         ui32 m_id;

@@ -8,28 +8,14 @@ namespace tml
     extern ma_decoder_config s_DecoderConfig;
     volatile bool AudioInitialized = Mixer::Init();
 
-    Music::Music()
-    : m_decoder(nullptr)
-    {
-        m_id = s_soundCount++;
-    }
-
     Music::Music(const std::string &filename)
-    : m_decoder(nullptr)
     {
-        ma_result result = ma_decoder_init_file(filename.c_str(), &s_DecoderConfig, (ma_decoder*)m_decoder);
-        if (result != MA_SUCCESS)
-            tml::Logger::ErrorMessage("Failed to load file -> %s", filename.c_str());
-        m_id = s_soundCount++;
+        LoadFromFile(filename);
     }
 
     Music::Music(void *data, ui32 bytes)
     {
-        m_decoder = new ma_decoder;
-        ma_result result = ma_decoder_init_memory(data, bytes, &s_DecoderConfig, (ma_decoder*)m_decoder);
-        if (result != MA_SUCCESS)
-            tml::Logger::ErrorMessage("Failed to load music from memory.");
-        m_id = s_soundCount++;
+        LoadFromData(data, bytes);
     }
 
     Music::~Music()
@@ -45,10 +31,11 @@ namespace tml
         Mixer::RemoveSound(m_id);
         if(!m_decoder)
             m_decoder = new ma_decoder;
-        else
-            ma_decoder_uninit((ma_decoder*)m_decoder);
+
         ma_result result = ma_decoder_init_file(filename.c_str(), &s_DecoderConfig, (ma_decoder*)m_decoder);
-        if (result != MA_SUCCESS)
+        m_valid = (result == MA_SUCCESS);
+
+        if(!m_valid)
         {
             tml::Logger::ErrorMessage("Failed to load sound file -> %s", filename.c_str());
             return false;
@@ -62,13 +49,14 @@ namespace tml
         Mixer::RemoveSound(m_id);
         if(!m_decoder)
             m_decoder = new ma_decoder;
-        else
-            ma_decoder_uninit((ma_decoder*)m_decoder);
 
         ma_result result = ma_decoder_init_memory(data, bytes, &s_DecoderConfig, (ma_decoder*)m_decoder);
-        if (result != MA_SUCCESS)
+        m_valid = (result == MA_SUCCESS);
+
+        if(!m_valid)
         {
             tml::Logger::ErrorMessage("Failed to load sound from memory.");
+            ma_decoder_uninit((ma_decoder*)m_decoder);
             return false;
         }
         return true;
@@ -76,7 +64,8 @@ namespace tml
 
     void Music::Stop()
     {
-        ma_decoder_seek_to_pcm_frame((ma_decoder*)m_decoder, 0);
+        if(m_valid)
+            ma_decoder_seek_to_pcm_frame((ma_decoder*)m_decoder, 0);
         m_state = Stopped;
     }
 
