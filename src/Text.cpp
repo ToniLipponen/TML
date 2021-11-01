@@ -26,7 +26,7 @@ namespace tml
     }
 
     Text::Text(const std::string& text)
-    : m_string(Util::stringToWstring(text))
+    : m_string(Util::StringToWstring(text))
     {
         m_color = {255,255,255};
         m_pos = {0,0};
@@ -40,7 +40,7 @@ namespace tml
     }
 
     Text::Text(const std::string& text, const std::string& font_file_name)
-    : m_string(Util::stringToWstring(text))
+    : m_string(Util::StringToWstring(text))
     {
         m_font.LoadFromFile(font_file_name);
         m_color = {255,255,255};
@@ -50,7 +50,7 @@ namespace tml
     }
 
     Text::Text(const std::string& text, Font& font)
-    : m_string(Util::stringToWstring(text))
+    : m_string(Util::StringToWstring(text))
     {
         m_font = font;
         m_color = {255,255,255};
@@ -81,7 +81,7 @@ namespace tml
 
     void Text::SetString(const std::string& string)
     {
-        m_string = Util::stringToWstring(string);
+        m_string = Util::StringToWstring(string);
         Generate();
     }
 

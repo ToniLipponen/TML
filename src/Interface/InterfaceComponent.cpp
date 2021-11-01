@@ -1,5 +1,6 @@
 #include <TML/Interface/InterfaceComponent.h>
 #include <TML/IO/Input.h>
+#include <TML/Clock.h>
 #include <iostream>
 #include <map>
 #include <stack>
@@ -160,16 +161,18 @@ namespace tml
             ProcessEvents(mp, mouseDown, events);
         }
 
-        void BaseComponent::Update(float dt)
+        void BaseComponent::Update()
         {
+            static Clock clock;
+            const double delta = clock.Reset();
             const Vector2 mousePos = Mouse::GetPosition();
             const bool click = Mouse::ButtonDown(Mouse::Left);
             Events event = { false };
             Poll(mousePos, click, event);
-            GetRoot()->p_Update(dt, mousePos);
+            GetRoot()->p_Update(delta, mousePos);
         }
 
-        void BaseComponent::p_Update(float dt, const Vector2& mp)
+        void BaseComponent::p_Update(double dt, const Vector2& mp)
         {
             if (!m_state.Enabled)
                 return;
@@ -244,7 +247,7 @@ namespace tml
         void BaseComponent::OnMouseEnter() {}
         void BaseComponent::OnMouseExit() {}
         void BaseComponent::OnMouseDrag(const Vector2& mousePos) {}
-        void BaseComponent::OnUpdate(float) {}
+        void BaseComponent::OnUpdate(double dt) {}
         void BaseComponent::OnFocused() {}
         void BaseComponent::OnFocusLost() {}
     }

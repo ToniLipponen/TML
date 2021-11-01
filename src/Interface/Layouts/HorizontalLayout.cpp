@@ -10,7 +10,7 @@ namespace tml
             m_pos = Vector2(x,y);
             m_size = Vector2(w,h);
         }
-        void HorizontalLayout::OnUpdate(float dt)
+        void HorizontalLayout::OnUpdate(double dt)
         {
             float offset = 0;
             const float width = (m_size.x - 5) / m_children.size();

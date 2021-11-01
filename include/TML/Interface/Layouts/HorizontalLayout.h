@@ -12,7 +12,7 @@ namespace tml
 
         private:
             void Draw() override {}
-            virtual void OnUpdate(float dt) override;
+            virtual void OnUpdate(double dt) override;
         };
     }
 }

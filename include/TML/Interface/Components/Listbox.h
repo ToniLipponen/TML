@@ -22,7 +22,7 @@ namespace tml
             friend class DropMenu;
         protected:
             virtual void OnMouseClick(const Vector2& mousePos) override;
-            virtual void OnUpdate(float dt = 1.0f / 60.f) override;
+            virtual void OnUpdate(double dt = 1.0f / 60.f) override;
             virtual void Draw() override;
             std::vector<std::string> m_values;
             bool m_showSlider = false; // Scroll bar

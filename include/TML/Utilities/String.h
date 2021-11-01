@@ -7,14 +7,14 @@ namespace tml
 {
     namespace Util
     {
-        inline std::string wstringToString(const std::wstring& str) noexcept
+        inline std::string WstringToString(const std::wstring& str) noexcept
         {
             using convert_type = std::codecvt_utf8<wchar_t>;
             std::wstring_convert<convert_type, wchar_t> converter;
             return converter.to_bytes(str);
         }
 
-        inline std::wstring stringToWstring(const std::string& str) noexcept
+        inline std::wstring StringToWstring(const std::string& str) noexcept
         {
             using convert_type = std::codecvt_utf8<wchar_t>;
             std::wstring_convert<convert_type, wchar_t> converter;

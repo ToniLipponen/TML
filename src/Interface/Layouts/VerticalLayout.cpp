@@ -14,7 +14,7 @@ namespace tml
             m_vSizePolicy = Expand;
         }
 
-        void VerticalLayout::OnUpdate(float dt)
+        void VerticalLayout::OnUpdate(double dt)
         {
             float offset = 0;
             for(auto item = m_children.rbegin(); item != m_children.rend(); ++item)

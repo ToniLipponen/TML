@@ -62,7 +62,7 @@ namespace tml
             BaseComponent* GetParent(); // DANGER! Returns nullptr if the component doesn't have a parent.
             BaseComponent* GetRoot();
             virtual bool ContainsPoint(const Vector2& p);
-            virtual void Update(float dt = (1.0f / 60.f));
+            virtual void Update();
 
             inline SizePolicy GetHorizontalSizePolicy() const { return m_hSizePolicy; }
             inline SizePolicy GetVerticalSizePolicy() const { return m_vSizePolicy; }
@@ -82,7 +82,7 @@ namespace tml
             void Poll(const Vector2& mp, bool mouseDown, Events& events);
 
         protected:
-            void p_Update(float dt, const Vector2& mp);
+            void p_Update(double dt, const Vector2& mp);
             virtual void Draw() = 0;
             // Internal events
             virtual void OnMouseClick(const Vector2& mousePos);
@@ -91,7 +91,7 @@ namespace tml
             virtual void OnMouseEnter();
             virtual void OnMouseExit();
             virtual void OnMouseDrag(const Vector2& mousePos);
-            virtual void OnUpdate(float dt);
+            virtual void OnUpdate(double dt);
             virtual void OnFocused();
             virtual void OnFocusLost();
 

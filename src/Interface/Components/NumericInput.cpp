@@ -76,7 +76,7 @@ namespace tml
         }
 
         template<typename T>
-        void NumericInput<T>::OnUpdate(float dt)
+        void NumericInput<T>::OnUpdate(double dt)
         {
             auto buttonPos = m_pos;
             buttonPos.x += m_size.x + 2;
@@ -135,7 +135,7 @@ namespace tml
                         Decrement();
                     }
                 }
-                const auto str = Util::wstringToString(Keyboard::EndString());
+                const auto str = Keyboard::EndString();
                 if(!str.empty())
                 {
                     char c = str.at(0);

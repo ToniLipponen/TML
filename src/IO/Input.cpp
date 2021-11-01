@@ -2,7 +2,7 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <map>
-#include <iostream>
+#include <TML/Utilities/String.h>
 // Keycode and action
 
 static tml::ui32 s_keyboardLastKey = -1;
@@ -50,15 +50,15 @@ namespace tml
     {
         s_string.clear();
     }
-    std::wstring Keyboard::EndString()
+    std::string Keyboard::EndString()
     {
-        std::wstring s = s_string;
+        const std::wstring s = s_string;
         s_string.clear();
-        return s;
+        return Util::WstringToString(s);
     }
-    const std::wstring& Keyboard::GetString()
+    std::string Keyboard::GetString()
     {
-        return s_string;
+        return Util::WstringToString(s_string);
     }
 
     ui32 Keyboard::GetChar()

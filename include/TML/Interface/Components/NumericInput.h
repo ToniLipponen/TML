@@ -19,7 +19,7 @@ namespace tml
             void Increment();
             void Decrement();
             void OnMouseClick(const Vector2& p) override;
-            void OnUpdate(float dt) override;
+            void OnUpdate(double dt) override;
             virtual void Draw() override;
             T m_value = 0;
             T m_increment = 1;

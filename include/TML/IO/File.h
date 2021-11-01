@@ -151,6 +151,7 @@ namespace tml
             if(m_stream.is_open() && m_stream.good())
             {
                 m_stream.write(string.c_str(), string.size());
+                m_dataLen += string.size();
             }
         }
         void Write(const char* data, ui64 dataSize)
@@ -158,6 +159,7 @@ namespace tml
             if(data && m_stream.is_open() && m_stream.good())
             {
                 m_stream.write(data, dataSize);
+                m_dataLen += dataSize;
             }
         }
     };
