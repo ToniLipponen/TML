@@ -92,8 +92,8 @@ namespace tml
     void Window::Display()
     {
         // TODO: Figure out why glfwSwapBuffers is not working on all platforms/GPUs.
-//        glfwSwapBuffers(static_cast<GLFWwindow*>(m_handle));
-        glad_glFlush();
+        glfwSwapBuffers((GLFWwindow*)m_handle);
+//        glad_glFlush();
         glfwPollEvents();
     }
 
