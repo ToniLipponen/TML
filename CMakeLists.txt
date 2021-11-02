@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(TML)
 option(TML_DEBUG_OPENGL_CALLS "Applies error checking around opengl function calls." no)
 option(TML_ASSERT "Applies asserts around important functions" yes)
-option(TML_MAKE_STATIC "Compiles TML as a static library" no)
+option(TML_MAKE_STATIC "Compiles TML as a static library" yes)
 option(TML_BUILD_EXAMPLES "Builds some example programs" yes)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
