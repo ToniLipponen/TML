@@ -3,6 +3,11 @@
 #define PL_MPEG_IMPLEMENTATION 1
 #include <PL_MPEG/pl_mpeg.h>
 
+/*
+ * Currently, conversion from YCrCb data to RGB is done on the CPU.
+ * Also, no audio decoding at the moment.
+ */
+
 namespace tml
 {
     Video::Video() = default;

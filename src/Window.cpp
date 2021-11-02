@@ -91,6 +91,7 @@ namespace tml
 
     void Window::Display()
     {
+        // TODO: Figure out why glfwSwapBuffers is not working on all platforms/GPUs.
 //        glfwSwapBuffers(static_cast<GLFWwindow*>(m_handle));
         glad_glFlush();
         glfwPollEvents();
@@ -182,12 +183,12 @@ namespace tml
                 tml::Condition(user_h == -1, h, user_h),
                 m_title.c_str(),
                 monitor,
-                0);
+                nullptr);
         GLFWwindow* handle = static_cast<GLFWwindow*>(m_handle);
         TML_ASSERT(m_handle != nullptr, "Failed to create a window handle.");
-        glfwMakeContextCurrent(static_cast<GLFWwindow *>(m_handle));
-        glfwShowWindow(static_cast<GLFWwindow *>(m_handle));
-        glfwSetWindowSizeCallback(static_cast<GLFWwindow *>(m_handle), WindowResizeCallback);glfwSetDropCallback(handle, DragAndDropCallback);
+        glfwMakeContextCurrent(handle);
+        glfwShowWindow(handle);
+        glfwSetWindowSizeCallback(handle, WindowResizeCallback);glfwSetDropCallback(handle, DragAndDropCallback);
         glfwSetCharCallback(handle, CharCallback);
         glfwSetKeyCallback(handle, KeyCallback);
         glfwSetMouseButtonCallback(handle, MouseButtonCallback);
