@@ -41,7 +41,7 @@ namespace tml
             return true;
         }
 
-        tml::Logger::ErrorMessage("Failed to load video -> %s", filename);
+        tml::Logger::ErrorMessage("Failed to load video -> %s", filename.c_str());
         return false;
     }
 
