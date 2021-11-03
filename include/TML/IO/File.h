@@ -77,8 +77,9 @@ namespace tml
         {
             if(m_isValid)
             {
-                std::vector<char> data(m_dataLen, 0);
+                std::vector<char> data(m_dataLen);
                 m_stream.read(data.data(), m_dataLen);
+                return data;
             }
             return {};
         }

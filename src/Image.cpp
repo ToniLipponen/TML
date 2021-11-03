@@ -3,6 +3,9 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb/stb_image_write.h>
 #include <TML/Image.h>
+#include <webp/decode.h>
+#include <webp/encode.h>
+#include <TML/IO/File.h>
 
 namespace tml
 {
@@ -62,6 +65,9 @@ namespace tml
 
     Image& Image::operator=(const Image& rhs) noexcept
     {
+        if(&rhs == this)
+            return *this;
+
         this->m_width = rhs.m_width;
         this->m_height = rhs.m_height;
         this->m_Bpp = rhs.m_Bpp;
@@ -90,7 +96,14 @@ namespace tml
     bool Image::LoadFromFile(const std::string& fileName)
     {
         delete[] m_data; m_data = nullptr;
-        m_data = stbi_load(fileName.c_str(), &m_width, &m_height, &m_Bpp, 0);
+        const auto imageType = GetTypeFromFilename(fileName);
+        if(imageType == Image::Webp)
+        {
+            if(!LoadWebp(fileName))
+                return false;
+        }
+        else
+            m_data = stbi_load(fileName.c_str(), &m_width, &m_height, &m_Bpp, 0);
         return (m_data != nullptr);
     }
 
@@ -111,16 +124,91 @@ namespace tml
         return m_data != nullptr;
     }
 
-    bool Image::SaveToFile(const std::string& fileName)
+    bool Image::SaveToFile(const std::string& fileName, int quality)
     {
-        const auto ending = fileName.substr(fileName.find_last_of('.'), fileName.length());
-        if(ending == "png")
+        const auto type = GetTypeFromFilename(fileName);
+
+        if(type == Image::Png)
             return stbi_write_png(fileName.c_str(), m_width, m_height, m_Bpp, m_data, 0) != 0;
-        else if(ending == "bmp")
+        else if(type == Image::Bmp)
             return stbi_write_bmp(fileName.c_str(), m_width, m_height, m_Bpp, m_data) != 0;
-        else if(ending == "tga")
+        else if(type == Image::Tga)
             return stbi_write_tga(fileName.c_str(), m_width, m_height, m_Bpp, m_data) != 0;
+        else if(type == Image::Webp)
+            return SaveWebp(fileName, quality);
         else // Default to jpg
-            return stbi_write_jpg(fileName.c_str(), m_width, m_height, m_Bpp, m_data, 90) != 0;
+            return stbi_write_jpg(fileName.c_str(), m_width, m_height, m_Bpp, m_data, quality) != 0;
+    }
+
+    bool Image::LoadWebp(const std::string &filename)
+    {
+        InFile file;
+        file.Open(filename);
+        auto data = file.GetBytes();
+
+        WebPDecoderConfig config;
+        WebPInitDecoderConfig(&config);
+
+        WebPBitstreamFeatures features{};
+        auto status = WebPGetFeatures(reinterpret_cast<const uint8_t *>(data.data()), data.size(), &features);
+        if(status == VP8_STATUS_OK)
+        {
+            m_width = features.width;
+            m_height = features.height;
+            if(features.has_alpha)
+            {
+                m_Bpp = 4;
+                m_data = WebPDecodeRGBA(reinterpret_cast<const uint8_t *>(data.data()), data.size(), &m_width, &m_height);
+            }
+            else
+            {
+                m_Bpp = 3;
+                m_data = WebPDecodeRGB(reinterpret_cast<const uint8_t *>(data.data()), data.size(), &m_width, &m_height);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    bool Image::SaveWebp(const std::string& filename, int quality)
+    {
+        ui8* output = nullptr;
+        ui64 size = 0;
+
+        if(m_Bpp == 3)
+            size = WebPEncodeRGB(m_data, m_width, m_height, m_width*m_Bpp, static_cast<float>(quality), &output);
+        else if(m_Bpp == 4)
+            size = WebPEncodeRGBA(m_data, m_width, m_height, m_width*m_Bpp, static_cast<float>(quality), &output);
+
+        if(size && output)
+        {
+            OutFile file;
+            file.Open(filename);
+            file.Write(reinterpret_cast<const char *>(output), size);
+            return true;
+        }
+        return false;
+    }
+
+    Image::ImageType Image::GetTypeFromFilename(const std::string &filename)
+    {
+        const auto str = filename.substr(filename.find_last_of('.'), filename.length());
+
+        if(str == ".png")
+            return Image::Png;
+        else if(str == ".bmp")
+            return Image::Bmp;
+        else if(str == ".tga")
+            return Image::Tga;
+        else if(str == ".jpg")
+            return Image::Jpg;
+        else if(str == ".pic")
+            return Image::Pic;
+        else if(str == ".ppm")
+            return Image::Pnm;
+        else if(str == ".webp")
+            return Image::Webp;
+
+        return Image::None;
     }
 }

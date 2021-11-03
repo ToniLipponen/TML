@@ -29,8 +29,12 @@ namespace tml
         void LoadFromMemory(i32 w, i32 h, i32 Bpp, const ui8* data); // @brief Creates image from pixel data in memory
         bool LoadFromData(const ui8* data, ui32 dataSize); // @brief Creates image from raw file data in memory
 
-        bool SaveToFile(const std::string& fileName); // @brief Saves image to file. Uses postfix to deduce image file type. eg. .jpg .png ..
+        bool SaveToFile(const std::string& fileName, int quality = 90); // @brief Saves image to file. Uses postfix to deduce image file type. eg. .jpg .png ..
     private:
+        enum ImageType { None, Jpg, Png, Bmp, Tga, Pic, Pnm, Webp };
+        bool LoadWebp(const std::string& filename);
+        bool SaveWebp(const std::string& filename, int quality = 90);
+        static ImageType GetTypeFromFilename(const std::string& filename);
         i32 m_width, m_height, m_Bpp;
         ui8* m_data;
     };
