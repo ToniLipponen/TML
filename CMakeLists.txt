@@ -35,9 +35,15 @@ else()
     add_library(TML SHARED ${SRC_FILES})
 endif()
 
-if(WIN32 OR MSVC)
+if(WIN32)
     target_compile_features(TML PUBLIC cxx_std_14)
-    target_compile_options(TML INTERFACE /arch:SSE3)
+
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        target_compile_options(TML INTERFACE -msse3)
+    else() # MSVC
+        target_compile_options(TML INTERFACE /arch:SSE3)
+    endif()
+
     target_link_libraries(TML glfw)
 elseif(UNIX)
     set(CMAKE_INSTALL_PREFIX /usr)
@@ -52,4 +58,5 @@ if(TML_BUILD_EXAMPLES)
     add_subdirectory(examples/example1/)
     add_subdirectory(examples/example2/)
     add_subdirectory(examples/example3/)
+    add_subdirectory(examples/example4/)
 endif()
