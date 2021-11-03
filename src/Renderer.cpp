@@ -69,7 +69,7 @@ void main()
    {
        case 0:
            color = texture(uTextures[vTexID], vUV);
-           if(color.r > 0.02)
+           if(color.r > 0.1)
            {
                outColor = vColor;
                outColor.a = color.r * vColor.a;
@@ -91,7 +91,7 @@ void main()
        break;
        case 3:
            color = texture(uTextures[vTexID], vUV);
-           if(color.r > 0.02)
+           if(color.r > 0.1)
            {
                outColor = vColor;
                outColor.a = color.r * vColor.a;
