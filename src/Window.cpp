@@ -40,10 +40,11 @@ namespace tml
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         
-        glfwWindowHint(GLFW_DECORATED, (settings & Settings::NoTopBar) == 0);
-        glfwWindowHint(GLFW_RESIZABLE, (settings & Settings::Resizeable) != 0);
-        glfwWindowHint(GLFW_MAXIMIZED, (settings & Settings::Maximized) != 0);
-        glfwWindowHint(GLFW_DOUBLEBUFFER, (settings & Settings::VSync) != 0);
+        m_useVSync = (settings & Settings::VSync) != 0;
+        glfwWindowHint(GLFW_DECORATED,      (settings & Settings::NoTopBar)     == 0);
+        glfwWindowHint(GLFW_RESIZABLE,      (settings & Settings::Resizeable)   != 0);
+        glfwWindowHint(GLFW_MAXIMIZED,      (settings & Settings::Maximized)    != 0);
+        glfwWindowHint(GLFW_DOUBLEBUFFER,   (settings & Settings::VSync)        != 0);
         glfwWindowHint(GLFW_SAMPLES, static_cast<int>(((settings & Settings::Antialias) >> 4) * 4));
 
         m_handle = glfwCreateWindow(w, h, title.c_str(),(settings & Settings::Fullscreen) ? glfwGetPrimaryMonitor() : nullptr, nullptr);
@@ -91,9 +92,10 @@ namespace tml
 
     void Window::Display()
     {
-        // TODO: Figure out why glfwSwapBuffers is not working on all platforms/GPUs.
-        glfwSwapBuffers((GLFWwindow*)m_handle);
-//        glad_glFlush();
+        if(m_useVSync)
+            glfwSwapBuffers(static_cast<GLFWwindow*>(m_handle));
+        else
+            glad_glFlush();
         glfwPollEvents();
     }
 
