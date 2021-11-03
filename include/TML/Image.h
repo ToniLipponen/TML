@@ -33,6 +33,7 @@ namespace tml
     private:
         enum ImageType { None, Jpg, Png, Bmp, Tga, Pic, Pnm, Webp };
         bool LoadWebp(const std::string& filename);
+        bool LoadWebp(const ui8* data, ui32 size);
         bool SaveWebp(const std::string& filename, int quality = 90);
         static ImageType GetTypeFromFilename(const std::string& filename);
         i32 m_width, m_height, m_Bpp;

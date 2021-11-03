@@ -121,7 +121,10 @@ namespace tml
     {
         delete[] m_data; m_data = nullptr;
         m_data = stbi_load_from_memory(data, dataSize, &m_width, &m_height, &m_Bpp, 0);
-        return m_data != nullptr;
+        if(m_data == nullptr)
+            return LoadWebp(data, dataSize);
+
+        return false;
     }
 
     bool Image::SaveToFile(const std::string& fileName, int quality)
@@ -146,11 +149,13 @@ namespace tml
         file.Open(filename);
         auto data = file.GetBytes();
 
-        WebPDecoderConfig config;
-        WebPInitDecoderConfig(&config);
+       return LoadWebp(reinterpret_cast<const ui8*>(data.data()), data.size());
+    }
 
+    bool Image::LoadWebp(const ui8 *data, ui32 size)
+    {
         WebPBitstreamFeatures features{};
-        auto status = WebPGetFeatures(reinterpret_cast<const uint8_t *>(data.data()), data.size(), &features);
+        auto status = WebPGetFeatures(data, size, &features);
         if(status == VP8_STATUS_OK)
         {
             m_width = features.width;
@@ -158,12 +163,12 @@ namespace tml
             if(features.has_alpha)
             {
                 m_Bpp = 4;
-                m_data = WebPDecodeRGBA(reinterpret_cast<const uint8_t *>(data.data()), data.size(), &m_width, &m_height);
+                m_data = WebPDecodeRGBA(data, size, &m_width, &m_height);
             }
             else
             {
                 m_Bpp = 3;
-                m_data = WebPDecodeRGB(reinterpret_cast<const uint8_t *>(data.data()), data.size(), &m_width, &m_height);
+                m_data = WebPDecodeRGB(data, size, &m_width, &m_height);
             }
             return true;
         }
@@ -211,4 +216,5 @@ namespace tml
 
         return Image::None;
     }
+
 }
