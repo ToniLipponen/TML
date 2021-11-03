@@ -45,6 +45,7 @@ namespace tml
         void Screenshot(const std::string& filename) const noexcept;
     private:
         std::string m_title;
+        bool m_useVSync = false;
         void *m_handle;
     };
 }
