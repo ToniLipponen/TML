@@ -9,9 +9,9 @@ int main()
     Window window(300, 400, "Example 4", Window::VSync);
     Renderer::Init();
 
-    TextInput input(1, 1, 197, 30);
-    auto* button = new Button(200, 1, 99, 30, "Add to list");
-    auto* list = new Listbox(1, 33, 298, 396 - 30);
+    TextInput input(0, 0, 200, 30);
+    auto* button = new Button(200, 0, 100, 30, "Add to list");
+    auto* list = new Listbox(0, 30, 300, 400 - 30);
     input.AddChild(button, "button");
     input.AddChild(list, "listbox");
 

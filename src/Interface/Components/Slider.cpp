@@ -51,7 +51,7 @@ namespace tml
 
         void Slider::Draw()
         {
-            // Maybe clean this up at some point?
+            // TODO: Maybe clean this up at some point?
             if(m_type == Horizontal)
             {
                 const Vector2 a = m_pos + Vector2{m_size.y / 4, m_size.y / 2};

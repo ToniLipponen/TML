@@ -98,6 +98,9 @@ void Listbox::OnUpdate(double dt)
 void Listbox::Draw()
 {
     Renderer::DrawRect(m_pos, m_size, m_pColor);
+
+    const Vector2 pos = m_pos + Vector2(1,1);
+    const Vector2 size = m_size - Vector2(2,2);
     for(int i = 0; i < m_values.size(); i++)
     {
         if(i == m_selectedIndex)
@@ -106,7 +109,7 @@ void Listbox::Draw()
                                   BLACK, m_pos, m_pos + m_size);
     }
     if(m_state.Focused)
-        Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 2);
+        Renderer::DrawGrid(pos, size, 1, 1, m_activeColor, 2);
     else
-        Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor, 2);
+        Renderer::DrawGrid(pos, size, 1, 1, m_sColor, 2);
 }

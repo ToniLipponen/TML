@@ -169,8 +169,11 @@ namespace tml
             DEFAULT_TEXT->SetPosition(m_pos);
             DEFAULT_TEXT->SetSize(m_size.y);
             DEFAULT_TEXT->SetString(m_valueStr.substr(0, m_cursorIndex));
-            const auto cursorX = Util::Clamp(m_pos.x + DEFAULT_TEXT->GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x);
             DEFAULT_TEXT->SetString(m_valueStr);
+
+            const Vector2 pos = m_pos + Vector2(1,1);
+            const Vector2 size = m_size - Vector2(2,2);
+            const auto cursorX = Util::Clamp(pos.x + DEFAULT_TEXT->GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x);
 
             Renderer::DrawRect(m_pos, m_size, m_pColor);
             Renderer::DrawTextCropped(m_valueStr, m_pos,m_size.y, BLACK, m_pos, m_pos + m_size);
@@ -178,10 +181,10 @@ namespace tml
             if(m_state.Focused)
             {
                 Renderer::DrawLine({cursorX, m_pos.y + (m_size.y / 10.0f)}, {cursorX, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
-                Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 2);
+                Renderer::DrawGrid(pos, size, 1, 1, m_activeColor, 2);
             }
             else
-                Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor, 2);
+                Renderer::DrawGrid(pos, size, 1, 1, m_sColor, 2);
         }
 
         template class NumericInput<i64>;

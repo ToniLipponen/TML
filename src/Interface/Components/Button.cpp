@@ -25,14 +25,19 @@ void Button::Draw()
 {
     DEFAULT_TEXT->SetString(m_text);
     DEFAULT_TEXT->SetSize(m_textSize);
-    Vector2 size = DEFAULT_TEXT->GetDimensions();
+    Vector2 textSize = DEFAULT_TEXT->GetDimensions();
+
+    const Vector2 pos = m_pos + Vector2(1,1);
+    const Vector2 size = m_size - Vector2(2,2);
+
     if(m_eventStatus.MouseDown)
         Renderer::DrawRect(m_pos, m_size, m_activeColor);
     else
         Renderer::DrawRect(m_pos, m_size, m_pColor);
-    Renderer::DrawText(m_text, m_pos + (m_size / 2.f) - (size / 2.f), m_textSize, m_tColor);
+
+    Renderer::DrawText(m_text, pos + (size / 2.f) - (textSize / 2.f), m_textSize, m_tColor);
     if(m_state.Focused)
-        Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor,2);
+        Renderer::DrawGrid(pos, size, 1, 1, m_activeColor,2);
     else
-        Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor,2);
+        Renderer::DrawGrid(pos, size, 1, 1, m_sColor,2);
 }
