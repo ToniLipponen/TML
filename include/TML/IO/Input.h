@@ -147,4 +147,8 @@ namespace tml
         static bool ButtonDown(Button button);
         static double GetScrollValue();
     };
+    namespace Input
+    {
+        void PollEvents();
+    }
 }

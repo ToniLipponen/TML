@@ -1,5 +1,6 @@
 #include <TML/Audio/Music.h>
 #include <miniaudio/miniaudio.h>
+#include <TML/IO/File.h>
 #include "Mixer.h"
 #include "../internal/Assert.h"
 
@@ -13,7 +14,7 @@ namespace tml
         LoadFromFile(filename);
     }
 
-    Music::Music(void *data, ui32 bytes)
+    Music::Music(const char* data, ui32 bytes)
     {
         LoadFromData(data, bytes);
     }
@@ -32,7 +33,8 @@ namespace tml
         if(!m_decoder)
             m_decoder = new ma_decoder;
 
-        ma_result result = ma_decoder_init_file(filename.c_str(), &s_DecoderConfig, (ma_decoder*)m_decoder);
+        auto* decoder = reinterpret_cast<ma_decoder*>(m_decoder);
+        ma_result result = ma_decoder_init_file(filename.c_str(), &s_DecoderConfig, decoder);
         m_valid = (result == MA_SUCCESS);
 
         if(!m_valid)
@@ -40,25 +42,31 @@ namespace tml
             tml::Logger::ErrorMessage("Failed to load sound file -> %s", filename.c_str());
             return false;
         }
+        m_frameCount = ma_decoder_get_length_in_pcm_frames(decoder) * decoder->outputChannels;
+        m_rate = decoder->outputSampleRate;
+        m_channels = decoder->outputChannels;
         return true;
     }
 
-    bool Music::LoadFromData(void *data, ui32 bytes)
+    bool Music::LoadFromData(const char* data, ui32 bytes)
     {
         m_state = Stopped;
         Mixer::RemoveSound(m_id);
         if(!m_decoder)
             m_decoder = new ma_decoder;
 
-        ma_result result = ma_decoder_init_memory(data, bytes, &s_DecoderConfig, (ma_decoder*)m_decoder);
+        auto* decoder = reinterpret_cast<ma_decoder*>(m_decoder);
+        ma_result result = ma_decoder_init_memory(data, bytes, &s_DecoderConfig, decoder);
         m_valid = (result == MA_SUCCESS);
 
         if(!m_valid)
         {
             tml::Logger::ErrorMessage("Failed to load sound from memory.");
-            ma_decoder_uninit((ma_decoder*)m_decoder);
             return false;
         }
+        m_frameCount = ma_decoder_get_length_in_pcm_frames(decoder) * decoder->outputChannels;
+        m_rate = decoder->outputSampleRate;
+        m_channels = decoder->outputChannels;
         return true;
     }
 
@@ -100,6 +108,7 @@ namespace tml
                 break;
             }
         }
+        m_framesRead += totalFramesRead * m_channels;
         return totalFramesRead;
     }
 }

@@ -19,8 +19,5 @@ namespace tml
     private:
         ui32 ReadFrames(float* output, ui32 frameCount) override;
         float* m_samples;
-        ui64 m_readSamples;
-        ui64 m_samplesCount;
-        ui8 m_channels;
     };
 }

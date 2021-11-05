@@ -12,7 +12,17 @@ namespace tml
         FileBase() = default;
         explicit FileBase(const std::string& filename)
         {
-            m_stream.open(filename, std::ios::in | std::ios::out | std::ios::binary);
+//            m_stream.open(filename, std::ios::in | std::ios::out | std::ios::binary);
+            m_stream.open(filename, std::ios::ate | std::ios::in | std::ios::out | std::ios::binary);
+            if (!m_stream.is_open() || m_stream.fail())
+            {
+                m_isValid = false;
+                Logger::ErrorMessage("Could not open file -> %s", filename.c_str());
+            }
+
+            m_isValid = true;
+            m_dataLen = m_stream.tellg();
+            m_stream.seekg(0, std::iostream::beg);
         }
 
         virtual ~FileBase()
@@ -138,7 +148,7 @@ namespace tml
     class OutFile : public FileBase
     {
     public:
-        OutFile() = default;
+        using FileBase::FileBase;
         bool Open(const std::string& filename) override
         {
             m_stream.clear();

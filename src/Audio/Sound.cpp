@@ -10,19 +10,19 @@ namespace tml
     extern ma_decoder_config s_DecoderConfig;
 
     Sound::Sound()
-    : m_channels(0), m_readSamples(0), m_samplesCount(0), m_samples(nullptr)
+    : m_samples(nullptr)
     {
 
     }
 
     Sound::Sound(const std::string &filename)
-    : m_channels(0), m_readSamples(0), m_samplesCount(0), m_samples(nullptr)
+    : m_samples(nullptr)
     {
         LoadFromFile(filename);
     }
 
     Sound::Sound(const float *data, ui8 channels, ui64 sampleCount)
-    : m_channels(0), m_readSamples(0), m_samplesCount(0), m_samples(nullptr)
+    :m_samples(nullptr)
     {
         LoadFromMemory(data, channels, sampleCount);
     }
@@ -43,13 +43,14 @@ namespace tml
             tml::Logger::ErrorMessage("Failed to load sound file -> %s", filename.c_str());
             return false;
         }
-        m_samplesCount = ma_decoder_get_length_in_pcm_frames(&decoder) * decoder.outputChannels;
+        m_frameCount = ma_decoder_get_length_in_pcm_frames(&decoder) * decoder.outputChannels;
 
         delete[] m_samples;
-        m_samples = new float[m_samplesCount];
-        ma_decoder_read_pcm_frames(&decoder, m_samples, m_samplesCount);
+        m_samples = new float[m_frameCount];
+        ma_decoder_read_pcm_frames(&decoder, m_samples, m_frameCount);
 
-        m_readSamples = 0;
+        m_framesRead = 0;
+        m_rate = decoder.outputSampleRate;
         m_channels = decoder.outputChannels;
 
         ma_decoder_uninit(&decoder);
@@ -66,12 +67,13 @@ namespace tml
             tml::Logger::ErrorMessage("Failed to load sound");
             return false;
         }
-        m_samplesCount = ma_decoder_get_length_in_pcm_frames(&decoder) * decoder.outputChannels;
+        m_frameCount = ma_decoder_get_length_in_pcm_frames(&decoder) * decoder.outputChannels;
 
         delete[] m_samples;
-        m_samples = new float[m_samplesCount];
-        ma_decoder_read_pcm_frames(&decoder, m_samples, m_samplesCount);
-        m_readSamples = 0;
+        m_samples = new float[m_frameCount];
+        ma_decoder_read_pcm_frames(&decoder, m_samples, m_frameCount);
+        m_framesRead = 0;
+        m_rate = decoder.outputSampleRate;
         m_channels = decoder.outputChannels;
 
         ma_decoder_uninit(&decoder);
@@ -83,31 +85,31 @@ namespace tml
         delete[] m_samples;
         m_samples = new float[sampleCount];
         Util::Copy<float>(m_samples, data, sampleCount);
-        m_samplesCount = sampleCount;
-        m_readSamples = 0;
+        m_frameCount = sampleCount;
+        m_framesRead = 0;
         m_channels = channels;
         return true;
     }
 
     void Sound::Play()
     {
-        m_readSamples = 0;
+        m_framesRead = 0;
         AudioType::Play();
     }
 
     void Sound::Stop()
     {
         AudioType::Stop();
-        m_readSamples = 0;
+        m_framesRead = 0;
     }
 
     ui32 Sound::ReadFrames(float *output, ui32 frameCount)
     {
-        const ui32 readFrames = Util::Clamp<ui32>(frameCount * m_channels, 0, m_samplesCount - m_readSamples);
+        const ui32 readFrames = Util::Clamp<ui32>(frameCount * m_channels, 0, m_frameCount - m_framesRead);
         for(ui32 i = 0; i < readFrames; ++i)
-            output[i] += m_samples[m_readSamples+i] * m_volume;
+            output[i] += m_samples[m_framesRead + i] * m_volume;
 
-        m_readSamples += readFrames;
+        m_framesRead += readFrames;
         return frameCount;
     }
 

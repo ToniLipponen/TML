@@ -101,4 +101,12 @@ namespace tml
         s_mouseScrollValue = 0;
         return r;
     }
+
+    namespace Input
+    {
+        void PollEvents()
+        {
+            glfwPollEvents();
+        }
+    }
 }

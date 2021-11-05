@@ -9,10 +9,10 @@ namespace tml
     public:
         Music() = default;
         explicit Music(const std::string &filename);
-        Music(void* data, ui32 bytes); // @brief Constructs music from raw file data.
+        Music(const char* data, ui32 bytes); // @brief Constructs music from raw file data. Data has to be available during playback.
         ~Music();
         bool LoadFromFile(const std::string& filename);
-        bool LoadFromData(void* data, ui32 bytes); // @brief Loads music from raw file data.
+        bool LoadFromData(const char* data, ui32 bytes); // @brief Loads music from raw file data. Data has to be available during playback.
         void Stop() override;
     private:
         ui32 ReadFrames(float* output, ui32 frameCount) override;
