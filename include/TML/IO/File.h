@@ -9,6 +9,12 @@ namespace tml
     class FileBase
     {
     public:
+        FileBase() = default;
+        explicit FileBase(const std::string& filename)
+        {
+            m_stream.open(filename, std::ios::in | std::ios::out | std::ios::binary);
+        }
+
         virtual ~FileBase()
         {
             m_stream.close();
@@ -54,7 +60,7 @@ namespace tml
     class InFile : public FileBase
     {
     public:
-        InFile() = default;
+        using FileBase::FileBase;
 
         bool Open(const std::string& filename) override
         {

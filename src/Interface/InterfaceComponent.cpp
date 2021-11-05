@@ -14,13 +14,13 @@ namespace tml
         std::hash<std::string> BaseComponent::s_hash = std::hash<std::string>();
 
         BaseComponent::BaseComponent()
-            : m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr)
+        : m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr)
         {
             m_state.Enabled = true;
         }
 
         BaseComponent::BaseComponent(BaseComponent* parent)
-            : m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(parent)
+        : m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(parent)
         {
             m_state.Enabled = true;
             m_parent->AddChild(this);

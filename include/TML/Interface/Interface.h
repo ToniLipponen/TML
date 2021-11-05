@@ -6,3 +6,6 @@
 #include "Components/Listbox.h"
 #include "Components/Dropmenu.h"
 #include "Components/Label.h"
+#include "Components/Progressbar.h"
+#include "Layouts/VerticalLayout.h"
+#include "Layouts/HorizontalLayout.h"
