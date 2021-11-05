@@ -75,6 +75,7 @@ namespace tml
         if(m_valid)
             ma_decoder_seek_to_pcm_frame((ma_decoder*)m_decoder, 0);
         m_state = Stopped;
+        AudioType::Stop();
     }
 
     ui32 Music::ReadFrames(float *output, ui32 frameCount)

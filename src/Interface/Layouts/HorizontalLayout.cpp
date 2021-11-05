@@ -9,6 +9,8 @@ namespace tml
         {
             m_pos = Vector2(x,y);
             m_size = Vector2(w,h);
+            m_hSizePolicy = Expand;
+            m_vSizePolicy = Expand;
         }
         void HorizontalLayout::OnUpdate(double dt)
         {

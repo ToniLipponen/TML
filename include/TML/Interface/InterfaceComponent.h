@@ -29,7 +29,7 @@ namespace tml
                 bool Resizeable = false;
                 bool Movable = false;
             };
-            enum SizePolicy { Fixed, Expand, Auto };
+            enum SizePolicy { Fixed, Expand, Clamp };
             using UIFunc = Function_ptr<void, BaseComponent*>;
         public:
             BaseComponent();
@@ -111,8 +111,8 @@ namespace tml
             // Visual
             float m_animSpeed = 4.f;
             Color m_pColor, m_sColor, m_activeColor; // Primary and secondary color.
-            SizePolicy m_hSizePolicy = Fixed; // Horizontal size policy.
-            SizePolicy m_vSizePolicy = Fixed; // Vertical size policy.
+            SizePolicy m_hSizePolicy = Clamp; // Horizontal size policy.
+            SizePolicy m_vSizePolicy = Clamp; // Vertical size policy.
 
             std::deque<std::pair<unsigned long, BaseComponent*>> m_children;
             BaseComponent* m_parent;
