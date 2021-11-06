@@ -35,12 +35,12 @@ namespace tml
                 const auto itemSize = item.second->GetSize();
                 switch(item.second->GetVerticalSizePolicy())
                 {
-                    case Expand:
-                        expandThese.push_back(item.second);
-                        expandedChildren++;
+                    case Fixed:
+                        height += itemSize.y;
                         break;
                     default:
-                        height += itemSize.y;
+                        expandThese.push_back(item.second);
+                        expandedChildren++;
                         break;
                 }
                 switch(item.second->GetHorizontalSizePolicy())
@@ -56,12 +56,14 @@ namespace tml
                         break;
                 }
             }
+
             if(expandedChildren == 0)
                 return;
 
-            expandSize = Util::Min<float>(((m_size.y - height) / expandedChildren), 0);
+            expandSize = Util::Min<float>(((m_size.y - height) / expandedChildren) - (m_padding.y / 2) - 1, 0);
             if(expandSize < 1)
                 return;
+
             for(auto i : expandThese)
                 i->SetSize({i->GetSize().x, expandSize});
         }

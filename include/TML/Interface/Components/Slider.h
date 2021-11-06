@@ -5,12 +5,11 @@ namespace tml
 {
     namespace Interface
     {
+        template<ComponentAxis axis>
         class Slider : public BaseComponent
         {
         public:
-            enum Type {Vertical, Horizontal};
-        public:
-            Slider(ui32 type, i32 x, i32 y, ui32 size, ui32 thickness = 20,
+            Slider(i32 x, i32 y, ui32 size, ui32 thickness = 20,
                    float min = 0.0f, float max = 1.0f);
             void SetValue(float value);
             inline float GetValue() const { return m_value; }
@@ -19,7 +18,8 @@ namespace tml
             void OnMouseDrag(const Vector2& mousePos) override;
             void Draw() override;
             float m_min, m_max, m_value;
-            ui32 m_type; // Vertical, Horizontal
         };
+        using VSlider = Slider<Vertical>;
+        using HSlider = Slider<Horizontal>;
     }
 }

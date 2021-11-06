@@ -69,7 +69,7 @@ void main()
    {
        case 0:
            color = texture(uTextures[vTexID], vUV);
-           if(color.r > 0.1)
+           if(color.r > 0.01)
            {
                outColor = vColor;
                outColor.a = color.r * vColor.a;
@@ -84,14 +84,14 @@ void main()
        break;
        case 2:
            outColor = texture(uTextures[vTexID], vUV);
-           if(outColor.a < 0.1)
+           if(outColor.a < 0.01)
            {
                discard;
            }
        break;
        case 3:
            color = texture(uTextures[vTexID], vUV);
-           if(color.r > 0.1)
+           if(color.r > 0.01)
            {
                outColor = vColor;
                outColor.a = color.r * vColor.a;
@@ -113,7 +113,6 @@ void main()
 using namespace tml;
 
 extern Text*            DEFAULT_TEXT;
-
 static Texture*         s_circleTexture = nullptr;
 static VertexArray*     s_vao = nullptr;
 static VertexBuffer*    s_vertexBuffer = nullptr;
@@ -124,7 +123,7 @@ static Shader*          s_shader = nullptr;
 static glm::mat4 s_view = glm::mat4(1.f);
 static glm::mat4 s_proj = glm::mat4(1.f);
 static glm::mat4 s_scale = glm::mat4(1.f);
-static Vector2  s_viewSize   = {0, 0};
+static Vector2  s_viewSize = {0, 0};
 static Camera s_camera;
 
 // Render batch related stuff
@@ -151,7 +150,7 @@ void PrintInformation()
     tml::Logger::InfoMessage("GPU available texture units: %d", gpu_texture_units);
 }
 
-void gl_message_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
+void GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
 {
     auto const src_str = [source]() {
         switch (source)
@@ -193,12 +192,21 @@ void gl_message_callback(GLenum source, GLenum type, GLuint id, GLenum severity,
     std::cout << src_str << ", " << type_str << ", " << severity_str << ", " << id << ": " << message << '\n';
 }
 
-bool Renderer::Init()
+bool Renderer::Init() noexcept
+{
+    const bool result = QuietInit();
+    PrintInformation();
+    return result;
+}
+
+bool Renderer::QuietInit() noexcept
 {
     s_vertexData.reserve(MAX_VERTEX_COUNT);
     s_indexData.reserve(MAX_VERTEX_COUNT * 1.5);
-    TML_ASSERT(gladLoadGL(), "Failed to initialize OpenGL.");
-    PrintInformation();
+    const auto result = gladLoadGL();
+    TML_ASSERT(result, "Failed to initialize OpenGL.");
+    if(result == 0)
+        return false;
 
     s_vao           = new VertexArray();
     s_vertexBuffer  = new VertexBuffer(nullptr, sizeof(Vertex), MAX_VERTEX_COUNT);
@@ -221,23 +229,26 @@ bool Renderer::Init()
     ui8* circleData = stbi_load_from_memory(CIRCLE.data(), static_cast<int>(CIRCLE.size()), &w, &h, &bpp, 1);
     s_circleTexture->LoadFromMemory(w, h, bpp, circleData);
     delete[] circleData;
+
     GL_CALL(glad_glEnable(GL_BLEND));
-    GL_CALL(glad_glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+    GL_CALL(glad_glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     GL_CALL(glad_glDisable(GL_DEPTH_TEST));
     GL_CALL(glad_glDisable(GL_CULL_FACE));
+
     #ifndef TML_NO_GL_DEBUGGING
         glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageCallback(gl_message_callback, nullptr);
     #endif
+
     return true;
 }
 
-void Renderer::SetClearColor(const Color &color)
+void Renderer::SetClearColor(const Color &color) noexcept
 {
     GL_CALL(glad_glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
 }
 
-void Renderer::SetCamera(Camera &cam)
+void Renderer::SetCamera(Camera &cam) noexcept
 {
     ResetCamera();
     s_camera = cam;
@@ -247,30 +258,59 @@ void Renderer::SetCamera(Camera &cam)
     s_view = glm::translate(s_view, glm::vec3(-s_camera.GetPosition().x, -s_camera.GetPosition().y, 0));
 }
 
-void Renderer::ResetCamera()
+void Renderer::ResetCamera() noexcept
 {
     EndBatch();
     s_view = glm::mat4(1.f);
     s_scale = glm::mat4(1.f);
 }
 
-void Renderer::Clear()
+void Renderer::SetViewport(i32 x, i32 y, ui32 w, ui32 h) noexcept
 {
-    GL_CALL(glad_glClear(GL_COLOR_BUFFER_BIT));
-	static int f[4];
-	GL_CALL(glad_glGetIntegerv(GL_VIEWPORT, f));
+    EndBatch();
+    s_viewSize = Vector2{static_cast<float>(w), static_cast<float>(h)};
+    s_proj = glm::ortho(
+            static_cast<float>(x),
+            static_cast<float>(w),
+            static_cast<float>(h),
+            static_cast<float>(y)
+    );
+}
+
+void Renderer::SetViewport(const Vector2& pos, const Vector2& size) noexcept
+{
+    EndBatch();
+    s_viewSize = size;
+    s_proj = glm::ortho(
+            pos.x,
+            size.x,
+            size.y,
+            pos.y
+    );
+}
+
+void Renderer::ResetViewport() noexcept
+{
+    int f[4];
+    GL_CALL(glad_glGetIntegerv(GL_VIEWPORT, f));
     s_viewSize = Vector2{static_cast<float>(f[2]), static_cast<float>(f[3])};
     s_proj = glm::ortho(
             static_cast<float>(f[0]),
             static_cast<float>(f[2]),
             static_cast<float>(f[3]),
             static_cast<float>(f[1])
-            );
+    );
+}
+
+void Renderer::Clear() noexcept
+{
+    GL_CALL(glad_glClear(GL_COLOR_BUFFER_BIT));
+    ResetViewport();
     GL_CALL(BeginBatch());
     ResetCamera();
 }
 
-void Renderer::BeginBatch()
+void Renderer::BeginBatch() noexcept
 {
     s_vertexData.clear();
     s_indexData.clear();
@@ -279,17 +319,17 @@ void Renderer::BeginBatch()
     s_indexBuffer->Flush();
 }
 
-void Renderer::Draw(Rectangle& r)
+void Renderer::Draw(Rectangle& r) noexcept
 {
     PushQuad(r.m_pos, r.m_size, r.m_color, r.m_tex, r.m_rotation, Vertex::RECTANGLE);
 }
 
-void Renderer::Draw(Circle& r)
+void Renderer::Draw(Circle& r) noexcept
 {
     PushQuad(r.m_pos - (r.m_size * 0.5f), r.m_size, r.m_color, *s_circleTexture, Vertex::CIRCLE);
 }
 
-void Renderer::Draw(Sprite& r)
+void Renderer::Draw(Sprite& r) noexcept
 {
     ui32 currentElements = s_vertexData.size();
     if((currentElements + 4) >= MAX_VERTEX_COUNT)
@@ -323,7 +363,7 @@ void Renderer::Draw(Sprite& r)
 //    PushQuad(r.m_pos, r.m_size, r.m_color, r.m_tex, r.m_rotation, Vertex::TEXTURE);
 }
 
-void Renderer::Draw(Text& r)
+void Renderer::Draw(Text& r) noexcept
 {
     ui32 currentElements = s_vertexData.size();
     if((currentElements + r.m_vertexData.size()) >= MAX_VERTEX_COUNT)
@@ -351,12 +391,12 @@ void Renderer::Draw(Text& r)
         s_indexData.push_back(currentElements + i);
 }
 
-void Renderer::Draw(Video& r)
+void Renderer::Draw(Video& r) noexcept
 {
-    PushQuad(r.m_pos, r.m_size, r.m_color, r.m_tex,Vertex::TEXTURE);
+    PushQuad(r.m_pos, r.m_size, r.m_color, r.m_tex, Vertex::TEXTURE);
 }
 
-void Renderer::DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Color color, bool rounded)
+void Renderer::DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Color color, bool rounded) noexcept
 {
     ui32 currentElements = s_vertexData.size();
     if(currentElements >= MAX_VERTEX_COUNT - 4)
@@ -387,7 +427,7 @@ void Renderer::DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Col
     }
 }
 
-void Renderer::p_DrawRect(const Vector2& pos, const Vector2& dimensions, const Color& color, float rotation)
+void Renderer::p_DrawRect(const Vector2& pos, const Vector2& dimensions, const Color& color, float rotation) noexcept
 {
     ui32 currentElements = s_vertexData.size();
     if(currentElements >= MAX_VERTEX_COUNT - 4)
@@ -413,7 +453,7 @@ void Renderer::p_DrawRect(const Vector2& pos, const Vector2& dimensions, const C
     s_indexData.push_back(currentElements + 2);
 }
 
-void Renderer::DrawRect(const Vector2& pos, const Vector2& dimensions, const Color& color, float roundness, float rotation)
+void Renderer::DrawRect(const Vector2& pos, const Vector2& dimensions, const Color& color, float roundness, float rotation) noexcept
 {
     if(roundness < 3.f) // If roundness is too low, just draw a regular rectangle
         p_DrawRect(pos, dimensions, color, rotation);
@@ -432,13 +472,13 @@ void Renderer::DrawRect(const Vector2& pos, const Vector2& dimensions, const Col
     }
 }
 
-void Renderer::DrawCircle(const Vector2& pos, float radius, const Color& color)
+void Renderer::DrawCircle(const Vector2& pos, float radius, const Color& color) noexcept
 {
     PushQuad(pos - Vector2{radius,radius}, {radius*2}, color, *s_circleTexture, Vertex::CIRCLE);
 }
 
 void Renderer::DrawBezier(const Vector2 &a, const Vector2 &cp1, const Vector2 &b, const Vector2 &cp2, float thickness,
-                          const Color &color, bool rounded, float step)
+                          const Color &color, bool rounded, float step) noexcept
 {
     Vector2 begin = a;
     for(float i = 0; i < 1.f; i += step)
@@ -450,7 +490,7 @@ void Renderer::DrawBezier(const Vector2 &a, const Vector2 &cp1, const Vector2 &b
 }
 
 void Renderer::DrawBezier(const Vector2 &a, const Vector2 &cp, const Vector2 &b, float thickness,
-                          const Color &color, bool rounded, float step)
+                          const Color &color, bool rounded, float step) noexcept
 {
     Vector2 begin = a;
     for(float i = 0; i < 1.f; i += step)
@@ -462,7 +502,7 @@ void Renderer::DrawBezier(const Vector2 &a, const Vector2 &cp, const Vector2 &b,
 }
 
 void Renderer::DrawGrid(const Vector2 &top_left, const Vector2 &size, ui32 rows, ui32 columns, const Color &color,
-                        float thickness, bool rounded)
+                        float thickness, bool rounded) noexcept
 {
     for(int i = 0; i <= rows; ++i)
     {
@@ -474,13 +514,13 @@ void Renderer::DrawGrid(const Vector2 &top_left, const Vector2 &size, ui32 rows,
                  top_left + Vector2{(size.x / columns) * i, size.y}, thickness, color, false);
 }
 
-void Renderer::DrawTexture(Texture &tex, const Vector2 &pos, const Vector2 &size)
+void Renderer::DrawTexture(Texture &tex, const Vector2 &pos, const Vector2 &size) noexcept
 {
     PushQuad(pos, size, TRANSPARENT, tex, Vertex::TEXTURE);
 }
 
 void
-Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& texture, Vertex::Drawable_Type type)
+Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& texture, Vertex::Drawable_Type type) noexcept
 {
     ui32 currentElements = s_vertexData.size();
     if(currentElements >= MAX_VERTEX_COUNT - 4)
@@ -511,7 +551,7 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
 }
 
 void
-Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& texture, float rotation, Vertex::Drawable_Type type)
+Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& texture, float rotation, Vertex::Drawable_Type type) noexcept
 {
     ui32 currentElements = s_vertexData.size();
     if(currentElements >= MAX_VERTEX_COUNT - 4)
@@ -542,7 +582,7 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
     s_indexData.emplace_back(currentElements + 2);
 }
 
-void Renderer::DrawText(const std::string &text, const Vector2 &pos, float size, const Color &color)
+void Renderer::DrawText(const std::string &text, const Vector2 &pos, float size, const Color &color) noexcept
 {
     DEFAULT_TEXT->SetString(text);
     DEFAULT_TEXT->SetSize(size);
@@ -553,7 +593,7 @@ void Renderer::DrawText(const std::string &text, const Vector2 &pos, float size,
 
 // This doesn't remove any quads, even if they are out of bounds. The vertices of quads only get clamped. Maybe improve this in the future.
 void Renderer::DrawTextCropped(const std::string &text, const Vector2 &pos, float size, const Color &color,
-                               const Vector2 &topLeft, const Vector2 &bottomRight)
+                               const Vector2 &topLeft, const Vector2 &bottomRight) noexcept
 {
     DEFAULT_TEXT->SetString(text);
     DEFAULT_TEXT->SetSize(size);
@@ -569,7 +609,7 @@ void Renderer::DrawTextCropped(const std::string &text, const Vector2 &pos, floa
 
     ui32 tex = PushTexture(DEFAULT_TEXT->m_font.m_texture);
     currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again.
-    auto clamp_vertex = [&topLeft, &bottomRight](Vertex& v)
+    auto clamp_vertex = [&topLeft, &bottomRight](Vertex& v) noexcept
     {
         const float x_clamped = Util::Clamp(v.pos.x, topLeft.x, bottomRight.x);
         const float y_clamped = Util::Clamp(v.pos.y, topLeft.y, bottomRight.y);
@@ -587,7 +627,7 @@ void Renderer::DrawTextCropped(const std::string &text, const Vector2 &pos, floa
 }
 
 // Finds a parking spot for the texture.
-ui32 Renderer::PushTexture(Texture &texture)
+ui32 Renderer::PushTexture(Texture &texture) noexcept
 {
     if(s_textures.size() >= MAX_TEXTURE_COUNT - 1)
     {
@@ -613,7 +653,7 @@ ui32 Renderer::PushTexture(Texture &texture)
     return index;
 }
 
-void Renderer::EndBatch()
+void Renderer::EndBatch() noexcept
 {
     s_shader->Bind();
     for(i32 i = 0; i < MAX_TEXTURE_COUNT; i++)

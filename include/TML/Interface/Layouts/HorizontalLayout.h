@@ -1,11 +1,12 @@
 #pragma once
 #include <TML/Interface/InterfaceComponent.h>
+#include <TML/Interface/Layout.h>
 
 namespace tml
 {
     namespace Interface
     {
-        class HorizontalLayout : public BaseComponent
+        class HorizontalLayout : public BaseComponent, public Layout
         {
         public:
             HorizontalLayout(i32 x, i32 y, ui32 w, ui32 h);
@@ -13,6 +14,8 @@ namespace tml
         private:
             void Draw() override {}
             void OnUpdate(double dt) override;
+            void ScaleChildren();
+            void AlignChildren();
         };
     }
 }

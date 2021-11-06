@@ -8,6 +8,8 @@ namespace tml
 {
     namespace Interface
     {
+        enum ComponentAxis { Horizontal, Vertical}; // For components that can be either horizontal or vertical, for example sliders and scrollbars.
+
         class BaseComponent : public Object
         {
         public:
