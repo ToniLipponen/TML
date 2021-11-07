@@ -4,12 +4,12 @@
 Simple library for making multimedia applications.
 
 <h1>Features</h1>
+<li>Cross platform</li>
 <li>OpenGL 4.5 core</li>
 <li>C++14</li>
 <li>Everything batch rendered</li>
 <li>Simple audio interface</li>
-<li>Video playback support using MPEG-1</li>
-<li>Custom GUI implementation</li>
+<li>Custom GUI implementation (Needs work)</li>
 
 <h3>Example</h3>
 
