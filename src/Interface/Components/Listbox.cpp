@@ -99,6 +99,17 @@ namespace tml
             return 0;
         }
 
+        void Listbox::OnMoved()
+        {
+            m_scrollbar->SetPosition(m_pos + Vector2(m_size.x - 22, 2));
+        }
+
+        void Listbox::OnResized()
+        {
+            m_scrollbar->SetPosition(m_pos + Vector2(m_size.x - 22, 2));
+            m_scrollbar->SetSize({m_scrollbar->GetSize().x, m_size.y - 4});
+        }
+
         void Listbox::OnMouseClick(const Vector2 &mousePos)
         {
             auto PointInRect = [&](const Vector2 &tl, const Vector2 &br)
@@ -144,6 +155,5 @@ namespace tml
             else
                 Renderer::DrawGrid(pos, size, 1, 1, m_sColor, 2);
         }
-
     }
 }

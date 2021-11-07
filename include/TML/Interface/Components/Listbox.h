@@ -24,6 +24,8 @@ namespace tml
         private:
             ui32 GetOverFlow() const noexcept; // Get count of items that do not fit int the visible area.
         protected:
+            void OnMoved() override;
+            void OnResized() override;
             void OnMouseClick(const Vector2& mousePos) override;
             void OnUpdate(double dt) override;
             void Draw() override;

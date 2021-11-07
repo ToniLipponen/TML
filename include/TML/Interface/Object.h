@@ -21,10 +21,12 @@ namespace tml
             void SetPosition(const Vector2& position)
             {
                 m_pos = position;
+                OnMoved();
             }
             void SetSize(const Vector2& size)
             {
                 m_size = size;
+                OnResized();
             }
             inline Vector2 GetPosition() const
             {
@@ -34,7 +36,10 @@ namespace tml
             {
                 return m_size;
             }
+
         protected:
+            virtual void OnResized(){}
+            virtual void OnMoved(){}
             Vector2 m_pos;
             Vector2 m_size;
         };

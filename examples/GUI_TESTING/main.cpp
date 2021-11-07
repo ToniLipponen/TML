@@ -16,8 +16,12 @@ int main()
     {
         if(Keyboard::IsKeyPressed(Keyboard::KEY_A))
             list.AddValue("Item" + std::to_string(list.GetElementsCount()));
-        if(Keyboard::IsKeyPressed(Keyboard::KEY_D))
+        else if(Keyboard::IsKeyPressed(Keyboard::KEY_D))
             list.RemoveValue(list.GetElementsCount()-1);
+        if(Keyboard::IsKeyPressed(Keyboard::KEY_RIGHT))
+            list.SetSize(list.GetSize() + Vector2(10, 0));
+        else if(Keyboard::IsKeyPressed(Keyboard::KEY_LEFT))
+            list.SetSize(list.GetSize() - Vector2(10, 0));
 
         Renderer::Clear();
         list.Update();
