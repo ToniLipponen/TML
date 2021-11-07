@@ -135,10 +135,13 @@ namespace tml
         void Listbox::OnUpdate(double dt)
         {
             const auto value = Mouse::GetScrollValue();
-            if(value > 0.0)
-                m_scrollbar->SetValue(m_scrollbar->GetValue() - 1);
-            else if(value < 0.0)
-                m_scrollbar->SetValue(m_scrollbar->GetValue() + 1);
+            if(m_state.Focused && m_scrollbar->Enabled())
+            {
+                if(value > 0.0)
+                    m_scrollbar->SetValue(m_scrollbar->GetValue() - 1);
+                else if(value < 0.0)
+                    m_scrollbar->SetValue(m_scrollbar->GetValue() + 1);
+            }
         }
 
         void Listbox::Draw()
@@ -148,7 +151,7 @@ namespace tml
             const Vector2 pos = m_pos + Vector2(1, 1);
             const Vector2 size = m_size - Vector2(2, 2);
 
-            if(m_selectedIndex != -1 && Util::InRange<float>(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20), m_size.y - 20))
+            if(m_selectedIndex >= 0 && m_selectedIndex < m_values.size() && Util::InRange<float>(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20), m_size.y - 20))
             {
                 Renderer::DrawRect(m_pos + Vector2(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20)), {m_size.x, 20.f}, m_activeColor);
             }

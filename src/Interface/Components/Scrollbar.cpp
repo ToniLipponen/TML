@@ -29,7 +29,7 @@ namespace tml
             if(axis == Vertical)
             {
                 const float barSize = m_size.y / m_max;
-                const auto barPos = Util::Max(m_pos.y + (m_size.y / m_max) * m_value, m_pos.y + m_size.y - barSize);
+                const auto barPos = Util::Max(m_pos.y + barSize * m_value, m_pos.y + m_size.y - barSize);
 
                 Renderer::DrawRect(m_pos, m_size, m_pColor);
                 Renderer::DrawRect({m_pos.x, barPos}, {m_size.x, barSize}, m_sColor);
@@ -37,7 +37,7 @@ namespace tml
             else
             {
                 const float barSize = m_size.x / m_max;
-                const auto barPos = Util::Max(m_pos.x + (m_size.x / m_max) * m_value, m_pos.x + m_size.x - barSize);
+                const auto barPos = Util::Max(m_pos.x + barSize * m_value, m_pos.x + m_size.x - barSize);
 
                 Renderer::DrawRect(m_pos, m_size, m_pColor);
                 Renderer::DrawRect({barPos, m_pos.y}, {barSize, m_size.y}, m_sColor);

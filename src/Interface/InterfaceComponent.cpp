@@ -121,31 +121,30 @@ namespace tml
         {
             if (!m_eventStatus.Drag || !childEvents.Drag)
             {
-                const auto oldMouseOver = m_eventStatus.MouseOver;
-                m_eventStatus.MouseOver = (!childEvents.MouseOver && ContainsPoint(mp) && !childEvents.MouseOver);
-                m_eventStatus.MouseEnter = (!oldMouseOver && !childEvents.MouseEnter && m_eventStatus.MouseOver);
-                m_eventStatus.MouseExit = (oldMouseOver && !childEvents.MouseExit && !m_eventStatus.MouseOver);
-                m_eventStatus.Click = (!m_eventStatus.MouseDown && !m_eventStatus.Click && m_eventStatus.MouseOver && !childEvents.Click && mouseDown);
-                m_eventStatus.MouseDown = (m_eventStatus.MouseOver && !childEvents.MouseDown && mouseDown);
-                m_eventStatus.GainedFocus = (!m_state.Focused && (m_eventStatus.MouseOver && !childEvents.GainedFocus && m_eventStatus.MouseDown));
+                const auto oldMouseOver     = m_eventStatus.MouseOver;
+                m_eventStatus.MouseOver     = (!childEvents.MouseOver && ContainsPoint(mp) && !childEvents.MouseOver);
+                m_eventStatus.MouseEnter    = (!oldMouseOver && !childEvents.MouseEnter && m_eventStatus.MouseOver);
+                m_eventStatus.MouseExit     = (oldMouseOver && !childEvents.MouseExit && !m_eventStatus.MouseOver);
+                m_eventStatus.Click         = (!m_eventStatus.MouseDown && !m_eventStatus.Click && m_eventStatus.MouseOver && !childEvents.Click && mouseDown);
+                m_eventStatus.MouseDown     = (m_eventStatus.MouseOver && !childEvents.MouseDown && mouseDown);
+                m_eventStatus.GainedFocus   = (!m_state.Focused && (m_eventStatus.MouseOver && !childEvents.GainedFocus && m_eventStatus.MouseDown));
 
                 if (m_eventStatus.MouseDown)
                     m_eventStatus.Drag = true;
                 else if (!mouseDown)
                     m_eventStatus.Drag = false;
 
-                childEvents.MouseOver = m_eventStatus.MouseOver || childEvents.MouseOver;
-                childEvents.MouseEnter = m_eventStatus.MouseEnter || childEvents.MouseEnter;
-                childEvents.MouseExit = m_eventStatus.MouseExit || childEvents.MouseExit;
-                childEvents.Click = m_eventStatus.Click || childEvents.Click;
-                childEvents.MouseDown = m_eventStatus.MouseDown || childEvents.MouseDown;
-                childEvents.LostFocus = m_eventStatus.LostFocus || childEvents.LostFocus;
+                childEvents.MouseOver   = m_eventStatus.MouseOver   || childEvents.MouseOver;
+                childEvents.MouseEnter  = m_eventStatus.MouseEnter  || childEvents.MouseEnter;
+                childEvents.MouseExit   = m_eventStatus.MouseExit   || childEvents.MouseExit;
+                childEvents.Click       = m_eventStatus.Click       || childEvents.Click;
+                childEvents.MouseDown   = m_eventStatus.MouseDown   || childEvents.MouseDown;
+                childEvents.LostFocus   = m_eventStatus.LostFocus   || childEvents.LostFocus;
                 childEvents.GainedFocus = m_eventStatus.GainedFocus || childEvents.GainedFocus;
-                childEvents.Drag = m_eventStatus.MouseDown || childEvents.Drag;
+                childEvents.Drag        = m_eventStatus.MouseDown   || childEvents.Drag;
             }
             m_eventStatus.LostFocus = (m_state.Focused && !m_eventStatus.MouseOver && mouseDown);
         }
-
 
         void BaseComponent::Poll(const Vector2& mp, bool mouseDown, Events& events)
         {
@@ -175,6 +174,8 @@ namespace tml
         {
             if (!m_state.Enabled)
                 return;
+
+            OnUpdate(dt);
             Draw();
             if (m_eventStatus.Click)
             {
@@ -232,7 +233,6 @@ namespace tml
                     m_onDragFunc(this);
             }
 
-            OnUpdate(dt);
             if (m_onUpdate.IsNotNull())
                 m_onUpdate(this);
             for (auto& i : m_children)

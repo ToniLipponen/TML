@@ -239,8 +239,7 @@ bool Renderer::QuietInit() noexcept
 
     GL_CALL(glad_glEnable(GL_BLEND));
     GL_CALL(glad_glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-    GL_CALL(glad_glDisable(GL_DEPTH_TEST));
-    GL_CALL(glad_glDisable(GL_CULL_FACE));
+    GL_CALL(glad_glBlendEquation(GL_FUNC_ADD));
 
     #ifndef TML_NO_GL_DEBUGGING
         glEnable(GL_DEBUG_OUTPUT);
@@ -480,9 +479,8 @@ void Renderer::DrawRect(const Vector2& pos, const Vector2& dimensions, const Col
         p_DrawRect(pos, dimensions, color, rotation);
     else
     {
-        Vector2 origin =
-                {origin.x = (pos.x + pos.x + dimensions.x) * 0.5f,
-                 origin.y = (pos.y + pos.y + dimensions.y) * 0.5f};
+        Vector2 origin = {origin.x = (pos.x + pos.x + dimensions.x) * 0.5f,
+                          origin.y = (pos.y + pos.y + dimensions.y) * 0.5f};
         p_DrawRect(pos+Vector2{0.f, roundness}, dimensions - Vector2{0.f, roundness*2}, color, rotation);
         p_DrawRect(pos+Vector2{roundness, 0.f}, dimensions - Vector2{roundness*2, 0.f}, color, rotation);
 
@@ -541,7 +539,7 @@ void Renderer::DrawTexture(Texture &tex, const Vector2 &pos, const Vector2 &size
 }
 
 void
-Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& texture, Vertex::Drawable_Type type) noexcept
+Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& texture, Vertex::DrawableType type) noexcept
 {
     ui32 currentElements = s_vertexData.size();
     if(currentElements >= MAX_VERTEX_COUNT - 4)
@@ -572,7 +570,7 @@ Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Te
 }
 
 void
-Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& texture, float rotation, Vertex::Drawable_Type type) noexcept
+Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& texture, float rotation, Vertex::DrawableType type) noexcept
 {
     ui32 currentElements = s_vertexData.size();
     if(currentElements >= MAX_VERTEX_COUNT - 4)

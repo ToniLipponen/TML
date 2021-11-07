@@ -66,10 +66,10 @@ namespace tml
 
     private:
         static void
-        PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& tex_id, Vertex::Drawable_Type type) noexcept;
+        PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& tex_id, Vertex::DrawableType type) noexcept;
 
         static void // Rotated
-        PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& tex_id, float rotation, Vertex::Drawable_Type type) noexcept;
+        PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& tex_id, float rotation, Vertex::DrawableType type) noexcept;
 
         static void
         p_DrawRect(const Vector2 &pos, const Vector2 &dimensions, const Color &color, float rotation = 0.0f) noexcept;

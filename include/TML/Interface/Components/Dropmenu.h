@@ -19,11 +19,11 @@ namespace tml
             void Clear();
         private:
             void Draw() override;
-            virtual void OnUpdate(double dt) override;
-            virtual void OnMouseClick(const Vector2& mousePos) override;
-            virtual void OnMouseDown(const Vector2& mousePos) override;
-            virtual void OnFocused() override;
-            virtual void OnFocusLost() override;
+            void OnUpdate(double dt) override;
+            void OnMouseClick(const Vector2& mousePos) override;
+            void OnMouseDown(const Vector2& mousePos) override;
+            void OnFocused() override;
+            void OnFocusLost() override;
 
             Listbox* m_listComponent;
         };

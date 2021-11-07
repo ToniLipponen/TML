@@ -9,13 +9,11 @@ int main()
     Renderer::Init();
     Renderer::SetClearColor(WHITE);
 
-    TextInput* input = new TextInput(0,0, 200);
-    Listbox list(300, 300, 200, 300);
+    Listbox list(0, 30, 200, 300);
     for(int i = 0; i < 20; i++)
         list.AddValue("Item" + std::to_string(i));
 
-    list.AddChild(input);
-    Clock clock;
+    Clock clock, clock2;
     double dt;
 
     Text fpsText;
@@ -31,13 +29,16 @@ int main()
         Renderer::Clear();
         {
             list.Update();
-            Renderer::DrawRect(Mouse::GetPosition(), {200, 200}, RED, 10, 0);
             Renderer::Draw(fpsText);
         }
         Renderer::EndBatch();
         window.Display();
         dt = clock.Reset();
-        fpsText.SetString("FPS: " + std::to_string(ui32(1.0 / dt)));
+        if(clock2.GetTime() > 0.5)
+        {
+            fpsText.SetString("FPS: " + std::to_string(ui32(1.0 / dt)));
+            clock2.Reset();
+        }
     }
     return 0;
 }
