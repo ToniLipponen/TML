@@ -14,6 +14,7 @@ namespace tml
     public:
         static bool Init() noexcept;
         static bool QuietInit() noexcept;
+
         static void SetClearColor(const Color& color) noexcept;
         static void SetCamera(Camera& cam) noexcept;
         static void ResetCamera() noexcept;
@@ -22,8 +23,12 @@ namespace tml
         static void SetViewport(const Vector2& pos, const Vector2& size) noexcept;
         static void ResetViewport() noexcept;
 
+        static void SetBounds(const Vector2& pos, const Vector2& size) noexcept;
+        static void ResetBounds() noexcept;
+
         static void Clear() noexcept;
         static void BeginBatch() noexcept; // Maybe make this private?
+
         static void Draw(Rectangle &rectangle) noexcept;
         static void Draw(Circle &circle) noexcept;
         static void Draw(Sprite &sprite) noexcept;
@@ -39,7 +44,7 @@ namespace tml
         // @brief Draws a cubic bezier-curve.
         // a and b are the end points, while cp1 and cp2 are the control points.
         static void
-        DrawBezier(const Vector2 &a, const Vector2 &cp1, const Vector2 &b, const Vector2 &cp2, float thickness,
+        DrawBezier(const Vector2 &a, const Vector2 &cp1, const Vector2 &cp2, const Vector2 &b, float thickness,
                    const Color &color, bool rounded = true, float step = 0.01f) noexcept;
 
         // @brief Draws a quadratic bezier-curve.
@@ -57,12 +62,6 @@ namespace tml
         static void
         DrawText(const std::string& text, const Vector2& pos, float size, const Color& color = WHITE) noexcept;
 
-        // @brief Draws text within given area. Anything outside this area is discarded.
-        // NOT WORKING RIGHT AT THE MOMENT.
-        // TODO: Fix
-        static void
-        DrawTextCropped(const std::string& text, const Vector2& pos, float size, const Color& color,
-                                    const Vector2& topLeft, const Vector2& bottomRight) noexcept;
         static void EndBatch() noexcept;
 
     private:
@@ -76,5 +75,6 @@ namespace tml
         p_DrawRect(const Vector2 &pos, const Vector2 &dimensions, const Color &color, float rotation = 0.0f) noexcept;
 
         static ui32 PushTexture(Texture& tex) noexcept;
+        static void PushVertexData(std::vector<Vertex>& vertices, std::vector<ui32>& indices) noexcept;
     };
 }

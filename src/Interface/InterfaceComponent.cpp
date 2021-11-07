@@ -1,9 +1,7 @@
 #include <TML/Interface/InterfaceComponent.h>
+#include <TML/Renderer.h>
 #include <TML/IO/Input.h>
 #include <TML/Clock.h>
-#include <iostream>
-#include <map>
-#include <stack>
 #include <functional>
 #include <string>
 
@@ -169,6 +167,7 @@ namespace tml
             const bool click = Mouse::ButtonDown(Mouse::Left);
             Events event = { false };
             Poll(mousePos, click, event);
+            Renderer::ResetCamera();
             GetRoot()->p_Update(delta, mousePos);
         }
 

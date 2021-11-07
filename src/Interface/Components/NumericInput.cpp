@@ -176,15 +176,20 @@ namespace tml
             const auto cursorX = Util::Clamp(pos.x + DEFAULT_TEXT->GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x);
 
             Renderer::DrawRect(m_pos, m_size, m_pColor);
-            Renderer::DrawTextCropped(m_valueStr, m_pos,m_size.y, BLACK, m_pos, m_pos + m_size);
+            Renderer::SetBounds(m_pos, m_size);
+            Renderer::DrawText(m_valueStr, m_pos,m_size.y, BLACK);
 
             if(m_state.Focused)
             {
                 Renderer::DrawLine({cursorX, m_pos.y + (m_size.y / 10.0f)}, {cursorX, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
+                Renderer::ResetBounds();
                 Renderer::DrawGrid(pos, size, 1, 1, m_activeColor, 2);
             }
             else
+            {
+                Renderer::ResetBounds();
                 Renderer::DrawGrid(pos, size, 1, 1, m_sColor, 2);
+            }
         }
 
         template class NumericInput<i64>;

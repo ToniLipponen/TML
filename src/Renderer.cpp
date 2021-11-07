@@ -24,6 +24,7 @@ layout (location = 4) in uint Type;
 
 out flat vec4  vColor;
 out vec2  vUV;
+out vec2 vViewSize;
 out flat uint  vTexID;
 out flat uint  vType;
 
@@ -36,14 +37,16 @@ void main()
 {
     const vec4 r = uView * vec4(Pos-(uViewSize*0.5), 1, 1);
     gl_Position = uProj * (uScale * vec4(r.xy + (uViewSize*0.5), 0, 1));
+
     vColor = vec4(
-        int((Color & 0xff000000) >> 24),
-        int((Color & 0x00ff0000) >> 16),
-        int((Color & 0x0000ff00) >> 8),
-        int((Color & 0x000000ff))) * 0.003921568;
+        ((Color & 0xff000000) >> 24),
+        ((Color & 0x00ff0000) >> 16),
+        ((Color & 0x0000ff00) >> 8),
+        ((Color & 0x000000ff))) * 0.003921568;
     vUV = UV;
     vTexID = Tex;
     vType = Type;
+    vViewSize = uViewSize;
 }
 )END";
 
@@ -52,16 +55,20 @@ R"END(
 #version 450 core
 in vec4 vColor;
 in vec2 vUV;
+in vec2 vViewSize;
 flat in uint vTexID;
 flat in uint vType;
 out vec4 outColor;
+
 uniform sampler2D uTextures[32];
+
 mat4 bt601 = mat4(
   1.16438,  0.00000,  1.59603, -0.87079,
   1.16438, -0.39176, -0.81297,  0.52959,
   1.16438,  2.01723,  0.00000, -1.08139,
   0, 0, 0, 1
 );
+
 void main()
 {
    vec4 color = vec4(0.0);
@@ -237,7 +244,7 @@ bool Renderer::QuietInit() noexcept
 
     #ifndef TML_NO_GL_DEBUGGING
         glEnable(GL_DEBUG_OUTPUT);
-        glDebugMessageCallback(gl_message_callback, nullptr);
+        glDebugMessageCallback(GLMessageCallback, nullptr);
     #endif
 
     return true;
@@ -302,12 +309,26 @@ void Renderer::ResetViewport() noexcept
     );
 }
 
+void Renderer::SetBounds(const Vector2& pos, const Vector2& size) noexcept
+{
+    EndBatch();
+    glad_glScissor(pos.x, s_viewSize.y - pos.y - size.y, size.x, size.y);
+    glad_glEnable(GL_SCISSOR_TEST);
+}
+
+void Renderer::ResetBounds() noexcept
+{
+    EndBatch();
+    glad_glDisable(GL_SCISSOR_TEST);
+}
+
 void Renderer::Clear() noexcept
 {
     GL_CALL(glad_glClear(GL_COLOR_BUFFER_BIT));
     ResetViewport();
     GL_CALL(BeginBatch());
     ResetCamera();
+    ResetBounds();
 }
 
 void Renderer::BeginBatch() noexcept
@@ -477,7 +498,7 @@ void Renderer::DrawCircle(const Vector2& pos, float radius, const Color& color) 
     PushQuad(pos - Vector2{radius,radius}, {radius*2}, color, *s_circleTexture, Vertex::CIRCLE);
 }
 
-void Renderer::DrawBezier(const Vector2 &a, const Vector2 &cp1, const Vector2 &b, const Vector2 &cp2, float thickness,
+void Renderer::DrawBezier(const Vector2 &a, const Vector2 &cp1, const Vector2 &cp2, const Vector2 &b, float thickness,
                           const Color &color, bool rounded, float step) noexcept
 {
     Vector2 begin = a;
@@ -506,7 +527,7 @@ void Renderer::DrawGrid(const Vector2 &top_left, const Vector2 &size, ui32 rows,
 {
     for(int i = 0; i <= rows; ++i)
     {
-        DrawLine(top_left + Vector2{0.f,(size.y / rows) * i},
+        DrawLine(top_left + Vector2{0.f,    (size.y / rows) * i},
                  top_left + Vector2{size.x, (size.y / rows) * i}, thickness, color, ((i == 0) || (i == rows)));
     }
     for(int i = 0; i <= columns; ++i)
@@ -591,41 +612,6 @@ void Renderer::DrawText(const std::string &text, const Vector2 &pos, float size,
     Draw(*DEFAULT_TEXT);
 }
 
-// This doesn't remove any quads, even if they are out of bounds. The vertices of quads only get clamped. Maybe improve this in the future.
-void Renderer::DrawTextCropped(const std::string &text, const Vector2 &pos, float size, const Color &color,
-                               const Vector2 &topLeft, const Vector2 &bottomRight) noexcept
-{
-    DEFAULT_TEXT->SetString(text);
-    DEFAULT_TEXT->SetSize(size);
-    DEFAULT_TEXT->SetColor(color);
-    DEFAULT_TEXT->SetPosition(pos);
-
-    ui32 currentElements = s_vertexData.size();
-    if(currentElements >= MAX_VERTEX_COUNT - 4)
-    {
-        EndBatch();
-        currentElements = 0;
-    }
-
-    ui32 tex = PushTexture(DEFAULT_TEXT->m_font.m_texture);
-    currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again.
-    auto clamp_vertex = [&topLeft, &bottomRight](Vertex& v) noexcept
-    {
-        const float x_clamped = Util::Clamp(v.pos.x, topLeft.x, bottomRight.x);
-        const float y_clamped = Util::Clamp(v.pos.y, topLeft.y, bottomRight.y);
-        const float xm = x_clamped / v.pos.x;
-        const float ym = y_clamped / v.pos.y;
-
-        v.pos = {x_clamped, y_clamped};
-        v.uv = v.uv * Vector2(xm, ym);
-    };
-    for(auto& v : DEFAULT_TEXT->m_vertexData)
-    {
-        clamp_vertex(v);
-    }
-    Draw(*DEFAULT_TEXT);
-}
-
 // Finds a parking spot for the texture.
 ui32 Renderer::PushTexture(Texture &texture) noexcept
 {
@@ -633,9 +619,11 @@ ui32 Renderer::PushTexture(Texture &texture) noexcept
     {
         EndBatch();
     }
+
     bool already_in_m_textures = false;
     const auto id = texture.GetID();
     ui32 index = 0;
+
     for(auto i : s_textures)
     {
         if(i == id)
@@ -653,11 +641,23 @@ ui32 Renderer::PushTexture(Texture &texture) noexcept
     return index;
 }
 
+void Renderer::PushVertexData(std::vector<Vertex> &vertices, std::vector<ui32> &indices) noexcept
+{
+    if(MAX_VERTEX_COUNT >= s_vertexData.size() + vertices.size())
+        EndBatch();
+
+    const auto size = s_indexData.size();
+    std::copy(vertices.begin(), vertices.end(), back_inserter(s_vertexData));
+    for(auto i : indices)
+        s_indexData.push_back(size + i);
+}
+
 void Renderer::EndBatch() noexcept
 {
     s_shader->Bind();
     for(i32 i = 0; i < MAX_TEXTURE_COUNT; i++)
         s_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i);
+
     s_shader->SetVec2("uViewSize", s_viewSize);
     s_shader->UniformMat4fv("uView", 1, false, &s_view[0][0]);
     s_shader->UniformMat4fv("uProj", 1, false, &s_proj[0][0]);

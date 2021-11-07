@@ -147,15 +147,19 @@ namespace tml
 
             const Vector2 pos = m_pos + Vector2(1, 1);
             const Vector2 size = m_size - Vector2(2, 2);
+
+            if(m_selectedIndex != -1 && Util::InRange<float>(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20), m_size.y - 20))
+            {
+                Renderer::DrawRect(m_pos + Vector2(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20)), {m_size.x, 20.f}, m_activeColor);
+            }
+
+            Renderer::SetBounds(m_pos, m_size);
             for(int i = 0; i < m_values.size(); i++)
             {
-                if(i == m_selectedIndex && Util::InRange<float>(0, i * 20 - (m_scrollbar->GetValue() * 20), m_size.y - 20))
-                {
-                    Renderer::DrawRect(m_pos + Vector2(0, i * 20 - (m_scrollbar->GetValue() * 20)), {m_size.x, 20.f}, m_activeColor);
-                }
-                Renderer::DrawTextCropped(m_values.at(i), m_pos + Vector2(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20,
-                                          BLACK, m_pos, m_pos + m_size);
+                Renderer::DrawText(m_values.at(i), m_pos + Vector2(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20, BLACK);
             }
+            Renderer::ResetBounds();
+
             if(m_state.Focused)
                 Renderer::DrawGrid(pos, size, 1, 1, m_activeColor, 2);
             else
