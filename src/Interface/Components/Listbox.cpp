@@ -1,6 +1,5 @@
 #include <TML/Interface/Components/Listbox.h>
 #include <TML/Renderer.h>
-#include <TML/Logger.h>
 
 namespace tml
 {
@@ -12,7 +11,7 @@ namespace tml
             m_size = Vector2(width, height);
             m_scrollbar = new Scrollbar<Vertical>(x + width - 22, y+2, height-4);
             m_scrollbar->Disable();
-            AddChild(m_scrollbar, "mScrollBar");
+            AddChild(m_scrollbar);
         }
 
         void Listbox::AddValue(std::string value)
@@ -108,6 +107,13 @@ namespace tml
         {
             m_scrollbar->SetPosition(m_pos + Vector2(m_size.x - 22, 2));
             m_scrollbar->SetSize({m_scrollbar->GetSize().x, m_size.y - 4});
+
+            const auto overflow = GetOverFlow();
+            if(overflow > 0)
+            {
+                m_scrollbar->Enable();
+                m_scrollbar->SetRange(0, overflow);
+            }
         }
 
         void Listbox::OnMouseClick(const Vector2 &mousePos)
@@ -128,7 +134,6 @@ namespace tml
 
         void Listbox::OnUpdate(double dt)
         {
-//            tml::Logger::InfoMessage("Scroll value: %f", Mouse::GetScrollValue());
             const auto value = Mouse::GetScrollValue();
             if(value > 0.0)
                 m_scrollbar->SetValue(m_scrollbar->GetValue() - 1);
@@ -142,14 +147,15 @@ namespace tml
 
             const Vector2 pos = m_pos + Vector2(1, 1);
             const Vector2 size = m_size - Vector2(2, 2);
-            for(int i = 0; i < m_values.size(); i++) {
+            for(int i = 0; i < m_values.size(); i++)
+            {
                 if(i == m_selectedIndex && Util::InRange<float>(0, i * 20 - (m_scrollbar->GetValue() * 20), m_size.y - 20))
+                {
                     Renderer::DrawRect(m_pos + Vector2(0, i * 20 - (m_scrollbar->GetValue() * 20)), {m_size.x, 20.f}, m_activeColor);
+                }
                 Renderer::DrawTextCropped(m_values.at(i), m_pos + Vector2(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20,
                                           BLACK, m_pos, m_pos + m_size);
             }
-//            if(m_showSlider)
-//                m_scrollbar->Update();
             if(m_state.Focused)
                 Renderer::DrawGrid(pos, size, 1, 1, m_activeColor, 2);
             else

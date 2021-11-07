@@ -60,7 +60,6 @@ namespace tml
                 m_value = Util::Clamp<i32>((mousePos.y - m_pos.y) / m_size.y * m_max, m_min, m_max);
         }
 
-
         template class Scrollbar<Horizontal>;
         template class Scrollbar<Vertical>;
     }

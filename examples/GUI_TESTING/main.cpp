@@ -18,10 +18,16 @@ int main()
             list.AddValue("Item" + std::to_string(list.GetElementsCount()));
         else if(Keyboard::IsKeyPressed(Keyboard::KEY_D))
             list.RemoveValue(list.GetElementsCount()-1);
+
         if(Keyboard::IsKeyPressed(Keyboard::KEY_RIGHT))
             list.SetSize(list.GetSize() + Vector2(10, 0));
         else if(Keyboard::IsKeyPressed(Keyboard::KEY_LEFT))
             list.SetSize(list.GetSize() - Vector2(10, 0));
+
+        if(Keyboard::IsKeyPressed(Keyboard::KEY_UP))
+            list.SetSize(list.GetSize() - Vector2(0, 10));
+        else if(Keyboard::IsKeyPressed(Keyboard::KEY_DOWN))
+            list.SetSize(list.GetSize() + Vector2(0, 10));
 
         Renderer::Clear();
         list.Update();
