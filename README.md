@@ -4,7 +4,6 @@
 Simple library for making multimedia applications.
 
 <h1>Features</h1>
-<li>Cross platform</li>
 <li>OpenGL 4.5 core</li>
 <li>C++14</li>
 <li>Everything batch rendered</li>
