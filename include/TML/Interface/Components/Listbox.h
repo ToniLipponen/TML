@@ -1,5 +1,6 @@
 #pragma once
 #include "../InterfaceComponent.h"
+#include <TML/Interface/Components/Scrollbar.h>
 #include <vector>
 
 namespace tml
@@ -20,12 +21,15 @@ namespace tml
             void RemoveValue(ui32 index);
             void Clear();
             friend class DropMenu;
+        private:
+            ui32 GetOverFlow() const noexcept; // Get count of items that do not fit int the visible area.
         protected:
-            virtual void OnMouseClick(const Vector2& mousePos) override;
-            virtual void OnUpdate(double dt = 1.0f / 60.f) override;
-            virtual void Draw() override;
+            void OnMouseClick(const Vector2& mousePos) override;
+            void OnUpdate(double dt) override;
+            void Draw() override;
             std::vector<std::string> m_values;
-            bool m_showSlider = false; // Scroll bar
+            Scrollbar<Vertical>* m_scrollbar = nullptr;
+
             float m_scrollDist = 0.f;
             i32 m_selectedIndex = -1;
         };
