@@ -1,7 +1,7 @@
 #include "internal/Assert.h"
 #include "internal/GlDebug.h"
 #include "internal/Shader.h"
-#include <glad/glad.h>
+#include <GLHeader.h>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -92,13 +92,25 @@ void Shader::FromString(const std::string& vs, const std::string& fs) const
     GL_CALL(glad_glDetachShader(m_id, _fs));
     GL_CALL(glad_glDeleteShader(_vs));
     GL_CALL(glad_glDeleteShader(_fs));
+
+    int shaderStatus;
+    GL_CALL(glGetShaderiv(m_id, GL_COMPILE_STATUS, &shaderStatus));
+    if(shaderStatus == GL_FALSE)
+    {
+        int length = 0;
+        GL_CALL(glGetShaderiv(m_id, GL_INFO_LOG_LENGTH, &length));
+        std::string message(length, 0);
+        GL_CALL(glGetProgramInfoLog(m_id, length, &length, &message[0]));
+        std::cout << message << std::endl;
+    }
 }
 
 inline i32 Shader::GetUniformLocation(const std::string& name) const
 {
-    if(m_uniform_cache.count(name) != 0)
+    if(m_uniform_cache.find(name) != m_uniform_cache.end())
         return m_uniform_cache[name];
-    i32 loc = GL_CALL(glad_glGetUniformLocation(m_id, name.c_str()));
+
+    i32 loc = GL_CALL(glGetUniformLocation(m_id, name.c_str()));
     if(loc != -1)
         m_uniform_cache[name] = loc;
     return loc;
@@ -149,7 +161,6 @@ void Shader::Uniform4i(const std::string& name, i32 x, i32 y, i32 z, i32 w) cons
 void Shader::Uniform1ui(const std::string& name, ui32 x) const
 {
     i32 loc = GL_CALL(GetUniformLocation(name));
-    if(loc == -1) return;
     GL_CALL(GL_CALL(glad_glProgramUniform1ui(m_id, loc, x)));
 }
 void Shader::Uniform2ui(const std::string& name, ui32 x, ui32 y) const

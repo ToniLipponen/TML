@@ -1,10 +1,10 @@
 #include "internal/GlDebug.h"
 #include "internal/Assert.h"
-#include <glad/glad.h>
+#include <GLHeader.h>
 
 int CheckGLError()
 {
-    const auto e = glad_glGetError();
+    const auto e = glGetError();
     if(!e) return 0;
 
     switch(e)

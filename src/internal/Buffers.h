@@ -1,5 +1,5 @@
 #pragma once
-#include "../../include/TML/Types.h"
+#include <TML/Types.h>
 #include <utility>
 #include <vector>
 #include <tuple>
@@ -10,6 +10,7 @@ namespace tml {
         VertexBuffer();
         VertexBuffer(const void *data, ui32 vertexSize, ui32 numOfVertices);
         ~VertexBuffer();
+        void Bind() const; // Doesn't do anything on GL 4.5
         void BufferData(void *data, ui32 vertexSize, ui32 numOfVertices);
         void PushData(void *data, ui32 vertexSize, ui32 numOfVertices);
         void SetData(void *data, ui32 vertexSize, ui32 numOfVertices);
@@ -35,6 +36,7 @@ namespace tml {
         IndexBuffer();
         IndexBuffer(const ui32 *data, ui32 elements);
         ~IndexBuffer();
+        void Bind() const; // Doesn't do anything on GL 4.5
         void BufferData(const ui32 *data, ui32 elements);
         void PushData(const ui32 *data, ui32 elements);
         void SetData(const ui32 *data, ui32 elements);
@@ -55,22 +57,27 @@ namespace tml {
     public:
         enum DataType
         {
-            VERTEX_BYTE = 0x1400,
-            VERTEX_UNSIGNED_BYTE  = 0x1401,
-            VERTEX_SHORT = 0x1402,
-            VERTEX_UNSIGNED_SHORT = 0x1403,
-            VERTEX_INT = 0x1404,
-            VERTEX_UNSIGNED_INT = 0x1405,
-            VERTEX_FLOAT = 0x1406,
+            VERTEX_BYTE             = 0x1400,
+            VERTEX_UNSIGNED_BYTE    = 0x1401,
+            VERTEX_SHORT            = 0x1402,
+            VERTEX_UNSIGNED_SHORT   = 0x1403,
+            VERTEX_INT              = 0x1404,
+            VERTEX_UNSIGNED_INT     = 0x1405,
+            VERTEX_FLOAT            = 0x1406,
+        };
+        struct Attribute
+        {
+            ui32 elements, size;
+            DataType dataType;
         };
     public:
         BufferLayout() : m_stride(0) {}
 
-        explicit BufferLayout(std::vector<std::tuple<ui32, ui32, DataType>> layout)
+        explicit BufferLayout(std::vector<Attribute> layout)
         : m_layout(std::move(layout)), m_stride(0) {}
 
         void Push(ui32 elements, ui32 size, DataType type) {
-            m_layout.push_back(std::tuple<ui32,ui32,DataType>(elements, size, type));
+            m_layout.push_back(Attribute{elements, size, type});
             m_stride += elements * size;
         }
 
@@ -79,7 +86,7 @@ namespace tml {
             m_stride = 0;
         }
 
-        constexpr std::vector<std::tuple<ui32, ui32, DataType>> const &GetData() const {
+        constexpr std::vector<Attribute> const &GetData() const {
             return m_layout;
         }
 
@@ -89,7 +96,7 @@ namespace tml {
 
     private:
         //				  Elements | size | GL_TYPE
-        std::vector<std::tuple<ui32, ui32, DataType>> m_layout;
+        std::vector<Attribute> m_layout;
         ui32 m_stride;
     };
 
