@@ -63,18 +63,6 @@ void main()
    vec4 color = vec4(0.0);
    switch(vType)
    {
-       case 0:
-           color = texture(uTextures[vTexID], vUV);
-           if(color.r > 0.01)
-           {
-               outColor = vColor;
-               outColor.a = color.r * vColor.a;
-           }
-           else
-           {
-               discard;
-           }
-       break;
        case 1:
            outColor = vColor;
        break;
@@ -85,6 +73,7 @@ void main()
                discard;
            }
        break;
+       case 0:
        case 3:
            color = texture(uTextures[vTexID], vUV);
            if(color.r > 0.01)
@@ -155,7 +144,14 @@ flat in uint vTexID;
 flat in uint vType;
 out mediump vec4 outColor;
 
-uniform sampler2D uTexture;
+uniform sampler2D uTexture0;
+uniform sampler2D uTexture1;
+uniform sampler2D uTexture2;
+uniform sampler2D uTexture3;
+uniform sampler2D uTexture4;
+uniform sampler2D uTexture5;
+uniform sampler2D uTexture6;
+uniform sampler2D uTexture7;
 
 mediump mat4 bt601 = mat4(
   1.16438,  0.00000,  1.59603, -0.87079,
@@ -164,35 +160,41 @@ mediump mat4 bt601 = mat4(
   0, 0, 0, 1
 );
 
+mediump vec4 SampleTex()
+{
+    mediump vec4 color = vec4(1.0);
+    switch(vTexID)
+    {
+        case 0u: color = texture(uTexture0, vUV); break;;
+        case 1u: color = texture(uTexture1, vUV); break;;
+        case 2u: color = texture(uTexture2, vUV); break;;
+        case 3u: color = texture(uTexture3, vUV); break;;
+        case 4u: color = texture(uTexture4, vUV); break;;
+        case 5u: color = texture(uTexture5, vUV); break;;
+        case 6u: color = texture(uTexture6, vUV); break;;
+        case 7u: color = texture(uTexture7, vUV); break;;
+        default: color = vec4(1.0, 0.0, 0.0, 1.0); break;
+    }
+    return color;
+}
+
 void main()
 {
-   mediump vec4 color = vec4(0.0);
    switch(vType)
    {
-       case 0u:
-           color = texture(uTexture, vUV);
-           if(color.r > 0.01)
-           {
-               outColor = vColor;
-               outColor.a = color.r * vColor.a;
-           }
-           else
-           {
-               discard;
-           }
-       break;
        case 1u:
            outColor = vColor;
        break;
        case 2u:
-           outColor = texture(uTexture, vUV);
+           outColor = SampleTex();
            if(outColor.a < 0.01)
            {
                discard;
            }
        break;
+       case 0u:
        case 3u:
-           color = texture(uTexture, vUV);
+           mediump vec4 color = SampleTex();
            if(color.r > 0.01)
            {
                outColor = vColor;
@@ -204,7 +206,7 @@ void main()
            }
        break;
        case 4u:
-           outColor = texture(uTexture, vUV) * bt601;
+           outColor = SampleTex() * bt601;
        break;
        default:
            discard;

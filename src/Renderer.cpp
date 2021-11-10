@@ -133,7 +133,7 @@ bool Renderer::QuietInit() noexcept
     GL_CALL(glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MAX_TEXTURE_COUNT));
 
     #ifdef TML_USE_GLES
-        MAX_TEXTURE_COUNT = 1;
+        MAX_TEXTURE_COUNT = 8;
     #endif
 
     s_vao           = new VertexArray();
@@ -583,7 +583,8 @@ void Renderer::EndBatch() noexcept
         for(i32 i = 0; i < MAX_TEXTURE_COUNT; i++)
             s_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i);
     #else
-        s_shader->Uniform1i("uTexture", 0);
+        for(i32 i = 0; i < MAX_TEXTURE_COUNT; i++)
+            s_shader->Uniform1i("uTexture" + std::to_string(i), i);
     #endif
 
     s_shader->SetVec2("uViewSize", s_viewSize);
