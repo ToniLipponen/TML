@@ -96,7 +96,7 @@ void Texture::Generate()
         GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, m_clampmode));
         GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, m_minfilter));
         GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, m_magfilter));
-        GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MAX_LEVEL, 8));
+//        GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MAX_LEVEL, 8));
     #endif
 
 	if(m_width > 0 && m_height > 0)
@@ -124,9 +124,9 @@ void Texture::Generate()
             #ifdef TML_USE_GLES
                 GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, m_pixeldata));
             #else
-                GL_CALL(glTextureStorage2D(m_id, 8, ch, m_width, m_height));
+                GL_CALL(glTextureStorage2D(m_id, 1, ch, m_width, m_height));
                 GL_CALL(glTextureSubImage2D(m_id, m_mipmap_level, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, m_pixeldata));
-                GL_CALL(glGenerateTextureMipmap(m_id));
+//                GL_CALL(glGenerateTextureMipmap(m_id));
             #endif
         }
 	}

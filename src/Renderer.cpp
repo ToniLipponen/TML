@@ -574,13 +574,8 @@ void Renderer::EndBatch() noexcept
         return;
     s_shader->Bind();
 
-    #ifndef TML_USE_GLES
-        for(i32 i = 0; i < MAX_TEXTURE_COUNT; i++)
-            s_shader->Uniform1i("uTextures[" + std::to_string(i) + "]", i);
-    #else
-        for(i32 i = 0; i < MAX_TEXTURE_COUNT; i++)
-            s_shader->Uniform1i("uTexture" + std::to_string(i), i);
-    #endif
+    for(i32 i = 0; i < MAX_TEXTURE_COUNT; i++)
+        s_shader->Uniform1i("uTexture" + std::to_string(i), i);
 
     s_shader->SetVec2("uViewSize", s_viewSize);
     s_shader->UniformMat4fv("uView", 1, false, &s_view[0][0]);
