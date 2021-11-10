@@ -5,7 +5,8 @@
 int CheckGLError()
 {
     const auto e = glGetError();
-    if(!e) return 0;
+    if(e == GL_NO_ERROR)
+        return 0;
 
     switch(e)
     {

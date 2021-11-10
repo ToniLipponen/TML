@@ -210,7 +210,6 @@ void main()
            discard;
        break;
    }
-    outColor = vec4(1.0);
 }
 )END";
 #endif

@@ -66,7 +66,7 @@ VertexBuffer::VertexBuffer(const void* data, ui32 vertexsize, ui32 vertexnum)
 {
     GL_CALL(glGenBuffers(1, &m_id));
     Bind();
-    GL_CALL(glBufferData(GL_ARRAY_BUFFER, vertexsize * vertexnum, data, GL_STATIC_DRAW));
+    GL_CALL(glBufferData(GL_ARRAY_BUFFER, vertexsize * vertexnum, data, GL_DYNAMIC_DRAW));
 }
 
 VertexBuffer::~VertexBuffer()
@@ -85,7 +85,7 @@ void VertexBuffer::BufferData(void* data, ui32 vertexsize, ui32 numofvertices)
         m_vertexCount = numofvertices;
     m_dataSize = numofvertices * vertexsize;
     GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, m_id));
-    GL_CALL(glBufferData(GL_ARRAY_BUFFER, m_dataSize, data, GL_STATIC_DRAW));
+    GL_CALL(glBufferData(GL_ARRAY_BUFFER, m_dataSize, data, GL_DYNAMIC_DRAW));
 }
 
 void VertexBuffer::PushData(void* data, ui32 vertexsize, ui32 numofvertices)

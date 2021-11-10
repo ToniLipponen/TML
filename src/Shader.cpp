@@ -92,17 +92,6 @@ void Shader::FromString(const std::string& vs, const std::string& fs) const
     GL_CALL(glad_glDetachShader(m_id, _fs));
     GL_CALL(glad_glDeleteShader(_vs));
     GL_CALL(glad_glDeleteShader(_fs));
-
-    int shaderStatus;
-    GL_CALL(glGetShaderiv(m_id, GL_COMPILE_STATUS, &shaderStatus));
-    if(shaderStatus == GL_FALSE)
-    {
-        int length = 0;
-        GL_CALL(glGetShaderiv(m_id, GL_INFO_LOG_LENGTH, &length));
-        std::string message(length, 0);
-        GL_CALL(glGetProgramInfoLog(m_id, length, &length, &message[0]));
-        std::cout << message << std::endl;
-    }
 }
 
 inline i32 Shader::GetUniformLocation(const std::string& name) const
