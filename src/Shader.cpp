@@ -32,6 +32,7 @@ Shader::Shader()
 Shader::Shader(cstring vs, cstring fs)
 : m_id(-1)
 {
+    m_id = GL_CALL(glad_glCreateProgram());
     Load(vs, fs);
 }
 
