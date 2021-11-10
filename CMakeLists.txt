@@ -27,7 +27,7 @@ if(TML_USE_GLES)
     add_compile_definitions(TML_USE_GLES=1)
 endif()
 
-file(GLOB_RECURSE SRC_FILES src/*.cpp src/glad.c external/incbin/incbin.c)
+file(GLOB_RECURSE SRC_FILES src/*.cpp external/incbin/incbin.c)
 add_subdirectory(external/glfw/)
 add_subdirectory(external/libwebp)
 include_directories(external/glm external/glfw/include include external res external/libwebp/src/)

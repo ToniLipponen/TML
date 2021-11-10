@@ -8,6 +8,7 @@
 #define GLAD_WGL_IMPLEMENTATION
 #define GLAD_GLX_IMPLEMENTATION
 #include <GLHeader.h>
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -32,7 +33,7 @@ extern "C" void MouseButtonCallback(GLFWwindow* window, int button, int action, 
 
 void WindowResizeCallback(GLFWwindow* f, int x, int y)
 {
-    glad_glViewport(0, 0, x, y);
+    glViewport(0, 0, x, y);
 }
 
 namespace tml
@@ -110,7 +111,7 @@ namespace tml
         if(m_useVSync)
             glfwSwapBuffers(static_cast<GLFWwindow*>(m_handle));
         else
-            glad_glFlush();
+            glFlush();
         glfwPollEvents();
     }
 
