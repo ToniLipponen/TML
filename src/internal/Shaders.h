@@ -98,7 +98,7 @@ void main()
            }
        break;
        case 4:
-           color = texture(uTextures[vTexID], vUV) * bt601;
+           outColor = texture(uTextures[vTexID], vUV) * bt601;
        break;
        default:
            discard;
@@ -117,7 +117,7 @@ layout (location = 2) in uint Color;
 layout (location = 3) in uint Tex;
 layout (location = 4) in uint Type;
 
-out flat vec4  vColor;
+out vec4  vColor;
 out vec2  vUV;
 out vec2 vViewSize;
 out flat uint  vTexID;
@@ -204,7 +204,7 @@ void main()
            }
        break;
        case 4u:
-           color = texture(uTexture, vUV) * bt601;
+           outColor = texture(uTexture, vUV) * bt601;
        break;
        default:
            discard;

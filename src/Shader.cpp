@@ -71,16 +71,16 @@ void Shader::FromString(const std::string& vs, const std::string& fs) const
     GL_CALL(glad_glGetShaderiv(_vs, GL_COMPILE_STATUS, &vertex_status));
     GL_CALL(glad_glGetShaderiv(_fs, GL_COMPILE_STATUS, &fragment_status));
 
-    if(vertex_status != 1){
-        char vertex_message[1024*4];
+    if(vertex_status != GL_TRUE){
+        char vertex_message[1024];
         i32 vertex_message_len = 0;
-        GL_CALL(glad_glGetShaderInfoLog(_vs, 500, &vertex_message_len, vertex_message));
+        GL_CALL(glad_glGetShaderInfoLog(_vs, 1024, &vertex_message_len, vertex_message));
         tml::Logger::ErrorMessage("Vertex shader error at %s", vertex_message);
     }
-    if(fragment_status != 1){
-        char fragment_message[1024*4];
+    if(fragment_status != GL_TRUE){
+        char fragment_message[1024];
         i32 fragment_message_len = 0;
-        GL_CALL(glad_glGetShaderInfoLog(_fs, 500, &fragment_message_len, fragment_message));
+        GL_CALL(glad_glGetShaderInfoLog(_fs, 1024, &fragment_message_len, fragment_message));
         tml::Logger::ErrorMessage("Fragment shader error at %s", fragment_message);
     }
 
@@ -90,8 +90,20 @@ void Shader::FromString(const std::string& vs, const std::string& fs) const
     GL_CALL(glad_glLinkProgram(m_id));
     GL_CALL(glad_glValidateProgram(m_id));
 
+    int linkStatus = 1, validationStatus = 1;
+
+    GL_CALL(glGetProgramiv(m_id, GL_LINK_STATUS, &linkStatus));
+    GL_CALL(glGetProgramiv(m_id, GL_VALIDATE_STATUS, &validationStatus));
+
+    if(linkStatus != GL_TRUE)
+        Logger::ErrorMessage("Failed to link shader program");
+
+    if(validationStatus != GL_TRUE)
+        Logger::ErrorMessage("Failed to validate shader program");
+
     GL_CALL(glad_glDetachShader(m_id, _vs));
     GL_CALL(glad_glDetachShader(m_id, _fs));
+
     GL_CALL(glad_glDeleteShader(_vs));
     GL_CALL(glad_glDeleteShader(_fs));
 }
