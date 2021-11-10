@@ -594,7 +594,10 @@ void Renderer::EndBatch() noexcept
     s_vertexBuffer->PushData(s_vertexData.data(), sizeof(Vertex), s_vertexData.size());
     s_indexBuffer->PushData(s_indexData.data(), s_indexData.size());
     s_vao->BufferData(*s_vertexBuffer, *s_indexBuffer, s_layout);
+
     s_vao->Bind();
+    s_vertexBuffer->Bind();
+    s_indexBuffer->Bind();
 
     GL_CALL(glad_glDrawElements(GL_TRIANGLES, s_indexBuffer->Elements(), GL_UNSIGNED_INT, nullptr));
     Renderer::BeginBatch();

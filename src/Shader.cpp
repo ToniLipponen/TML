@@ -25,6 +25,7 @@ std::string ReadFile(const char* filename)
 }
 
 Shader::Shader()
+: m_id(-1)
 {
     m_id = GL_CALL(glad_glCreateProgram());
 }

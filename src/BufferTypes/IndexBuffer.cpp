@@ -27,6 +27,11 @@ void IndexBuffer::Bind() const
 
 }
 
+void IndexBuffer::Unbind() const
+{
+
+}
+
 void IndexBuffer::BufferData(const ui32* data, ui32 elements)
 {
 	m_elements = elements;
@@ -62,6 +67,7 @@ IndexBuffer::IndexBuffer(const ui32* data, ui32 elements)
     GL_CALL(glGenBuffers(1, &m_id));
     Bind();
     GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements * 4, data, GL_DYNAMIC_DRAW));
+    Unbind();
 }
 
 IndexBuffer::~IndexBuffer()
@@ -74,24 +80,32 @@ void IndexBuffer::Bind() const
     GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id));
 }
 
+void IndexBuffer::Unbind() const
+{
+    GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+}
+
 void IndexBuffer::BufferData(const ui32* data, ui32 elements)
 {
     m_elements = elements;
-    GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id));
+    Bind();
     GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements * 4, data, GL_DYNAMIC_DRAW));
+    Unbind();
 }
 
 void IndexBuffer::PushData(const ui32* data, ui32 elements)
 {
-    GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id));
+    Bind();
     GL_CALL(glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, m_elements * sizeof(ui32), elements * sizeof(ui32), data));
+    Unbind();
     m_elements += elements;
 }
 
 void IndexBuffer::SetData(const ui32 *data, ui32 elements)
 {
-    GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id));
+    Bind();
     GL_CALL(glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, elements * sizeof(ui32), data));
+    Unbind();
     m_elements = elements;
 }
 

@@ -7,7 +7,6 @@ int main()
     Window window(800, 600, "Example1");
     Renderer::Init();
 
-    Clock clock;
     while(!window.ShouldClose())
     {
         Renderer::Clear();

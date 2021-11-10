@@ -101,59 +101,12 @@ VertexArray::VertexArray(VertexBuffer& vb, BufferLayout& layout)
     auto& lo = layout.GetData();
     ui64 offset = 0;
 
-    GL_CALL(glBindVertexArray(m_id));
-    vb.Bind();
-    for(int i = 0; i < lo.size(); i++)
-    {
-        GL_CALL(glEnableVertexAttribArray(i));
-        if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
-            glVertexAttribIPointer(i, lo.at(i).elements, lo.at(i).dataType, layout.GetStride(), (const void*)offset);
-        else
-            glVertexAttribPointer(i, lo.at(i).elements, lo.at(i).dataType, 0, layout.GetStride(), (const void*)offset);
-        offset += lo.at(i).elements * lo.at(i).size;
-    }
+    BufferData(vb, layout);
 }
 
 VertexArray::~VertexArray()
 {
     GL_CALL(glDeleteVertexArrays(1, &m_id));
-}
-
-void VertexArray::BufferData(VertexBuffer& vb, BufferLayout& layout) noexcept
-{
-    auto& lo = layout.GetData();
-    ui64 offset = 0;
-
-    GL_CALL(glBindVertexArray(m_id));
-    vb.Bind();
-    for(int i = 0; i < lo.size(); i++)
-    {
-        GL_CALL(glEnableVertexAttribArray(i));
-        if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
-            glVertexAttribIPointer(i, lo.at(i).elements, lo.at(i).dataType, layout.GetStride(), (const void*)offset);
-        else
-            glVertexAttribPointer(i, lo.at(i).elements, lo.at(i).dataType, 0, layout.GetStride(), (const void*)offset);
-        offset += lo.at(i).elements * lo.at(i).size;
-    }
-}
-
-void VertexArray::BufferData(VertexBuffer& vb, IndexBuffer& ib, BufferLayout& layout) noexcept
-{
-    auto& lo = layout.GetData();
-    ui64 offset = 0;
-
-    vb.Bind();
-    GL_CALL(glBindVertexArray(m_id));
-    for(int i = 0; i < lo.size(); i++)
-    {
-        GL_CALL(glEnableVertexAttribArray(i));
-        if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
-            glVertexAttribIPointer(i, lo.at(i).elements, lo.at(i).dataType, layout.GetStride(), (const void*)offset);
-        else
-            glVertexAttribPointer(i, lo.at(i).elements, lo.at(i).dataType, 0, layout.GetStride(), (const void*)offset);
-        offset += lo.at(i).elements * lo.at(i).size;
-    }
-    ib.Bind();
 }
 
 void VertexArray::Bind() const noexcept
@@ -165,4 +118,45 @@ void VertexArray::Unbind() const noexcept
 {
     GL_CALL(glBindVertexArray(0));
 }
+
+void VertexArray::BufferData(VertexBuffer& vb, BufferLayout& layout) noexcept
+{
+    auto& lo = layout.GetData();
+    ui64 offset = 0;
+
+    Bind();
+    vb.Bind();
+    for(int i = 0; i < lo.size(); i++)
+    {
+        GL_CALL(glEnableVertexAttribArray(i));
+        if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
+            glVertexAttribIPointer(i, lo.at(i).elements, lo.at(i).dataType, layout.GetStride(), (const void*)offset);
+        else
+            glVertexAttribPointer(i, lo.at(i).elements, lo.at(i).dataType, 0, layout.GetStride(), (const void*)offset);
+        offset += lo.at(i).elements * lo.at(i).size;
+    }
+    Unbind();
+    vb.Unbind();
+}
+
+void VertexArray::BufferData(VertexBuffer& vb, IndexBuffer& ib, BufferLayout& layout) noexcept
+{
+    auto& lo = layout.GetData();
+    ui64 offset = 0;
+
+    Bind();
+    vb.Bind();
+    ib.Bind();
+    for(int i = 0; i < lo.size(); i++)
+    {
+        GL_CALL(glEnableVertexAttribArray(i));
+        if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
+            glVertexAttribIPointer(i, lo.at(i).elements, lo.at(i).dataType, layout.GetStride(), (const void*)offset);
+        else
+            glVertexAttribPointer(i, lo.at(i).elements, lo.at(i).dataType, 0, layout.GetStride(), (const void*)offset);
+        offset += lo.at(i).elements * lo.at(i).size;
+    }
+    Unbind();
+}
+
 #endif

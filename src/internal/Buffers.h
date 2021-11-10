@@ -11,6 +11,7 @@ namespace tml {
         VertexBuffer(const void *data, ui32 vertexSize, ui32 numOfVertices);
         ~VertexBuffer();
         void Bind() const; // Doesn't do anything on GL 4.5
+        void Unbind() const;
         void BufferData(void *data, ui32 vertexSize, ui32 numOfVertices);
         void PushData(void *data, ui32 vertexSize, ui32 numOfVertices);
         void SetData(void *data, ui32 vertexSize, ui32 numOfVertices);
@@ -37,6 +38,7 @@ namespace tml {
         IndexBuffer(const ui32 *data, ui32 elements);
         ~IndexBuffer();
         void Bind() const; // Doesn't do anything on GL 4.5
+        void Unbind() const;
         void BufferData(const ui32 *data, ui32 elements);
         void PushData(const ui32 *data, ui32 elements);
         void SetData(const ui32 *data, ui32 elements);
@@ -105,10 +107,10 @@ namespace tml {
         VertexArray();
         VertexArray(VertexBuffer &vb, BufferLayout &layout);
         ~VertexArray();
-        void BufferData(VertexBuffer &vb, BufferLayout &layout) noexcept;
-        void BufferData(VertexBuffer &vb, IndexBuffer &ib, BufferLayout &layout) noexcept;
         void Bind() const noexcept;
         void Unbind() const noexcept;
+        void BufferData(VertexBuffer &vb, BufferLayout &layout) noexcept;
+        void BufferData(VertexBuffer &vb, IndexBuffer &ib, BufferLayout &layout) noexcept;
         constexpr ui32 VertexCount() const noexcept {
             return m_vertexCount;
         }
