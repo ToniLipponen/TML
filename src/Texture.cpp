@@ -2,7 +2,7 @@
 #include <GLHeader.h>
 #include <climits>
 #include "internal/GlDebug.h"
-#include "internal/Assert.h"
+#include "internal/_Assert.h"
 
 using namespace tml;
 

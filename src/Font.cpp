@@ -1,5 +1,5 @@
 #include <TML/Font.h>
-#include "internal/Assert.h"
+#include "internal/_Assert.h"
 #define STB_TRUETYPE_IMPLEMENTATION 1
 #include <stb/stb_truetype.h>
 #include <TML/Image.h>

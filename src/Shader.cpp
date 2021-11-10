@@ -1,4 +1,4 @@
-#include "internal/Assert.h"
+#include "internal/_Assert.h"
 #include "internal/GlDebug.h"
 #include "internal/Shader.h"
 #include <GLHeader.h>

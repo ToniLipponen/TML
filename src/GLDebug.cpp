@@ -1,5 +1,5 @@
 #include "internal/GlDebug.h"
-#include "internal/Assert.h"
+#include "internal/_Assert.h"
 #include <GLHeader.h>
 
 int CheckGLError()

@@ -1,5 +1,5 @@
 #include <TML/Drawable/Video.h>
-#include "internal/Assert.h"
+#include "internal/_Assert.h"
 #define PL_MPEG_IMPLEMENTATION 1
 #include <PL_MPEG/pl_mpeg.h>
 

@@ -1,11 +1,6 @@
 #include <TML/Renderer.h>
 #include <TML/Utilities/Utilities.h>
 
-#define GLAD_GL_IMPLEMENTATION
-#define GLAD_GLES2_IMPLEMENTATION
-#define GLAD_EGL_IMPLEMENTATION
-#define GLAD_WGL_IMPLEMENTATION
-#define GLAD_GLX_IMPLEMENTATION
 #include <GLHeader.h>
 
 #define GLFW_INCLUDE_NONE
@@ -17,7 +12,7 @@
 #include <string>
 
 #include "internal/GlDebug.h"
-#include "internal/Assert.h"
+#include "internal/_Assert.h"
 #include "internal/Buffers.h"
 #include "internal/Shader.h"
 #include "internal/Shaders.h"

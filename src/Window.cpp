@@ -2,6 +2,11 @@
 #include <TML/Utilities/Condition.h>
 #include <TML/Utilities/Platform.h>
 
+#define GLAD_GL_IMPLEMENTATION
+#define GLAD_GLES2_IMPLEMENTATION
+#define GLAD_EGL_IMPLEMENTATION
+#define GLAD_WGL_IMPLEMENTATION
+#define GLAD_GLX_IMPLEMENTATION
 #include <GLHeader.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -9,7 +14,7 @@
 #include <stb/stb_image_write.h>
 #include <stb/stb_image.h>
 
-#include "internal/Assert.h"
+#include "internal/_Assert.h"
 
 #if PLATFORM_UNIX
     #include <incbin/incbin.h>
