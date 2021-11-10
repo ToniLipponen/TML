@@ -1,7 +1,7 @@
-#include "internal/Assert.h"
+#include "internal/_Assert.h"
 #include "internal/GlDebug.h"
 #include "internal/Shader.h"
-#include <glad/glad.h>
+#include <GLHeader.h>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -25,6 +25,7 @@ std::string ReadFile(const char* filename)
 }
 
 Shader::Shader()
+: m_id(-1)
 {
     m_id = GL_CALL(glad_glCreateProgram());
 }
@@ -32,6 +33,7 @@ Shader::Shader()
 Shader::Shader(cstring vs, cstring fs)
 : m_id(-1)
 {
+    m_id = GL_CALL(glad_glCreateProgram());
     Load(vs, fs);
 }
 
@@ -69,16 +71,16 @@ void Shader::FromString(const std::string& vs, const std::string& fs) const
     GL_CALL(glad_glGetShaderiv(_vs, GL_COMPILE_STATUS, &vertex_status));
     GL_CALL(glad_glGetShaderiv(_fs, GL_COMPILE_STATUS, &fragment_status));
 
-    if(vertex_status != 1){
-        char vertex_message[1024*4];
+    if(vertex_status != GL_TRUE){
+        char vertex_message[1024];
         i32 vertex_message_len = 0;
-        GL_CALL(glad_glGetShaderInfoLog(_vs, 500, &vertex_message_len, vertex_message));
+        GL_CALL(glad_glGetShaderInfoLog(_vs, 1024, &vertex_message_len, vertex_message));
         tml::Logger::ErrorMessage("Vertex shader error at %s", vertex_message);
     }
-    if(fragment_status != 1){
-        char fragment_message[1024*4];
+    if(fragment_status != GL_TRUE){
+        char fragment_message[1024];
         i32 fragment_message_len = 0;
-        GL_CALL(glad_glGetShaderInfoLog(_fs, 500, &fragment_message_len, fragment_message));
+        GL_CALL(glad_glGetShaderInfoLog(_fs, 1024, &fragment_message_len, fragment_message));
         tml::Logger::ErrorMessage("Fragment shader error at %s", fragment_message);
     }
 
@@ -88,17 +90,30 @@ void Shader::FromString(const std::string& vs, const std::string& fs) const
     GL_CALL(glad_glLinkProgram(m_id));
     GL_CALL(glad_glValidateProgram(m_id));
 
+    int linkStatus = 1, validationStatus = 1;
+
+    GL_CALL(glGetProgramiv(m_id, GL_LINK_STATUS, &linkStatus));
+    GL_CALL(glGetProgramiv(m_id, GL_VALIDATE_STATUS, &validationStatus));
+
+    if(linkStatus != GL_TRUE)
+        Logger::ErrorMessage("Failed to link shader program");
+
+    if(validationStatus != GL_TRUE)
+        Logger::ErrorMessage("Failed to validate shader program");
+
     GL_CALL(glad_glDetachShader(m_id, _vs));
     GL_CALL(glad_glDetachShader(m_id, _fs));
+
     GL_CALL(glad_glDeleteShader(_vs));
     GL_CALL(glad_glDeleteShader(_fs));
 }
 
 inline i32 Shader::GetUniformLocation(const std::string& name) const
 {
-    if(m_uniform_cache.count(name) != 0)
+    if(m_uniform_cache.find(name) != m_uniform_cache.end())
         return m_uniform_cache[name];
-    i32 loc = GL_CALL(glad_glGetUniformLocation(m_id, name.c_str()));
+
+    i32 loc = GL_CALL(glGetUniformLocation(m_id, name.c_str()));
     if(loc != -1)
         m_uniform_cache[name] = loc;
     return loc;
@@ -149,7 +164,6 @@ void Shader::Uniform4i(const std::string& name, i32 x, i32 y, i32 z, i32 w) cons
 void Shader::Uniform1ui(const std::string& name, ui32 x) const
 {
     i32 loc = GL_CALL(GetUniformLocation(name));
-    if(loc == -1) return;
     GL_CALL(GL_CALL(glad_glProgramUniform1ui(m_id, loc, x)));
 }
 void Shader::Uniform2ui(const std::string& name, ui32 x, ui32 y) const

@@ -2,7 +2,7 @@
 #include <miniaudio/miniaudio.h>
 #include <TML/IO/File.h>
 #include "Mixer.h"
-#include "../internal/Assert.h"
+#include "../internal/_Assert.h"
 
 namespace tml
 {

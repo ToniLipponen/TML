@@ -1,11 +1,12 @@
 #include "internal/GlDebug.h"
-#include "internal/Assert.h"
-#include <glad/glad.h>
+#include "internal/_Assert.h"
+#include <GLHeader.h>
 
 int CheckGLError()
 {
-    const auto e = glad_glGetError();
-    if(!e) return 0;
+    const auto e = glGetError();
+    if(e == GL_NO_ERROR)
+        return 0;
 
     switch(e)
     {
@@ -16,7 +17,7 @@ int CheckGLError()
         case 1284: tml::Logger::ErrorMessage("GL_STACK_UNDERFLOW");              break;
         case 1285: tml::Logger::ErrorMessage("GL_OUT_OF_MEMORY");                break;
         case 1286: tml::Logger::ErrorMessage("GL_INVALID_FRAMEBUFFER_OPERATION");break;
-        default:break;
+        default:                                                                 break;
     }
     return 1;
 }

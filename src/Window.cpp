@@ -2,14 +2,20 @@
 #include <TML/Utilities/Condition.h>
 #include <TML/Utilities/Platform.h>
 
-#include <glad/glad.h>
+#define GLAD_GL_IMPLEMENTATION
+#define GLAD_GLES2_IMPLEMENTATION
+#define GLAD_EGL_IMPLEMENTATION
+#define GLAD_WGL_IMPLEMENTATION
+#define GLAD_GLX_IMPLEMENTATION
+#include <GLHeader.h>
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 #include <stb/stb_image_write.h>
 #include <stb/stb_image.h>
 
-#include "internal/Assert.h"
+#include "internal/_Assert.h"
 
 #if PLATFORM_UNIX
     #include <incbin/incbin.h>
@@ -27,7 +33,7 @@ extern "C" void MouseButtonCallback(GLFWwindow* window, int button, int action, 
 
 void WindowResizeCallback(GLFWwindow* f, int x, int y)
 {
-    glad_glViewport(0, 0, x, y);
+    glViewport(0, 0, x, y);
 }
 
 namespace tml
@@ -35,19 +41,27 @@ namespace tml
     Window::Window(i32 w, i32 h, const std::string& title, ui32 settings)
     : m_handle(nullptr), m_title(title)
     {
-        TML_ASSERT(glfwInit(), "Failed to initialize window.");
-//        glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
-        glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        
+        const auto result = glfwInit();
+        TML_ASSERT(result, "Failed to initialize window.");
+
+        #ifdef TML_USE_GLES
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+        #else
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        #endif
+
         m_useVSync = (settings & Settings::VSync) != 0;
         glfwWindowHint(GLFW_DECORATED,      (settings & Settings::NoTopBar)     == 0);
         glfwWindowHint(GLFW_RESIZABLE,      (settings & Settings::Resizeable)   != 0);
         glfwWindowHint(GLFW_MAXIMIZED,      (settings & Settings::Maximized)    != 0);
         glfwWindowHint(GLFW_DOUBLEBUFFER,   (settings & Settings::VSync)        != 0);
         glfwWindowHint(GLFW_SAMPLES, static_cast<int>(((settings & Settings::Antialias) >> 4) * 4));
+
+        glfwSetErrorCallback([](int, const char* m){ Logger::ErrorMessage("GLFW ERROR: %s", m);});
 
         m_handle = glfwCreateWindow(w, h, title.c_str(),(settings & Settings::Fullscreen) ? glfwGetPrimaryMonitor() : nullptr, nullptr);
         TML_ASSERT(m_handle != nullptr, "Failed to create a window handle.");
@@ -97,7 +111,7 @@ namespace tml
         if(m_useVSync)
             glfwSwapBuffers(static_cast<GLFWwindow*>(m_handle));
         else
-            glad_glFlush();
+            glFlush();
         glfwPollEvents();
     }
 
