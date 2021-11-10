@@ -183,12 +183,12 @@ namespace tml
             {
                 Renderer::DrawLine({cursorX, m_pos.y + (m_size.y / 10.0f)}, {cursorX, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
                 Renderer::ResetBounds();
-                Renderer::DrawGrid(pos, size, 1, 1, m_activeColor, 2);
+                Renderer::DrawGrid(pos, size, 1, 1, m_activeColor, 1);
             }
             else
             {
                 Renderer::ResetBounds();
-                Renderer::DrawGrid(pos, size, 1, 1, m_sColor, 2);
+                Renderer::DrawGrid(pos, size, 1, 1, m_sColor, 1);
             }
         }
 

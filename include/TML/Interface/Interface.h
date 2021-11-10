@@ -4,6 +4,7 @@
 #include "Components/Checkbox.h"
 #include "Components/Slider.h"
 #include "Components/TextInput.h"
+#include "Components/NumericInput.h"
 #include "Components/Listbox.h"
 #include "Components/Dropmenu.h"
 #include "Components/Label.h"

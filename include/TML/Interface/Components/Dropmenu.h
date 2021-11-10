@@ -26,6 +26,9 @@ namespace tml
             void OnFocusLost() override;
 
             Listbox* m_listComponent;
+        protected:
+            void OnMoved() override;
+            void OnResized() override;
         };
     }
 }

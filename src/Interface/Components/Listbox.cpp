@@ -164,9 +164,9 @@ namespace tml
             Renderer::ResetBounds();
 
             if(m_state.Focused)
-                Renderer::DrawGrid(pos, size, 1, 1, m_activeColor, 2);
+                Renderer::DrawGrid(pos, size, 1, 1, m_activeColor, 1);
             else
-                Renderer::DrawGrid(pos, size, 1, 1, m_sColor, 2);
+                Renderer::DrawGrid(pos, size, 1, 1, m_sColor, 1);
         }
     }
 }

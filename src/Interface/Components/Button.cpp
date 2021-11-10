@@ -33,9 +33,9 @@ void Button::Draw()
         Renderer::DrawRect(m_pos, m_size, m_pColor);
 
     Renderer::DrawText(m_text, pos + (size / 2.f) - (textSize / 2.f), m_textSize, m_tColor);
-    
+
     if(m_state.Focused)
-        Renderer::DrawGrid(pos, size, 1, 1, m_activeColor,2);
+        Renderer::DrawGrid(pos, size, 1, 1, m_activeColor,1);
     else
-        Renderer::DrawGrid(pos, size, 1, 1, m_sColor,2);
+        Renderer::DrawGrid(pos, size, 1, 1, m_sColor,1);
 }

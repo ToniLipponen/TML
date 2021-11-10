@@ -3,42 +3,53 @@
 using namespace tml;
 using namespace Interface;
 
+/*
+ * This is just a testing ground for GUI components.
+ */
+
 int main()
 {
     Window window(800, 600, "GUI TESTING", Window::Resizeable | Window::Antialias);
     Renderer::Init();
     Renderer::SetClearColor(WHITE);
 
-    Listbox list(0, 30, 200, 300);
+    Listbox* list = new Listbox(0, 30, 400, 300);
+    DropMenu* dropmenu = new DropMenu(0,0, 400, 30);
+    Progressbar* progressbar = new Progressbar(0,0, 400, 30);
+    VerticalLayout* vlayout = new VerticalLayout(0,0,400,200);
+
+    vlayout->AddChild(new Label(0,0,30));
+    vlayout->AddChild(new Button(0,0,400, 30, "Button"));
+    vlayout->AddChild(new TextInput(0,0,400, 30));
+    vlayout->AddChild(new NumericInput<int>(0,0,400,30));
+    vlayout->AddChild(progressbar);
+    vlayout->AddChild(new Slider<Horizontal>(0,0, 400, 30));
+    vlayout->AddChild(dropmenu);
+
+    HorizontalLayout hlayout(0,0, 800, 200);
+    hlayout.AddChild(list);
+    hlayout.AddChild(vlayout);
+
     for(int i = 0; i < 20; i++)
-        list.AddValue("Item" + std::to_string(i));
+    {
+        list->AddValue("Item" + std::to_string(i));
+        dropmenu->AddValue("Item" + std::to_string(i));
+    }
 
-    Clock clock, clock2;
-    double dt;
-
-    Text fpsText;
-    fpsText.SetColor(BLACK);
+    Clock clock;
+    clock.Reset();
+    double runTime = 0;
 
     while(!window.ShouldClose())
     {
-        if(Keyboard::IsKeyPressed(Keyboard::KEY_A))
-            list.AddValue("Item" + std::to_string(list.GetElementsCount()));
-        else if(Keyboard::IsKeyPressed(Keyboard::KEY_D))
-            list.RemoveValue(list.GetElementsCount()-1);
-
         Renderer::Clear();
         {
-            list.Update();
-            Renderer::Draw(fpsText);
+            hlayout.Update();
         }
         Renderer::EndBatch();
         window.Display();
-        dt = clock.Reset();
-        if(clock2.GetTime() > 0.5)
-        {
-            fpsText.SetString("FPS: " + std::to_string(ui32(1.0 / dt)));
-            clock2.Reset();
-        }
+        runTime += clock.Reset();
+        progressbar->SetValue(runTime / 100.0);
     }
     return 0;
 }
