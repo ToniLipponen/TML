@@ -32,8 +32,6 @@ add_subdirectory(external/glfw/)
 add_subdirectory(external/libwebp)
 include_directories(external/glm external/glfw/include include external res external/libwebp/src/)
 
-set(GLFW_LIBARY_TYPE OBJECT)
-
 if(TML_MAKE_STATIC)
     add_library(TML STATIC ${SRC_FILES})
 else()
