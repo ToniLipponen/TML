@@ -45,7 +45,6 @@ int main()
         Renderer::Clear();
         {
             hlayout.Update();
-            Renderer::DrawLine(0, Mouse::GetPosition(), 1, BLACK);
         }
         Renderer::EndBatch();
         window.Display();
