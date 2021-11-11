@@ -16,8 +16,8 @@ static tml::Vector2 s_mousePos;
 
 extern "C" void MouseMoveCallback(GLFWwindow* window, double x, double y)
 {
-    s_mousePos.x = x;
-    s_mousePos.y = y;
+    s_mousePos.x = static_cast<float>(x);
+    s_mousePos.y = static_cast<float>(y);
 }
 
 extern "C" void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
@@ -50,12 +50,14 @@ namespace tml
     {
         s_string.clear();
     }
+
     std::string Keyboard::EndString()
     {
         const std::wstring s = s_string;
         s_string.clear();
         return Util::WstringToString(s);
     }
+
     std::string Keyboard::GetString()
     {
         return Util::WstringToString(s_string);
@@ -72,6 +74,7 @@ namespace tml
         s_keyboardLastKey = -1;
         return key;
     }
+
     bool Keyboard::IsKeyPressed(Key key)
     {
         bool state = s_keyMap[key] == GLFW_PRESS;

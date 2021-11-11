@@ -162,7 +162,6 @@ void main()
 }
 )END";
 #else
-
 std::string VERTEX_STRING =
 R"END(
 #version 310 es

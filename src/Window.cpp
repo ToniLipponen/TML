@@ -11,10 +11,8 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-
 #include <stb/stb_image_write.h>
 #include <stb/stb_image.h>
-
 #include "internal/_Assert.h"
 
 #if PLATFORM_UNIX
@@ -216,7 +214,7 @@ namespace tml
 
     void Window::SetActive() noexcept
     {
-        glfwMakeContextCurrent((GLFWwindow*)m_handle);
+        glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_handle));
     }
 
     void Window::Screenshot(const std::string& filename) const noexcept

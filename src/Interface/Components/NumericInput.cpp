@@ -28,8 +28,8 @@ namespace tml
 
             auto buttonPos = m_pos - Vector2(h/2, 0);
             buttonPos.x += m_size.x;
-            m_incrementButton = new Button(buttonPos.x, buttonPos.y, h/2, h/2, "+");
-            m_decrementButton = new Button(buttonPos.x, buttonPos.y + h/2, h/2, h/2, "-");
+            m_incrementButton = new Button(buttonPos.x, buttonPos.y,        h/2, h/2, "+");
+            m_decrementButton = new Button(buttonPos.x, buttonPos.y + h/2,  h/2, h/2, "-");
             AddChild(m_decrementButton);
             AddChild(m_incrementButton);
             m_size.x -= h / 2;
@@ -79,12 +79,12 @@ namespace tml
         void NumericInput<T>::OnUpdate(double dt)
         {
             auto buttonPos = m_pos;
-            buttonPos.x += m_size.x + 2;
+            buttonPos.x += m_size.x;
 
-            m_incrementButton->SetSize({m_size.y / 2, (m_size.y / 2) - 1});
-            m_decrementButton->SetSize({m_size.y / 2, (m_size.y / 2) - 1});
+            m_incrementButton->SetSize({m_size.y / 2, (m_size.y / 2)});
+            m_decrementButton->SetSize({m_size.y / 2, (m_size.y / 2)});
             m_incrementButton->SetPosition(buttonPos);
-            m_decrementButton->SetPosition({buttonPos.x, buttonPos.y + (m_size.y / 2) + 1});
+            m_decrementButton->SetPosition({buttonPos.x, buttonPos.y + (m_size.y / 2)});
 
             m_repeatTimer = Util::Max(m_repeatTimer += dt, 0.11f);
             if(m_state.Focused)
