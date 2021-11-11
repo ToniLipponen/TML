@@ -38,10 +38,7 @@ namespace tml
         template<ComponentAxis axis>
         void Slider<axis>::OnMouseDown(const Vector2& mp)
         {
-    //        if(m_type == Horizontal)
-    //            m_value = (mp.x - m_pos.x) / m_size.x * m_max;
-    //        else
-    //            m_value = m_max - ((mp.y - m_pos.y) / m_size.y * m_max);
+
         }
 
         template<ComponentAxis axis>
@@ -56,36 +53,18 @@ namespace tml
         template<ComponentAxis axis>
         void Slider<axis>::Draw()
         {
-            // TODO: Maybe clean this up at some point?
-            if(axis == Horizontal)
-            {
-                const Vector2 a = m_pos + Vector2{m_size.y / 4, m_size.y / 2};
-                const Vector2 b = a + Vector2(m_size.x - m_size.y / 2, 0);
-                Renderer::DrawLine(a,b,(m_size.y / 2) * 1.25f,m_sColor);
-                Renderer::DrawLine(a,b,m_size.y / 2,m_pColor);
-                Renderer::DrawLine(a,Util::Lerp(a,b,m_value / m_max),m_size.y / 2,m_activeColor);
-                if(m_state.Focused)
-                    Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_size.y / 2,m_activeColor);
-                else
-                    Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max),m_size.y / 2,m_sColor);
-                Renderer::DrawCircle(Util::Lerp(a, b, m_value / m_max), (m_size.y / 2) * 0.85f,m_pColor);
-            }
+            Renderer::DrawRect(m_pos, m_size, m_pColor);
+            if(m_state.Focused)
+                Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor);
             else
-            {
-                const Vector2 a = m_pos + Vector2(m_size.x / 2, m_size.x / 4);
-                const Vector2 b = a + Vector2(0, m_size.y - m_size.x / 2);
-                Renderer::DrawLine(a,b,(m_size.x / 2) * 1.25f,m_sColor);
-                Renderer::DrawLine(a, b,m_size.x / 2,m_pColor);
-                Renderer::DrawLine(b, Util::Lerp(a, b, 1.f - (m_value / m_max)),m_size.x / 2,m_activeColor);
-                if(m_state.Focused)
-                    Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)), m_size.x / 2, m_activeColor);
-                else
-                    Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),m_size.x / 2,m_sColor);
-                Renderer::DrawCircle(Util::Lerp(a, b, 1.f - (m_value / m_max)),(m_size.x / 2) * 0.85f,m_pColor);
-            }
+                Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor);
+            if(axis == Horizontal)
+                Renderer::DrawRect(m_pos, {Util::Lerp({0,0}, m_size, m_value / m_max).x, m_size.y}, m_activeColor);
+            else
+                Renderer::DrawRect(m_pos + Vector2(0, Util::Lerp({0,0}, m_size, 1.0 - m_value / m_max).y),
+                                   {m_size.x, m_size.y - Util::Lerp({0,0}, m_size, 1.0 - m_value / m_max).y}, m_activeColor);
         }
         template class Slider<Vertical>;
         template class Slider<Horizontal>;
-
     }
 }

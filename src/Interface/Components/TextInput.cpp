@@ -95,7 +95,7 @@ void TextInput::Draw()
 {
     // Setting DEFAULT_TEXT values here, so I can measure the dimensions of the text.
     DEFAULT_TEXT->SetPosition(m_pos);
-    DEFAULT_TEXT->SetSize(m_size.y);
+    DEFAULT_TEXT->SetSize(m_size.y * 0.8);
     DEFAULT_TEXT->SetString(m_value.substr(0, m_cursorIndex));
     DEFAULT_TEXT->SetString(m_value);
 
@@ -105,7 +105,7 @@ void TextInput::Draw()
 
     Renderer::DrawRect(m_pos, m_size, m_pColor);
     Renderer::SetBounds(m_pos, m_size);
-    Renderer::DrawText(Util::WstringToString(m_value), m_pos, m_size.y, BLACK);
+    Renderer::DrawText(Util::WstringToString(m_value), m_pos + Vector2(0, m_size.y * 0.2f), m_size.y * 0.8, BLACK);
 
     if(m_state.Focused)
     {

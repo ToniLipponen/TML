@@ -149,15 +149,16 @@ namespace tml
         s_shader->FromString(VERTEX_STRING, FRAGMENT_STRING);
         s_shader->Bind();
 
-        int w = 0,h = 0,bpp = 0;
-        ui8* circleData = stbi_load_from_memory(CIRCLE.data(), static_cast<int>(CIRCLE.size()), &w, &h, &bpp, 1);
-        s_circleTexture->LoadFromMemory(w, h, bpp, circleData);
-        delete[] circleData;
+        Image circleImage;
+        circleImage.LoadFromData(CIRCLE.data(), CIRCLE.size());
+        s_circleTexture->LoadFromImage(circleImage);
+        s_circleTexture->SetMinMagFilter(Texture::Linear, Texture::Linear);
+//        s_circleTexture->SetMinMagFilter(Texture::LinearMipmapLinear, Texture::LinearMipmapLinear);
 
-        GL_CALL(glad_glEnable(GL_BLEND));
-        GL_CALL(glad_glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-        GL_CALL(glad_glBlendEquation(GL_FUNC_ADD));
-        glDisable(GL_CULL_FACE);
+        GL_CALL(glEnable(GL_BLEND));
+        GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+        GL_CALL(glBlendEquation(GL_FUNC_ADD));
+        GL_CALL(glDisable(GL_CULL_FACE));
 
         #ifndef TML_USE_GLES
             #ifndef TML_NO_GL_DEBUGGING
@@ -346,11 +347,12 @@ namespace tml
         // dx and dy for normals
         const float dx = b.x - a.x;
         const float dy = b.y - a.y;
+        thickness = ceilf(thickness);
 
-        s_vertexData.push_back({(Vector2(-dy, dx).Normalized() * thickness * 0.5f) + a, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
-        s_vertexData.push_back({(Vector2(dy, -dx).Normalized() * thickness * 0.5f) + a, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
-        s_vertexData.push_back({(Vector2(-dy, dx).Normalized() * thickness * 0.5f) + b, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
-        s_vertexData.push_back({(Vector2(dy, -dx).Normalized() * thickness * 0.5f) + b, {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+        s_vertexData.push_back({((Vector2(-dy, dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+        s_vertexData.push_back({((Vector2(dy, -dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+        s_vertexData.push_back({((Vector2(-dy, dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+        s_vertexData.push_back({((Vector2(dy, -dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
 
         s_indexData.push_back(currentElements + 0);
         s_indexData.push_back(currentElements + 1);
@@ -359,6 +361,7 @@ namespace tml
         s_indexData.push_back(currentElements + 1);
         s_indexData.push_back(currentElements + 3);
         s_indexData.push_back(currentElements + 2);
+
         if(rounded)
         {
             Renderer::DrawCircle(a, thickness * 0.5f, color);

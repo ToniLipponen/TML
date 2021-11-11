@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 2.8...3.20)
 project(TML)
 option(TML_DEBUG_OPENGL_CALLS "Applies error checking around opengl function calls." no)
 option(TML_ASSERT "Applies asserts around important functions" yes)

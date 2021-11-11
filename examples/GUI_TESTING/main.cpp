@@ -9,7 +9,7 @@ using namespace Interface;
 
 int main()
 {
-    Window window(800, 600, "GUI TESTING", Window::Resizeable | Window::Antialias);
+    Window window(800, 600, "GUI TESTING", Window::Resizeable);
     Renderer::Init();
     Renderer::SetClearColor(WHITE);
 
@@ -45,6 +45,7 @@ int main()
         Renderer::Clear();
         {
             hlayout.Update();
+            Renderer::DrawLine(0, Mouse::GetPosition(), 1, BLACK);
         }
         Renderer::EndBatch();
         window.Display();

@@ -37,9 +37,7 @@ namespace tml {
     friend class Renderer;
     private:
         void Generate();
-        constexpr ui32 GetID() const {
-            return m_id;
-        }
+        constexpr ui32 GetID() const { return m_id; }
     private:
         ClampMode m_clampmode = ClampToBorder;
         Filter m_minfilter = LinearMipmapLinear;

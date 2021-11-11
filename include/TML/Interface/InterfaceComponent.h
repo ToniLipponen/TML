@@ -114,7 +114,7 @@ namespace tml
             float m_animSpeed = 4.f;
             Color m_pColor, m_sColor, m_activeColor; // Primary and secondary color.
             SizePolicy m_hSizePolicy = Clamp; // Horizontal size policy.
-            SizePolicy m_vSizePolicy = Clamp; // Vertical size policy.
+            SizePolicy m_vSizePolicy = Fixed; // Vertical size policy.
 
             std::deque<std::pair<unsigned long, BaseComponent*>> m_children;
             BaseComponent* m_parent;

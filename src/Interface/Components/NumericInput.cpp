@@ -167,7 +167,7 @@ namespace tml
         void NumericInput<T>::Draw()
         {
             DEFAULT_TEXT->SetPosition(m_pos);
-            DEFAULT_TEXT->SetSize(m_size.y);
+            DEFAULT_TEXT->SetSize(m_size.y * 0.8f);
             DEFAULT_TEXT->SetString(m_valueStr.substr(0, m_cursorIndex));
             DEFAULT_TEXT->SetString(m_valueStr);
 
@@ -177,7 +177,7 @@ namespace tml
 
             Renderer::DrawRect(m_pos, m_size, m_pColor);
             Renderer::SetBounds(m_pos, m_size);
-            Renderer::DrawText(m_valueStr, m_pos,m_size.y, BLACK);
+            Renderer::DrawText(m_valueStr, m_pos + Vector2(0, m_size.y * 0.2f), m_size.y * 0.8f, BLACK);
 
             if(m_state.Focused)
             {

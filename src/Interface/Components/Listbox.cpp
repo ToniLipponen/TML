@@ -9,7 +9,7 @@ namespace tml
         {
             m_pos = Vector2(x, y);
             m_size = Vector2(width, height);
-            m_scrollbar = new Scrollbar<Vertical>(x + width - 22, y+2, height-4);
+            m_scrollbar = new Scrollbar<Vertical>(x + width - 21, y+1, height-2);
             m_scrollbar->Disable();
             AddChild(m_scrollbar);
         }
@@ -43,7 +43,7 @@ namespace tml
 
         std::string Listbox::GetSelectedValue() const
         {
-            if(m_selectedIndex != -1 && m_selectedIndex < m_values.size())
+            if(m_selectedIndex > -1 && m_selectedIndex < m_values.size())
             {
                 return m_values.at(m_selectedIndex);
             }
@@ -100,13 +100,13 @@ namespace tml
 
         void Listbox::OnMoved()
         {
-            m_scrollbar->SetPosition(m_pos + Vector2(m_size.x - 22, 2));
+            m_scrollbar->SetPosition(m_pos + Vector2(m_size.x - 21, 1));
         }
 
         void Listbox::OnResized()
         {
-            m_scrollbar->SetPosition(m_pos + Vector2(m_size.x - 22, 2));
-            m_scrollbar->SetSize({m_scrollbar->GetSize().x, m_size.y - 4});
+            m_scrollbar->SetPosition(m_pos + Vector2(m_size.x - 21, 1));
+            m_scrollbar->SetSize({m_scrollbar->GetSize().x, m_size.y - 2});
 
             const auto overflow = GetOverFlow();
             if(overflow > 0)
@@ -135,7 +135,7 @@ namespace tml
         void Listbox::OnUpdate(double dt)
         {
             const auto value = Mouse::GetScrollValue();
-            if(m_state.Focused && m_scrollbar->Enabled())
+            if(m_eventStatus.MouseOver && m_scrollbar->Enabled())
             {
                 if(value > 0.0)
                     m_scrollbar->SetValue(m_scrollbar->GetValue() - 1);

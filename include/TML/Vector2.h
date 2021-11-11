@@ -100,6 +100,10 @@ namespace tml
         {
             return (x > rhs.x && y > rhs.y);
         }
+        Vector2 Rounded() const noexcept
+        {
+            return {roundf(x), roundf(y)};
+        }
 
         float x, y;
     };
