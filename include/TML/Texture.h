@@ -4,8 +4,10 @@
 #include "Image.h"
 #include <string>
 
-namespace tml {
-    class Texture {
+namespace tml
+{
+    class Texture
+    {
     public:
         enum ClampMode
         {

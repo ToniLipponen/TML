@@ -149,15 +149,8 @@ void main()
        case 0:
        case 3:
            color = SampleTex();
-           if(color.r > 0.01)
-           {
-               outColor = vColor;
-               outColor.a = color.r * vColor.a;
-           }
-           else
-           {
-               discard;
-           }
+           outColor = vColor;
+           outColor.a = color.r * vColor.a;
        break;
        case 4:
            outColor = SampleTex() * bt601;

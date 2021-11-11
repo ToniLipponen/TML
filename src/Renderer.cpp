@@ -250,15 +250,6 @@ namespace tml
         ResetBounds();
     }
 
-    void Renderer::BeginBatch() noexcept
-    {
-        s_vertexData.clear();
-        s_indexData.clear();
-        s_textures.clear();
-        s_vertexBuffer->Flush();
-        s_indexBuffer->Flush();
-    }
-
     void Renderer::Draw(Rectangle& r) noexcept
     {
         PushQuad(r.m_pos, r.m_size, r.m_color, r.m_tex, r.m_rotation, Vertex::RECTANGLE);
@@ -369,42 +360,16 @@ namespace tml
         }
     }
 
-    void Renderer::p_DrawRect(const Vector2& pos, const Vector2& dimensions, const Color& color, float rotation) noexcept
-    {
-        ui32 currentElements = s_vertexData.size();
-        if(currentElements >= MAX_VERTEX_COUNT - 4)
-        {
-            EndBatch();
-            currentElements = 0;
-        }
-
-        Vector2 origin = {(pos.x + pos.x + dimensions.x) * 0.5f,
-                          (pos.y + pos.y + dimensions.y) * 0.5f};
-        // Clean this up
-        s_vertexData.push_back({Util::Rotate(origin, pos, rotation), Vector2{0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
-        s_vertexData.push_back({Util::Rotate(origin, pos + Vector2{dimensions.x, 0.0f}, rotation), Vector2{1, 0},color.Hex(), 0, Vertex::RECTANGLE});
-        s_vertexData.push_back({Util::Rotate(origin, pos + Vector2{0.0f, dimensions.y}, rotation), Vector2{0, 1},color.Hex(), 0, Vertex::RECTANGLE});
-        s_vertexData.push_back({Util::Rotate(origin, pos + dimensions, rotation), Vector2{1, 1},color.Hex(), 0, Vertex::RECTANGLE});
-
-        s_indexData.push_back(currentElements + 0);
-        s_indexData.push_back(currentElements + 1);
-        s_indexData.push_back(currentElements + 2);
-
-        s_indexData.push_back(currentElements + 1);
-        s_indexData.push_back(currentElements + 3);
-        s_indexData.push_back(currentElements + 2);
-    }
-
     void Renderer::DrawRect(const Vector2& pos, const Vector2& dimensions, const Color& color, float roundness, float rotation) noexcept
     {
         if(roundness < 3.f) // If roundness is too low, just draw a regular rectangle
-            p_DrawRect(pos, dimensions, color, rotation);
+            PushQuad(pos, dimensions, color, *s_circleTexture, rotation, Vertex::RECTANGLE);
         else
         {
             Vector2 origin = {origin.x = (pos.x + pos.x + dimensions.x) * 0.5f,
                               origin.y = (pos.y + pos.y + dimensions.y) * 0.5f};
-            p_DrawRect(pos+Vector2{0.f, roundness}, dimensions - Vector2{0.f, roundness*2}, color, rotation);
-            p_DrawRect(pos+Vector2{roundness, 0.f}, dimensions - Vector2{roundness*2, 0.f}, color, rotation);
+            PushQuad(pos+Vector2{0.f, roundness}, dimensions - Vector2{0.f, roundness*2}, color, *s_circleTexture, rotation, Vertex::RECTANGLE);
+            PushQuad(pos+Vector2{roundness, 0.f}, dimensions - Vector2{roundness*2, 0.f}, color, *s_circleTexture, rotation, Vertex::RECTANGLE);
 
             DrawCircle(Util::Rotate(origin, pos+Vector2{roundness, roundness}, rotation), roundness, color);
             DrawCircle(Util::Rotate(origin, pos+Vector2{dimensions.x - roundness, roundness}, rotation), roundness, color);
@@ -582,8 +547,8 @@ namespace tml
             s_shader->Uniform1i("uTexture" + std::to_string(i), i);
 
         s_shader->SetVec2("uViewSize", s_viewSize);
-        s_shader->UniformMat4fv("uView", 1, false, &s_view[0][0]);
-        s_shader->UniformMat4fv("uProj", 1, false, &s_proj[0][0]);
+        s_shader->UniformMat4fv("uView",  1, false, &s_view [0][0]);
+        s_shader->UniformMat4fv("uProj",  1, false, &s_proj [0][0]);
         s_shader->UniformMat4fv("uScale", 1, false, &s_scale[0][0]);
 
         s_vertexBuffer->PushData(s_vertexData.data(), sizeof(Vertex), s_vertexData.size());
@@ -596,5 +561,14 @@ namespace tml
 
         GL_CALL(glad_glDrawElements(GL_TRIANGLES, s_indexBuffer->Elements(), GL_UNSIGNED_INT, nullptr));
         Renderer::BeginBatch();
+    }
+
+    void Renderer::BeginBatch() noexcept
+    {
+        s_vertexData.clear();
+        s_indexData.clear();
+        s_textures.clear();
+        s_vertexBuffer->Flush();
+        s_indexBuffer->Flush();
     }
 }

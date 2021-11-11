@@ -10,7 +10,7 @@ int main()
     while(!window.ShouldClose())
     {
         Renderer::Clear();
-            Renderer::DrawCircle(Mouse::GetPosition(), 100, RED);
+            Renderer::DrawCircle(Mouse::GetPosition(), 100, GREEN);
         Renderer::EndBatch();
         window.Display();
     }

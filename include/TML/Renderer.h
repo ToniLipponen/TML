@@ -27,7 +27,6 @@ namespace tml
         static void ResetBounds() noexcept;
 
         static void Clear() noexcept;
-        static void BeginBatch() noexcept; // Maybe make this private?
 
         static void Draw(Rectangle &rectangle) noexcept;
         static void Draw(Circle &circle) noexcept;
@@ -65,14 +64,12 @@ namespace tml
         static void EndBatch() noexcept;
 
     private:
+        static void BeginBatch() noexcept; // Maybe make this private?
         static void
         PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& tex_id, Vertex::DrawableType type) noexcept;
 
         static void // Rotated
         PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& tex_id, float rotation, Vertex::DrawableType type) noexcept;
-
-        static void
-        p_DrawRect(const Vector2 &pos, const Vector2 &dimensions, const Color &color, float rotation = 0.0f) noexcept;
 
         static ui32 PushTexture(Texture& tex) noexcept;
         static void PushVertexData(std::vector<Vertex>& vertices, std::vector<ui32>& indices) noexcept;

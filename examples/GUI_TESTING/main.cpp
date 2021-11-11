@@ -16,7 +16,7 @@ int main()
     Listbox* list = new Listbox(0, 30, 400, 300);
     DropMenu* dropmenu = new DropMenu(0,0, 400, 30);
     Progressbar* progressbar = new Progressbar(0,0, 400, 30);
-    VerticalLayout* vlayout = new VerticalLayout(0,0,400,200);
+    VerticalLayout* vlayout = new VerticalLayout(0,0,400,600);
 
     vlayout->AddChild(new Label(0,0,30));
     vlayout->AddChild(new Button(0,0,400, 30, "Button"));
@@ -25,8 +25,9 @@ int main()
     vlayout->AddChild(progressbar);
     vlayout->AddChild(new Slider<Horizontal>(0,0, 400, 30));
     vlayout->AddChild(dropmenu);
+    vlayout->AddChild(new Checkbox(0,0,30));
 
-    HorizontalLayout hlayout(0,0, 800, 200);
+    HorizontalLayout hlayout(0,0, 800, 600);
     hlayout.AddChild(list);
     hlayout.AddChild(vlayout);
 
