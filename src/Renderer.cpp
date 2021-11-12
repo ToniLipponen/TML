@@ -151,9 +151,8 @@ namespace tml
 
         Image circleImage;
         circleImage.LoadFromData(CIRCLE.data(), CIRCLE.size());
+        s_circleTexture->SetMinMagFilter(Texture::Linear, Texture::Linear);
         s_circleTexture->LoadFromImage(circleImage);
-//        s_circleTexture->SetMinMagFilter(Texture::Linear, Texture::Linear);
-//        s_circleTexture->SetMinMagFilter(Texture::LinearMipmapLinear, Texture::LinearMipmapLinear);
 
         GL_CALL(glEnable(GL_BLEND));
         GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));

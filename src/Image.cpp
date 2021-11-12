@@ -23,6 +23,7 @@ namespace tml
     }
 
     Image::Image(const ui8* data, ui32 s)
+    : m_width(0), m_height(0), m_Bpp(0), m_data(nullptr)
     {
         LoadFromData(data, s);
     }

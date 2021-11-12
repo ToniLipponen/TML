@@ -10,11 +10,10 @@ layout (location = 2) in uint Color;
 layout (location = 3) in uint Tex;
 layout (location = 4) in uint Type;
 
-out flat vec4  vColor;
-out vec2  vUV;
-out vec2 vViewSize;
-out flat uint  vTexID;
-out flat uint  vType;
+out vec4 vColor;
+out vec2 vUV;
+out flat uint vTexID;
+out flat uint vType;
 
 uniform vec2 uViewSize;
 uniform mat4 uView;
@@ -34,7 +33,6 @@ void main()
     vUV = UV;
     vTexID = Tex;
     vType = Type;
-    vViewSize = uViewSize;
 }
 )END";
 
@@ -43,7 +41,6 @@ R"END(
 #version 450 core
 in vec4 vColor;
 in vec2 vUV;
-in vec2 vViewSize;
 flat in uint vTexID;
 flat in uint vType;
 out vec4 outColor;
@@ -133,7 +130,6 @@ vec4 SampleTex()
 }
 void main()
 {
-   vec4 color = vec4(0.0);
    switch(vType)
    {
        case 1:
@@ -142,15 +138,18 @@ void main()
        case 2:
            outColor = SampleTex();
            if(outColor.a < 0.01)
-           {
                discard;
-           }
        break;
        case 0:
        case 3:
-           color = SampleTex();
-           outColor = vColor;
-           outColor.a = color.r * vColor.a;
+           vec4 color = SampleTex();
+           if(color.r > 0.01)
+           {
+                outColor = vColor;
+                outColor.a = color.r * vColor.a;
+           }
+           else
+                discard;
        break;
        case 4:
            outColor = SampleTex() * bt601;

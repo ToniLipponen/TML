@@ -2,6 +2,7 @@
 #include <TML/Renderer.h>
 
 extern tml::Text* DEFAULT_TEXT;
+
 namespace tml
 {
     namespace Interface
@@ -14,7 +15,7 @@ namespace tml
 
         void Progressbar::Draw()
         {
-            DEFAULT_TEXT->SetString(std::to_string(int(m_value * 100)) + "%");
+            DEFAULT_TEXT->SetString(std::to_string(ui32(m_value * 100)) + "%");
             DEFAULT_TEXT->SetSize(m_size.y / 2);
             DEFAULT_TEXT->SetPosition({m_pos.x + (m_size.x / 2) - (DEFAULT_TEXT->GetDimensions().x / 2), m_pos.y + m_size.y / 4});
 

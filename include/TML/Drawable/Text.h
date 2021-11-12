@@ -25,6 +25,13 @@ namespace tml
         friend class Renderer;
 
     private:
+        void SetTexture() = delete;
+        void Rotate() = delete;
+        void SetRotation() = delete;
+        const Vector2& GetSize() = delete;
+        constexpr float GetRotation() = delete;
+
+    private:
         void Generate() noexcept;
         Font m_font;
         std::wstring m_string;

@@ -66,6 +66,11 @@ namespace tml
             return m_rotation;
         }
 
+        constexpr const Color& GetColor() const noexcept
+        {
+            return m_color;
+        }
+
         friend class Renderer;
 
     protected:
