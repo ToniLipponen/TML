@@ -19,15 +19,14 @@ namespace tml
         static void SetCamera(Camera& cam) noexcept;
         static void ResetCamera() noexcept;
 
-        static void SetViewport(i32 x, i32 y, ui32 w, ui32 h) noexcept;
-        static void SetViewport(const Vector2& pos, const Vector2& size) noexcept;
-        static void ResetViewport() noexcept;
+//        static void SetViewport(i32 x, i32 y, ui32 w, ui32 h) noexcept;
+//        static void SetViewport(const Vector2& pos, const Vector2& size) noexcept;
+//        static void ResetViewport() noexcept;
 
         static void SetBounds(const Vector2& pos, const Vector2& size) noexcept;
         static void ResetBounds() noexcept;
 
         static void Clear() noexcept;
-
         static void Draw(Rectangle &rectangle) noexcept;
         static void Draw(Circle &circle) noexcept;
         static void Draw(Sprite &sprite) noexcept;

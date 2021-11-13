@@ -10,9 +10,9 @@ namespace tml
         Image();
         Image(i32 w, i32 h, i32 Bpp, const ui8* data);
         Image(const ui8* data, ui32 data_size);
-        Image(const std::string& fileName);
+        explicit Image(const std::string& fileName);
         Image(const Image& image);
-        Image(Image&& image);
+        Image(Image&& image) noexcept;
         ~Image();
 
         Image& operator=(const Image& rhs) noexcept;

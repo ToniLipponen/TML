@@ -89,9 +89,9 @@ mat4 bt601 = mat4(
   0, 0, 0, 1
 );
 
-vec4 SampleTex()
+vec4 SampleTex(uint index)
 {
-    switch(vTexID)
+    switch(index)
     {
         case 0u:  return texture(uTexture0,   vUV); break;
         case 1u:  return texture(uTexture1,   vUV); break;
@@ -125,7 +125,7 @@ vec4 SampleTex()
         case 29u: return texture(uTexture29,  vUV); break;
         case 30u: return texture(uTexture30,  vUV); break;
         case 31u: return texture(uTexture31,  vUV); break;
-        default:  return vec4(1.0, 0.0, 0.0, 1.0); break;
+        default:  return vec4(0.0); break;
     }
 }
 void main()
@@ -136,13 +136,13 @@ void main()
            outColor = vColor;
        break;
        case 2:
-           outColor = SampleTex();
+           outColor = SampleTex(vTexID);
            if(outColor.a < 0.01)
                discard;
        break;
        case 0:
        case 3:
-           vec4 color = SampleTex();
+           vec4 color = SampleTex(vTexID);
            if(color.r > 0.01)
            {
                 outColor = vColor;
@@ -152,7 +152,10 @@ void main()
                 discard;
        break;
        case 4:
-           outColor = SampleTex() * bt601;
+           const float y  = SampleTex(vTexID  ).r;
+           const float cb = SampleTex(vTexID+1).r;
+           const float cr = SampleTex(vTexID+2).r;
+           outColor = vec4(y,cb,cr,1.0) * bt601;
        break;
        default:
            discard;

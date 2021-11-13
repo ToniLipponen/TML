@@ -31,10 +31,11 @@ namespace tml
     Image::Image(const std::string& fileName)
     : m_width(0), m_height(0), m_Bpp(0), m_data(nullptr)
     {
-        m_data = stbi_load(fileName.c_str(), &m_width, &m_height, &m_Bpp, 0);
+        LoadFromFile(fileName);
     }
 
     Image::Image(const Image& image)
+    : m_width(0), m_height(0), m_Bpp(0), m_data(nullptr)
     {
         this->m_width = image.m_width;
         this->m_height = image.m_height;
@@ -45,18 +46,10 @@ namespace tml
         memcpy(m_data, image.m_data, m_width*m_height*m_Bpp);
     }
 
-    Image::Image(Image&& image)
+    Image::Image(Image&& image) noexcept
+    : m_width(0), m_height(0), m_Bpp(0), m_data(nullptr)
     {
-        this->m_width = image.m_width;
-        this->m_height = image.m_height;
-        this->m_Bpp = image.m_Bpp;
-        delete[] m_data;
-
-        this->m_data = image.m_data;
-        image.m_data = nullptr;
-        image.m_width = 0;
-        image.m_height = 0;
-        image.m_Bpp = 0;
+        *this = image;
     }
 
     Image::~Image()
@@ -73,9 +66,13 @@ namespace tml
         this->m_height = rhs.m_height;
         this->m_Bpp = rhs.m_Bpp;
 
-        delete[] m_data;
-        m_data = new ui8[m_width*m_height*m_Bpp];
-        memcpy(m_data,rhs.m_data, m_width*m_height*m_Bpp);
+        // Reallocate memory only if the dimensions and bytes per pixel of the images don't match.
+        if(m_width != rhs.m_width || m_height != rhs.m_height || m_Bpp != rhs.m_Bpp)
+        {
+            delete[] m_data;
+            m_data = new ui8[m_width * m_height * m_Bpp];
+        }
+        memcpy(m_data, rhs.m_data, m_width * m_height * m_Bpp);
         return *this;
     }
 
@@ -121,7 +118,7 @@ namespace tml
     bool Image::LoadFromData(const ui8 *data, ui32 dataSize)
     {
         delete[] m_data; m_data = nullptr;
-        m_data = stbi_load_from_memory(data, dataSize, &m_width, &m_height, &m_Bpp, 0);
+        m_data = stbi_load_from_memory(data, static_cast<int>(dataSize), &m_width, &m_height, &m_Bpp, 0);
         if(m_data == nullptr)
             return LoadWebp(data, dataSize);
 
@@ -148,7 +145,7 @@ namespace tml
     {
         InFile file;
         file.Open(filename);
-        auto data = file.GetBytes();
+        const auto data = file.GetBytes();
 
        return LoadWebp(reinterpret_cast<const ui8*>(data.data()), data.size());
     }
@@ -206,7 +203,7 @@ namespace tml
             return Image::Bmp;
         else if(str == ".tga")
             return Image::Tga;
-        else if(str == ".jpg")
+        else if(str == ".jpg" || str == ".jpeg")
             return Image::Jpg;
         else if(str == ".pic")
             return Image::Pic;

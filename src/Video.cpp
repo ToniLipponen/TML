@@ -4,8 +4,7 @@
 #include <PL_MPEG/pl_mpeg.h>
 
 /*
- * Currently, conversion from YCrCb data to RGB is done on the CPU.
- * Also, no audio decoding at the moment.
+ * No audio at the moment.
  */
 
 namespace tml
@@ -21,7 +20,6 @@ namespace tml
     {
         if(m_stream != nullptr)
             plm_destroy((plm_t*)m_stream);
-        delete[] m_frameData;
     }
 
     bool Video::LoadFromFile(const std::string& filename) noexcept
@@ -39,9 +37,6 @@ namespace tml
             m_size = Vector2(static_cast<float>(m_streamWidth), static_cast<float>(m_streamHeight));
 
             SetFrameRate(plm_get_framerate((plm_t*)m_stream));
-
-            delete[] m_frameData;
-            m_frameData    = new ui8[m_streamWidth * m_streamHeight * 3];
             plm_set_audio_enabled(reinterpret_cast<plm_t*>(m_stream), false);
             return true;
         }
@@ -63,12 +58,12 @@ namespace tml
 
     void Video::Advance(f64 step) noexcept
     {
-        if(m_oneDividedByFrameRate < (m_timer += step)
-        && plm_has_ended(reinterpret_cast<plm_t*>(m_stream)) != 1)
+        if(m_oneDividedByFrameRate < (m_timer += step) && plm_has_ended(reinterpret_cast<plm_t*>(m_stream)) != 1)
         {
-            plm_frame_t* frame = plm_decode_video(reinterpret_cast<plm_t*>(m_stream));
-            plm_frame_to_rgb(frame, m_frameData, m_streamWidth * 3);
-            m_tex.LoadFromMemory(m_streamWidth, m_streamHeight, 3, m_frameData);
+            const plm_frame_t* frame = plm_decode_video(reinterpret_cast<plm_t*>(m_stream));
+            m_y.LoadFromMemory(frame->y.width,   frame->y.height,  1, frame->y.data);
+            m_cb.LoadFromMemory(frame->cb.width, frame->cb.height, 1, frame->cb.data);
+            m_cr.LoadFromMemory(frame->cr.width, frame->cr.height, 1, frame->cr.data);
             m_timer = 0;
         }
     }

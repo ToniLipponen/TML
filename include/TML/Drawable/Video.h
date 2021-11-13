@@ -22,6 +22,6 @@ namespace tml
         double m_oneDividedByFrameRate = 1.0 / m_frameRate;
         i32 m_streamWidth = 0; // Dimensions of the actual video
         i32 m_streamHeight = 0;
-        ui8* m_frameData = nullptr;
+        Texture m_y, m_cb, m_cr;
     };
 }

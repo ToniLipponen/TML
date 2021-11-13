@@ -190,42 +190,42 @@ namespace tml
         s_scale = glm::mat4(1.f);
     }
 
-    void Renderer::SetViewport(i32 x, i32 y, ui32 w, ui32 h) noexcept
-    {
-        EndBatch();
-        s_viewSize = Vector2{static_cast<float>(w), static_cast<float>(h)};
-        s_proj = glm::ortho(
-                static_cast<float>(x),
-                static_cast<float>(w),
-                static_cast<float>(h),
-                static_cast<float>(y)
-        );
-    }
-
-    void Renderer::SetViewport(const Vector2& pos, const Vector2& size) noexcept
-    {
-        EndBatch();
-        s_viewSize = size;
-        s_proj = glm::ortho(
-                pos.x,
-                size.x,
-                size.y,
-                pos.y
-        );
-    }
-
-    void Renderer::ResetViewport() noexcept
-    {
-        int f[4];
-        GL_CALL(glad_glGetIntegerv(GL_VIEWPORT, f));
-        s_viewSize = Vector2{static_cast<float>(f[2]), static_cast<float>(f[3])};
-        s_proj = glm::ortho(
-                static_cast<float>(f[0]),
-                static_cast<float>(f[2]),
-                static_cast<float>(f[3]),
-                static_cast<float>(f[1])
-        );
-    }
+//    void Renderer::SetViewport(i32 x, i32 y, ui32 w, ui32 h) noexcept
+//    {
+//        EndBatch();
+//        s_viewSize = Vector2{static_cast<float>(w), static_cast<float>(h)};
+//        s_proj = glm::ortho(
+//                static_cast<float>(x),
+//                static_cast<float>(w),
+//                static_cast<float>(h),
+//                static_cast<float>(y)
+//        );
+//    }
+//
+//    void Renderer::SetViewport(const Vector2& pos, const Vector2& size) noexcept
+//    {
+//        EndBatch();
+//        s_viewSize = size;
+//        s_proj = glm::ortho(
+//                pos.x,
+//                size.x,
+//                size.y,
+//                pos.y
+//        );
+//    }
+//
+//    void Renderer::ResetViewport() noexcept
+//    {
+//        int f[4];
+//        GL_CALL(glad_glGetIntegerv(GL_VIEWPORT, f));
+//        s_viewSize = Vector2{static_cast<float>(f[2]), static_cast<float>(f[3])};
+//        s_proj = glm::ortho(
+//                static_cast<float>(f[0]),
+//                static_cast<float>(f[2]),
+//                static_cast<float>(f[3]),
+//                static_cast<float>(f[1])
+//        );
+//    }
 
     void Renderer::SetBounds(const Vector2& pos, const Vector2& size) noexcept
     {
@@ -244,7 +244,17 @@ namespace tml
     {
         GL_CALL(glad_glClear(GL_COLOR_BUFFER_BIT));
         GL_CALL(BeginBatch());
-        ResetViewport();
+
+        int f[4];
+        GL_CALL(glad_glGetIntegerv(GL_VIEWPORT, f));
+        s_viewSize = Vector2{static_cast<float>(f[2]), static_cast<float>(f[3])};
+        s_proj = glm::ortho(
+                static_cast<float>(f[0]),
+                static_cast<float>(f[2]),
+                static_cast<float>(f[3]),
+                static_cast<float>(f[1])
+        );
+//        ResetViewport();
         ResetCamera();
         ResetBounds();
     }
@@ -323,7 +333,11 @@ namespace tml
 
     void Renderer::Draw(Video& r) noexcept
     {
-        PushQuad(r.m_pos, r.m_size, r.m_color, r.m_tex, Vertex::TEXTURE);
+        if(s_textures.size() >= MAX_TEXTURE_COUNT - 3)
+            EndBatch();
+        PushQuad(r.m_pos, r.m_size, r.m_color, r.m_y, Vertex::VIDEO);
+        PushTexture(r.m_cb);
+        PushTexture(r.m_cr);
     }
 
     void Renderer::DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Color color, bool rounded) noexcept
@@ -441,10 +455,10 @@ namespace tml
         }
         currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again
 
-        s_vertexData.emplace_back(Vertex{pos,  {0.f, 0.f},col.Hex(), tex, type});
-        s_vertexData.emplace_back(Vertex{pos + Vector2{size.x, 0.f}, {1.f, 0.f}, col.Hex(), tex, type});
-        s_vertexData.emplace_back(Vertex{pos + Vector2{0.f, size.y}, {0.f, 1.f}, col.Hex(), tex, type});
-        s_vertexData.emplace_back(Vertex{pos + size, {1.f, 1.f}, col.Hex(), tex, type});
+        s_vertexData.emplace_back(Vertex{pos,                           {0.f, 0.f}, col.Hex(), tex, type});
+        s_vertexData.emplace_back(Vertex{pos + Vector2{size.x, 0.f},    {1.f, 0.f}, col.Hex(), tex, type});
+        s_vertexData.emplace_back(Vertex{pos + Vector2{0.f, size.y},    {0.f, 1.f}, col.Hex(), tex, type});
+        s_vertexData.emplace_back(Vertex{pos + size,                    {1.f, 1.f}, col.Hex(), tex, type});
 
         s_indexData.emplace_back(currentElements + 0);
         s_indexData.emplace_back(currentElements + 1);
