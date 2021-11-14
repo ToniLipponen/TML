@@ -1,6 +1,10 @@
 #pragma once
 #include "Drawable.h"
-
+/*
+ * Video playback is brought to you by Dominic Szablewskis PL_MPEG (https://github.com/phoboslab/pl_mpeg).
+ * This only supports MPEG1. I would be open to extending support to other video formats
+ * through other libraries, if they use license compatible with Zlib license.
+ */
 namespace tml
 {
     class Video : public Drawable

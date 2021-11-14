@@ -152,9 +152,9 @@ void main()
                 discard;
        break;
        case 4:
-           const float y  = SampleTex(vTexID  ).r;
-           const float cb = SampleTex(vTexID+1).r;
-           const float cr = SampleTex(vTexID+2).r;
+           const float y  = SampleTex(vTexID    ).r;
+           const float cb = SampleTex(vTexID + 1).r;
+           const float cr = SampleTex(vTexID + 2).r;
            outColor = vec4(y,cb,cr,1.0) * bt601;
        break;
        default:
@@ -227,22 +227,20 @@ mediump mat4 bt601 = mat4(
   0, 0, 0, 1
 );
 
-mediump vec4 SampleTex()
+mediump vec4 SampleTex(uint index)
 {
-    mediump vec4 color = vec4(1.0);
-    switch(vTexID)
+    switch(index)
     {
-        case 0u: color = texture(uTexture0, vUV); break;;
-        case 1u: color = texture(uTexture1, vUV); break;;
-        case 2u: color = texture(uTexture2, vUV); break;;
-        case 3u: color = texture(uTexture3, vUV); break;;
-        case 4u: color = texture(uTexture4, vUV); break;;
-        case 5u: color = texture(uTexture5, vUV); break;;
-        case 6u: color = texture(uTexture6, vUV); break;;
-        case 7u: color = texture(uTexture7, vUV); break;;
-        default: color = vec4(1.0, 0.0, 0.0, 1.0); break;
+        case 0u: return texture2D(uTexture0, vUV);  break;
+        case 1u: return texture2D(uTexture1, vUV);  break;
+        case 2u: return texture2D(uTexture2, vUV);  break;
+        case 3u: return texture2D(uTexture3, vUV);  break;
+        case 4u: return texture2D(uTexture4, vUV);  break;
+        case 5u: return texture2D(uTexture5, vUV);  break;
+        case 6u: return texture2D(uTexture6, vUV);  break;
+        case 7u: return texture2D(uTexture7, vUV);  break;
+        default: return vec4(1.0, 0.0, 0.0, 1.0); break;
     }
-    return color;
 }
 
 void main()
@@ -253,7 +251,7 @@ void main()
            outColor = vColor;
        break;
        case 2u:
-           outColor = SampleTex();
+           outColor = SampleTex(vTexID);
            if(outColor.a < 0.01)
            {
                discard;
@@ -261,7 +259,7 @@ void main()
        break;
        case 0u:
        case 3u:
-           mediump vec4 color = SampleTex();
+           mediump vec4 color = SampleTex(vTexID);
            if(color.r > 0.01)
            {
                outColor = vColor;
@@ -273,7 +271,10 @@ void main()
            }
        break;
        case 4u:
-           outColor = SampleTex() * bt601;
+           mediump float y  = SampleTex(vTexID     ).r;
+           mediump float cb = SampleTex(vTexID + 1u).r;
+           mediump float cr = SampleTex(vTexID + 2u).r;
+           outColor = vec4(y,cb,cr,1.0) * bt601;
        break;
        default:
            discard;
