@@ -1,12 +1,13 @@
 #include <TML/Texture.h>
 #include <GLHeader.h>
+#include <TML/Logger.h>
 #include "internal/GlDebug.h"
 
 
 namespace tml
 {
     Texture::Texture()
-    : m_width(0), m_height(0), m_bpp(0), m_pixeldata(nullptr), m_id(0)
+    : m_width(0), m_height(0), m_bpp(0), m_pixelData(nullptr), m_id(0)
     {
 
     }
@@ -35,7 +36,7 @@ namespace tml
         #else
             GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
         #endif
-        m_pixeldata = data;
+        m_pixelData = data;
         m_width 	= w;
         m_height 	= h;
         m_bpp 		= bpp;
@@ -54,43 +55,43 @@ namespace tml
 
     void Texture::SetMipMapLevel(ui8 level)
     {
-        m_mipmap_level = level;
+        m_mipmapLevel = level;
         Generate();
     }
 
     void Texture::SetMinMagFilter(Filter min, Filter mag)
     {
-        m_minfilter = min;
-        m_magfilter = mag;
+        m_minFilter = min;
+        m_magFilter = mag;
         Generate();
     }
 
     void Texture::SetClampMode(ClampMode mode)
     {
-        m_clampmode = mode;
+        m_clampMode = mode;
         Generate();
     }
 
-    void Texture::Generate()
+    inline void Texture::Generate() const
     {
+        GL_CALL(glBindTexture(GL_TEXTURE_2D, m_id));
         #ifdef TML_USE_GLES
-            GL_CALL(glBindTexture(GL_TEXTURE_2D, m_id));
             GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
             GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
             GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
             GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
         #else
-            GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, m_clampmode));
-            GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, m_clampmode));
-            GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, m_minfilter));
-            GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, m_magfilter));
+            GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_S,     m_clampMode));
+            GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_T,     m_clampMode));
+            GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, m_minFilter));
+            GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, m_magFilter));
         #endif
 
         if(m_width > 0 && m_height > 0)
         {
-            if(m_pixeldata != nullptr)
+            if(m_pixelData)
             {
-                i32 ch = 0, chi = 0;
+                i32 ch = 0, chi = 0; // Channels & channels internal.
                 switch(m_bpp)
                 {
                     case 1: ch = GL_R8;     chi = GL_RED;   break;
@@ -100,10 +101,13 @@ namespace tml
                     default:                                break;
                 }
                 #ifdef TML_USE_GLES
-                    GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, m_pixeldata));
+                    GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, m_pixelData));
                 #else
-                    GL_CALL(glTextureStorage2D(m_id, 1, ch, m_width, m_height));
-                    GL_CALL(glTextureSubImage2D(m_id, m_mipmap_level, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, m_pixeldata));
+                GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, m_pixelData));
+
+                // Not using these two guys at the moment. glTextureStorage2D throws an error for some reason.
+                // GL_CALL(glTextureStorage2D(m_id, 1, ch, m_width, m_height));
+                // GL_CALL(glTextureSubImage2D(m_id, m_mipmapLevel, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, m_pixelData));
                 #endif
             }
         }

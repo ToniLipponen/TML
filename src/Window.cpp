@@ -16,6 +16,7 @@
 #include "internal/_Assert.h"
 
 #if PLATFORM_UNIX
+    #include <glfw_config.h>
     #include <incbin/incbin.h>
     INCBIN(TML_ICON, "../res/Logo.png");
 #else
@@ -41,7 +42,10 @@ namespace tml
     {
         const auto result = glfwInit();
         TML_ASSERT(result, "Failed to initialize window.");
-
+        #ifdef _GLFW_WAYLAND // We don't support wayland at the moment.
+            Logger::ErrorMessage("Wayland not supported at the moment!");
+            exit(66);
+        #endif
         #ifdef TML_USE_GLES
             glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

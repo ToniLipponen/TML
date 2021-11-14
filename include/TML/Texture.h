@@ -38,15 +38,15 @@ namespace tml
         void SetClampMode(ClampMode mode);
     friend class Renderer;
     private:
-        void Generate();
+        inline void Generate() const;
         constexpr ui32 GetID() const { return m_id; }
     private:
-        ClampMode m_clampmode = ClampToBorder;
-        Filter m_minfilter = Linear;
-        Filter m_magfilter = Linear;
+        ClampMode m_clampMode = ClampToBorder;
+        Filter m_minFilter = Linear;
+        Filter m_magFilter = Linear;
         ui32 m_id;
         i32 m_width, m_height, m_bpp;
-        ui8 *m_pixeldata = nullptr;
-        ui8 m_mipmap_level = 0;
+        ui8 *m_pixelData = nullptr;
+        ui8 m_mipmapLevel = 0;
     };
 }

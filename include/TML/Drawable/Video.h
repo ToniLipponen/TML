@@ -17,13 +17,14 @@ namespace tml
         bool LoadFromFile(const std::string& fileName) noexcept;
         void SetFrameRate(double fps) noexcept;
         void SetLooping(bool loop) const noexcept;
-        void Advance(double step) noexcept;
+        bool Advance(double step) noexcept; //@brief Returns false when no frames are available.
         friend class Renderer;
     private:
         void* m_stream = nullptr;
         double m_frameRate = 30;
-        double m_timer = 0;
+        double m_timer = 1;
         double m_oneDividedByFrameRate = 1.0 / m_frameRate;
+        bool m_ended = false;
         i32 m_streamWidth = 0; // Dimensions of the actual video
         i32 m_streamHeight = 0;
         Texture m_y, m_cb, m_cr;

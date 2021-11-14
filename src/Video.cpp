@@ -56,15 +56,20 @@ namespace tml
         plm_set_loop(reinterpret_cast<plm_t*>(m_stream), static_cast<int>(loop));
     }
 
-    void Video::Advance(f64 step) noexcept
+    bool Video::Advance(f64 step) noexcept
     {
-        if(m_oneDividedByFrameRate < (m_timer += step) && plm_has_ended(reinterpret_cast<plm_t*>(m_stream)) != 1)
+        m_ended = static_cast<bool>(plm_has_ended(reinterpret_cast<plm_t*>(m_stream)));
+        if((m_oneDividedByFrameRate < (m_timer += step)) && !m_ended)
         {
             const plm_frame_t* frame = plm_decode_video(reinterpret_cast<plm_t*>(m_stream));
-            m_y.LoadFromMemory(frame->y.width,   frame->y.height,  1, frame->y.data);
-            m_cb.LoadFromMemory(frame->cb.width, frame->cb.height, 1, frame->cb.data);
-            m_cr.LoadFromMemory(frame->cr.width, frame->cr.height, 1, frame->cr.data);
+            if(frame)
+            {
+                m_y.LoadFromMemory(frame->y.width,   frame->y.height,  1, frame->y.data);
+                m_cb.LoadFromMemory(frame->cb.width, frame->cb.height, 1, frame->cb.data);
+                m_cr.LoadFromMemory(frame->cr.width, frame->cr.height, 1, frame->cr.data);
+            }
             m_timer = 0;
         }
+        return !m_ended;
     }
 }

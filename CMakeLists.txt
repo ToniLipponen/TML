@@ -57,7 +57,7 @@ elseif(UNIX)
     install(DIRECTORY include/TML DESTINATION /usr/include)
 endif()
 
-target_include_directories(TML PRIVATE src/internal)
+target_include_directories(TML PRIVATE src/internal external/glfw/src)
 
 if(TML_BUILD_EXAMPLES)
     add_subdirectory(examples/example1/)
