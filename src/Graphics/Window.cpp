@@ -1,4 +1,4 @@
-#include <TML/Window.h>
+#include <TML/Graphics/Window.h>
 #include <TML/Utilities/Condition.h>
 #include <TML/Utilities/Platform.h>
 
@@ -13,7 +13,7 @@
 #include <GLFW/glfw3.h>
 #include <stb/stb_image_write.h>
 #include <stb/stb_image.h>
-#include "internal/_Assert.h"
+#include "_Assert.h"
 
 #if PLATFORM_UNIX
     #include <glfw_config.h>

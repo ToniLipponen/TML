@@ -1,4 +1,4 @@
-#include <TML/Renderer.h>
+#include <TML/Graphics/Renderer.h>
 #include <TML/Utilities/Utilities.h>
 
 #include <GLHeader.h>
@@ -11,11 +11,11 @@
 #include <stb/stb_image.h>
 #include <string>
 
-#include "internal/GlDebug.h"
-#include "internal/_Assert.h"
-#include "internal/Buffers.h"
-#include "internal/Shader.h"
-#include "internal/Shaders.h"
+#include "GlDebug.h"
+#include "_Assert.h"
+#include "Buffers.h"
+#include "Shader.h"
+#include "Shaders.h"
 
 #include <Circle.h> // Circle texture data
 

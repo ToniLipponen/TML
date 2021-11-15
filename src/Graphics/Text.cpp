@@ -1,4 +1,4 @@
-#include <TML/Drawable/Text.h>
+#include <TML/Graphics/Drawable/Text.h>
 #include <TML/Utilities/Utilities.h>
 #include <stb/stb_truetype.h>
 

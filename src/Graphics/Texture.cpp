@@ -1,7 +1,7 @@
-#include <TML/Texture.h>
+#include <TML/Graphics/Texture.h>
 #include <GLHeader.h>
-#include <TML/Logger.h>
-#include "internal/GlDebug.h"
+#include <TML/IO/Logger.h>
+#include "GlDebug.h"
 
 
 namespace tml
@@ -93,7 +93,7 @@ namespace tml
         {
             if(m_pixelData)
             {
-                i32 ch = 0, chi = 0; // Channels & channels internal.
+                i32 ch = 0, chi = 0; // Channels & channels Headers.
                 switch(m_bpp)
                 {
                     case 1: ch = GL_R8;     chi = GL_RED;   break;

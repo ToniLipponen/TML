@@ -2,7 +2,7 @@
 #include <stb/stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb/stb_image_write.h>
-#include <TML/Image.h>
+#include <TML/Graphics/Image.h>
 #include <webp/decode.h>
 #include <webp/encode.h>
 #include <TML/IO/File.h>

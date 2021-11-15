@@ -1,6 +1,6 @@
 #pragma once
-#include "../Types.h"
-#include "../Texture.h"
+#include "TML/Utilities/Types.h"
+#include "TML/Graphics/Texture.h"
 
 namespace tml
 {

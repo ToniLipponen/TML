@@ -1,7 +1,6 @@
 #include <TML/Interface/Components/NumericInput.h>
-#include <TML/Drawable/Text.h>
 #include <TML/Utilities/Utilities.h>
-#include <TML/Renderer.h>
+#include <TML/Graphics/Renderer.h>
 #include <TML/IO/Clipboard.h>
 
 extern tml::Text* DEFAULT_TEXT;

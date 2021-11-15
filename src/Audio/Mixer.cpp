@@ -1,5 +1,5 @@
 #include "Mixer.h"
-#include "../internal/_Assert.h"
+#include <_Assert.h>
 
 #define STB_VORBIS_HEADER_ONLY
 #include <miniaudio/decoders/stb_vorbis.c>  /* Enables Vorbis decoding. */

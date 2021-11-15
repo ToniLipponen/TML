@@ -2,7 +2,7 @@
 #include "Copy.h"
 #include "Condition.h"
 #include "String.h"
-#include "../Vector2.h"
+#include "Vector2.h"
 
 namespace tml
 {

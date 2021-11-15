@@ -3,8 +3,8 @@
 #include <map>
 #include <unordered_map>
 
-#include "Types.h"
-#include "Vector2.h"
+#include "TML/Utilities/Types.h"
+#include "TML/Utilities/Vector2.h"
 #include "Texture.h"
 
 namespace tml

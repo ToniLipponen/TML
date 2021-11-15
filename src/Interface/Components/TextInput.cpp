@@ -1,5 +1,5 @@
 #include <TML/Interface/Components/TextInput.h>
-#include <TML/Renderer.h>
+#include <TML/Graphics/Renderer.h>
 #include <TML/IO/Clipboard.h>
 
 using namespace tml::Interface;

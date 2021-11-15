@@ -1,4 +1,4 @@
-#include <TML/Camera.h>
+#include <TML/Graphics/Camera.h>
 #include <glad/gl.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

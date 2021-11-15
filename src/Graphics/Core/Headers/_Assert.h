@@ -1,8 +1,8 @@
 #pragma once
 
 #include <cstdio>
-#include <TML/Types.h>
-#include <TML/Logger.h>
+#include <TML/Utilities/Types.h>
+#include <TML/IO/Logger.h>
 
 #if (TML_NO_DEBUGGING != 1)
 	#include <cassert>

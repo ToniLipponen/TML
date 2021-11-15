@@ -1,6 +1,6 @@
 #include <TML/Interface/Components/Slider.h>
 #include <TML/Utilities/Utilities.h>
-#include <TML/Renderer.h>
+#include <TML/Graphics/Renderer.h>
 
 namespace tml
 {

@@ -1,7 +1,7 @@
 #pragma once
 #include "Drawable.h"
-#include "../Image.h"
-#include "../Utilities/Condition.h"
+#include "TML/Graphics/Image.h"
+#include "TML/Utilities/Condition.h"
 
 namespace tml
 {

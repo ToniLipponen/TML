@@ -1,5 +1,5 @@
 #include <TML/Interface/Components/Scrollbar.h>
-#include <TML/Renderer.h>
+#include <TML/Graphics/Renderer.h>
 
 namespace tml
 {

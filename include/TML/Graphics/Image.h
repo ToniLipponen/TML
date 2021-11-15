@@ -1,5 +1,5 @@
 #pragma once
-#include "Types.h"
+#include <TML/Utilities/Types.h>
 #include <string>
 
 namespace tml
@@ -9,7 +9,7 @@ namespace tml
     public:
         Image();
         Image(i32 w, i32 h, i32 Bpp, const ui8* data);
-        Image(const ui8* data, ui32 data_size);
+        Image(const ui8* data, ui32 dataSize);
         explicit Image(const std::string& fileName);
         Image(const Image& image);
         Image(Image&& image) noexcept;

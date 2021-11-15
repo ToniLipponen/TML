@@ -1,5 +1,5 @@
 #include <TML/Interface/Components/Label.h>
-#include <TML/Renderer.h>
+#include <TML/Graphics/Renderer.h>
 
 extern tml::Text* DEFAULT_TEXT;
 

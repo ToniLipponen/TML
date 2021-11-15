@@ -1,11 +1,11 @@
 #pragma once
-#include "Window.h"
-#include "Drawable/Rectangle.h"
-#include "Drawable/Circle.h"
-#include "Drawable/Sprite.h"
-#include "Drawable/Text.h"
-#include "Drawable/Video.h"
-#include "Camera.h"
+#include <TML/Graphics/Window.h>
+#include <TML/Graphics/Drawable/Rectangle.h>
+#include <TML/Graphics/Drawable/Circle.h>
+#include <TML/Graphics/Drawable/Sprite.h>
+#include <TML/Graphics/Drawable/Text.h>
+#include <TML/Graphics/Drawable/Video.h>
+#include <TML/Graphics/Camera.h>
 
 namespace tml
 {

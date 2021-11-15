@@ -1,7 +1,7 @@
 #include <TML/Interface/InterfaceComponent.h>
-#include <TML/Renderer.h>
+#include <TML/Graphics/Renderer.h>
 #include <TML/IO/Input.h>
-#include <TML/Clock.h>
+#include <TML/Utilities/Clock.h>
 #include <functional>
 #include <string>
 
@@ -239,7 +239,7 @@ namespace tml
                 i.second->p_Update(dt, mp);
         }
 
-        // Override these in derived classes to add internal functionality.
+        // Override these in derived classes to add Headers functionality.
         void BaseComponent::OnMouseClick(const Vector2& mp) {}
         void BaseComponent::OnMouseDown(const Vector2& mousePos) {}
         void BaseComponent::OnMouseHover(const Vector2& mousePos) {}

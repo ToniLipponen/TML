@@ -1,6 +1,6 @@
-#include "internal/_Assert.h"
-#include "internal/GlDebug.h"
-#include "internal/Shader.h"
+#include "_Assert.h"
+#include "GlDebug.h"
+#include "Shader.h"
 #include <GLHeader.h>
 #include <string>
 #include <fstream>

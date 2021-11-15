@@ -1,7 +1,7 @@
 #pragma once
-#include "Types.h"
-#include "Vector2.h"
-#include "Image.h"
+#include "TML/Utilities/Types.h"
+#include "TML/Utilities/Vector2.h"
+#include "TML/Graphics/Image.h"
 #include <string>
 
 namespace tml
@@ -43,7 +43,7 @@ namespace tml
     private:
         ClampMode m_clampMode = ClampToBorder;
         Filter m_minFilter = LinearMipmapLinear;
-        Filter m_magFilter = Linear;
+        Filter m_magFilter = LinearMipmapLinear;
         ui32 m_id;
         i32 m_width, m_height, m_bpp;
         ui8 *m_pixelData = nullptr;

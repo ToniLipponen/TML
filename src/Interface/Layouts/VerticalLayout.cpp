@@ -1,6 +1,6 @@
 #include <TML/Interface/Layouts/VerticalLayout.h>
 #include <TML/Utilities/Utilities.h>
-#include <TML/Renderer.h>
+#include <TML/Graphics/Renderer.h>
 
 namespace tml
 {
