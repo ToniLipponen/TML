@@ -5,7 +5,12 @@ TML is a simple library for making games and applications. It provides relativel
 
 # Building
 <h2>Linux:</h2>
-In terminal:<br>
+Before building on Linux, you might need to install the X11 development packages.<br>
+On Ubuntu base distributions:
+<code>sudo apt install xorg-dev</code><br>
+On RHEL/Fedora based distributions:
+<code>sudo dnf install libXcursor-devel libXi-devel libXinerama-devel libXrandr-devel</code><br><br>
+And then in terminal:<br>
 1. git clone --recursive "https://github.com/ToniLipponen/TML.git"<br>
 2. cd TML<br>
 3. cmake .<br>
