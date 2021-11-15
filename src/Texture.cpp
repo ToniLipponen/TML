@@ -78,13 +78,15 @@ namespace tml
         #ifdef TML_USE_GLES
             GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
             GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-            GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-            GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+            GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_minFilter));
+            GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_magFilter));
+            GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8));
         #else
             GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_S,     m_clampMode));
             GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_T,     m_clampMode));
             GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, m_minFilter));
             GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, m_magFilter));
+            GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MAX_LEVEL, 8));
         #endif
 
         if(m_width > 0 && m_height > 0)
@@ -102,12 +104,11 @@ namespace tml
                 }
                 #ifdef TML_USE_GLES
                     GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, m_pixelData));
+                    GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
                 #else
-                GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, m_pixelData));
-
-                // Not using these two guys at the moment. glTextureStorage2D throws an error for some reason.
-                // GL_CALL(glTextureStorage2D(m_id, 1, ch, m_width, m_height));
-                // GL_CALL(glTextureSubImage2D(m_id, m_mipmapLevel, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, m_pixelData));
+                    GL_CALL(glTextureStorage2D(m_id, 8, ch, m_width, m_height));
+                    GL_CALL(glTextureSubImage2D(m_id, m_mipmapLevel, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, m_pixelData));
+                    GL_CALL(glGenerateTextureMipmap(m_id));
                 #endif
             }
         }

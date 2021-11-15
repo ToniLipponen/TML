@@ -42,7 +42,7 @@ namespace tml
         constexpr ui32 GetID() const { return m_id; }
     private:
         ClampMode m_clampMode = ClampToBorder;
-        Filter m_minFilter = Linear;
+        Filter m_minFilter = LinearMipmapLinear;
         Filter m_magFilter = Linear;
         ui32 m_id;
         i32 m_width, m_height, m_bpp;
