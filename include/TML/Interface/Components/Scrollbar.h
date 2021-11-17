@@ -1,5 +1,5 @@
 #pragma once
-#include <TML/Interface/InterfaceComponent.h>
+#include <TML/Interface/BaseComponent.h>
 
 namespace tml
 {

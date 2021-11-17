@@ -1,5 +1,5 @@
 #pragma once
-#include <TML/Interface/InterfaceComponent.h>
+#include <TML/Interface/BaseComponent.h>
 #include "Button.h"
 
 namespace tml
@@ -20,6 +20,8 @@ namespace tml
             void Decrement();
             void OnMouseClick(const Vector2& p) override;
             void OnUpdate(double dt) override;
+            void OnMoved() override;
+            void OnResized() override;
             virtual void Draw() override;
             T m_value = 0;
             T m_increment = 1;

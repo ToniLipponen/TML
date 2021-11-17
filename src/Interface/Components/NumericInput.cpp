@@ -25,13 +25,12 @@ namespace tml
             m_valueStr = std::to_string(m_value);
             m_cursorIndex = m_valueStr.length();
 
-            auto buttonPos = m_pos - Vector2(h/2, 0);
-            buttonPos.x += m_size.x;
+            auto buttonPos = m_pos;
+            buttonPos.x += m_size.x - m_size.y / 2;
             m_incrementButton = new Button(buttonPos.x, buttonPos.y,        h/2, h/2, "+");
             m_decrementButton = new Button(buttonPos.x, buttonPos.y + h/2,  h/2, h/2, "-");
             AddChild(m_decrementButton);
             AddChild(m_incrementButton);
-            m_size.x -= h / 2;
 
             m_incrementButton->SetTextSize(h * 0.8);
             m_decrementButton->SetTextSize(h * 0.8);
@@ -77,14 +76,6 @@ namespace tml
         template<typename T>
         void NumericInput<T>::OnUpdate(double dt)
         {
-            auto buttonPos = m_pos;
-            buttonPos.x += m_size.x;
-
-            m_incrementButton->SetSize({m_size.y / 2, (m_size.y / 2)});
-            m_decrementButton->SetSize({m_size.y / 2, (m_size.y / 2)});
-            m_incrementButton->SetPosition(buttonPos);
-            m_decrementButton->SetPosition({buttonPos.x, buttonPos.y + (m_size.y / 2)});
-
             m_repeatTimer = Util::Max(m_repeatTimer += dt, 0.11f);
             if(m_state.Focused)
             {
@@ -161,6 +152,29 @@ namespace tml
             m_value = Util::StringToType<T>(m_valueStr);
         }
 
+        template<typename T>
+        void NumericInput<T>::OnMoved()
+        {
+            auto buttonPos = m_pos;
+            buttonPos.x += m_size.x - m_size.y / 2;
+
+            m_incrementButton->SetSize({m_size.y / 2, (m_size.y / 2)});
+            m_decrementButton->SetSize({m_size.y / 2, (m_size.y / 2)});
+            m_incrementButton->SetPosition(buttonPos);
+            m_decrementButton->SetPosition({buttonPos.x, buttonPos.y + (m_size.y / 2)});
+        }
+
+        template<typename T>
+        void NumericInput<T>::OnResized()
+        {
+            auto buttonPos = m_pos;
+            buttonPos.x += m_size.x - m_size.y / 2;
+            m_incrementButton->SetSize({m_size.y / 2, (m_size.y / 2)});
+            m_decrementButton->SetSize({m_size.y / 2, (m_size.y / 2)});
+            m_incrementButton->SetPosition(buttonPos);
+            m_decrementButton->SetPosition({buttonPos.x, buttonPos.y + (m_size.y / 2)});
+        }
+
 
         template<typename T>
         void NumericInput<T>::Draw()
@@ -182,12 +196,12 @@ namespace tml
             {
                 Renderer::DrawLine({cursorX, m_pos.y + (m_size.y / 10.0f)}, {cursorX, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
                 Renderer::ResetBounds();
-                Renderer::DrawGrid(pos, size, 1, 1, m_activeColor, 1);
+                Renderer::DrawGrid(pos, size - Vector2(m_size.y/2, 0), 1, 1, m_activeColor, 1);
             }
             else
             {
                 Renderer::ResetBounds();
-                Renderer::DrawGrid(pos, size, 1, 1, m_sColor, 1);
+                Renderer::DrawGrid(pos, size - Vector2(m_size.y/2, 0), 1, 1, m_sColor, 1);
             }
         }
 

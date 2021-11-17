@@ -1,5 +1,5 @@
 #pragma once
-#include "../InterfaceComponent.h"
+#include "../BaseComponent.h"
 #include "Listbox.h"
 #include <string>
 

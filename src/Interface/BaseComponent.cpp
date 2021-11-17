@@ -1,4 +1,4 @@
-#include <TML/Interface/InterfaceComponent.h>
+#include <TML/Interface/BaseComponent.h>
 #include <TML/Graphics/Renderer.h>
 #include <TML/IO/Input.h>
 #include <TML/Utilities/Clock.h>
