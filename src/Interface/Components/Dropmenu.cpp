@@ -10,8 +10,8 @@ namespace tml
     {
         DropMenu::DropMenu(i32 x, i32 y, ui32 width, ui32 height)
         {
-            m_pos = Vector2(x,y);
-            m_size = Vector2(width, height);
+            m_pos = Vector2i(x,y);
+            m_size = Vector2i(width, height);
             AddChild(m_listComponent = new Listbox(x, y + height + 2, width, 0));
             m_listComponent->Disable();
         }
@@ -19,7 +19,7 @@ namespace tml
         void DropMenu::AddValue(std::string value)
         {
             m_listComponent->AddValue(std::move(value));
-            m_listComponent->SetSize(Vector2(m_size.x, m_listComponent->GetElementsCount() * 20.f));
+            m_listComponent->SetSize(Vector2i(m_size.x, m_listComponent->GetElementsCount() * 20.f));
         }
 
         void DropMenu::SetValue(ui32 index, std::string value)
@@ -63,12 +63,12 @@ namespace tml
 
         }
 
-        void DropMenu::OnMouseClick(const Vector2 &mousePos)
+        void DropMenu::OnMouseClick(const Vector2i &mousePos)
         {
 
         }
 
-        void DropMenu::OnMouseDown(const Vector2 &mousePos)
+        void DropMenu::OnMouseDown(const Vector2i &mousePos)
         {
 
         }

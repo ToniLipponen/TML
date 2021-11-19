@@ -15,15 +15,15 @@ namespace tml
 
             if(axis == Horizontal)
             {
-                m_pos = Vector2(x,y);
-                m_size = Vector2(size, thickness);
+                m_pos = Vector2i(x,y);
+                m_size = Vector2i(size, thickness);
                 m_vSizePolicy = Fixed;
                 m_hSizePolicy = Expand;
             }
             else
             {
-                m_pos = Vector2(x,y);
-                m_size = Vector2(thickness, size);
+                m_pos = Vector2i(x,y);
+                m_size = Vector2i(thickness, size);
                 m_vSizePolicy = Expand;
                 m_hSizePolicy = Fixed;
             }
@@ -36,18 +36,18 @@ namespace tml
         }
 
         template<ComponentAxis axis>
-        void Slider<axis>::OnMouseDown(const Vector2& mp)
+        void Slider<axis>::OnMouseDown(const Vector2i& mp)
         {
 
         }
 
         template<ComponentAxis axis>
-        void Slider<axis>::OnMouseDrag(const Vector2& mp)
+        void Slider<axis>::OnMouseDrag(const Vector2i& mp)
         {
             if(axis == Horizontal)
-                m_value = Util::Clamp((mp.x - m_pos.x) / m_size.x * m_max, m_min, m_max);
+                m_value = Util::Clamp(float(mp.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
             else
-                m_value = Util::Clamp(m_max - ((mp.y - m_pos.y) / m_size.y * m_max), m_min, m_max);
+                m_value = Util::Clamp(m_max - float((mp.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
         }
 
         template<ComponentAxis axis>
@@ -59,10 +59,10 @@ namespace tml
             else
                 Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor);
             if(axis == Horizontal)
-                Renderer::DrawRect(m_pos, {Util::Lerp({0,0}, m_size, m_value / m_max).x, m_size.y}, m_activeColor);
+                Renderer::DrawRect(m_pos, {Util::Lerp<Vector2f>({0.f,0.f}, m_size, m_value / m_max).x, (float)m_size.y}, m_activeColor);
             else
-                Renderer::DrawRect(m_pos + Vector2(0, Util::Lerp({0,0}, m_size, 1.0 - m_value / m_max).y),
-                                   {m_size.x, m_size.y - Util::Lerp({0,0}, m_size, 1.0 - m_value / m_max).y}, m_activeColor);
+                Renderer::DrawRect(m_pos + Vector2i(0, Util::Lerp<Vector2f>({0,0}, m_size, 1.0 - m_value / m_max).y),
+                               Vector2f(m_size.x, m_size.y - Util::Lerp<Vector2f>({0,0}, m_size, 1.0 - m_value / m_max).y), m_activeColor);
         }
         template class Slider<Vertical>;
         template class Slider<Horizontal>;

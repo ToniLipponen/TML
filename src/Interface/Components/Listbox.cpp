@@ -7,8 +7,8 @@ namespace tml
     {
         Listbox::Listbox(i32 x, i32 y, ui32 width, ui32 height)
         {
-            m_pos = Vector2(x, y);
-            m_size = Vector2(width, height);
+            m_pos = Vector2i(x, y);
+            m_size = Vector2i(width, height);
             m_scrollbar = new Scrollbar<Vertical>(x + width - 21, y+1, height-2);
             m_scrollbar->Disable();
             AddChild(m_scrollbar);
@@ -100,12 +100,12 @@ namespace tml
 
         void Listbox::OnMoved()
         {
-            m_scrollbar->SetPosition(m_pos + Vector2(m_size.x - 21, 1));
+            m_scrollbar->SetPosition(m_pos + Vector2i(m_size.x - 21, 1));
         }
 
         void Listbox::OnResized()
         {
-            m_scrollbar->SetPosition(m_pos + Vector2(m_size.x - 21, 1));
+            m_scrollbar->SetPosition(m_pos + Vector2i(m_size.x - 21, 1));
             m_scrollbar->SetSize({m_scrollbar->GetSize().x, m_size.y - 2});
 
             const auto overflow = GetOverFlow();
@@ -116,15 +116,15 @@ namespace tml
             }
         }
 
-        void Listbox::OnMouseClick(const Vector2 &mousePos)
+        void Listbox::OnMouseClick(const Vector2i &mousePos)
         {
-            auto PointInRect = [&](const Vector2 &tl, const Vector2 &br)
+            auto PointInRect = [&](const Vector2i &tl, const Vector2i &br)
             {
                 return (mousePos < br && mousePos > tl);
             };
             for(int i = 0; i < m_values.size(); i++)
             {
-                if(PointInRect(m_pos + Vector2(0, i * 20), m_pos + Vector2(m_size.x - 20, (i * 20) + 20)))
+                if(PointInRect(m_pos + Vector2i(0, i * 20), m_pos + Vector2i(m_size.x - 20, (i * 20) + 20)))
                 {
                     m_selectedIndex = i + m_scrollbar->GetValue();
                     break;
@@ -148,18 +148,18 @@ namespace tml
         {
             Renderer::DrawRect(m_pos, m_size, m_pColor);
 
-            const Vector2 pos = m_pos + Vector2(1, 1);
-            const Vector2 size = m_size - Vector2(2, 2);
+            const Vector2i pos = m_pos + Vector2i(1, 1);
+            const Vector2i size = m_size - Vector2i(2, 2);
 
             if(m_selectedIndex >= 0 && m_selectedIndex < m_values.size() && Util::InRange<float>(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20), m_size.y - 20))
             {
-                Renderer::DrawRect(m_pos + Vector2(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20)), {m_size.x, 20.f}, m_activeColor);
+                Renderer::DrawRect(m_pos + Vector2i(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20)), {m_size.x, 20.f}, m_activeColor);
             }
 
             Renderer::SetBounds(m_pos, m_size);
             for(int i = 0; i < m_values.size(); i++)
             {
-                Renderer::DrawText(m_values.at(i), m_pos + Vector2(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20, BLACK);
+                Renderer::DrawText(m_values.at(i), m_pos + Vector2i(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20, BLACK);
             }
             Renderer::ResetBounds();
 

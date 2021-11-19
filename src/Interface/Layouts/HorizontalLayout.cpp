@@ -8,16 +8,21 @@ namespace tml
     {
         HorizontalLayout::HorizontalLayout(i32 x, i32 y, ui32 w, ui32 h)
         {
-            m_pos = Vector2(x,y);
-            m_size = Vector2(w,h);
+            m_pos = Vector2i(x,y);
+            m_size = Vector2i(w,h);
             m_hSizePolicy = Expand;
             m_vSizePolicy = Expand;
         }
 
         void HorizontalLayout::OnUpdate(double dt)
         {
-            ScaleChildren();
-            AlignChildren();
+            static ui64 oldChildrenSize = 0;
+            if(m_children.size() != oldChildrenSize)
+            {
+                ScaleChildren();
+                AlignChildren();
+                oldChildrenSize = m_children.size();
+            }
         }
 
         void HorizontalLayout::ScaleChildren()
@@ -60,7 +65,7 @@ namespace tml
                 return;
 
             for(auto i : expandThese)
-                i->SetSize({expandSize, i->GetSize().y});
+                i->SetSize({static_cast<int>(expandSize), i->GetSize().y});
         }
 
         void HorizontalLayout::AlignChildren()
@@ -90,13 +95,13 @@ namespace tml
                 switch(m_hAlignPolicy)
                 {
                     case Far:
-                        i->SetPosition({m_pos.x + offset, m_pos.y + m_size.y - itemSize.y});
+                        i->SetPosition({static_cast<int>(m_pos.x + offset), m_pos.y + m_size.y - itemSize.y});
                         break;
                     case Center:
-                        i->SetPosition({m_pos.x + offset, m_pos.y + ((m_size.y - itemSize.y) / 2)});
+                        i->SetPosition({static_cast<int>(m_pos.x + offset), m_pos.y + ((m_size.y - itemSize.y) / 2)});
                         break;
                     default:
-                        i->SetPosition({m_pos.x + offset, m_pos.y});
+                        i->SetPosition({static_cast<int>(m_pos.x + offset), m_pos.y});
                         break;
                 }
                 if(m_vAlignPolicy == Far)
@@ -104,6 +109,18 @@ namespace tml
                 else
                     offset += i->GetSize().x + m_padding.x;
             }
+        }
+
+        void HorizontalLayout::OnResized()
+        {
+            ScaleChildren();
+            AlignChildren();
+        }
+
+        void HorizontalLayout::OnMoved()
+        {
+            ScaleChildren();
+            AlignChildren();
         }
     }
 }

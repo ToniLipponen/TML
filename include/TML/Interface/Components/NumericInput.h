@@ -18,7 +18,7 @@ namespace tml
         private:
             void Increment();
             void Decrement();
-            void OnMouseClick(const Vector2& p) override;
+            void OnMouseClick(const Vector2i& p) override;
             void OnUpdate(double dt) override;
             void OnMoved() override;
             void OnResized() override;

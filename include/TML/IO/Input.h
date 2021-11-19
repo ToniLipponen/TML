@@ -143,7 +143,7 @@ namespace tml
     public:
         enum Button {Left, Right, Middle, Four, Five, Six, Seven, Last};
 
-        static Vector2 GetPosition();
+        static Vector2d GetPosition();
         static bool ButtonDown(Button button);
         static double GetScrollValue();
     };

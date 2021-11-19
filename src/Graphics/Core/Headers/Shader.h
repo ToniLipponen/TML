@@ -3,8 +3,10 @@
 #include <string>
 #include <unordered_map>
 
-namespace tml {
-    class Shader {
+namespace tml
+{
+    class Shader
+    {
     public:
         Shader();
         Shader(cstring vs, cstring fs);
@@ -51,7 +53,7 @@ namespace tml {
     public:
         void SetFloat(const std::string &name, f32 value) const;
         void SetInt(const std::string &name, i32 value) const;
-        void SetVec2(const std::string &name, const Vector2 &vector) const;
+        void SetVec2(const std::string &name, const Vector2f &vector) const;
 
     private:
         inline i32 GetUniformLocation(const std::string &name) const;

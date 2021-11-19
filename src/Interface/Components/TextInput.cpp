@@ -7,14 +7,14 @@ extern tml::Text* DEFAULT_TEXT;
 
 TextInput::TextInput(i32 x, i32 y, i32 width, i32 height)
 {
-    m_pos = Vector2(x,y);
-    m_size = Vector2(width, height);
+    m_pos = Vector2i(x,y);
+    m_size = Vector2i(width, height);
 
     m_hSizePolicy = Expand;
     m_vSizePolicy = Fixed;
 }
 
-void TextInput::OnMouseClick(const Vector2 &p)
+void TextInput::OnMouseClick(const Vector2i &p)
 {
     Keyboard::BeginString();
 }
@@ -99,13 +99,13 @@ void TextInput::Draw()
     DEFAULT_TEXT->SetString(m_value.substr(0, m_cursorIndex));
     DEFAULT_TEXT->SetString(m_value);
 
-    const Vector2 pos = m_pos + Vector2(1,1);
-    const Vector2 size = m_size - Vector2(2,2);
-    const auto cursorX = Util::Clamp(pos.x + DEFAULT_TEXT->GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
+    const Vector2i pos = m_pos + Vector2i(1,1);
+    const Vector2i size = m_size - Vector2i(2,2);
+    const float cursorX = Util::Clamp<int>(pos.x + DEFAULT_TEXT->GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
 
     Renderer::DrawRect(m_pos, m_size, m_pColor);
     Renderer::SetBounds(m_pos, m_size);
-    Renderer::DrawText(Util::WstringToString(m_value), m_pos + Vector2(0, m_size.y * 0.2f), m_size.y * 0.8, BLACK);
+    Renderer::DrawText(Util::WstringToString(m_value), m_pos + Vector2i(0, m_size.y * 0.2f), m_size.y * 0.8, BLACK);
 
     if(m_state.Focused)
     {

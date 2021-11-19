@@ -14,12 +14,12 @@ namespace tml
             void SetVerticalAlign(AlignPolicy alignPolicy) { m_vAlignPolicy = alignPolicy;}
             inline constexpr AlignPolicy GetHorizontalAlign() const noexcept { return m_hAlignPolicy; }
             inline constexpr AlignPolicy GetVerticalAlign() const noexcept { return m_vAlignPolicy; }
-            void SetPadding(const Vector2& padding){ m_padding = padding; }
-            Vector2 GetPadding() const noexcept { return m_padding; }
+            void SetPadding(const Vector2i& padding){ m_padding = padding; }
+            Vector2i GetPadding() const noexcept { return m_padding; }
         protected:
             AlignPolicy m_hAlignPolicy = Near; // Horizontal align policy.
             AlignPolicy m_vAlignPolicy = Near; // Vertical align policy.
-            Vector2 m_padding = {5, 5};
+            Vector2i m_padding = {5, 5};
         };
     }
 }

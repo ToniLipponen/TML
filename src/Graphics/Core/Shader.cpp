@@ -299,7 +299,7 @@ void Shader::SetInt(const std::string &name, int value) const
     GL_CALL(glad_glProgramUniform1i(m_id, loc, value));
 }
 
-void Shader::SetVec2(const std::string &name, const Vector2 &vector) const
+void Shader::SetVec2(const std::string &name, const Vector2f &vector) const
 {
    int loc = GetUniformLocation(name);
    GL_CALL(glad_glUniform2f(loc, vector.x, vector.y));

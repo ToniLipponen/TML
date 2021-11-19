@@ -7,8 +7,8 @@ namespace tml
     {
         Checkbox::Checkbox(i32 x, i32 y, ui32 size, bool checked)
         {
-            m_pos = Vector2(x,y);
-            m_size = Vector2(size,size);
+            m_pos = Vector2f(x,y);
+            m_size = Vector2f(size,size);
             m_value = checked;
         }
 
@@ -19,7 +19,7 @@ namespace tml
                 Renderer::DrawRect(m_pos + m_size * 0.2f, m_size * 0.6f, m_activeColor);
         }
 
-        void Checkbox::OnMouseClick(const Vector2& mousePos)
+        void Checkbox::OnMouseClick(const Vector2i& mousePos)
         {
             m_value = !m_value;
         }

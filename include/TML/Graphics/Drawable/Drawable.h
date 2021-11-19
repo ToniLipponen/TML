@@ -12,7 +12,7 @@ namespace tml
             m_color = c;
         }
 
-        virtual void SetPosition(const Vector2 &p) noexcept
+        virtual void SetPosition(const Vector2f &p) noexcept
         {
             m_pos = p;
         }
@@ -22,7 +22,7 @@ namespace tml
             m_pos = {x, y};
         }
 
-        virtual void SetSize(const Vector2 &s) noexcept
+        virtual void SetSize(const Vector2f &s) noexcept
         {
             m_size = s;
         }
@@ -41,7 +41,7 @@ namespace tml
             m_rotation = d;
         }
 
-        void Translate(const Vector2 &offset) noexcept
+        void Translate(const Vector2f &offset) noexcept
         {
             m_pos += offset;
         }
@@ -51,12 +51,12 @@ namespace tml
             m_pos += {x,y};
         }
 
-        const Vector2& GetSize() const noexcept
+        const Vector2f& GetSize() const noexcept
         {
             return m_size;
         }
 
-        const Vector2& GetPosition() const noexcept
+        const Vector2f& GetPosition() const noexcept
         {
             return m_pos;
         }
@@ -75,8 +75,8 @@ namespace tml
 
     protected:
         Color m_color = WHITE;
-        Vector2 m_pos = {0, 0};
-        Vector2 m_size = {0, 0};
+        Vector2f m_pos = {0, 0};
+        Vector2f m_size = {0, 0};
         Texture m_tex;
         float m_rotation = 0;
     };

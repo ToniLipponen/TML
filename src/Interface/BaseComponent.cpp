@@ -57,9 +57,9 @@ namespace tml
 
         void BaseComponent::AddChild(BaseComponent* component, const std::string& name)
         {
-            if (component)
+            if(component)
             {
-                if (name == "")
+                if(name == "")
                 {
                     component->m_parent = this;
                     m_children.push_front(std::pair<unsigned long, BaseComponent*>(s_hash(std::to_string(m_children.size())), component));
@@ -80,15 +80,15 @@ namespace tml
 
         BaseComponent* BaseComponent::FindComponent(unsigned long nameHash)
         {
-            if (m_children.empty())
+            if(m_children.empty())
                 return nullptr;
             //        const auto result = std::find_if(m_children.begin(), m_children.end(), [nameHash](std::pair<unsigned long, BaseComponent*> p){return p.first == nameHash;});
 
-            for (auto& i : m_children)
-                if (nameHash == i.first)
+            for(auto& i : m_children)
+                if(nameHash == i.first)
                     return i.second;
 
-            for (auto i : m_children)
+            for(auto i : m_children)
             {
                 auto child_result = i.second->FindComponent(nameHash);
                 if (child_result)
@@ -100,26 +100,26 @@ namespace tml
 
         BaseComponent* BaseComponent::GetParent()
         {
-            if (m_parent)
+            if(m_parent)
                 return m_parent;
             return nullptr;
         }
 
         BaseComponent* BaseComponent::GetRoot()
         {
-            if (!m_parent)
+            if(!m_parent)
                 return this;
             return m_parent->GetRoot();
         }
 
-        bool BaseComponent::ContainsPoint(const Vector2& p)
+        bool BaseComponent::ContainsPoint(const Vector2i& p)
         {
             return (p > m_pos && p < m_pos + m_size);
         }
 
-        void BaseComponent::ProcessEvents(const Vector2& mp, bool mouseDown, Events& childEvents)
+        void BaseComponent::ProcessEvents(const Vector2i& mp, bool mouseDown, Events& childEvents)
         {
-            if (!m_eventStatus.Drag || !childEvents.Drag)
+            if(!m_eventStatus.Drag || !childEvents.Drag)
             {
                 const auto oldMouseOver     = m_eventStatus.MouseOver;
                 m_eventStatus.MouseOver     = (!childEvents.MouseOver && ContainsPoint(mp) && !childEvents.MouseOver);
@@ -129,9 +129,9 @@ namespace tml
                 m_eventStatus.MouseDown     = (m_eventStatus.MouseOver && !childEvents.MouseDown && mouseDown);
                 m_eventStatus.GainedFocus   = (!m_state.Focused && (m_eventStatus.MouseOver && !childEvents.GainedFocus && m_eventStatus.MouseDown));
 
-                if (m_eventStatus.MouseDown)
+                if(m_eventStatus.MouseDown)
                     m_eventStatus.Drag = true;
-                else if (!mouseDown)
+                else if(!mouseDown)
                     m_eventStatus.Drag = false;
 
                 childEvents.MouseOver   = m_eventStatus.MouseOver   || childEvents.MouseOver;
@@ -146,11 +146,11 @@ namespace tml
             m_eventStatus.LostFocus = (m_state.Focused && !m_eventStatus.MouseOver && mouseDown);
         }
 
-        void BaseComponent::Poll(const Vector2& mp, bool mouseDown, Events& events)
+        void BaseComponent::Poll(const Vector2i& mp, bool mouseDown, Events& events)
         {
-            for (auto child : m_children)
+            for(auto child : m_children)
             {
-                if (child.second->m_state.Enabled)
+                if(child.second->m_state.Enabled)
                 {
                     child.second->Poll(mp, mouseDown, events);
                 }
@@ -162,7 +162,7 @@ namespace tml
         {
             static Clock clock;
             const double delta = clock.Reset();
-            const Vector2 mousePos = Mouse::GetPosition();
+            const Vector2i mousePos = Mouse::GetPosition();
             const bool click = Mouse::ButtonDown(Mouse::Left);
             Events event = { false };
             Poll(mousePos, click, event);
@@ -170,84 +170,84 @@ namespace tml
             GetRoot()->p_Update(delta, mousePos);
         }
 
-        void BaseComponent::p_Update(double dt, const Vector2& mp)
+        void BaseComponent::p_Update(double dt, const Vector2i& mp)
         {
-            if (!m_state.Enabled)
+            if(!m_state.Enabled)
                 return;
 
             OnUpdate(dt);
             Draw();
-            if (m_eventStatus.Click)
+            if(m_eventStatus.Click)
             {
                 m_eventStatus.Click = false;
                 OnMouseClick(mp);
-                if (m_onClickFunc.IsNotNull())
+                if(m_onClickFunc.IsNotNull())
                     m_onClickFunc(this);
             }
-            else if (m_eventStatus.MouseDown)
+            else if(m_eventStatus.MouseDown)
             {
                 OnMouseDown(mp);
-                if (m_onMouseDownFunc.IsNotNull())
+                if(m_onMouseDownFunc.IsNotNull())
                     m_onMouseDownFunc(this);
             }
-            if (m_eventStatus.MouseEnter)
+            if(m_eventStatus.MouseEnter)
             {
                 m_eventStatus.MouseEnter = false;
                 OnMouseEnter();
-                if (m_onMouseEnterFunc.IsNotNull())
+                if(m_onMouseEnterFunc.IsNotNull())
                     m_onMouseEnterFunc(this);
             }
-            else if (m_eventStatus.MouseExit)
+            else if(m_eventStatus.MouseExit)
             {
                 m_eventStatus.MouseExit = false;
                 OnMouseExit();
-                if (m_onMouseExitFunc.IsNotNull())
+                if(m_onMouseExitFunc.IsNotNull())
                     m_onMouseExitFunc(this);
             }
-            if (m_eventStatus.MouseOver)
+            if(m_eventStatus.MouseOver)
             {
                 OnMouseHover(mp);
-                if (m_onHoverFunc.IsNotNull())
+                if(m_onHoverFunc.IsNotNull())
                     m_onHoverFunc(this);
             }
-            if (m_eventStatus.GainedFocus)
+            if(m_eventStatus.GainedFocus)
             {
                 m_eventStatus.GainedFocus = false;
                 m_state.Focused = true;
                 OnFocused();
-                if (m_onFocused.IsNotNull())
+                if(m_onFocused.IsNotNull())
                     m_onFocused(this);
             }
-            if (m_eventStatus.LostFocus)
+            if(m_eventStatus.LostFocus)
             {
                 m_eventStatus.LostFocus = false;
                 m_state.Focused = false;
                 OnFocusLost();
-                if (m_onFocusLost.IsNotNull())
+                if(m_onFocusLost.IsNotNull())
                     m_onFocusLost(this);
             }
-            if (m_eventStatus.Drag)
+            if(m_eventStatus.Drag)
             {
                 OnMouseDrag(mp);
-                if (m_onDragFunc.IsNotNull())
+                if(m_onDragFunc.IsNotNull())
                     m_onDragFunc(this);
             }
 
-            if (m_onUpdate.IsNotNull())
+            if(m_onUpdate.IsNotNull())
                 m_onUpdate(this);
-            for (auto& i : m_children)
+            for(auto& i : m_children)
                 i.second->p_Update(dt, mp);
         }
 
-        // Override these in derived classes to add Headers functionality.
-        void BaseComponent::OnMouseClick(const Vector2& mp) {}
-        void BaseComponent::OnMouseDown(const Vector2& mousePos) {}
-        void BaseComponent::OnMouseHover(const Vector2& mousePos) {}
-        void BaseComponent::OnMouseEnter() {}
-        void BaseComponent::OnMouseExit() {}
-        void BaseComponent::OnMouseDrag(const Vector2& mousePos) {}
-        void BaseComponent::OnUpdate(double dt) {}
-        void BaseComponent::OnFocused() {}
-        void BaseComponent::OnFocusLost() {}
+        // Override these in derived classes to add internal event based functionality.
+        void BaseComponent::OnMouseClick(const Vector2i& mousePos){}
+        void BaseComponent::OnMouseDown(const Vector2i& mousePos){}
+        void BaseComponent::OnMouseHover(const Vector2i& mousePos){}
+        void BaseComponent::OnMouseEnter(){}
+        void BaseComponent::OnMouseExit(){}
+        void BaseComponent::OnMouseDrag(const Vector2i& mousePos){}
+        void BaseComponent::OnUpdate(double dt){}
+        void BaseComponent::OnFocused(){}
+        void BaseComponent::OnFocusLost(){}
     }
 }

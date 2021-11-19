@@ -8,11 +8,11 @@ namespace tml
         template<ComponentAxis axis>
         Scrollbar<axis>::Scrollbar(i32 x, i32 y, ui32 length, ui32 thickness)
         {
-            m_pos = Vector2(x,y);
+            m_pos = Vector2i(x,y);
             if(axis == Horizontal)
-                m_size = Vector2(length, thickness);
+                m_size = Vector2i(length, thickness);
             else
-                m_size = Vector2(thickness, length);
+                m_size = Vector2i(thickness, length);
             m_sColor = 0x4d8be4ff;
             m_pColor = 0xccccccff;
         }
@@ -46,13 +46,13 @@ namespace tml
         }
 
         template<ComponentAxis axis>
-        void Scrollbar<axis>::OnMouseClick(const Vector2& mousePos)
+        void Scrollbar<axis>::OnMouseClick(const Vector2i& mousePos)
         {
             OnMouseDrag(mousePos);
         }
 
         template<ComponentAxis axis>
-        void Scrollbar<axis>::OnMouseDrag(const Vector2 &mousePos)
+        void Scrollbar<axis>::OnMouseDrag(const Vector2i &mousePos)
         {
             if(axis == Horizontal)
                 m_value = Util::Clamp<i32>((mousePos.x - m_pos.x) / m_size.x * m_max, m_min, m_max);

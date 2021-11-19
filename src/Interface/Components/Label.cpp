@@ -29,7 +29,7 @@ namespace tml
             m_size = DEFAULT_TEXT->GetDimensions();
         }
 
-        bool Label::ContainsPoint(const Vector2 &p)
+        bool Label::ContainsPoint(const Vector2i &p)
         {
             DEFAULT_TEXT->SetString(m_text);
             DEFAULT_TEXT->SetSize(m_fontSize);

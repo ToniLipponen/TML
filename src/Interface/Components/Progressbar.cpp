@@ -9,8 +9,8 @@ namespace tml
     {
         Progressbar::Progressbar(i32 x, i32 y, ui32 w, ui32 h)
         {
-            m_pos = Vector2(x,y);
-            m_size = Vector2(w,h);
+            m_pos = Vector2i(x,y);
+            m_size = Vector2i(w,h);
         }
 
         void Progressbar::Draw()

@@ -16,8 +16,8 @@ namespace tml
     Text::Text()
     {
         m_color = {255,255,255};
-        m_pos = {0,0};
-        m_size = {32,32};
+        m_pos = Vector2f{0,0};
+        m_size = Vector2f{32,32};
         #ifndef _WIN32
             m_font.LoadFromMemory(gDEFAULT_FONTData, gDEFAULT_FONTSize);
         #else
@@ -29,8 +29,8 @@ namespace tml
     : m_string(Util::StringToWstring(text))
     {
         m_color = {255,255,255};
-        m_pos = {0,0};
-        m_size = {32,32};
+        m_pos = Vector2f{0,0};
+        m_size = Vector2f{32,32};
         #ifndef _WIN32
             m_font.LoadFromMemory(gDEFAULT_FONTData, gDEFAULT_FONTSize);
         #else
@@ -44,8 +44,8 @@ namespace tml
     {
         m_font.LoadFromFile(font_file_name);
         m_color = {255,255,255};
-        m_pos = {0,0};
-        m_size = {32,32};
+        m_pos = Vector2f{0,0};
+        m_size = Vector2f{32,32};
         Generate();
     }
 
@@ -54,12 +54,12 @@ namespace tml
     {
         m_font = font;
         m_color = {255,255,255};
-        m_pos = {0,0};
-        m_size = {32,32};
+        m_pos = Vector2f{0,0};
+        m_size = Vector2f{32,32};
         Generate();
     }
 
-    void Text::SetPosition(const Vector2 &pos) noexcept
+    void Text::SetPosition(const Vector2f &pos) noexcept
     {
         if(m_pos.x == pos.x && m_pos.y == pos.y) // Checking this every time is faster than Generate()
             return;
@@ -69,7 +69,7 @@ namespace tml
 
     void Text::SetSize(float s)
     {
-        m_size = {s,s};
+        m_size = Vector2f{s,s};
         Generate();
     }
 
@@ -115,7 +115,7 @@ namespace tml
 
     void Text::Generate() noexcept
     {
-        m_dimensions = {0, m_size.y};
+        m_dimensions = Vector2f{0, m_size.y};
         float x = 0, y = 64.f;
         float width = 0, height = 0;
         ui32 count = 0;

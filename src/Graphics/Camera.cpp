@@ -7,13 +7,13 @@ namespace tml
 {
     Camera::Camera() = default;
 
-    Camera::Camera(const tml::Vector2 &pos, float zoom, float rotation)
+    Camera::Camera(const Vector2f &pos, float zoom, float rotation)
     : m_pos(pos), m_zoom(zoom), m_rotation(rotation)
     {
 
     }
 
-    void Camera::Move(const Vector2 &offset)
+    void Camera::Move(const Vector2f &offset)
     {
         m_pos += offset;
     }
@@ -28,7 +28,7 @@ namespace tml
         m_rotation += d;
     }
 
-    void Camera::SetPosition(const Vector2& position)
+    void Camera::SetPosition(const Vector2f& position)
     {
         m_pos = position;
     }
@@ -43,7 +43,7 @@ namespace tml
         m_rotation = d;
     }
 
-    Vector2 Camera::GetPosition() const noexcept
+    Vector2f Camera::GetPosition() const noexcept
     {
         return m_pos;
     }
@@ -58,7 +58,7 @@ namespace tml
         return m_rotation;
     }
 
-    Vector2 Camera::ScreenToWorld(const Vector2 &point) const noexcept
+    Vector2f Camera::ScreenToWorld(const Vector2f &point) const noexcept
     {
         static int f[4];
         glad_glGetIntegerv(GL_VIEWPORT, f);
@@ -71,6 +71,6 @@ namespace tml
         m = glm::inverse(m);
         const auto res = m * glm::vec4(point.x, point.y, -1, 1);
 
-        return Vector2{res.x, res.y} + (m_pos - (m_pos / m_zoom));
+        return Vector2f{res.x, res.y} + (m_pos - (m_pos / m_zoom));
     }
 }

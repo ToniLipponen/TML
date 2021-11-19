@@ -20,8 +20,8 @@ namespace tml
         private:
             void Draw() override;
             void OnUpdate(double dt) override;
-            void OnMouseClick(const Vector2& mousePos) override;
-            void OnMouseDown(const Vector2& mousePos) override;
+            void OnMouseClick(const Vector2i& mousePos) override;
+            void OnMouseDown(const Vector2i& mousePos) override;
             void OnFocused() override;
             void OnFocusLost() override;
 

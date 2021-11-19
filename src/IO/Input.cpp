@@ -12,12 +12,12 @@ static std::map<tml::i32, tml::i32> s_keyMap;
 static std::map<tml::i32, tml::i32> s_mouseButtonMap;
 static std::wstring s_string;
 static double s_mouseScrollValue = 0;
-static tml::Vector2 s_mousePos;
+static tml::Vector2d s_mousePos;
 
 extern "C" void MouseMoveCallback(GLFWwindow* window, double x, double y)
 {
-    s_mousePos.x = static_cast<float>(x);
-    s_mousePos.y = static_cast<float>(y);
+    s_mousePos.x = x;
+    s_mousePos.y = y;
 }
 
 extern "C" void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
@@ -88,7 +88,7 @@ namespace tml
         return s_keyMap[key] == GLFW_REPEAT || s_keyMap[key] == GLFW_PRESS;
     }
 
-    Vector2 Mouse::GetPosition()
+    Vector2d Mouse::GetPosition()
     {
         return s_mousePos;
     }

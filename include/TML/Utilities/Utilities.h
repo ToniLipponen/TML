@@ -8,8 +8,8 @@ namespace tml
 {
     namespace Util
     {
-
-        inline Vector2 Rotate(const Vector2 &origin, Vector2 p, float r)
+        template<typename T>
+        inline Vector2<T> Rotate(const Vector2<T> &origin, Vector2<T> p, float r)
         {
             r = (r * 0.01745329f);
             p -= origin;
@@ -82,20 +82,25 @@ namespace tml
             return false;
         }
 
-        inline bool PointInRect(const Vector2& point, const Vector2& p, const Vector2& s, float rotation)
+        inline bool PointInRect(const Vector2f& point, const Vector2f& p, const Vector2f& s, float rotation)
         {
             const auto npoint = Rotate(p + (s*0.5), point, -rotation);
             return (p < npoint && npoint < p+s);
         }
 
-        inline bool PointInCircle(const Vector2& point, const Vector2& p, float r)
+        inline float Distance(const Vector2f &a, const Vector2f &b) noexcept
         {
-            return (Vector2::Distance(point, p) <= r);
+            return 0;
         }
 
-        inline Vector2 AngleToHeading(float degrees) noexcept
+        inline bool PointInCircle(const Vector2f& point, const Vector2f& p, float r)
         {
-            return Vector2(std::cos(degrees * 0.01745329f), std::sin(degrees * 0.01745329f)).Normalized();
+            return (Distance(point, p) <= r);
+        }
+
+        inline Vector2f AngleToHeading(float degrees) noexcept
+        {
+            return Vector2f(std::cos(degrees * 0.01745329f), std::sin(degrees * 0.01745329f)).Normalized();
         }
     }
 }

@@ -9,7 +9,7 @@ using namespace Interface;
 
 int main()
 {
-    Window window(800, 600, "GUI TESTING", Window::Resizeable);
+    Window window(800, 600, "GUI TESTING", Window::Resizeable | Window::Antialias);
     Renderer::Init();
     Renderer::SetClearColor(WHITE);
 
@@ -23,9 +23,9 @@ int main()
     vlayout->AddChild(new TextInput(0,0,400, 30));
     vlayout->AddChild(new NumericInput<int>(0,0,400,30));
     vlayout->AddChild(progressbar);
-    vlayout->AddChild(new Slider<Horizontal>(0,0, 400, 30));
+    vlayout->AddChild(new Slider<Horizontal>(0,0, 400, 15));
     vlayout->AddChild(dropmenu);
-    vlayout->AddChild(new Checkbox(0,0,30));
+    vlayout->AddChild(new Checkbox(0,0,20));
 
     HorizontalLayout hlayout(0,0, 800, 600);
     hlayout.AddChild(list);

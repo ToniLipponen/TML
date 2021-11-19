@@ -12,20 +12,19 @@ namespace tml
         template<typename T>
         NumericInput<T>::NumericInput()
         {
-            Object(0,0,0,0);
             m_value = 0;
         }
 
         template<typename T>
         NumericInput<T>::NumericInput(i32 x, i32 y, ui32 w, ui32 h, T value)
         {
-            m_pos = Vector2(x,y);
-            m_size = Vector2(w,h);
+            m_pos = Vector2i(x,y);
+            m_size = Vector2i(w,h);
             m_value = value;
             m_valueStr = std::to_string(m_value);
             m_cursorIndex = m_valueStr.length();
 
-            auto buttonPos = m_pos;
+            Vector2i buttonPos = m_pos;
             buttonPos.x += m_size.x - m_size.y / 2;
             m_incrementButton = new Button(buttonPos.x, buttonPos.y,        h/2, h/2, "+");
             m_decrementButton = new Button(buttonPos.x, buttonPos.y + h/2,  h/2, h/2, "-");
@@ -68,7 +67,7 @@ namespace tml
         }
 
         template<typename T>
-        void NumericInput<T>::OnMouseClick(const Vector2 &p)
+        void NumericInput<T>::OnMouseClick(const Vector2i &p)
         {
             Keyboard::BeginString();
         }
@@ -158,10 +157,10 @@ namespace tml
             auto buttonPos = m_pos;
             buttonPos.x += m_size.x - m_size.y / 2;
 
-            m_incrementButton->SetSize({m_size.y / 2, (m_size.y / 2)});
-            m_decrementButton->SetSize({m_size.y / 2, (m_size.y / 2)});
-            m_incrementButton->SetPosition(buttonPos);
-            m_decrementButton->SetPosition({buttonPos.x, buttonPos.y + (m_size.y / 2)});
+            ((Object*)m_incrementButton)->SetSize({m_size.y / 2, (m_size.y / 2)});
+            ((Object*)m_decrementButton)->SetSize({m_size.y / 2, (m_size.y / 2)});
+            ((Object*)m_incrementButton)->SetPosition(buttonPos);
+            ((Object*)m_decrementButton)->SetPosition({buttonPos.x, buttonPos.y + (m_size.y / 2)});
         }
 
         template<typename T>
@@ -169,10 +168,10 @@ namespace tml
         {
             auto buttonPos = m_pos;
             buttonPos.x += m_size.x - m_size.y / 2;
-            m_incrementButton->SetSize({m_size.y / 2, (m_size.y / 2)});
-            m_decrementButton->SetSize({m_size.y / 2, (m_size.y / 2)});
-            m_incrementButton->SetPosition(buttonPos);
-            m_decrementButton->SetPosition({buttonPos.x, buttonPos.y + (m_size.y / 2)});
+            ((Object*)m_incrementButton)->SetSize(Vector2i{m_size.y / 2, (m_size.y / 2)});
+            ((Object*)m_decrementButton)->SetSize({m_size.y / 2, (m_size.y / 2)});
+            ((Object*)m_incrementButton)->SetPosition(buttonPos);
+            ((Object*)m_decrementButton)->SetPosition({buttonPos.x, buttonPos.y + (m_size.y / 2)});
         }
 
 
@@ -184,24 +183,24 @@ namespace tml
             DEFAULT_TEXT->SetString(m_valueStr.substr(0, m_cursorIndex));
             DEFAULT_TEXT->SetString(m_valueStr);
 
-            const Vector2 pos = m_pos + Vector2(1,1);
-            const Vector2 size = m_size - Vector2(2,2);
-            const auto cursorX = Util::Clamp(pos.x + DEFAULT_TEXT->GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x);
+            const Vector2i pos = m_pos + Vector2i(1,1);
+            const Vector2i size = m_size - Vector2i(2,2);
+            const float cursorX = Util::Clamp<int>(pos.x + DEFAULT_TEXT->GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x);
 
             Renderer::DrawRect(m_pos, m_size, m_pColor);
             Renderer::SetBounds(m_pos, m_size);
-            Renderer::DrawText(m_valueStr, m_pos + Vector2(0, m_size.y * 0.2f), m_size.y * 0.8f, BLACK);
+            Renderer::DrawText(m_valueStr, m_pos + Vector2i(0, m_size.y * 0.2f), m_size.y * 0.8f, BLACK);
 
             if(m_state.Focused)
             {
-                Renderer::DrawLine({cursorX, m_pos.y + (m_size.y / 10.0f)}, {cursorX, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
+                Renderer::DrawLine(Vector2f{cursorX, m_pos.y + (m_size.y / 10.0f)}, {cursorX, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
                 Renderer::ResetBounds();
-                Renderer::DrawGrid(pos, size - Vector2(m_size.y/2, 0), 1, 1, m_activeColor, 1);
+                Renderer::DrawGrid(pos, size - Vector2i(m_size.y/2, 0), 1, 1, m_activeColor, 1);
             }
             else
             {
                 Renderer::ResetBounds();
-                Renderer::DrawGrid(pos, size - Vector2(m_size.y/2, 0), 1, 1, m_sColor, 1);
+                Renderer::DrawGrid(pos, size - Vector2i(m_size.y/2, 0), 1, 1, m_sColor, 1);
             }
         }
 

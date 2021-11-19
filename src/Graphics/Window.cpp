@@ -160,18 +160,18 @@ namespace tml
         return y;
     }
 
-    Vector2 Window::GetPosition() const noexcept
+    Vector2i Window::GetPosition() const noexcept
     {
         i32 x, y;
         glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &x, &y);
-        return {static_cast<float>(x),static_cast<float>(y)};
+        return {x,y};
     }
 
-    Vector2 Window::GetSize() const noexcept
+    Vector2i Window::GetSize() const noexcept
     {
         i32 x, y;
         glfwGetWindowSize(static_cast<GLFWwindow*>(m_handle), &x, &y);
-        return {static_cast<float>(x),static_cast<float>(y)};
+        return {x,y};
     }
 
     void Window::SetSize(ui32 w, ui32 h) noexcept

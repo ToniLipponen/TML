@@ -14,6 +14,8 @@ namespace tml
         private:
             void Draw() override {};
             void OnUpdate(double dt) override;
+            void OnResized() override;
+            void OnMoved() override;
             void ScaleChildren();
             void AlignChildren();
         };

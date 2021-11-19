@@ -10,7 +10,7 @@ namespace tml
         public:
             Label(i32 x, i32 y, ui32 s = 20, std::string str = "Label");
             void SetValue(std::string str);
-            virtual bool ContainsPoint(const Vector2& p) override;
+            virtual bool ContainsPoint(const Vector2i& p) override;
         private:
             virtual void Draw() override;
             std::string m_text;

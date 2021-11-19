@@ -34,8 +34,8 @@ namespace tml
         i32 GetX() const noexcept;
         i32 GetY() const noexcept;
 
-        Vector2 GetPosition() const noexcept;
-        Vector2 GetSize() const noexcept;
+        Vector2i GetPosition() const noexcept;
+        Vector2i GetSize() const noexcept;
 
         void SetSize(ui32 width, ui32 height) noexcept;
         void SetTitle(const std::string& title) noexcept;

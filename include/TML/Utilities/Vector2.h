@@ -1,122 +1,221 @@
 #pragma once
 #include <cmath>
-#include <ostream>
-#include <istream>
 
 namespace tml
 {
+    template<typename T>
     class Vector2
     {
     public:
         Vector2() = default;
-        Vector2(float v) noexcept : x(v), y(v) {}
-        Vector2(float x, float y) noexcept : x(x), y(y) {}
+        constexpr inline Vector2(T v) noexcept;
+        constexpr inline Vector2(T x, T y) noexcept;
 
-        inline Vector2 operator+(const Vector2 &rhs) const noexcept {
-            return {x + rhs.x, y + rhs.y};
-        }
+        template<typename R>
+        constexpr inline Vector2(R v) noexcept;
 
-        inline Vector2 operator-(const Vector2 &rhs) const noexcept {
-            return {x - rhs.x, y - rhs.y};
-        }
+        template<typename R>
+        constexpr inline Vector2(R x, R y) noexcept;
 
-        inline Vector2 operator/(const Vector2 &rhs) const noexcept {
-            return {x / rhs.x, y / rhs.y};
-        }
+        template<typename R>
+        constexpr inline Vector2(const Vector2<R>& v) noexcept;
 
-        inline Vector2 operator*(const Vector2 &rhs) const noexcept {
-            return {x * rhs.x, y * rhs.y};
-        }
+        inline Vector2 operator+(const Vector2 &rhs) const noexcept;
 
-        inline Vector2 operator/(const float rhs) const noexcept {
-            return {x / rhs, y / rhs};
-        }
+        inline Vector2 operator-(const Vector2 &rhs) const noexcept;
 
-        inline Vector2 operator*(const float rhs) const noexcept {
-            return {x * rhs, y * rhs};
-        }
+        inline Vector2 operator/(const Vector2 &rhs) const noexcept;
 
-        inline constexpr Vector2 &operator+=(const Vector2 &rhs) noexcept {
-            this->x += rhs.x;
-            this->y += rhs.y;
-            return *this;
-        }
+        inline Vector2 operator*(const Vector2 &rhs) const noexcept;
 
-        inline constexpr Vector2 &operator-=(const Vector2 &rhs) noexcept {
-            this->x -= rhs.x;
-            this->y -= rhs.y;
-            return *this;
-        }
+        inline Vector2 operator/(const T rhs) const noexcept;
 
-        inline constexpr Vector2 &operator*=(const Vector2 &rhs) noexcept {
-            this->x *= rhs.x;
-            this->y *= rhs.y;
-            return *this;
-        }
+        inline Vector2 operator*(const T rhs) const noexcept;
 
-        inline constexpr Vector2 &operator/=(const Vector2 &rhs) noexcept {
-            this->x /= rhs.x;
-            this->y /= rhs.y;
-            return *this;
-        }
+        inline constexpr Vector2 &operator+=(const Vector2 &rhs) noexcept;
 
-        inline constexpr Vector2 &operator*=(const float rhs) noexcept {
-            this->x *= rhs;
-            this->y *= rhs;
-            return *this;
-        }
+        inline constexpr Vector2 &operator-=(const Vector2 &rhs) noexcept;
 
-        inline constexpr Vector2 &operator/=(const float rhs) noexcept {
-            this->x /= rhs;
-            this->y /= rhs;
-            return *this;
-        }
+        inline constexpr Vector2 &operator*=(const Vector2 &rhs) noexcept;
 
-        friend std::ostream& operator<<(std::ostream& s, const Vector2& v);
-        friend std::istream& operator>>(std::istream& s, Vector2& v);
+        inline constexpr Vector2 &operator/=(const Vector2 &rhs) noexcept;
 
-        inline float Length() const noexcept {
-            return sqrtf(x * x + y * y);
-        }
+        inline constexpr Vector2 &operator*=(const T rhs) noexcept;
 
-        inline Vector2 &Normalize() noexcept {
-            return (*this /= Length());
-        }
+        inline constexpr Vector2 &operator/=(const T rhs) noexcept;
 
-        inline Vector2 Normalized() const noexcept {
-            return *this / Length();
-        }
 
-        inline static float Distance(const Vector2 &a, const Vector2 &b) noexcept {
-            return sqrtf(powf(b.x - a.x, 2) + powf(b.y - a.y, 2));
-        }
+        inline float Length() const noexcept;
 
-        inline bool operator<(const Vector2& rhs) const noexcept
-        {
-            return (x < rhs.x && y < rhs.y);
-        }
+        inline Vector2 &Normalize() noexcept;
 
-        inline bool operator>(const Vector2& rhs) const noexcept
-        {
-            return (x > rhs.x && y > rhs.y);
-        }
-        Vector2 Rounded() const noexcept
-        {
-            return {roundf(x), roundf(y)};
-        }
+        inline Vector2 Normalized() const noexcept;
 
-        float x, y;
+        inline bool operator<(const Vector2& rhs) const noexcept;
+
+        inline bool operator>(const Vector2& rhs) const noexcept;
+
+        template<typename R>
+        inline Vector2<T>& operator=(const Vector2<R>& rhs) noexcept;
+
+    public:
+        T x = 0, y = 0;
     };
 
-    inline std::ostream& operator<<(std::ostream &out, const Vector2& v)
+
+    using Vector2i = Vector2<int>;
+    using Vector2f = Vector2<float>;
+    using Vector2d = Vector2<double>;
+
+    // Vector2 implementation
+
+    template<typename T>
+    constexpr inline Vector2<T>::Vector2(T v) noexcept
+    : x(v), y(v)
     {
-        out << v.x << std::string(" - ") << v.y;
-        return out;
+
     }
 
-    inline std::istream& operator>>(std::istream& in, Vector2& v)
+    template<typename T>
+    constexpr inline Vector2<T>::Vector2(T x, T y) noexcept
+    : x(x), y(y)
     {
-        in >> v.x >> v.y;
-        return in;
+
+    }
+
+    template<typename T>
+    template<typename R>
+    constexpr inline Vector2<T>::Vector2(R v) noexcept
+            : x(static_cast<T>(v)), y(static_cast<T>(v))
+    {
+
+    }
+
+    template<typename T>
+    template<typename R>
+    constexpr inline Vector2<T>::Vector2(R x, R y) noexcept
+            : x(static_cast<T>(x)), y(static_cast<T>(y))
+    {
+
+    }
+
+    template<typename T>
+    template<typename R>
+    constexpr inline Vector2<T>::Vector2(const Vector2<R>& v) noexcept
+    : x(static_cast<T>(v.x)), y(static_cast<T>(v.y))
+    {
+
+    }
+
+    template<typename T>
+    inline Vector2<T> Vector2<T>::operator+(const Vector2 &rhs) const noexcept {
+        return {x + rhs.x, y + rhs.y};
+    }
+
+    template<typename T>
+    inline Vector2<T> Vector2<T>::operator-(const Vector2 &rhs) const noexcept {
+        return {x - rhs.x, y - rhs.y};
+    }
+
+    template<typename T>
+    inline Vector2<T> Vector2<T>::operator/(const Vector2 &rhs) const noexcept {
+        return {x / rhs.x, y / rhs.y};
+    }
+
+    template<typename T>
+    inline Vector2<T> Vector2<T>::operator*(const Vector2 &rhs) const noexcept {
+        return {x * rhs.x, y * rhs.y};
+    }
+
+    template<typename T>
+    inline Vector2<T> Vector2<T>::operator/(const T rhs) const noexcept {
+        return {x / rhs, y / rhs};
+    }
+
+    template<typename T>
+    inline Vector2<T> Vector2<T>::operator*(const T rhs) const noexcept {
+        return {x * rhs, y * rhs};
+    }
+
+    template<typename T>
+    inline constexpr Vector2<T>& Vector2<T>::operator+=(const Vector2 &rhs) noexcept {
+        this->x += rhs.x;
+        this->y += rhs.y;
+        return *this;
+    }
+
+    template<typename T>
+    inline constexpr Vector2<T>& Vector2<T>::operator-=(const Vector2 &rhs) noexcept {
+        this->x -= rhs.x;
+        this->y -= rhs.y;
+        return *this;
+    }
+
+    template<typename T>
+    inline constexpr Vector2<T>& Vector2<T>::operator*=(const Vector2 &rhs) noexcept {
+        this->x *= rhs.x;
+        this->y *= rhs.y;
+        return *this;
+    }
+
+    template<typename T>
+    inline constexpr Vector2<T>& Vector2<T>::operator/=(const Vector2 &rhs) noexcept {
+        this->x /= rhs.x;
+        this->y /= rhs.y;
+        return *this;
+    }
+
+    template<typename T>
+    inline constexpr Vector2<T>& Vector2<T>::operator*=(const T rhs) noexcept {
+        this->x *= rhs;
+        this->y *= rhs;
+        return *this;
+    }
+
+    template<typename T>
+    inline constexpr Vector2<T>& Vector2<T>::operator/=(const T rhs) noexcept {
+        this->x /= rhs;
+        this->y /= rhs;
+        return *this;
+    }
+
+    template<typename T>
+    inline float Vector2<T>::Length() const noexcept {
+        return sqrtf(x * x + y * y);
+    }
+
+    template<typename T>
+    inline Vector2<T>& Vector2<T>::Normalize() noexcept {
+        return (*this /= Length());
+    }
+
+    template<typename T>
+    inline Vector2<T> Vector2<T>::Normalized() const noexcept {
+        return *this / Length();
+    }
+
+//    inline static float Distance(const Vector2 &a, const Vector2 &b) noexcept {
+//        return sqrtf(powf(b.x - a.x, 2) + powf(b.y - a.y, 2));
+//    }
+
+    template<typename T>
+    inline bool Vector2<T>::operator<(const Vector2<T>& rhs) const noexcept
+    {
+        return (x < rhs.x && y < rhs.y);
+    }
+
+    template<typename T>
+    inline bool Vector2<T>::operator>(const Vector2& rhs) const noexcept
+    {
+        return (x > rhs.x && y > rhs.y);
+    }
+
+    template<typename T>
+    template<typename R>
+    inline Vector2<T>& Vector2<T>::operator=(const Vector2<R>& rhs) noexcept
+    {
+        x = static_cast<T>(rhs.x);
+        y = static_cast<T>(rhs.y);
+        return *this;
     }
 }

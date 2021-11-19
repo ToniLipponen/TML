@@ -12,7 +12,7 @@ namespace tml
             bool GetValue() const { return m_value; }
         private:
             void Draw() override;
-            void OnMouseClick(const Vector2& mousePos) override;
+            void OnMouseClick(const Vector2i& mousePos) override;
             bool m_value = false;
         };
     }

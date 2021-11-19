@@ -63,7 +63,7 @@ namespace tml
 
             BaseComponent* GetParent(); // DANGER! Returns nullptr if the component doesn't have a parent.
             BaseComponent* GetRoot();
-            virtual bool ContainsPoint(const Vector2& p);
+            virtual bool ContainsPoint(const Vector2i& p);
             virtual void Update();
 
             inline SizePolicy GetHorizontalSizePolicy() const { return m_hSizePolicy; }
@@ -80,19 +80,19 @@ namespace tml
             void SetActiveColor(const Color& color) { m_activeColor = color; }
 
         private:
-            void ProcessEvents(const Vector2& mp, bool mouseDown, Events& events);
-            void Poll(const Vector2& mp, bool mouseDown, Events& events);
+            void ProcessEvents(const Vector2i& mp, bool mouseDown, Events& events);
+            void Poll(const Vector2i& mp, bool mouseDown, Events& events);
 
         protected:
-            void p_Update(double dt, const Vector2& mp);
+            void p_Update(double dt, const Vector2i& mp);
             virtual void Draw() = 0;
             // Internal events
-            virtual void OnMouseClick(const Vector2& mousePos);
-            virtual void OnMouseDown(const Vector2& mousePos);
-            virtual void OnMouseHover(const Vector2& mousePos);
+            virtual void OnMouseClick(const Vector2i& mousePos);
+            virtual void OnMouseDown(const Vector2i& mousePos);
+            virtual void OnMouseHover(const Vector2i& mousePos);
             virtual void OnMouseEnter();
             virtual void OnMouseExit();
-            virtual void OnMouseDrag(const Vector2& mousePos);
+            virtual void OnMouseDrag(const Vector2i& mousePos);
             virtual void OnUpdate(double dt);
             virtual void OnFocused();
             virtual void OnFocusLost();

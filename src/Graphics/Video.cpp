@@ -31,10 +31,10 @@ namespace tml
 
         if(m_stream != nullptr)
         {
-            m_pos = 0;
+            m_pos = Vector2f{0};
             m_streamWidth  = plm_get_width((plm_t*)m_stream);
             m_streamHeight = plm_get_height((plm_t*)m_stream);
-            m_size = Vector2(static_cast<float>(m_streamWidth), static_cast<float>(m_streamHeight));
+            m_size = Vector2f(static_cast<float>(m_streamWidth), static_cast<float>(m_streamHeight));
 
             SetFrameRate(plm_get_framerate((plm_t*)m_stream));
             plm_set_audio_enabled(reinterpret_cast<plm_t*>(m_stream), false);

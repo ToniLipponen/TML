@@ -33,7 +33,7 @@ namespace tml
     static glm::mat4 s_view = glm::mat4(1.f);
     static glm::mat4 s_proj = glm::mat4(1.f);
     static glm::mat4 s_scale = glm::mat4(1.f);
-    static Vector2  s_viewSize = {0, 0};
+    static Vector2f  s_viewSize = {0, 0};
     static Camera s_camera;
 
     // Render batch related stuff
@@ -191,7 +191,7 @@ namespace tml
 //    void Renderer::SetViewport(i32 x, i32 y, ui32 w, ui32 h) noexcept
 //    {
 //        EndBatch();
-//        s_viewSize = Vector2{static_cast<float>(w), static_cast<float>(h)};
+//        s_viewSize = Vector2f{static_cast<float>(w), static_cast<float>(h)};
 //        s_proj = glm::ortho(
 //                static_cast<float>(x),
 //                static_cast<float>(w),
@@ -200,7 +200,7 @@ namespace tml
 //        );
 //    }
 //
-//    void Renderer::SetViewport(const Vector2& pos, const Vector2& size) noexcept
+//    void Renderer::SetViewport(const Vector2f& pos, const Vector2f& size) noexcept
 //    {
 //        EndBatch();
 //        s_viewSize = size;
@@ -216,7 +216,7 @@ namespace tml
 //    {
 //        int f[4];
 //        GL_CALL(glad_glGetIntegerv(GL_VIEWPORT, f));
-//        s_viewSize = Vector2{static_cast<float>(f[2]), static_cast<float>(f[3])};
+//        s_viewSize = Vector2f{static_cast<float>(f[2]), static_cast<float>(f[3])};
 //        s_proj = glm::ortho(
 //                static_cast<float>(f[0]),
 //                static_cast<float>(f[2]),
@@ -225,7 +225,7 @@ namespace tml
 //        );
 //    }
 
-    void Renderer::SetBounds(const Vector2& pos, const Vector2& size) noexcept
+    void Renderer::SetBounds(const Vector2i& pos, const Vector2i& size) noexcept
     {
         EndBatch();
         glad_glScissor(pos.x, s_viewSize.y - pos.y - size.y, size.x, size.y);
@@ -245,7 +245,7 @@ namespace tml
 
         int f[4];
         GL_CALL(glad_glGetIntegerv(GL_VIEWPORT, f));
-        s_viewSize = Vector2{static_cast<float>(f[2]), static_cast<float>(f[3])};
+        s_viewSize = Vector2f{static_cast<float>(f[2]), static_cast<float>(f[3])};
         s_proj = glm::ortho(
                 static_cast<float>(f[0]),
                 static_cast<float>(f[2]),
@@ -283,12 +283,12 @@ namespace tml
             return;
 
         currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again
-        Vector2 tl = r.m_rect.pos / r.m_texSize;
-        Vector2 br = (r.m_rect.pos + r.m_rect.size) / r.m_texSize;
-        const Vector2 origin = (r.m_pos + r.m_pos + r.m_size) * 0.5f;
+        Vector2f tl = r.m_rect.pos / r.m_texSize;
+        Vector2f br = (r.m_rect.pos + r.m_rect.size) / r.m_texSize;
+        const Vector2f origin = (r.m_pos + r.m_pos + r.m_size) * 0.5f;
         s_vertexData.emplace_back(Vertex{Util::Rotate(origin, r.m_pos, r.m_rotation),                            tl, r.m_color.Hex(), tex, Vertex::TEXTURE});
-        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, r.m_pos + Vector2{r.m_size.x, 0.f}, r.m_rotation), {br.x, tl.y}, r.m_color.Hex(), tex, Vertex::TEXTURE});
-        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, r.m_pos + Vector2{0.f, r.m_size.y}, r.m_rotation), {tl.x, br.y}, r.m_color.Hex(), tex, Vertex::TEXTURE});
+        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, r.m_pos + Vector2f{r.m_size.x, 0.f}, r.m_rotation), {br.x, tl.y}, r.m_color.Hex(), tex, Vertex::TEXTURE});
+        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, r.m_pos + Vector2f{0.f, r.m_size.y}, r.m_rotation), {tl.x, br.y}, r.m_color.Hex(), tex, Vertex::TEXTURE});
         s_vertexData.emplace_back(Vertex{Util::Rotate(origin, r.m_pos + r.m_size, r.m_rotation),                 br, r.m_color.Hex(), tex, Vertex::TEXTURE});
 
         s_indexData.emplace_back(currentElements + 0);
@@ -338,7 +338,7 @@ namespace tml
         PushTexture(r.m_cr);
     }
 
-    void Renderer::DrawLine(const Vector2 &a, const Vector2 &b, float thickness, Color color, bool rounded) noexcept
+    void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, float thickness, Color color, bool rounded) noexcept
     {
         ui32 currentElements = s_vertexData.size();
         if(currentElements >= MAX_VERTEX_COUNT - 4)
@@ -351,10 +351,10 @@ namespace tml
         const float dy = b.y - a.y;
         thickness = ceilf(thickness);
 
-        s_vertexData.push_back({((Vector2(-dy, dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
-        s_vertexData.push_back({((Vector2(dy, -dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
-        s_vertexData.push_back({((Vector2(-dy, dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
-        s_vertexData.push_back({((Vector2(dy, -dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+        s_vertexData.push_back({((Vector2f(-dy, dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+        s_vertexData.push_back({((Vector2f(dy, -dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+        s_vertexData.push_back({((Vector2f(-dy, dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
+        s_vertexData.push_back({((Vector2f(dy, -dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), 0, Vertex::RECTANGLE});
 
         s_indexData.push_back(currentElements + 0);
         s_indexData.push_back(currentElements + 1);
@@ -371,73 +371,73 @@ namespace tml
         }
     }
 
-    void Renderer::DrawRect(const Vector2& pos, const Vector2& dimensions, const Color& color, float roundness, float rotation) noexcept
+    void Renderer::DrawRect(const Vector2f& pos, const Vector2f& dimensions, const Color& color, float roundness, float rotation) noexcept
     {
         if(roundness < 3.f) // If roundness is too low, just draw a regular rectangle
             PushQuad(pos, dimensions, color, *s_circleTexture, rotation, Vertex::RECTANGLE);
         else
         {
-            Vector2 origin = {origin.x = (pos.x + pos.x + dimensions.x) * 0.5f,
+            Vector2f origin = {origin.x = (pos.x + pos.x + dimensions.x) * 0.5f,
                               origin.y = (pos.y + pos.y + dimensions.y) * 0.5f};
-            PushQuad(pos+Vector2{0.f, roundness}, dimensions - Vector2{0.f, roundness*2}, color, *s_circleTexture, rotation, Vertex::RECTANGLE);
-            PushQuad(pos+Vector2{roundness, 0.f}, dimensions - Vector2{roundness*2, 0.f}, color, *s_circleTexture, rotation, Vertex::RECTANGLE);
+            PushQuad(pos+Vector2f{0.f, roundness}, dimensions - Vector2f{0.f, roundness*2}, color, *s_circleTexture, rotation, Vertex::RECTANGLE);
+            PushQuad(pos+Vector2f{roundness, 0.f}, dimensions - Vector2f{roundness*2, 0.f}, color, *s_circleTexture, rotation, Vertex::RECTANGLE);
 
-            DrawCircle(Util::Rotate(origin, pos+Vector2{roundness, roundness}, rotation), roundness, color);
-            DrawCircle(Util::Rotate(origin, pos+Vector2{dimensions.x - roundness, roundness}, rotation), roundness, color);
-            DrawCircle(Util::Rotate(origin,pos+Vector2{roundness,dimensions.y - roundness}, rotation), roundness, color);
-            DrawCircle(Util::Rotate(origin,pos+dimensions-Vector2{roundness, roundness}, rotation), roundness, color);
+            DrawCircle(Util::Rotate(origin, pos+Vector2f{roundness, roundness}, rotation), roundness, color);
+            DrawCircle(Util::Rotate(origin, pos+Vector2f{dimensions.x - roundness, roundness}, rotation), roundness, color);
+            DrawCircle(Util::Rotate(origin,pos+Vector2f{roundness,dimensions.y - roundness}, rotation), roundness, color);
+            DrawCircle(Util::Rotate(origin,pos+dimensions-Vector2f{roundness, roundness}, rotation), roundness, color);
         }
     }
 
-    void Renderer::DrawCircle(const Vector2& pos, float radius, const Color& color) noexcept
+    void Renderer::DrawCircle(const Vector2f& pos, float radius, const Color& color) noexcept
     {
-        PushQuad(pos - Vector2{radius,radius}, {radius*2}, color, *s_circleTexture, Vertex::CIRCLE);
+        PushQuad(pos - Vector2f{radius,radius}, {radius*2}, color, *s_circleTexture, Vertex::CIRCLE);
     }
 
-    void Renderer::DrawBezier(const Vector2 &a, const Vector2 &cp1, const Vector2 &cp2, const Vector2 &b, float thickness,
+    void Renderer::DrawBezier(const Vector2f &a, const Vector2f &cp1, const Vector2f &cp2, const Vector2f &b, float thickness,
                               const Color &color, bool rounded, float step) noexcept
     {
-        Vector2 begin = a;
+        Vector2f begin = a;
         for(float i = 0; i < 1.f; i += step)
         {
-            const Vector2 end = Util::Cubic(a,cp1,cp2,b,i);
+            const Vector2f end = Util::Cubic(a,cp1,cp2,b,i);
             DrawLine(begin, end, thickness, color, rounded);
             begin = end;
         }
     }
 
-    void Renderer::DrawBezier(const Vector2 &a, const Vector2 &cp, const Vector2 &b, float thickness,
+    void Renderer::DrawBezier(const Vector2f &a, const Vector2f &cp, const Vector2f &b, float thickness,
                               const Color &color, bool rounded, float step) noexcept
     {
-        Vector2 begin = a;
+        Vector2f begin = a;
         for(float i = 0; i < 1.f; i += step)
         {
-            const Vector2 end = Util::Quadratic(a,cp,b,i);
+            const Vector2f end = Util::Quadratic(a,cp,b,i);
             DrawLine(begin, end, thickness, color, rounded);
             begin = end;
         }
     }
 
-    void Renderer::DrawGrid(const Vector2 &top_left, const Vector2 &size, ui32 rows, ui32 columns, const Color &color,
+    void Renderer::DrawGrid(const Vector2f &top_left, const Vector2f &size, ui32 rows, ui32 columns, const Color &color,
                             float thickness, bool rounded) noexcept
     {
         for(int i = 0; i <= rows; ++i)
         {
-            DrawLine(top_left + Vector2{0.f,    (size.y / rows) * i},
-                     top_left + Vector2{size.x, (size.y / rows) * i}, thickness, color, ((i == 0) || (i == rows)));
+            DrawLine(top_left + Vector2f{0.f,    (size.y / rows) * i},
+                     top_left + Vector2f{size.x, (size.y / rows) * i}, thickness, color, ((i == 0) || (i == rows)));
         }
         for(int i = 0; i <= columns; ++i)
-            DrawLine(top_left + Vector2{(size.x / columns) * i,0.f},
-                     top_left + Vector2{(size.x / columns) * i, size.y}, thickness, color, false);
+            DrawLine(top_left + Vector2f{(size.x / columns) * i,0.f},
+                     top_left + Vector2f{(size.x / columns) * i, size.y}, thickness, color, false);
     }
 
-    void Renderer::DrawTexture(Texture &tex, const Vector2 &pos, const Vector2 &size) noexcept
+    void Renderer::DrawTexture(Texture &tex, const Vector2f &pos, const Vector2f &size) noexcept
     {
         PushQuad(pos, size, TRANSPARENT, tex, Vertex::TEXTURE);
     }
 
     void
-    Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& texture, Vertex::DrawableType type) noexcept
+    Renderer::PushQuad(const Vector2f &pos, const Vector2f &size, const Color &col, Texture& texture, Vertex::DrawableType type) noexcept
     {
         ui32 currentElements = s_vertexData.size();
         if(currentElements >= MAX_VERTEX_COUNT - 4)
@@ -454,8 +454,8 @@ namespace tml
         currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again
 
         s_vertexData.emplace_back(Vertex{pos,                           {0.f, 0.f}, col.Hex(), tex, type});
-        s_vertexData.emplace_back(Vertex{pos + Vector2{size.x, 0.f},    {1.f, 0.f}, col.Hex(), tex, type});
-        s_vertexData.emplace_back(Vertex{pos + Vector2{0.f, size.y},    {0.f, 1.f}, col.Hex(), tex, type});
+        s_vertexData.emplace_back(Vertex{pos + Vector2f{size.x, 0.f},    {1.f, 0.f}, col.Hex(), tex, type});
+        s_vertexData.emplace_back(Vertex{pos + Vector2f{0.f, size.y},    {0.f, 1.f}, col.Hex(), tex, type});
         s_vertexData.emplace_back(Vertex{pos + size,                    {1.f, 1.f}, col.Hex(), tex, type});
 
         s_indexData.emplace_back(currentElements + 0);
@@ -468,7 +468,7 @@ namespace tml
     }
 
     void
-    Renderer::PushQuad(const Vector2 &pos, const Vector2 &size, const Color &col, Texture& texture, float rotation, Vertex::DrawableType type) noexcept
+    Renderer::PushQuad(const Vector2f &pos, const Vector2f &size, const Color &col, Texture& texture, float rotation, Vertex::DrawableType type) noexcept
     {
         ui32 currentElements = s_vertexData.size();
         if(currentElements >= MAX_VERTEX_COUNT - 4)
@@ -484,10 +484,10 @@ namespace tml
         }
         currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again
 
-        const Vector2 origin = (pos + pos + size) * 0.5f;
+        const Vector2f origin = (pos + pos + size) * 0.5f;
         s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos, rotation), {0.f, 0.f}, col.Hex(), tex, type});
-        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos + Vector2{size.x, 0.f}, rotation), {1.f, 0.f}, col.Hex(), tex, type});
-        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos + Vector2{0.f, size.y}, rotation), {0.f, 1.f}, col.Hex(), tex, type});
+        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos + Vector2f{size.x, 0.f}, rotation), {1.f, 0.f}, col.Hex(), tex, type});
+        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos + Vector2f{0.f, size.y}, rotation), {0.f, 1.f}, col.Hex(), tex, type});
         s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos + size, rotation), {1.f, 1.f}, col.Hex(), tex, type});
 
         s_indexData.emplace_back(currentElements + 0);
@@ -499,7 +499,7 @@ namespace tml
         s_indexData.emplace_back(currentElements + 2);
     }
 
-    void Renderer::DrawText(const std::string &text, const Vector2 &pos, float size, const Color &color) noexcept
+    void Renderer::DrawText(const std::string &text, const Vector2f &pos, float size, const Color &color) noexcept
     {
         DEFAULT_TEXT->SetString(text);
         DEFAULT_TEXT->SetSize(size);
