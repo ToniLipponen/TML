@@ -21,12 +21,12 @@
  */
 
 #pragma once
-#include "TML/Graphics/Renderer.h"
-#include "TML/Utilities/Vector2.h"
-#include "TML/IO/Input.h"
-#include "TML/IO/Clipboard.h"
-#include "TML/IO/File.h"
-#include "Audio/Audio.h"
-#include "Utilities/Utilities.h"
-#include "TML/Utilities/Clock.h"
-#include "TML/IO/Logger.h"
+#include <TML/Graphics/Renderer.h>
+#include <TML/Graphics/Vector2.h>
+#include <TML/IO/Input.h>
+#include <TML/IO/Clipboard.h>
+#include <TML/IO/File.h>
+#include <TML/Audio/Audio.h>
+#include <TML/Utilities/Utilities.h>
+#include <TML/Utilities/Clock.h>
+#include <TML/IO/Logger.h>
