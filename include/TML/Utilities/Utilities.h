@@ -2,7 +2,7 @@
 #include "Copy.h"
 #include "Condition.h"
 #include "String.h"
-#include "Vector2.h"
+#include "TML/Graphics/Vector2.h"
 
 namespace tml
 {
@@ -90,7 +90,7 @@ namespace tml
 
         inline float Distance(const Vector2f &a, const Vector2f &b) noexcept
         {
-            return 0;
+            return sqrtf(powf(b.x - a.x, 2) + powf(b.y - a.y, 2));
         }
 
         inline bool PointInCircle(const Vector2f& point, const Vector2f& p, float r)

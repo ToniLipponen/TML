@@ -23,8 +23,17 @@ namespace tml
             m_size = Vector2f{r, r} * 0.5f;
         }
 
+        inline constexpr float GetRadius() const noexcept
+        {
+            return m_size.x;
+        }
+
         void SetTexture(const Texture &t) = delete;
         void Rotate(float d) = delete;
+        float GetRotation() const noexcept = delete;
+        void SetRotation(float d) noexcept = delete;
+
+        const Vector2f& GetSize() const noexcept = delete;
 
     private:
         void SetSize(const Vector2f &) noexcept override {}

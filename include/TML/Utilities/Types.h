@@ -22,5 +22,5 @@ namespace tml
     typedef const char* cstring;
 }
 
-#include "Vector2.h"
+#include "TML/Graphics/Vector2.h"
 #include "TML/Graphics/Color.h"

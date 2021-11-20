@@ -1,6 +1,6 @@
 #pragma once
 #include "TML/Utilities/Types.h"
-#include "TML/Utilities/Vector2.h"
+#include "Vector2.h"
 #include "TML/Graphics/Image.h"
 #include <string>
 
