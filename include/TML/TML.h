@@ -30,3 +30,4 @@
 #include <TML/Utilities/Utilities.h>
 #include <TML/Utilities/Clock.h>
 #include <TML/IO/Logger.h>
+#include <TML/Graphics/Ray.h>
