@@ -181,33 +181,33 @@ namespace tml
             {
                 m_eventStatus.Click = false;
                 OnMouseClick(mp);
-                if(m_onClickFunc.IsNotNull())
+                if(m_onClickFunc)
                     m_onClickFunc(this);
             }
             else if(m_eventStatus.MouseDown)
             {
                 OnMouseDown(mp);
-                if(m_onMouseDownFunc.IsNotNull())
+                if(m_onMouseDownFunc)
                     m_onMouseDownFunc(this);
             }
             if(m_eventStatus.MouseEnter)
             {
                 m_eventStatus.MouseEnter = false;
                 OnMouseEnter();
-                if(m_onMouseEnterFunc.IsNotNull())
+                if(m_onMouseEnterFunc)
                     m_onMouseEnterFunc(this);
             }
             else if(m_eventStatus.MouseExit)
             {
                 m_eventStatus.MouseExit = false;
                 OnMouseExit();
-                if(m_onMouseExitFunc.IsNotNull())
+                if(m_onMouseExitFunc)
                     m_onMouseExitFunc(this);
             }
             if(m_eventStatus.MouseOver)
             {
                 OnMouseHover(mp);
-                if(m_onHoverFunc.IsNotNull())
+                if(m_onHoverFunc)
                     m_onHoverFunc(this);
             }
             if(m_eventStatus.GainedFocus)
@@ -215,7 +215,7 @@ namespace tml
                 m_eventStatus.GainedFocus = false;
                 m_state.Focused = true;
                 OnFocused();
-                if(m_onFocused.IsNotNull())
+                if(m_onFocused)
                     m_onFocused(this);
             }
             if(m_eventStatus.LostFocus)
@@ -223,17 +223,17 @@ namespace tml
                 m_eventStatus.LostFocus = false;
                 m_state.Focused = false;
                 OnFocusLost();
-                if(m_onFocusLost.IsNotNull())
+                if(m_onFocusLost)
                     m_onFocusLost(this);
             }
             if(m_eventStatus.Drag)
             {
                 OnMouseDrag(mp);
-                if(m_onDragFunc.IsNotNull())
+                if(m_onDragFunc)
                     m_onDragFunc(this);
             }
 
-            if(m_onUpdate.IsNotNull())
+            if(m_onUpdate)
                 m_onUpdate(this);
             for(auto& i : m_children)
                 i.second->p_Update(dt, mp);

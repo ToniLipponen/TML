@@ -1,7 +1,7 @@
 #include <TML/Audio/Sound.h>
 #include <miniaudio/miniaudio.h>
-#include <TML/Utilities/Copy.h>
-#include <TML/Utilities/Utilities.h>
+#include <memory.h>
+#include <TML/Utilities/Math.h>
 #include <_Assert.h>
 #include "Mixer.h"
 
@@ -84,7 +84,7 @@ namespace tml
     {
         delete[] m_samples;
         m_samples = new float[sampleCount];
-        Util::Copy<float>(m_samples, data, sampleCount);
+        memcpy(m_samples, data, sampleCount * sizeof(float));
         m_frameCount = sampleCount;
         m_framesRead = 0;
         m_channels = channels;
@@ -105,7 +105,7 @@ namespace tml
 
     ui32 Sound::ReadFrames(float *output, ui32 frameCount)
     {
-        const ui32 readFrames = Util::Clamp<ui32>(frameCount * m_channels, 0, m_frameCount - m_framesRead);
+        const ui32 readFrames = Math::Clamp<ui32>(frameCount * m_channels, 0, m_frameCount - m_framesRead);
         for(ui32 i = 0; i < readFrames; ++i)
             output[i] += m_samples[m_framesRead + i] * m_volume;
 

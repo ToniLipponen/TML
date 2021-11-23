@@ -60,7 +60,7 @@ namespace tml
             if(expandedChildren == 0)
                 return;
 
-            expandSize = Util::Min<float>(((m_size.y - height) / expandedChildren) - (m_padding.y / 2) - 1, 0);
+            expandSize = Math::Min<float>(((m_size.y - height) / expandedChildren) - (m_padding.y / 2) - 1, 0);
             if(expandSize < 1)
                 return;
 
@@ -90,7 +90,7 @@ namespace tml
             for(auto item = m_children.rbegin(); item != m_children.rend(); ++item)
             {
                 auto* i = item->second;
-                auto next = Util::Clamp(item+1, m_children.rbegin(), m_children.rend()-1);
+                auto next = Math::Clamp(item+1, m_children.rbegin(), m_children.rend()-1);
                 auto itemSize = i->GetSize();
                 switch(m_hAlignPolicy)
                 {

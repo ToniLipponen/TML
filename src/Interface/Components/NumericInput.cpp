@@ -75,7 +75,7 @@ namespace tml
         template<typename T>
         void NumericInput<T>::OnUpdate(double dt)
         {
-            m_repeatTimer = Util::Max(m_repeatTimer += dt, 0.11f);
+            m_repeatTimer = Math::Max(m_repeatTimer += dt, 0.11f);
             if(m_state.Focused)
             {
                 if(m_repeatTimer > 0.1f)
@@ -87,7 +87,7 @@ namespace tml
                     else if(Keyboard::IsKeyDown(Keyboard::KEY_BACKSPACE)
                             && !m_valueStr.empty())
                     {
-                        m_valueStr.erase(Util::Clamp<ui32>(m_cursorIndex-1, 0, m_valueStr.length() -1), 1);
+                        m_valueStr.erase(Math::Clamp<ui32>(m_cursorIndex-1, 0, m_valueStr.length() -1), 1);
                         m_cursorIndex--;
                     }
                     else if(Keyboard::IsKeyDown(Keyboard::KEY_LEFT))
@@ -104,7 +104,7 @@ namespace tml
                 {
                     if(Keyboard::IsKeyPressed(Keyboard::KEY_BACKSPACE) && !m_valueStr.empty())
                     {
-                        m_valueStr.erase(Util::Clamp<ui32>(m_cursorIndex-1, 0, m_valueStr.length() -1), 1);
+                        m_valueStr.erase(Math::Clamp<ui32>(m_cursorIndex-1, 0, m_valueStr.length() -1), 1);
                         m_cursorIndex--;
                     }
                     else if(Keyboard::IsKeyPressed(Keyboard::KEY_LEFT))
@@ -130,7 +130,7 @@ namespace tml
                     char c = str.at(0);
                     if(std::is_integral<T>::value)
                     {
-                        if(Util::InRange<char>(48, c, 57))
+                        if(Math::InRange<char>(48, c, 57))
                         {
                             m_valueStr.insert(m_cursorIndex, 1, c);
                             m_cursorIndex += 1;
@@ -138,7 +138,7 @@ namespace tml
                     }
                     else
                     {
-                        if(Util::InRange<char>(48, c, 57) || (c == '.' && m_valueStr.find('.') == m_valueStr.npos))
+                        if(Math::InRange<char>(48, c, 57) || (c == '.' && m_valueStr.find('.') == m_valueStr.npos))
                         {
                             m_valueStr.insert(m_cursorIndex, 1, c);
                             m_cursorIndex += 1;
@@ -146,7 +146,7 @@ namespace tml
                     }
                 }
     //            m_value = Util::StringToType<T>(m_valueStr);
-                m_cursorIndex = Util::Clamp<i32>(m_cursorIndex, 0, m_valueStr.size());
+                m_cursorIndex = Math::Clamp<i32>(m_cursorIndex, 0, m_valueStr.size());
             }
             m_value = Util::StringToType<T>(m_valueStr);
         }
@@ -185,7 +185,7 @@ namespace tml
 
             const Vector2i pos = m_pos + Vector2i(1,1);
             const Vector2i size = m_size - Vector2i(2,2);
-            const float cursorX = Util::Clamp<int>(pos.x + DEFAULT_TEXT->GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x);
+            const float cursorX = Math::Clamp<int>(pos.x + DEFAULT_TEXT->GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x);
 
             Renderer::DrawRect(m_pos, m_size, m_pColor);
             Renderer::SetBounds(m_pos, m_size);

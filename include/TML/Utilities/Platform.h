@@ -12,8 +12,8 @@
     #define PLATFORM -1
 #endif
 
-#define PLATFORM_WINDOWS    (PLATFORM == 0)
-#define PLATFORM_UNIX       (PLATFORM == 1)
-#define PLATFORM_LINUX      (PLATFORM == 2)
-#define PLATFORM_APPLE      (PLATFORM == 3)
+#define PLATFORM_WINDOWS    (PLATFORM ==  0)
+#define PLATFORM_UNIX       (PLATFORM ==  1)
+#define PLATFORM_LINUX      (PLATFORM ==  2)
+#define PLATFORM_APPLE      (PLATFORM ==  3)
 #define PLATFORM_UNKNOWN    (PLATFORM == -1)

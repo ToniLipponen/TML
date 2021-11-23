@@ -286,10 +286,10 @@ namespace tml
         Vector2f tl = r.m_rect.pos / r.m_texSize;
         Vector2f br = (r.m_rect.pos + r.m_rect.size) / r.m_texSize;
         const Vector2f origin = (r.m_pos + r.m_pos + r.m_size) * 0.5f;
-        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, r.m_pos, r.m_rotation),                            tl, r.m_color.Hex(), tex, Vertex::TEXTURE});
-        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, r.m_pos + Vector2f{r.m_size.x, 0.f}, r.m_rotation), {br.x, tl.y}, r.m_color.Hex(), tex, Vertex::TEXTURE});
-        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, r.m_pos + Vector2f{0.f, r.m_size.y}, r.m_rotation), {tl.x, br.y}, r.m_color.Hex(), tex, Vertex::TEXTURE});
-        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, r.m_pos + r.m_size, r.m_rotation),                 br, r.m_color.Hex(), tex, Vertex::TEXTURE});
+        s_vertexData.emplace_back(Vertex{Math::Rotate(origin, r.m_pos, r.m_rotation),                            tl, r.m_color.Hex(), tex, Vertex::TEXTURE});
+        s_vertexData.emplace_back(Vertex{Math::Rotate(origin, r.m_pos + Vector2f{r.m_size.x, 0.f}, r.m_rotation), {br.x, tl.y}, r.m_color.Hex(), tex, Vertex::TEXTURE});
+        s_vertexData.emplace_back(Vertex{Math::Rotate(origin, r.m_pos + Vector2f{0.f, r.m_size.y}, r.m_rotation), {tl.x, br.y}, r.m_color.Hex(), tex, Vertex::TEXTURE});
+        s_vertexData.emplace_back(Vertex{Math::Rotate(origin, r.m_pos + r.m_size, r.m_rotation),                 br, r.m_color.Hex(), tex, Vertex::TEXTURE});
 
         s_indexData.emplace_back(currentElements + 0);
         s_indexData.emplace_back(currentElements + 1);
@@ -382,10 +382,10 @@ namespace tml
             PushQuad(pos+Vector2f{0.f, roundness}, dimensions - Vector2f{0.f, roundness*2}, color, *s_circleTexture, rotation, Vertex::RECTANGLE);
             PushQuad(pos+Vector2f{roundness, 0.f}, dimensions - Vector2f{roundness*2, 0.f}, color, *s_circleTexture, rotation, Vertex::RECTANGLE);
 
-            DrawCircle(Util::Rotate(origin, pos+Vector2f{roundness, roundness}, rotation), roundness, color);
-            DrawCircle(Util::Rotate(origin, pos+Vector2f{dimensions.x - roundness, roundness}, rotation), roundness, color);
-            DrawCircle(Util::Rotate(origin,pos+Vector2f{roundness,dimensions.y - roundness}, rotation), roundness, color);
-            DrawCircle(Util::Rotate(origin,pos+dimensions-Vector2f{roundness, roundness}, rotation), roundness, color);
+            DrawCircle(Math::Rotate(origin, pos+Vector2f{roundness, roundness}, rotation), roundness, color);
+            DrawCircle(Math::Rotate(origin, pos+Vector2f{dimensions.x - roundness, roundness}, rotation), roundness, color);
+            DrawCircle(Math::Rotate(origin,pos+Vector2f{roundness,dimensions.y - roundness}, rotation), roundness, color);
+            DrawCircle(Math::Rotate(origin,pos+dimensions-Vector2f{roundness, roundness}, rotation), roundness, color);
         }
     }
 
@@ -400,7 +400,7 @@ namespace tml
         Vector2f begin = a;
         for(float i = 0; i < 1.f; i += step)
         {
-            const Vector2f end = Util::Cubic(a,cp1,cp2,b,i);
+            const Vector2f end = Math::Cubic(a,cp1,cp2,b,i);
             DrawLine(begin, end, thickness, color, rounded);
             begin = end;
         }
@@ -412,7 +412,7 @@ namespace tml
         Vector2f begin = a;
         for(float i = 0; i < 1.f; i += step)
         {
-            const Vector2f end = Util::Quadratic(a,cp,b,i);
+            const Vector2f end = Math::Quadratic(a,cp,b,i);
             DrawLine(begin, end, thickness, color, rounded);
             begin = end;
         }
@@ -485,10 +485,10 @@ namespace tml
         currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again
 
         const Vector2f origin = (pos + pos + size) * 0.5f;
-        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos, rotation), {0.f, 0.f}, col.Hex(), tex, type});
-        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos + Vector2f{size.x, 0.f}, rotation), {1.f, 0.f}, col.Hex(), tex, type});
-        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos + Vector2f{0.f, size.y}, rotation), {0.f, 1.f}, col.Hex(), tex, type});
-        s_vertexData.emplace_back(Vertex{Util::Rotate(origin, pos + size, rotation), {1.f, 1.f}, col.Hex(), tex, type});
+        s_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos, rotation), {0.f, 0.f}, col.Hex(), tex, type});
+        s_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos + Vector2f{size.x, 0.f}, rotation), {1.f, 0.f}, col.Hex(), tex, type});
+        s_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos + Vector2f{0.f, size.y}, rotation), {0.f, 1.f}, col.Hex(), tex, type});
+        s_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos + size, rotation), {1.f, 1.f}, col.Hex(), tex, type});
 
         s_indexData.emplace_back(currentElements + 0);
         s_indexData.emplace_back(currentElements + 1);

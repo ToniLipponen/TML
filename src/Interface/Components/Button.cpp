@@ -5,7 +5,7 @@
 using namespace tml::Interface;
 extern tml::Text* DEFAULT_TEXT;
 
-Button::Button(ui32 x, ui32 y, ui32 w, ui32 h, std::string str, Function_ptr<void, BaseComponent*> onClick)
+Button::Button(ui32 x, ui32 y, ui32 w, ui32 h, std::string str, UIFunc onClick)
 : m_text(std::move(str)), m_tColor(BLACK)
 {
     m_size = Vector2i(w,h);

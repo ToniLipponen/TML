@@ -1,6 +1,6 @@
 #pragma once
 #include "Drawable.h"
-#include "TML/Utilities/Utilities.h"
+#include <TML/Utilities/Math.h>
 
 namespace tml
 {
@@ -11,7 +11,7 @@ namespace tml
 
         Circle(const Vector2f &pos, float radius)
         {
-            radius = Util::Min(radius, 1.0f);
+            radius = Math::Min(radius, 1.0f);
             m_pos = pos;
             m_size = Vector2f{radius, radius} * 0.5f;
             m_color = Color(255, 255, 255);
@@ -19,7 +19,7 @@ namespace tml
 
         void SetRadius(float r)
         {
-            r = Util::Min(r, 0.1f);
+            r = Math::Min(r, 0.1f);
             m_size = Vector2f{r, r} * 0.5f;
         }
 

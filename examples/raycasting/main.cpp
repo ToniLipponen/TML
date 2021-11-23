@@ -12,7 +12,7 @@ struct Scene
         Ray ray(pos, 0);
         for(ui32 i = 0; i < 360; i++)
         {
-            ray.direction = Util::AngleToHeading(i);
+            ray.direction = Math::AngleToHeading(i);
             float nearest = MAXFLOAT;
             for(auto& r : rects)
             {
@@ -30,13 +30,14 @@ struct Scene
                     nearest = hitInfo.points.at(0).distance;
                 }
             }
-            Renderer::DrawLine(pos, pos + ray.direction * nearest, 1, WHITE, false);
+            Renderer::DrawLine(pos, pos + ray.direction * nearest, 1, 0xffffff66, false);
         }
     }
 };
+
 int main()
 {
-    Window window(800, 600, "Raycasting");
+    Window window(1920, 1080, "Raycasting");
     Renderer::Init();
     Scene scene;
     scene.rects.push_back(Rectangle(0,0,window.GetWidth(), window.GetHeight()));

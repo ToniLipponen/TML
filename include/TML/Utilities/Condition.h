@@ -8,7 +8,8 @@ namespace tml
         return condition ? _true : _false;
     }
 
-    inline constexpr void* Condition(bool condition, void* _true, void* _false) noexcept
+    template<typename T>
+    inline constexpr T* Condition(bool condition, T* _true, T* _false) noexcept
     {
         return condition ? _true : _false;
     }

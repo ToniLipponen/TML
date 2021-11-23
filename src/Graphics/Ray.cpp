@@ -22,10 +22,10 @@ namespace tml
         std::vector<Vector2f> points(4);
         const Vector2f origin = (pos + (pos + Vector2f(0.f, size.y))) / 2.0f;
 
-        points[0] = Util::Rotate(origin, pos, rotation);
-        points[1] = Util::Rotate(origin, pos+Vector2f(size.x, 0), rotation);
-        points[2] = Util::Rotate(origin, pos+size, rotation);
-        points[3] = Util::Rotate(origin, pos+Vector2f(0, size.y), rotation);
+        points[0] = Math::Rotate(origin, pos, rotation);
+        points[1] = Math::Rotate(origin, pos+Vector2f(size.x, 0), rotation);
+        points[2] = Math::Rotate(origin, pos+size, rotation);
+        points[3] = Math::Rotate(origin, pos+Vector2f(0, size.y), rotation);
 
         return IntersectsShape(points);
     }
@@ -87,7 +87,7 @@ namespace tml
         {
             const Vector2f hitPosition = {x1 + t * (x2 - x1),y1 + t * (y2 - y1)};
             rayIntersection.intersects = true;
-            rayIntersection.points.push_back({hitPosition, Util::Distance(position, hitPosition)});
+            rayIntersection.points.push_back({hitPosition, static_cast<float>(Math::Distance(position, hitPosition))});
         }
         return rayIntersection;
     }
@@ -97,23 +97,11 @@ namespace tml
         Ray::Intersection intersection, rayIntersection;
         for(int i = 0; i < points.size(); i++)
         {
-            if(i == points.size() -1 && points.size() > 2)
+            intersection = IntersectsLine(points.at(i), points.at((i+1) % (points.size())));
+            if(intersection == true)
             {
-                intersection = IntersectsLine(points.at(i), points.at(0));
-                if(intersection == true)
-                {
-                    rayIntersection.intersects = true;
-                    rayIntersection.points.push_back(intersection[0]);
-                }
-            }
-            else
-            {
-                intersection = IntersectsLine(points.at(i), points.at(i+1));
-                if(intersection == true)
-                {
-                    rayIntersection.intersects = true;
-                    rayIntersection.points.push_back(intersection[0]);
-                }
+                rayIntersection.intersects = true;
+                rayIntersection.points.push_back(intersection[0]);
             }
         }
 

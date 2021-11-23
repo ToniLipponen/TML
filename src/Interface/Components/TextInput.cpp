@@ -58,7 +58,7 @@ void TextInput::OnUpdate(double dt)
             else if(Keyboard::IsKeyPressed(Keyboard::KEY_DELETE) && !m_value.empty())
             {
                 ui32 index = search_forwards();
-                m_value.erase(m_value.begin() + m_cursorIndex, m_value.begin() + Util::Max<ui32>(index + 1, m_value.size()));
+                m_value.erase(m_value.begin() + m_cursorIndex, m_value.begin() + Math::Max<ui32>(index + 1, m_value.size()));
             }
             else if(Keyboard::IsKeyPressed(Keyboard::KEY_LEFT))
                 m_cursorIndex = search_backwards();
@@ -69,7 +69,7 @@ void TextInput::OnUpdate(double dt)
         {
             if(Keyboard::IsKeyPressed(Keyboard::KEY_BACKSPACE) && !m_value.empty())
             {
-                m_value.erase(Util::Clamp<ui32>(m_cursorIndex-1, 0, m_value.length() -1), 1);
+                m_value.erase(Math::Clamp<ui32>(m_cursorIndex-1, 0, m_value.length() -1), 1);
                 m_cursorIndex--;
             }
             else if(Keyboard::IsKeyPressed(Keyboard::KEY_DELETE) && !m_value.empty())
@@ -82,7 +82,7 @@ void TextInput::OnUpdate(double dt)
             m_value.insert(m_cursorIndex, str);
             m_cursorIndex += str.size();
         }
-        m_cursorIndex = Util::Clamp<ui32>(m_cursorIndex, 0, m_value.size());
+        m_cursorIndex = Math::Clamp<ui32>(m_cursorIndex, 0, m_value.size());
         if((m_blinkTimer += dt) > 1.0)
         {
             m_showLine = !m_showLine;
@@ -101,7 +101,7 @@ void TextInput::Draw()
 
     const Vector2i pos = m_pos + Vector2i(1,1);
     const Vector2i size = m_size - Vector2i(2,2);
-    const float cursorX = Util::Clamp<int>(pos.x + DEFAULT_TEXT->GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
+    const float cursorX = Math::Clamp<int>(pos.x + DEFAULT_TEXT->GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
 
     Renderer::DrawRect(m_pos, m_size, m_pColor);
     Renderer::SetBounds(m_pos, m_size);

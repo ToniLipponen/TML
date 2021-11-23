@@ -1,4 +1,3 @@
-// Small abstraction layer for function pointers.
 #pragma once
 
 namespace tml

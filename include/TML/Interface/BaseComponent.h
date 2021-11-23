@@ -1,8 +1,8 @@
 #pragma once
 #include <TML/Utilities/Types.h>
-#include <TML/Utilities/Function_ptr.h>
 #include <TML/Interface/Object.h>
 #include <deque>
+#include <functional>
 
 namespace tml
 {
@@ -32,7 +32,8 @@ namespace tml
                 bool Movable = false;
             };
             enum SizePolicy { Fixed, Expand, Clamp };
-            using UIFunc = Function_ptr<void, BaseComponent*>;
+            using UIFunc = std::function<void(BaseComponent*)>;
+
         public:
             BaseComponent();
             BaseComponent(BaseComponent* parent);
@@ -47,15 +48,15 @@ namespace tml
             bool Focused() const { return m_state.Focused; }
             bool Enabled() const { return m_state.Enabled; }
 
-            void SetOnClick(UIFunc function) { m_onClickFunc = function; }
-            void SetOnMouseDown(UIFunc function) { m_onMouseDownFunc = function; }
-            void SetOnHover(UIFunc function) { m_onHoverFunc = function; }
-            void SetOnEnter(UIFunc function) { m_onMouseEnterFunc = function; }
-            void SetOnExit(UIFunc function) { m_onMouseExitFunc = function; }
-            void SetOnDrag(UIFunc function) { m_onDragFunc = function; }
-            void SetOnUpdate(UIFunc function) { m_onUpdate = function; }
-            void SetOnFocusGained(UIFunc function) { m_onFocused = function; }
-            void SetOnFocusLost(UIFunc function) { m_onFocusLost = function; }
+            void SetOnClick(UIFunc function)        { m_onClickFunc         = function; }
+            void SetOnMouseDown(UIFunc function)    { m_onMouseDownFunc     = function; }
+            void SetOnHover(UIFunc function)        { m_onHoverFunc         = function; }
+            void SetOnEnter(UIFunc function)        { m_onMouseEnterFunc    = function; }
+            void SetOnExit(UIFunc function)         { m_onMouseExitFunc     = function; }
+            void SetOnDrag(UIFunc function)         { m_onDragFunc          = function; }
+            void SetOnUpdate(UIFunc function)       { m_onUpdate            = function; }
+            void SetOnFocusGained(UIFunc function)  { m_onFocused           = function; }
+            void SetOnFocusLost(UIFunc function)    { m_onFocusLost         = function; }
 
             void AddChild(BaseComponent* component, const std::string& name = "");
             BaseComponent* FindComponent(const std::string& name); // DANGER! Returns nullptr if not found.

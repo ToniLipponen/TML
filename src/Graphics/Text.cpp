@@ -126,8 +126,8 @@ namespace tml
             stbtt_aligned_quad q;
             if(c == '\n')
             {
-                m_dimensions.x = Util::Min(width, m_dimensions.x);
-                m_dimensions.y = Util::Min(height, m_dimensions.y);
+                m_dimensions.x = Math::Min(width, m_dimensions.x);
+                m_dimensions.y = Math::Min(height, m_dimensions.y);
                 y += 64.f;
                 x = 0;
                 width = 0;
@@ -152,7 +152,7 @@ namespace tml
             width = q.x1 - m_pos.x;
             height = q.y1 - m_pos.y;
         }
-        m_dimensions.x = Util::Min(width, m_dimensions.x);
-        m_dimensions.y = Util::Min(height, m_dimensions.y);
+        m_dimensions.x = Math::Min(width, m_dimensions.x);
+        m_dimensions.y = Math::Min(height, m_dimensions.y);
     }
 }

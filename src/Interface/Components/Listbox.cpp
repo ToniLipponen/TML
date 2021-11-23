@@ -93,7 +93,7 @@ namespace tml
         {
             const float valuesSize = (m_values.size() * 20.f);
             if(valuesSize > m_size.y)
-                return Util::Min<ui32>((valuesSize - m_size.y) / 20, 1);
+                return Math::Min<ui32>((valuesSize - m_size.y) / 20, 1);
 
             return 0;
         }
@@ -151,9 +151,9 @@ namespace tml
             const Vector2i pos = m_pos + Vector2i(1, 1);
             const Vector2i size = m_size - Vector2i(2, 2);
 
-            if(m_selectedIndex >= 0 && m_selectedIndex < m_values.size() && Util::InRange<float>(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20), m_size.y - 20))
+            if(m_selectedIndex >= 0 && m_selectedIndex < m_values.size() && Math::InRange<float>(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20), m_size.y - 20))
             {
-                Renderer::DrawRect(m_pos + Vector2i(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20)), {m_size.x, 20.f}, m_activeColor);
+                Renderer::DrawRect(m_pos + Vector2i(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20)), Vector2f(m_size.x, 20.f), m_activeColor);
             }
 
             Renderer::SetBounds(m_pos, m_size);
