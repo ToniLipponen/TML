@@ -10,16 +10,16 @@ On Ubuntu base distributions: <code>sudo apt install xorg-dev</code><br>
 On RHEL/Fedora based distributions:
 <code>sudo dnf install libXcursor-devel libXi-devel libXinerama-devel libXrandr-devel</code><br><br>
 And then in terminal:<br>
-1. <code>git clone --recursive "https://github.com/ToniLipponen/TML.git"<br>
-2. cd TML<br>
-3. cmake .<br>
-4. make -j8</code><br>
+1. <code>git clone --recursive "https://github.com/ToniLipponen/TML.git"</code><br>
+2. <code>cd TML</code><br>
+3. <code>cmake .</code><br>
+4. <code>make -j8</code><br>
 
 <h2>Windows (Visual Studio):</h2>
 In CMD:<br>
-1. <code>git clone --recursive "https://github.com/ToniLipponen/TML.git"<br>
-2. cd TML<br>
-3. cmake -G "Visual Studio 17"</code><br>
+1. <code>git clone --recursive "https://github.com/ToniLipponen/TML.git"</code><br>
+2. <code>cd TML</code><br>
+3. <code>cmake -G "Visual Studio 17"</code><br>
 4. Open the generated .sln in Visual Studio<br>
 5. Build.
 
