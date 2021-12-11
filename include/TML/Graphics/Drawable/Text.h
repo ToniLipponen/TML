@@ -11,32 +11,27 @@ namespace tml
     {
     public:
         Text();
-        explicit Text(const std::string& text);
-        Text(const std::string& text, const std::string &fontFileName);
-        Text(const std::string& text, Font &font);
         void SetPosition(const Vector2f &pos) noexcept override;
         void SetSize(float s);
         void SetColor(const Color &color) noexcept override;
-        void SetString(const std::string& string);
-        void SetString(const std::wstring& string);
+        void SetString(const std::string& string, const std::string& font = "");
+        void SetString(const std::wstring& string, const std::string& font = "");
         void SetFont(const Font &font);
         void SetSpacing(ui32 s);
         inline Vector2f GetDimensions() const noexcept { return m_dimensions; }
         friend class Renderer;
 
     private:
-        void SetTexture() = delete;
-        void Rotate() = delete;
-        void SetRotation() = delete;
-        const Vector2f& GetSize() = delete;
-        constexpr float GetRotation() = delete;
+        void SetTexture()               = delete;
+        void Rotate()                   = delete;
+        void SetRotation()              = delete;
+        const Vector2f& GetSize()       = delete;
+        constexpr float GetRotation()   = delete;
 
     private:
-        void Generate() noexcept;
+        void Generate() noexcept override;
         Font m_font;
         std::wstring m_string;
-        std::vector<Vertex> m_vertexData;
-        std::vector<ui32> m_indexData;
         float m_lineSpacing = 0;
         float m_kerning = 0;
         Vector2f m_dimensions;

@@ -1,11 +1,11 @@
 #pragma once
-#include "TML/Utilities/Types.h"
+#include <TML/Utilities/Types.h>
 
 namespace tml
 {
     struct Vertex
     {
-        enum DrawableType : ui32 { CIRCLE = 0, RECTANGLE = 1, TEXTURE = 2, TEXT = 3, VIDEO = 4 };
+        enum DrawableType : ui32 { COLOR = 0, TEXTURE = 1, TEXT = 2, VIDEO = 3 };
         Vector2f pos;
         Vector2f uv;
         ui32 color;

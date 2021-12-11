@@ -2,7 +2,6 @@
 #include <TML/Graphics/Renderer.h>
 #include <TML/IO/Input.h>
 #include <TML/Utilities/Clock.h>
-#include <functional>
 #include <string>
 
 namespace tml
@@ -26,7 +25,7 @@ namespace tml
 
         BaseComponent::~BaseComponent()
         {
-            for (auto& child : m_children)
+            for(auto& child : m_children)
                 delete child.second;
         }
 
@@ -82,7 +81,6 @@ namespace tml
         {
             if(m_children.empty())
                 return nullptr;
-            //        const auto result = std::find_if(m_children.begin(), m_children.end(), [nameHash](std::pair<unsigned long, BaseComponent*> p){return p.first == nameHash;});
 
             for(auto& i : m_children)
                 if(nameHash == i.first)
@@ -117,9 +115,9 @@ namespace tml
             return (p > m_pos && p < m_pos + m_size);
         }
 
-        void BaseComponent::ProcessEvents(const Vector2i& mp, bool mouseDown, Events& childEvents)
+        void BaseComponent::ProcessEvents(const Vector2i& mp, bool& mouseDown, Events& childEvents)
         {
-            if(!m_eventStatus.Drag || !childEvents.Drag)
+            if(!childEvents.Drag && !childEvents.MouseDown)
             {
                 const auto oldMouseOver     = m_eventStatus.MouseOver;
                 m_eventStatus.MouseOver     = (!childEvents.MouseOver && ContainsPoint(mp) && !childEvents.MouseOver);
@@ -127,7 +125,7 @@ namespace tml
                 m_eventStatus.MouseExit     = (oldMouseOver && !childEvents.MouseExit && !m_eventStatus.MouseOver);
                 m_eventStatus.Click         = (!m_eventStatus.MouseDown && !m_eventStatus.Click && m_eventStatus.MouseOver && !childEvents.Click && mouseDown);
                 m_eventStatus.MouseDown     = (m_eventStatus.MouseOver && !childEvents.MouseDown && mouseDown);
-                m_eventStatus.GainedFocus   = (!m_state.Focused && (m_eventStatus.MouseOver && !childEvents.GainedFocus && m_eventStatus.MouseDown));
+                m_eventStatus.GainedFocus   = (!m_state.Focused && (m_eventStatus.MouseOver && !childEvents.GainedFocus && m_eventStatus.Click));
 
                 if(m_eventStatus.MouseDown)
                     m_eventStatus.Drag = true;
@@ -146,15 +144,16 @@ namespace tml
             m_eventStatus.LostFocus = (m_state.Focused && !m_eventStatus.MouseOver && mouseDown);
         }
 
-        void BaseComponent::Poll(const Vector2i& mp, bool mouseDown, Events& events)
+        void BaseComponent::Poll(const Vector2i& mp, bool& mouseDown, Events& events)
         {
-            for(auto child : m_children)
-            {
-                if(child.second->m_state.Enabled)
-                {
-                    child.second->Poll(mp, mouseDown, events);
-                }
-            }
+            for(auto child = m_children.rbegin(); child != m_children.rend(); ++child)
+                if(child->second->m_state.Enabled)
+                    child->second->Poll(mp, mouseDown, events);
+
+//            for(auto child : m_children)
+//                if(child.second->m_state.Enabled)
+//                    child.second->Poll(mp, mouseDown, events);
+
             ProcessEvents(mp, mouseDown, events);
         }
 
@@ -163,7 +162,7 @@ namespace tml
             static Clock clock;
             const double delta = clock.Reset();
             const Vector2i mousePos = Mouse::GetPosition();
-            const bool click = Mouse::ButtonDown(Mouse::Left);
+            bool click = Mouse::ButtonDown(Mouse::Left);
             Events event = { false };
             Poll(mousePos, click, event);
             Renderer::ResetCamera();

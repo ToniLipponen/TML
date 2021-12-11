@@ -2,14 +2,8 @@
 #include <TML/Utilities/Utilities.h>
 #include <stb/stb_truetype.h>
 
-#ifndef _WIN32
-    #include <incbin/incbin.h>
-    INCBIN(DEFAULT_FONT, "../res/SF-UI-Text-Regular.otf");
-#else
-    #include <Font.h>
-#endif
-
 tml::Text* DEFAULT_TEXT;
+tml::Font* DEFAULT_FONT;
 
 namespace tml
 {
@@ -18,50 +12,11 @@ namespace tml
         m_color = {255,255,255};
         m_pos = Vector2f{0,0};
         m_size = Vector2f{32,32};
-        #ifndef _WIN32
-            m_font.LoadFromMemory(gDEFAULT_FONTData, gDEFAULT_FONTSize);
-        #else
-            m_font.LoadFromMemory(DEFAULT_FONT.data(), DEFAULT_FONT.size());
-        #endif
-    }
-
-    Text::Text(const std::string& text)
-    : m_string(Util::StringToWstring(text))
-    {
-        m_color = {255,255,255};
-        m_pos = Vector2f{0,0};
-        m_size = Vector2f{32,32};
-        #ifndef _WIN32
-            m_font.LoadFromMemory(gDEFAULT_FONTData, gDEFAULT_FONTSize);
-        #else
-            m_font.LoadFromMemory(DEFAULT_FONT.data(), DEFAULT_FONT.size());
-        #endif
-        Generate();
-    }
-
-    Text::Text(const std::string& text, const std::string& font_file_name)
-    : m_string(Util::StringToWstring(text))
-    {
-        m_font.LoadFromFile(font_file_name);
-        m_color = {255,255,255};
-        m_pos = Vector2f{0,0};
-        m_size = Vector2f{32,32};
-        Generate();
-    }
-
-    Text::Text(const std::string& text, Font& font)
-    : m_string(Util::StringToWstring(text))
-    {
-        m_font = font;
-        m_color = {255,255,255};
-        m_pos = Vector2f{0,0};
-        m_size = Vector2f{32,32};
-        Generate();
     }
 
     void Text::SetPosition(const Vector2f &pos) noexcept
     {
-        if(m_pos.x == pos.x && m_pos.y == pos.y) // Checking this every time is faster than Generate()
+        if(m_pos.x == pos.x && m_pos.y == pos.y)
             return;
         m_pos = pos;
         Generate();
@@ -79,15 +34,18 @@ namespace tml
         Generate();
     }
 
-    void Text::SetString(const std::string& string)
+    void Text::SetString(const std::string& string, const std::string& font)
     {
-        m_string = Util::StringToWstring(string);
-        Generate();
+        SetString(Util::StringToWstring(string), font);
     }
 
-    void Text::SetString(const std::wstring& string)
+    void Text::SetString(const std::wstring& string, const std::string& font)
     {
         m_string = string;
+        if(font == "")
+            m_font = *DEFAULT_FONT;
+        else
+            m_font.LoadFromFile(font);
         Generate();
     }
 
@@ -102,7 +60,6 @@ namespace tml
         m_lineSpacing = s;
         Generate();
     }
-
 
     // First normalizes the quad coordinates, then scales them to size and translates them to xy.
     inline constexpr void NormalizeQuad(stbtt_aligned_quad& q, double s, double x, double y) noexcept
@@ -121,6 +78,7 @@ namespace tml
         ui32 count = 0;
         m_vertexData.clear();
         m_indexData.clear();
+        const ui32 hex = m_color.Hex();
         for(auto c : m_string)
         {
             stbtt_aligned_quad q;
@@ -135,10 +93,10 @@ namespace tml
             }
             stbtt_GetBakedQuad((stbtt_bakedchar*)m_font.m_cdata, 1024, 1024,int(c-32), &x, &y,&q, 1);
             NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
-            m_vertexData.push_back({{ceilf(q.x0), floorf(q.y0)}, {q.s0, q.t0}, m_color.Hex(), 0, Vertex::TEXT});
-            m_vertexData.push_back({{ceilf(q.x1), floorf(q.y0)}, {q.s1, q.t0}, m_color.Hex(), 0, Vertex::TEXT});
-            m_vertexData.push_back({{ceilf(q.x0), floorf(q.y1)}, {q.s0, q.t1}, m_color.Hex(), 0, Vertex::TEXT});
-            m_vertexData.push_back({{ceilf(q.x1), floorf(q.y1)}, {q.s1, q.t1}, m_color.Hex(), 0, Vertex::TEXT});
+            m_vertexData.push_back({{ceilf(q.x0), floorf(q.y0)}, {q.s0, q.t0}, hex, 0, Vertex::TEXT});
+            m_vertexData.push_back({{ceilf(q.x1), floorf(q.y0)}, {q.s1, q.t0}, hex, 0, Vertex::TEXT});
+            m_vertexData.push_back({{ceilf(q.x0), floorf(q.y1)}, {q.s0, q.t1}, hex, 0, Vertex::TEXT});
+            m_vertexData.push_back({{ceilf(q.x1), floorf(q.y1)}, {q.s1, q.t1}, hex, 0, Vertex::TEXT});
 
             m_indexData.push_back(count + 0);
             m_indexData.push_back(count + 1);

@@ -42,10 +42,10 @@ namespace tml
         template<typename R>
         constexpr inline Vector2(const Vector2<R>& v) noexcept;
 
-        inline Vector2 operator+(const Vector2 &rhs) const noexcept;
-        inline Vector2 operator-(const Vector2 &rhs) const noexcept;
-        inline Vector2 operator/(const Vector2 &rhs) const noexcept;
-        inline Vector2 operator*(const Vector2 &rhs) const noexcept;
+        inline Vector2 operator+(const Vector2& rhs) const noexcept;
+        inline Vector2 operator-(const Vector2& rhs) const noexcept;
+        inline Vector2 operator/(const Vector2& rhs) const noexcept;
+        inline Vector2 operator*(const Vector2& rhs) const noexcept;
 
         template<typename R>
         inline constexpr Vector2 operator+(const R rhs) const noexcept;
@@ -59,22 +59,22 @@ namespace tml
         template<typename R>
         inline constexpr Vector2 operator*(const R rhs) const noexcept;
 
-        inline constexpr Vector2 &operator+=(const Vector2 &rhs) noexcept;
-        inline constexpr Vector2 &operator-=(const Vector2 &rhs) noexcept;
-        inline constexpr Vector2 &operator*=(const Vector2 &rhs) noexcept;
-        inline constexpr Vector2 &operator/=(const Vector2 &rhs) noexcept;
+        inline constexpr Vector2& operator+=(const Vector2& rhs) noexcept;
+        inline constexpr Vector2& operator-=(const Vector2& rhs) noexcept;
+        inline constexpr Vector2& operator*=(const Vector2& rhs) noexcept;
+        inline constexpr Vector2& operator/=(const Vector2& rhs) noexcept;
 
         template<typename R>
-        inline constexpr Vector2 &operator+=(const R rhs) noexcept;
+        inline constexpr Vector2& operator+=(const R rhs) noexcept;
 
         template<typename R>
-        inline constexpr Vector2 &operator-=(const R rhs) noexcept;
+        inline constexpr Vector2& operator-=(const R rhs) noexcept;
 
         template<typename R>
-        inline constexpr Vector2 &operator*=(const R rhs) noexcept;
+        inline constexpr Vector2& operator*=(const R rhs) noexcept;
 
         template<typename R>
-        inline constexpr Vector2 &operator/=(const R rhs) noexcept;
+        inline constexpr Vector2& operator/=(const R rhs) noexcept;
 
         inline float Length() const noexcept;
         inline Vector2 &Normalize() noexcept;
@@ -94,6 +94,9 @@ namespace tml
 
         template<typename R>
         inline constexpr Vector2<T>& operator=(const R rhs) noexcept;
+
+//        inline constexpr bool operator==(const Vector2& rhs) const noexcept;
+//        inline constexpr bool operator!=(const Vector2& rhs) const noexcept;
 
     public:
         T x = 0, y = 0;
@@ -307,4 +310,16 @@ namespace tml
     {
         return {static_cast<T>(rhs)};
     }
+
+//    template<typename T>
+//    constexpr bool Vector2<T>::operator==(const Vector2 &rhs) const noexcept
+//    {
+//        return (x == rhs.x && y = rhs.y);
+//    }
+//
+//    template<typename T>
+//    constexpr bool Vector2<T>::operator!=(const Vector2 &rhs) const noexcept
+//    {
+//        return !(*this == rhs);
+//    }
 }

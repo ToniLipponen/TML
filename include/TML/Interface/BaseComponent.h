@@ -81,8 +81,8 @@ namespace tml
             void SetActiveColor(const Color& color) { m_activeColor = color; }
 
         private:
-            void ProcessEvents(const Vector2i& mp, bool mouseDown, Events& events);
-            void Poll(const Vector2i& mp, bool mouseDown, Events& events);
+            void ProcessEvents(const Vector2i& mp, bool& mouseDown, Events& events);
+            void Poll(const Vector2i& mp, bool& mouseDown, Events& events);
 
         protected:
             void p_Update(double dt, const Vector2i& mp);

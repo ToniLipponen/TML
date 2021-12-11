@@ -1,7 +1,6 @@
 #pragma once
-#include "Drawable.h"
-#include "TML/Graphics/Image.h"
-#include "TML/Utilities/Condition.h"
+#include <TML/Graphics/Drawable/Drawable.h>
+#include <TML/Graphics/Image.h>
 
 namespace tml
 {
@@ -12,46 +11,18 @@ namespace tml
         Vector2f size;
     };
 
-    class Sprite : public Drawable {
+    class Sprite : public Drawable
+    {
     public:
-        Sprite()
-        : m_rect({{0, 0}, {0, 0}}), m_texSize(0)
-        {
-            m_pos = Vector2f{0,0};
-            m_size = Vector2f{0,0};
-        }
-
-        void SetRect(const TexRect &r) {
-            m_rect = r;
-        }
-
-        void LoadFromFile(const std::string& filename)
-        {
-            m_img.LoadFromFile(filename);
-            m_size = Vector2f(m_img.GetWidth(), m_img.GetHeight());
-            m_texSize = m_size;
-            m_rect = {{0,0}, m_size};
-            m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
-        }
-
-        void LoadFromImage(const Image& image)
-        {
-            m_img = image;
-            m_size = Vector2f(m_img.GetWidth(), m_img.GetHeight());
-            m_texSize = m_size;
-            m_rect = {{0,0}, m_size};
-            m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
-        }
-
-        void SetInterpolation(bool interpolate)
-        {
-            m_tex.SetMinMagFilter(
-                    tml::Condition(interpolate, Texture::Linear, Texture::Nearest),
-                    tml::Condition(interpolate, Texture::Linear, Texture::Nearest)
-            );
-        }
-
+        Sprite();
+        void SetRect(const TexRect &r);
+        void LoadFromFile(const std::string& filename);
+        void LoadFromImage(const Image& image);
+        void SetInterpolation(bool interpolate);
         friend class Renderer;
+
+    protected:
+        void Generate() noexcept override;
 
     private:
         Image m_img;

@@ -82,7 +82,7 @@ uniform sampler2D uTexture29;
 uniform sampler2D uTexture30;
 uniform sampler2D uTexture31;
 
-mat4 bt601 = mat4(
+const mat4 bt601 = mat4(
   1.16438,  0.00000,  1.59603, -0.87079,
   1.16438, -0.39176, -0.81297,  0.52959,
   1.16438,  2.01723,  0.00000, -1.08139,
@@ -93,38 +93,38 @@ vec4 SampleTex(uint index)
 {
     switch(index)
     {
-        case 0u:  return texture(uTexture0,   vUV); break;
-        case 1u:  return texture(uTexture1,   vUV); break;
-        case 2u:  return texture(uTexture2,   vUV); break;
-        case 3u:  return texture(uTexture3,   vUV); break;
-        case 4u:  return texture(uTexture4,   vUV); break;
-        case 5u:  return texture(uTexture5,   vUV); break;
-        case 6u:  return texture(uTexture6,   vUV); break;
-        case 7u:  return texture(uTexture7,   vUV); break;
-        case 8u:  return texture(uTexture8,   vUV); break;
-        case 9u:  return texture(uTexture9,   vUV); break;
-        case 10u: return texture(uTexture10,  vUV); break;
-        case 11u: return texture(uTexture11,  vUV); break;
-        case 12u: return texture(uTexture12,  vUV); break;
-        case 13u: return texture(uTexture13,  vUV); break;
-        case 14u: return texture(uTexture14,  vUV); break;
-        case 15u: return texture(uTexture15,  vUV); break;
-        case 16u: return texture(uTexture16,  vUV); break;
-        case 17u: return texture(uTexture17,  vUV); break;
-        case 18u: return texture(uTexture18,  vUV); break;
-        case 19u: return texture(uTexture19,  vUV); break;
-        case 20u: return texture(uTexture20,  vUV); break;
-        case 21u: return texture(uTexture21,  vUV); break;
-        case 22u: return texture(uTexture22,  vUV); break;
-        case 23u: return texture(uTexture23,  vUV); break;
-        case 24u: return texture(uTexture24,  vUV); break;
-        case 25u: return texture(uTexture25,  vUV); break;
-        case 26u: return texture(uTexture26,  vUV); break;
-        case 27u: return texture(uTexture27,  vUV); break;
-        case 28u: return texture(uTexture28,  vUV); break;
-        case 29u: return texture(uTexture29,  vUV); break;
-        case 30u: return texture(uTexture30,  vUV); break;
-        case 31u: return texture(uTexture31,  vUV); break;
+        case 0u:  return texture(uTexture0,  vUV); break;
+        case 1u:  return texture(uTexture1,  vUV); break;
+        case 2u:  return texture(uTexture2,  vUV); break;
+        case 3u:  return texture(uTexture3,  vUV); break;
+        case 4u:  return texture(uTexture4,  vUV); break;
+        case 5u:  return texture(uTexture5,  vUV); break;
+        case 6u:  return texture(uTexture6,  vUV); break;
+        case 7u:  return texture(uTexture7,  vUV); break;
+        case 8u:  return texture(uTexture8,  vUV); break;
+        case 9u:  return texture(uTexture9,  vUV); break;
+        case 10u: return texture(uTexture10, vUV); break;
+        case 11u: return texture(uTexture11, vUV); break;
+        case 12u: return texture(uTexture12, vUV); break;
+        case 13u: return texture(uTexture13, vUV); break;
+        case 14u: return texture(uTexture14, vUV); break;
+        case 15u: return texture(uTexture15, vUV); break;
+        case 16u: return texture(uTexture16, vUV); break;
+        case 17u: return texture(uTexture17, vUV); break;
+        case 18u: return texture(uTexture18, vUV); break;
+        case 19u: return texture(uTexture19, vUV); break;
+        case 20u: return texture(uTexture20, vUV); break;
+        case 21u: return texture(uTexture21, vUV); break;
+        case 22u: return texture(uTexture22, vUV); break;
+        case 23u: return texture(uTexture23, vUV); break;
+        case 24u: return texture(uTexture24, vUV); break;
+        case 25u: return texture(uTexture25, vUV); break;
+        case 26u: return texture(uTexture26, vUV); break;
+        case 27u: return texture(uTexture27, vUV); break;
+        case 28u: return texture(uTexture28, vUV); break;
+        case 29u: return texture(uTexture29, vUV); break;
+        case 30u: return texture(uTexture30, vUV); break;
+        case 31u: return texture(uTexture31, vUV); break;
         default:  return vec4(0.0); break;
     }
 }
@@ -132,26 +132,25 @@ void main()
 {
    switch(vType)
    {
-       case 1:
+       case 0u:
            outColor = vColor;
        break;
-       case 2:
+       case 1u:
            outColor = SampleTex(vTexID);
            if(outColor.a < 0.01)
                discard;
        break;
-       case 0:
-       case 3:
-           vec4 color = SampleTex(vTexID);
-           if(color.r > 0.01)
+       case 2u:
+           const float alpha = SampleTex(vTexID).r * vColor.a;
+           if(alpha > 0.1)
            {
                 outColor = vColor;
-                outColor.a = color.r * vColor.a;
+                outColor.a = alpha;
            }
            else
                 discard;
        break;
-       case 4:
+       case 3u:
            const float y  = SampleTex(vTexID    ).r;
            const float cb = SampleTex(vTexID + 1).r;
            const float cr = SampleTex(vTexID + 2).r;
@@ -247,18 +246,15 @@ void main()
 {
    switch(vType)
    {
-       case 1u:
+       case 0u:
            outColor = vColor;
        break;
-       case 2u:
+       case 1u:
            outColor = SampleTex(vTexID);
            if(outColor.a < 0.01)
-           {
                discard;
-           }
        break;
-       case 0u:
-       case 3u:
+       case 2u:
            mediump vec4 color = SampleTex(vTexID);
            if(color.r > 0.01)
            {
@@ -266,11 +262,9 @@ void main()
                outColor.a = color.r * vColor.a;
            }
            else
-           {
                discard;
-           }
        break;
-       case 4u:
+       case 3u:
            mediump float y  = SampleTex(vTexID     ).r;
            mediump float cb = SampleTex(vTexID + 1u).r;
            mediump float cr = SampleTex(vTexID + 2u).r;
