@@ -9,10 +9,11 @@ using namespace Interface;
 
 int main()
 {
-    Window window(800, 600, "GUI TESTING", Window::Resizeable | Window::Antialias);
+    Window window(800, 600, "GUI TESTING", Window::Resizeable);
     Renderer::Init();
     Renderer::SetClearColor(WHITE);
 
+    HorizontalLayout hlayout(0,0, 800, 600);
     Listbox* list = new Listbox(0, 30, 400, 300);
     DropMenu* dropmenu = new DropMenu(0,0, 400, 30);
     Progressbar* progressbar = new Progressbar(0,0, 400, 30);
@@ -27,7 +28,6 @@ int main()
     vlayout->AddChild(dropmenu);
     vlayout->AddChild(new Checkbox(0,0,20));
 
-    HorizontalLayout hlayout(0,0, 800, 600);
     hlayout.AddChild(list);
     hlayout.AddChild(vlayout);
 
@@ -35,8 +35,8 @@ int main()
     for(int i = 0; i < 20; i++)
     {
         list->AddValue("Item" + std::to_string(i));
-        dropmenu->AddValue("Item" + std::to_string(i));
     }
+    dropmenu->AddValue("Item" + std::to_string(1));
 
     Clock clock;
     clock.Reset();

@@ -27,7 +27,7 @@ void Button::Draw()
     const Vector2i pos = m_pos + Vector2i(1,1);
     const Vector2i size = m_size - Vector2i(2,2);
 
-    if(m_eventStatus.MouseDown)
+    if(m_event.MouseDown)
         Renderer::DrawRect(m_pos, m_size, m_activeColor);
     else
         Renderer::DrawRect(m_pos, m_size, m_pColor);

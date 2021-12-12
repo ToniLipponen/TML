@@ -4,8 +4,7 @@ namespace tml
 {
     Circle::Circle()
     {
-        m_indexData = std::vector<ui32>(6, 0);
-        m_vertexData = std::vector<Vertex>(4);
+        Circle({0}, 0);
     }
 
     Circle::Circle(const Vector2f &pos, float radius)
@@ -17,6 +16,7 @@ namespace tml
 
         m_indexData = std::vector<ui32>(6, 0);
         m_vertexData = std::vector<Vertex>(4);
+        Generate();
     }
 
     void Circle::SetRadius(float r)

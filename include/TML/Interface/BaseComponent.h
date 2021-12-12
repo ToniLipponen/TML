@@ -3,6 +3,7 @@
 #include <TML/Interface/Object.h>
 #include <deque>
 #include <functional>
+#include <vector>
 
 namespace tml
 {
@@ -26,10 +27,11 @@ namespace tml
             };
             struct StateFlag
             {
-                bool Enabled = true;
-                bool Focused = false;
+                bool Enabled    = true;
+                bool Focused    = false;
                 bool Resizeable = false;
-                bool Movable = false;
+                bool Movable    = false;
+                bool Raise      = false;
             };
             enum SizePolicy { Fixed, Expand, Clamp };
             using UIFunc = std::function<void(BaseComponent*)>;
@@ -79,10 +81,10 @@ namespace tml
             void SetPrimaryColor(const Color& color) { m_pColor = color; }
             void SetSecondaryColor(const Color& color) { m_sColor = color; }
             void SetActiveColor(const Color& color) { m_activeColor = color; }
+            void Raise();
 
         private:
-            void ProcessEvents(const Vector2i& mp, bool& mouseDown, Events& events);
-            void Poll(const Vector2i& mp, bool& mouseDown, Events& events);
+            void ProcessEvents(const Vector2i& mp, bool& mouseDown, Events& evnt);
 
         protected:
             void p_Update(double dt, const Vector2i& mp);
@@ -108,7 +110,7 @@ namespace tml
             UIFunc m_onFocused;
             UIFunc m_onFocusLost;
 
-            Events m_eventStatus;
+            Events m_event;
             StateFlag m_state;
 
             // Visual
@@ -121,6 +123,7 @@ namespace tml
             BaseComponent* m_parent;
 
             static std::hash<std::string> s_hash;
+            static std::vector<BaseComponent*> s_processStack;
         };
     }
 }

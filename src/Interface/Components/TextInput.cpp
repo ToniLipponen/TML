@@ -97,11 +97,11 @@ void TextInput::Draw()
     DEFAULT_TEXT->SetPosition(m_pos);
     DEFAULT_TEXT->SetSize(m_size.y * 0.8);
     DEFAULT_TEXT->SetString(m_value.substr(0, m_cursorIndex));
-    DEFAULT_TEXT->SetString(m_value);
-
     const Vector2i pos = m_pos + Vector2i(1,1);
     const Vector2i size = m_size - Vector2i(2,2);
     const float cursorX = Math::Clamp<int>(pos.x + DEFAULT_TEXT->GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
+
+    DEFAULT_TEXT->SetString(m_value);
 
     Renderer::DrawRect(m_pos, m_size, m_pColor);
     Renderer::SetBounds(m_pos, m_size);

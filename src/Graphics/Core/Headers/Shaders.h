@@ -142,7 +142,7 @@ void main()
        break;
        case 2u:
            const float alpha = SampleTex(vTexID).r * vColor.a;
-           if(alpha > 0.1)
+           if(alpha * vColor.a > 0.1)
            {
                 outColor = vColor;
                 outColor.a = alpha;
@@ -256,7 +256,7 @@ void main()
        break;
        case 2u:
            mediump vec4 color = SampleTex(vTexID);
-           if(color.r > 0.01)
+           if(color.r * vColor.a > 0.1)
            {
                outColor = vColor;
                outColor.a = color.r * vColor.a;

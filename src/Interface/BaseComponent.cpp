@@ -3,17 +3,20 @@
 #include <TML/IO/Input.h>
 #include <TML/Utilities/Clock.h>
 #include <string>
+#include <algorithm>
 
 namespace tml
 {
     namespace Interface
     {
         std::hash<std::string> BaseComponent::s_hash = std::hash<std::string>();
+        std::vector<BaseComponent*> BaseComponent::s_processStack = std::vector<BaseComponent*>();
 
         BaseComponent::BaseComponent()
         : m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr)
         {
             m_state.Enabled = true;
+            s_processStack.push_back(this);
         }
 
         BaseComponent::BaseComponent(BaseComponent* parent)
@@ -21,10 +24,20 @@ namespace tml
         {
             m_state.Enabled = true;
             m_parent->AddChild(this);
+            s_processStack.push_back(this);
         }
 
         BaseComponent::~BaseComponent()
         {
+            for(auto i = 0; i < s_processStack.size() - 1; i++)
+            {
+                if(s_processStack.at(i) == this)
+                {
+                    s_processStack.erase(s_processStack.begin() + i);
+                    break;
+                }
+            }
+
             for(auto& child : m_children)
                 delete child.second;
         }
@@ -115,46 +128,50 @@ namespace tml
             return (p > m_pos && p < m_pos + m_size);
         }
 
-        void BaseComponent::ProcessEvents(const Vector2i& mp, bool& mouseDown, Events& childEvents)
+        void BaseComponent::Raise()
         {
-            if(!childEvents.Drag && !childEvents.MouseDown)
+            for(auto i = 0; i < s_processStack.size() - 1; ++i)
             {
-                const auto oldMouseOver     = m_eventStatus.MouseOver;
-                m_eventStatus.MouseOver     = (!childEvents.MouseOver && ContainsPoint(mp) && !childEvents.MouseOver);
-                m_eventStatus.MouseEnter    = (!oldMouseOver && !childEvents.MouseEnter && m_eventStatus.MouseOver);
-                m_eventStatus.MouseExit     = (oldMouseOver && !childEvents.MouseExit && !m_eventStatus.MouseOver);
-                m_eventStatus.Click         = (!m_eventStatus.MouseDown && !m_eventStatus.Click && m_eventStatus.MouseOver && !childEvents.Click && mouseDown);
-                m_eventStatus.MouseDown     = (m_eventStatus.MouseOver && !childEvents.MouseDown && mouseDown);
-                m_eventStatus.GainedFocus   = (!m_state.Focused && (m_eventStatus.MouseOver && !childEvents.GainedFocus && m_eventStatus.Click));
-
-                if(m_eventStatus.MouseDown)
-                    m_eventStatus.Drag = true;
-                else if(!mouseDown)
-                    m_eventStatus.Drag = false;
-
-                childEvents.MouseOver   = m_eventStatus.MouseOver   || childEvents.MouseOver;
-                childEvents.MouseEnter  = m_eventStatus.MouseEnter  || childEvents.MouseEnter;
-                childEvents.MouseExit   = m_eventStatus.MouseExit   || childEvents.MouseExit;
-                childEvents.Click       = m_eventStatus.Click       || childEvents.Click;
-                childEvents.MouseDown   = m_eventStatus.MouseDown   || childEvents.MouseDown;
-                childEvents.LostFocus   = m_eventStatus.LostFocus   || childEvents.LostFocus;
-                childEvents.GainedFocus = m_eventStatus.GainedFocus || childEvents.GainedFocus;
-                childEvents.Drag        = m_eventStatus.MouseDown   || childEvents.Drag;
+                auto item = s_processStack.at(i);
+                if(item == this)
+                {
+                    s_processStack.erase(s_processStack.begin() + i);
+                    s_processStack.push_back(item);
+                    break;
+                }
             }
-            m_eventStatus.LostFocus = (m_state.Focused && !m_eventStatus.MouseOver && mouseDown);
+            for(auto& i : m_children)
+                i.second->Raise();
         }
 
-        void BaseComponent::Poll(const Vector2i& mp, bool& mouseDown, Events& events)
+        void BaseComponent::ProcessEvents(const Vector2i& mp, bool& mouseDown, Events& evnt)
         {
-            for(auto child = m_children.rbegin(); child != m_children.rend(); ++child)
-                if(child->second->m_state.Enabled)
-                    child->second->Poll(mp, mouseDown, events);
+            evnt.Drag = (m_event.MouseDown && mouseDown) || evnt.Drag;
+            if(!evnt.Drag)
+            {
+                const auto oldMouseOver = m_event.MouseOver;
+                m_event.MouseOver     = (!evnt.MouseOver && ContainsPoint(mp))                  && !evnt.MouseOver;
+                m_event.MouseEnter    = (!oldMouseOver && m_event.MouseOver)                    && !evnt.MouseEnter;
+                m_event.MouseExit     = (oldMouseOver && !m_event.MouseOver)                    && !evnt.MouseExit;
+                m_event.Click         = (m_event.MouseOver && !m_event.MouseDown && mouseDown)  && !evnt.Click;
+                m_event.MouseDown     = (m_event.MouseOver && mouseDown)                        && !evnt.MouseDown;
+                m_event.GainedFocus   = (!m_state.Focused && m_event.Click)                     && !evnt.GainedFocus;
 
-//            for(auto child : m_children)
-//                if(child.second->m_state.Enabled)
-//                    child.second->Poll(mp, mouseDown, events);
+                if(m_event.MouseDown)
+                    m_event.Drag = true;
+                else if(!mouseDown)
+                    m_event.Drag = false;
 
-            ProcessEvents(mp, mouseDown, events);
+                evnt.MouseOver   = m_event.MouseOver    || evnt.MouseOver;
+                evnt.MouseEnter  = m_event.MouseEnter   || evnt.MouseEnter;
+                evnt.MouseExit   = m_event.MouseExit    || evnt.MouseExit;
+                evnt.Click       = m_event.Click        || evnt.Click;
+                evnt.MouseDown   = m_event.MouseDown    || evnt.MouseDown;
+                evnt.LostFocus   = m_event.LostFocus    || evnt.LostFocus;
+                evnt.GainedFocus = m_event.GainedFocus  || evnt.GainedFocus;
+                evnt.Drag        = m_event.MouseDown    || evnt.Drag;
+            }
+            m_event.LostFocus = (m_state.Focused && !m_event.MouseOver && mouseDown);
         }
 
         void BaseComponent::Update()
@@ -164,9 +181,16 @@ namespace tml
             const Vector2i mousePos = Mouse::GetPosition();
             bool click = Mouse::ButtonDown(Mouse::Left);
             Events event = { false };
-            Poll(mousePos, click, event);
             Renderer::ResetCamera();
-            GetRoot()->p_Update(delta, mousePos);
+
+            if(!m_parent)
+            {
+                for(auto i = s_processStack.rbegin(); i != s_processStack.rend(); ++i)
+                    (*i)->ProcessEvents(mousePos, click, event);
+
+                for(auto i : s_processStack)
+                    i->p_Update(delta, mousePos);
+            }
         }
 
         void BaseComponent::p_Update(double dt, const Vector2i& mp)
@@ -176,56 +200,57 @@ namespace tml
 
             OnUpdate(dt);
             Draw();
-            if(m_eventStatus.Click)
+            if(m_event.Click)
             {
-                m_eventStatus.Click = false;
+                Raise();
+                m_event.Click = false;
                 OnMouseClick(mp);
                 if(m_onClickFunc)
                     m_onClickFunc(this);
             }
-            else if(m_eventStatus.MouseDown)
+            else if(m_event.MouseDown)
             {
                 OnMouseDown(mp);
                 if(m_onMouseDownFunc)
                     m_onMouseDownFunc(this);
             }
-            if(m_eventStatus.MouseEnter)
+            if(m_event.MouseEnter)
             {
-                m_eventStatus.MouseEnter = false;
+                m_event.MouseEnter = false;
                 OnMouseEnter();
                 if(m_onMouseEnterFunc)
                     m_onMouseEnterFunc(this);
             }
-            else if(m_eventStatus.MouseExit)
+            else if(m_event.MouseExit)
             {
-                m_eventStatus.MouseExit = false;
+                m_event.MouseExit = false;
                 OnMouseExit();
                 if(m_onMouseExitFunc)
                     m_onMouseExitFunc(this);
             }
-            if(m_eventStatus.MouseOver)
+            if(m_event.MouseOver)
             {
                 OnMouseHover(mp);
                 if(m_onHoverFunc)
                     m_onHoverFunc(this);
             }
-            if(m_eventStatus.GainedFocus)
+            if(m_event.GainedFocus)
             {
-                m_eventStatus.GainedFocus = false;
+                m_event.GainedFocus = false;
                 m_state.Focused = true;
                 OnFocused();
                 if(m_onFocused)
                     m_onFocused(this);
             }
-            if(m_eventStatus.LostFocus)
+            if(m_event.LostFocus)
             {
-                m_eventStatus.LostFocus = false;
+                m_event.LostFocus = false;
                 m_state.Focused = false;
                 OnFocusLost();
                 if(m_onFocusLost)
                     m_onFocusLost(this);
             }
-            if(m_eventStatus.Drag)
+            if(m_event.Drag)
             {
                 OnMouseDrag(mp);
                 if(m_onDragFunc)
@@ -234,8 +259,8 @@ namespace tml
 
             if(m_onUpdate)
                 m_onUpdate(this);
-            for(auto& i : m_children)
-                i.second->p_Update(dt, mp);
+//            for(auto& i : m_children)
+//                i.second->p_Update(dt, mp);
         }
 
         // Override these in derived classes to add internal event based functionality.

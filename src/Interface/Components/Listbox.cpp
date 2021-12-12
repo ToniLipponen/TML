@@ -135,7 +135,7 @@ namespace tml
         void Listbox::OnUpdate(double dt)
         {
             const auto value = Mouse::GetScrollValue();
-            if(m_eventStatus.MouseOver && m_scrollbar->Enabled())
+            if(m_event.MouseOver && m_scrollbar->Enabled())
             {
                 if(value > 0.0)
                     m_scrollbar->SetValue(m_scrollbar->GetValue() - 1);
@@ -147,9 +147,6 @@ namespace tml
         void Listbox::Draw()
         {
             Renderer::DrawRect(m_pos, m_size, m_pColor);
-
-            const Vector2i pos = m_pos + Vector2i(1, 1);
-            const Vector2i size = m_size - Vector2i(2, 2);
 
             if(m_selectedIndex >= 0 && m_selectedIndex < m_values.size() && Math::InRange<float>(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20), m_size.y - 20))
             {
@@ -164,9 +161,9 @@ namespace tml
             Renderer::ResetBounds();
 
             if(m_state.Focused)
-                Renderer::DrawGrid(pos, size, 1, 1, m_activeColor, 1);
+                Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
             else
-                Renderer::DrawGrid(pos, size, 1, 1, m_sColor, 1);
+                Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
         }
     }
 }

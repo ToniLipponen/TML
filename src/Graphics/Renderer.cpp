@@ -198,6 +198,7 @@ namespace tml
 
     void Renderer::Draw(Circle& r) noexcept
     {
+        std::cout << "Circle: ";
         PushVertexData(r.m_vertexData, r.m_indexData, *s_circleTexture);
     }
 
@@ -208,6 +209,7 @@ namespace tml
 
     void Renderer::Draw(Text& r) noexcept
     {
+        std::cout << "Text: ";
         PushVertexData(r.m_vertexData, r.m_indexData, r.m_font.m_texture);
     }
 
@@ -273,7 +275,7 @@ namespace tml
 
     void Renderer::DrawCircle(const Vector2f& pos, float circumference, const Color& color) noexcept
     {
-        PushQuad(pos - Vector2f{circumference * 0.5}, {circumference}, color, *s_circleTexture, Vertex::TEXTURE);
+        PushQuad(pos - Vector2f{circumference * 0.5}, {circumference}, color, *s_circleTexture, Vertex::TEXT);
     }
 
     void Renderer::DrawBezier(const Vector2f &a, const Vector2f &cp1, const Vector2f &cp2, const Vector2f &b, float thickness,
@@ -397,9 +399,9 @@ namespace tml
             ++index;
         }
 
-        if(!alreadyInMTextures)
+        if(alreadyInMTextures == false)
         {
-            texture.Bind(++index);
+            texture.Bind(index);
             s_textures.push_back(id);
         }
 
@@ -408,7 +410,7 @@ namespace tml
 
     void Renderer::PushVertexData(std::vector<Vertex>& vertices, std::vector<ui32>& indices) noexcept
     {
-        if(MAX_VERTEX_COUNT >= s_vertexData.size() + vertices.size())
+        if(MAX_VERTEX_COUNT <= s_vertexData.size() + vertices.size())
             EndBatch();
         const auto size = s_vertexData.size();
         std::copy(vertices.begin(), vertices.end(), std::back_inserter(s_vertexData));
@@ -418,10 +420,10 @@ namespace tml
 
     void Renderer::PushVertexData(std::vector<Vertex>& vertices, std::vector<ui32>& indices, Texture& tex) noexcept
     {
-        const ui32 id = PushTexture(tex);
+        const ui32 slot = PushTexture(tex);
         for(Vertex& i : vertices)
-            i.tex = id;
-
+            i.tex = slot;
+        std::cout << slot << std::endl;
         PushVertexData(vertices, indices);
     }
 
