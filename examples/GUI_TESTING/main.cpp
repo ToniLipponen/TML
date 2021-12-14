@@ -9,7 +9,7 @@ using namespace Interface;
 
 int main()
 {
-    Window window(800, 600, "GUI TESTING", Window::Resizeable);
+    Window window(800, 600, "GUI TESTING", Window::Resizeable | Window::VSync);
     Renderer::Init();
     Renderer::SetClearColor(WHITE);
 

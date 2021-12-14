@@ -11,12 +11,14 @@ namespace tml
     {
         std::hash<std::string> BaseComponent::s_hash = std::hash<std::string>();
         std::vector<BaseComponent*> BaseComponent::s_processStack = std::vector<BaseComponent*>();
+        std::vector<BaseComponent*> BaseComponent::s_renderStack = std::vector<BaseComponent*>();
 
         BaseComponent::BaseComponent()
         : m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr)
         {
             m_state.Enabled = true;
             s_processStack.push_back(this);
+            s_renderStack.push_back(this);
         }
 
         BaseComponent::BaseComponent(BaseComponent* parent)
@@ -25,15 +27,25 @@ namespace tml
             m_state.Enabled = true;
             m_parent->AddChild(this);
             s_processStack.push_back(this);
+            s_renderStack.push_back(this);
         }
 
         BaseComponent::~BaseComponent()
         {
-            for(auto i = 0; i < s_processStack.size() - 1; i++)
+            for(auto i = 0; i < s_processStack.size() - 1; ++i)
             {
                 if(s_processStack.at(i) == this)
                 {
                     s_processStack.erase(s_processStack.begin() + i);
+                    break;
+                }
+            }
+
+            for(auto i = 0; i < s_renderStack.size() - 1; ++i)
+            {
+                if(s_renderStack.at(i) == this)
+                {
+                    s_renderStack.erase(s_renderStack.begin() + i);
                     break;
                 }
             }
@@ -65,6 +77,18 @@ namespace tml
         void BaseComponent::ToggleEnabled()
         {
             m_state.Enabled = !m_state.Enabled;
+        }
+
+        bool BaseComponent::Enabled() const
+        {
+            if(m_parent)
+            {
+                if(!m_parent->m_state.Enabled)
+                    return false;
+                else
+                    return m_parent->Enabled();
+            }
+            return m_state.Enabled;
         }
 
         void BaseComponent::AddChild(BaseComponent* component, const std::string& name)
@@ -140,6 +164,19 @@ namespace tml
                     break;
                 }
             }
+
+            if(m_state.Raise) // Raise this component above others.
+            {
+                for(auto i = 0; i < s_renderStack.size() - 1; ++i)
+                {
+                    auto item = s_renderStack.at(i);
+                    if(item == this)
+                    {
+                        s_renderStack.erase(s_renderStack.begin() + i);
+                        s_renderStack.push_back(item);
+                    }
+                }
+            }
             for(auto& i : m_children)
                 i.second->Raise();
         }
@@ -186,20 +223,22 @@ namespace tml
             if(!m_parent)
             {
                 for(auto i = s_processStack.rbegin(); i != s_processStack.rend(); ++i)
-                    (*i)->ProcessEvents(mousePos, click, event);
+                    if((*i)->Enabled())
+                        (*i)->ProcessEvents(mousePos, click, event);
+
+                for(auto i : s_renderStack)
+                    if(i->Enabled())
+                        i->Draw();
 
                 for(auto i : s_processStack)
-                    i->p_Update(delta, mousePos);
+                    if(i->Enabled())
+                        i->p_Update(delta, mousePos);
             }
         }
 
         void BaseComponent::p_Update(double dt, const Vector2i& mp)
         {
-            if(!m_state.Enabled)
-                return;
-
             OnUpdate(dt);
-            Draw();
             if(m_event.Click)
             {
                 Raise();
@@ -259,8 +298,6 @@ namespace tml
 
             if(m_onUpdate)
                 m_onUpdate(this);
-//            for(auto& i : m_children)
-//                i.second->p_Update(dt, mp);
         }
 
         // Override these in derived classes to add internal event based functionality.

@@ -16,14 +16,14 @@ namespace tml
         public:
             struct Events
             {
-                bool Click = false;
-                bool MouseEnter = false;
-                bool MouseExit = false;
-                bool MouseOver = false;
-                bool Drag = false;
-                bool MouseDown = false;
-                bool LostFocus = false;
-                bool GainedFocus = false;
+                bool Click          = false;
+                bool MouseEnter     = false;
+                bool MouseExit      = false;
+                bool MouseOver      = false;
+                bool Drag           = false;
+                bool MouseDown      = false;
+                bool LostFocus      = false;
+                bool GainedFocus    = false;
             };
             struct StateFlag
             {
@@ -31,7 +31,7 @@ namespace tml
                 bool Focused    = false;
                 bool Resizeable = false;
                 bool Movable    = false;
-                bool Raise      = false;
+                bool Raise      = true;
             };
             enum SizePolicy { Fixed, Expand, Clamp };
             using UIFunc = std::function<void(BaseComponent*)>;
@@ -48,7 +48,7 @@ namespace tml
             void ToggleEnabled();
 
             bool Focused() const { return m_state.Focused; }
-            bool Enabled() const { return m_state.Enabled; }
+            bool Enabled() const;
 
             void SetOnClick(UIFunc function)        { m_onClickFunc         = function; }
             void SetOnMouseDown(UIFunc function)    { m_onMouseDownFunc     = function; }
@@ -124,6 +124,7 @@ namespace tml
 
             static std::hash<std::string> s_hash;
             static std::vector<BaseComponent*> s_processStack;
+            static std::vector<BaseComponent*> s_renderStack;
         };
     }
 }

@@ -198,7 +198,6 @@ namespace tml
 
     void Renderer::Draw(Circle& r) noexcept
     {
-        std::cout << "Circle: ";
         PushVertexData(r.m_vertexData, r.m_indexData, *s_circleTexture);
     }
 
@@ -209,7 +208,6 @@ namespace tml
 
     void Renderer::Draw(Text& r) noexcept
     {
-        std::cout << "Text: ";
         PushVertexData(r.m_vertexData, r.m_indexData, r.m_font.m_texture);
     }
 
@@ -266,10 +264,10 @@ namespace tml
             PushQuad(pos+Vector2f{0.f, roundness}, dimensions - Vector2f{0.f, roundness*2}, color, *s_circleTexture, rotation, Vertex::COLOR);
             PushQuad(pos+Vector2f{roundness, 0.f}, dimensions - Vector2f{roundness*2, 0.f}, color, *s_circleTexture, rotation, Vertex::COLOR);
 
-            DrawCircle(Math::Rotate(origin, pos+Vector2f{roundness, roundness}, rotation), roundness, color);
-            DrawCircle(Math::Rotate(origin, pos+Vector2f{dimensions.x - roundness, roundness}, rotation), roundness, color);
-            DrawCircle(Math::Rotate(origin,pos+Vector2f{roundness,dimensions.y - roundness}, rotation), roundness, color);
-            DrawCircle(Math::Rotate(origin,pos+dimensions-Vector2f{roundness, roundness}, rotation), roundness, color);
+            DrawCircle(Math::Rotate(origin, pos+Vector2f{roundness, roundness}, rotation), roundness * 2, color);
+            DrawCircle(Math::Rotate(origin, pos+Vector2f{dimensions.x - roundness, roundness}, rotation), roundness * 2, color);
+            DrawCircle(Math::Rotate(origin,pos+Vector2f{roundness,dimensions.y - roundness}, rotation), roundness * 2, color);
+            DrawCircle(Math::Rotate(origin,pos+dimensions-Vector2f{roundness, roundness}, rotation), roundness * 2, color);
         }
     }
 
@@ -423,7 +421,6 @@ namespace tml
         const ui32 slot = PushTexture(tex);
         for(Vertex& i : vertices)
             i.tex = slot;
-        std::cout << slot << std::endl;
         PushVertexData(vertices, indices);
     }
 
