@@ -5,12 +5,20 @@ namespace tml
 {
     Rectangle::Rectangle()
     {
-        Rectangle({0, 0}, {100, 100});
+        m_pos = {0,0};
+        m_size = {0,0};
+        m_indexData = std::vector<ui32>(6,0);
+        m_vertexData = std::vector<Vertex>(4);
+        Generate();
     }
 
     Rectangle::Rectangle(float x, float y, float w, float h)
     {
-        Rectangle({x,y}, {w,h});
+        m_pos = {x,y};
+        m_size = {w,h};
+        m_indexData = std::vector<ui32>(6,0);
+        m_vertexData = std::vector<Vertex>(4);
+        Generate();
     }
 
     Rectangle::Rectangle(const Vector2f& position, const Vector2f& size)

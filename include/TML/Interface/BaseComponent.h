@@ -31,7 +31,7 @@ namespace tml
                 bool Focused    = false;
                 bool Resizeable = false;
                 bool Movable    = false;
-                bool Raise      = true;
+                bool Raise      = false;
             };
             enum SizePolicy { Fixed, Expand, Clamp };
             using UIFunc = std::function<void(BaseComponent*)>;
@@ -46,6 +46,7 @@ namespace tml
             void Enable();
             void Disable();
             void ToggleEnabled();
+            void CanBeRaised(bool value); // Set this to true if you want this component to be raised above others if gained focus / clicked.
 
             bool Focused() const { return m_state.Focused; }
             bool Enabled() const;

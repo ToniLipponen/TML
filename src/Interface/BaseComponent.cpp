@@ -79,8 +79,15 @@ namespace tml
             m_state.Enabled = !m_state.Enabled;
         }
 
+        void BaseComponent::CanBeRaised(bool value)
+        {
+            m_state.Raise = value;
+        }
+
         bool BaseComponent::Enabled() const
         {
+            if(!m_state.Enabled)
+                return false;
             if(m_parent)
             {
                 if(!m_parent->m_state.Enabled)
@@ -154,31 +161,31 @@ namespace tml
 
         void BaseComponent::Raise()
         {
-            for(auto i = 0; i < s_processStack.size() - 1; ++i)
-            {
-                auto item = s_processStack.at(i);
-                if(item == this)
-                {
-                    s_processStack.erase(s_processStack.begin() + i);
-                    s_processStack.push_back(item);
-                    break;
-                }
-            }
-
             if(m_state.Raise) // Raise this component above others.
             {
-                for(auto i = 0; i < s_renderStack.size() - 1; ++i)
+                for(auto i = 0; i < s_processStack.size() - 1; ++i)
                 {
-                    auto item = s_renderStack.at(i);
+                    auto item = s_processStack.at(i);
                     if(item == this)
                     {
-                        s_renderStack.erase(s_renderStack.begin() + i);
-                        s_renderStack.push_back(item);
+                        s_processStack.erase(s_processStack.begin() + i);
+                        s_processStack.push_back(item);
+                        break;
                     }
                 }
+
+                    for(auto i = 0; i < s_renderStack.size() - 1; ++i)
+                    {
+                        auto item = s_renderStack.at(i);
+                        if(item == this)
+                        {
+                            s_renderStack.erase(s_renderStack.begin() + i);
+                            s_renderStack.push_back(item);
+                        }
+                    }
+                for(auto& i : m_children)
+                    i.second->Raise();
             }
-            for(auto& i : m_children)
-                i.second->Raise();
         }
 
         void BaseComponent::ProcessEvents(const Vector2i& mp, bool& mouseDown, Events& evnt)
