@@ -16,13 +16,10 @@ namespace tml
             void SetValue(ui32 value);
         private:
             void Draw() override;
-            void OnMouseClick(const Vector2i& mousePos) override;
-            void OnMouseDrag(const Vector2i& mousePos) override;
 
             i32 m_value = 0;
             ui32 m_max = 1;
             ui32 m_min = 0;
-            Vector2i m_clickPos = 0;
         };
 
         using HScrollbar = Scrollbar<Horizontal>;     // Vertical scrollbar.

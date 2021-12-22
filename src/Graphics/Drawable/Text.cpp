@@ -14,23 +14,10 @@ namespace tml
         m_size = Vector2f{32,32};
     }
 
-    void Text::SetPosition(const Vector2f &pos) noexcept
-    {
-        if(m_pos.x == pos.x && m_pos.y == pos.y)
-            return;
-        m_pos = pos;
-        Generate();
-    }
 
     void Text::SetSize(float s)
     {
         m_size = Vector2f{s,s};
-        Generate();
-    }
-
-    void Text::SetColor(const Color& color) noexcept
-    {
-        m_color = color;
         Generate();
     }
 
@@ -66,8 +53,8 @@ namespace tml
     {
         (q.x0 = (q.x0 * (s / 64.0))) += x;
         (q.x1 = (q.x1 * (s / 64.0))) += x;
-        (q.y0 = (q.y0 * (s / 64.0))) += y - (s / 3.f);
-        (q.y1 = (q.y1 * (s / 64.0))) += y - (s / 3.f);
+        (q.y0 = (q.y0 * (s / 64.0))) += y - (s / 3.0);
+        (q.y1 = (q.y1 * (s / 64.0))) += y - (s / 3.0);
     }
 
     void Text::Generate() noexcept
@@ -84,8 +71,8 @@ namespace tml
             stbtt_aligned_quad q;
             if(c == '\n')
             {
-                m_dimensions.x = Math::Min(width, m_dimensions.x);
-                m_dimensions.y = Math::Min(height, m_dimensions.y);
+                m_dimensions.x = Math::Max(width, m_dimensions.x);
+                m_dimensions.y = Math::Max(height, m_dimensions.y);
                 y += 64.f;
                 x = 0;
                 width = 0;
@@ -110,7 +97,7 @@ namespace tml
             width = q.x1 - m_pos.x;
             height = q.y1 - m_pos.y;
         }
-        m_dimensions.x = Math::Min(width, m_dimensions.x);
-        m_dimensions.y = Math::Min(height, m_dimensions.y);
+        m_dimensions.x = Math::Max(width, m_dimensions.x);
+        m_dimensions.y = Math::Max(height, m_dimensions.y);
     }
 }

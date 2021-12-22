@@ -11,14 +11,12 @@ namespace tml
     {
         std::hash<std::string> BaseComponent::s_hash = std::hash<std::string>();
         std::vector<BaseComponent*> BaseComponent::s_processStack = std::vector<BaseComponent*>();
-        std::vector<BaseComponent*> BaseComponent::s_renderStack = std::vector<BaseComponent*>();
 
         BaseComponent::BaseComponent()
         : m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr)
         {
             m_state.Enabled = true;
             s_processStack.push_back(this);
-            s_renderStack.push_back(this);
         }
 
         BaseComponent::BaseComponent(BaseComponent* parent)
@@ -27,7 +25,6 @@ namespace tml
             m_state.Enabled = true;
             m_parent->AddChild(this);
             s_processStack.push_back(this);
-            s_renderStack.push_back(this);
         }
 
         BaseComponent::~BaseComponent()
@@ -37,15 +34,6 @@ namespace tml
                 if(s_processStack.at(i) == this)
                 {
                     s_processStack.erase(s_processStack.begin() + i);
-                    break;
-                }
-            }
-
-            for(auto i = 0; i < s_renderStack.size() - 1; ++i)
-            {
-                if(s_renderStack.at(i) == this)
-                {
-                    s_renderStack.erase(s_renderStack.begin() + i);
                     break;
                 }
             }
@@ -79,11 +67,6 @@ namespace tml
             m_state.Enabled = !m_state.Enabled;
         }
 
-        void BaseComponent::CanBeRaised(bool value)
-        {
-            m_state.Raise = value;
-        }
-
         bool BaseComponent::Enabled() const
         {
             if(!m_state.Enabled)
@@ -96,6 +79,11 @@ namespace tml
                     return m_parent->Enabled();
             }
             return m_state.Enabled;
+        }
+
+        void BaseComponent::AddListener(const std::string& name, UIFunc callback)
+        {
+            m_listeners[name].push_back(callback);
         }
 
         void BaseComponent::AddChild(BaseComponent* component, const std::string& name)
@@ -161,161 +149,114 @@ namespace tml
 
         void BaseComponent::Raise()
         {
-            if(m_state.Raise) // Raise this component above others.
+            for(auto i = 0; i < s_processStack.size(); i++)
             {
-                for(auto i = 0; i < s_processStack.size() - 1; ++i)
+                auto item = s_processStack.at(i);
+                if(item == this)
                 {
-                    auto item = s_processStack.at(i);
-                    if(item == this)
-                    {
-                        s_processStack.erase(s_processStack.begin() + i);
-                        s_processStack.push_back(item);
-                        break;
-                    }
+                    s_processStack.erase(s_processStack.begin() + i);
+                    s_processStack.push_back(item);
+                    break;
                 }
-
-                    for(auto i = 0; i < s_renderStack.size() - 1; ++i)
-                    {
-                        auto item = s_renderStack.at(i);
-                        if(item == this)
-                        {
-                            s_renderStack.erase(s_renderStack.begin() + i);
-                            s_renderStack.push_back(item);
-                        }
-                    }
-                for(auto& i : m_children)
-                    i.second->Raise();
             }
+            for(auto& i : m_children)
+                i.second->Raise();
         }
 
-        void BaseComponent::ProcessEvents(const Vector2i& mp, bool& mouseDown, Events& evnt)
+        void BaseComponent::ProcessEvents(Event& event)
         {
-            evnt.Drag = (m_event.MouseDown && mouseDown) || evnt.Drag;
-            if(!evnt.Drag)
+            switch(event.type)
             {
-                const auto oldMouseOver = m_event.MouseOver;
-                m_event.MouseOver     = (!evnt.MouseOver && ContainsPoint(mp))                  && !evnt.MouseOver;
-                m_event.MouseEnter    = (!oldMouseOver && m_event.MouseOver)                    && !evnt.MouseEnter;
-                m_event.MouseExit     = (oldMouseOver && !m_event.MouseOver)                    && !evnt.MouseExit;
-                m_event.Click         = (m_event.MouseOver && !m_event.MouseDown && mouseDown)  && !evnt.Click;
-                m_event.MouseDown     = (m_event.MouseOver && mouseDown)                        && !evnt.MouseDown;
-                m_event.GainedFocus   = (!m_state.Focused && m_event.Click)                     && !evnt.GainedFocus;
+                default:
+                {
+                    if(event.type != Event::EventType::Null)
+                        OnEvent(event);
+                }
+                case Event::EventType::MouseButtonPressed:
+                    CallUIFunc("MouseDown", event);
+                    CallUIFunc("iMouseDown", event);
+                    break;
 
-                if(m_event.MouseDown)
-                    m_event.Drag = true;
-                else if(!mouseDown)
-                    m_event.Drag = false;
+                case Event::EventType::MouseButtonReleased:
+                    if(m_state.MouseDown != -1)
+                    {
+                        CallUIFunc("Click", event);
+                        CallUIFunc("iClick", event);
+                    }
+                    m_state.MouseDown = -1;
 
-                evnt.MouseOver   = m_event.MouseOver    || evnt.MouseOver;
-                evnt.MouseEnter  = m_event.MouseEnter   || evnt.MouseEnter;
-                evnt.MouseExit   = m_event.MouseExit    || evnt.MouseExit;
-                evnt.Click       = m_event.Click        || evnt.Click;
-                evnt.MouseDown   = m_event.MouseDown    || evnt.MouseDown;
-                evnt.LostFocus   = m_event.LostFocus    || evnt.LostFocus;
-                evnt.GainedFocus = m_event.GainedFocus  || evnt.GainedFocus;
-                evnt.Drag        = m_event.MouseDown    || evnt.Drag;
+                    break;
+
+                case Event::EventType::MouseMoved:
+                    m_state.MouseOver = ContainsPoint({event.mouseMove.x, event.mouseMove.y});
+                    CallUIFunc("MouseMoved", event);
+                    CallUIFunc("iMouseMoved", event);
+                    break;
+
+                case Event::EventType::MouseWheelScrolled:
+                    CallUIFunc("MouseScroll", event);
+                    CallUIFunc("iMouseScroll", event);
+                    break;
+
+                case Event::EventType::KeyPressed:
+                    CallUIFunc("KeyPressed", event);
+                    CallUIFunc("iKeyPressed", event);
+                    break;
+
+                case Event::EventType::KeyReleased:
+                    CallUIFunc("KeyReleased", event);
+                    CallUIFunc("iKeyReleased", event);
+                    break;
+
+                case Event::EventType::TextEntered:
+                    CallUIFunc("TextEntered", event);
+                    CallUIFunc("iTextEntered", event);
+                    break;
+
+                case Event::EventType::Null:
+                    break;
             }
-            m_event.LostFocus = (m_state.Focused && !m_event.MouseOver && mouseDown);
         }
 
-        void BaseComponent::Update()
+        void BaseComponent::Update(Event event)
         {
             static Clock clock;
             const double delta = clock.Reset();
-            const Vector2i mousePos = Mouse::GetPosition();
-            bool click = Mouse::ButtonDown(Mouse::Left);
-            Events event = { false };
             Renderer::ResetCamera();
 
-            if(!m_parent)
+            for(auto i = s_processStack.rbegin(); i != s_processStack.rend(); i++)
             {
-                for(auto i = s_processStack.rbegin(); i != s_processStack.rend(); ++i)
-                    if((*i)->Enabled())
-                        (*i)->ProcessEvents(mousePos, click, event);
-
-                for(auto i : s_renderStack)
-                    if(i->Enabled())
-                        i->Draw();
-
-                for(auto i : s_processStack)
-                    if(i->Enabled())
-                        i->p_Update(delta, mousePos);
+                if((*i)->Enabled())
+                    (*i)->ProcessEvents(event);
+            }
+            for(auto i : s_processStack)
+            {
+                if(i->Enabled())
+                {
+//                    i->ProcessEvents(event);
+                    i->OnUpdate(delta);
+                    i->Draw();
+                }
             }
         }
 
-        void BaseComponent::p_Update(double dt, const Vector2i& mp)
+        bool BaseComponent::CallUIFunc(const std::string& name, Event &event)
         {
-            OnUpdate(dt);
-            if(m_event.Click)
+            if(m_listeners.find(name) != m_listeners.end())
             {
-                Raise();
-                m_event.Click = false;
-                OnMouseClick(mp);
-                if(m_onClickFunc)
-                    m_onClickFunc(this);
+                auto functions = m_listeners.at(name);
+                for(auto function : functions)
+                {
+                    if(function(this, event))
+                        return true;
+                }
+                return true;
             }
-            else if(m_event.MouseDown)
-            {
-                OnMouseDown(mp);
-                if(m_onMouseDownFunc)
-                    m_onMouseDownFunc(this);
-            }
-            if(m_event.MouseEnter)
-            {
-                m_event.MouseEnter = false;
-                OnMouseEnter();
-                if(m_onMouseEnterFunc)
-                    m_onMouseEnterFunc(this);
-            }
-            else if(m_event.MouseExit)
-            {
-                m_event.MouseExit = false;
-                OnMouseExit();
-                if(m_onMouseExitFunc)
-                    m_onMouseExitFunc(this);
-            }
-            if(m_event.MouseOver)
-            {
-                OnMouseHover(mp);
-                if(m_onHoverFunc)
-                    m_onHoverFunc(this);
-            }
-            if(m_event.GainedFocus)
-            {
-                m_event.GainedFocus = false;
-                m_state.Focused = true;
-                OnFocused();
-                if(m_onFocused)
-                    m_onFocused(this);
-            }
-            if(m_event.LostFocus)
-            {
-                m_event.LostFocus = false;
-                m_state.Focused = false;
-                OnFocusLost();
-                if(m_onFocusLost)
-                    m_onFocusLost(this);
-            }
-            if(m_event.Drag)
-            {
-                OnMouseDrag(mp);
-                if(m_onDragFunc)
-                    m_onDragFunc(this);
-            }
-
-            if(m_onUpdate)
-                m_onUpdate(this);
+            return false;
         }
 
-        // Override these in derived classes to add internal event based functionality.
-        void BaseComponent::OnMouseClick(const Vector2i& mousePos){}
-        void BaseComponent::OnMouseDown(const Vector2i& mousePos){}
-        void BaseComponent::OnMouseHover(const Vector2i& mousePos){}
-        void BaseComponent::OnMouseEnter(){}
-        void BaseComponent::OnMouseExit(){}
-        void BaseComponent::OnMouseDrag(const Vector2i& mousePos){}
+        // By default, these don't do anything. You can override these in derived classes to add your own functionality.
+        void BaseComponent::OnEvent(Event& event){}
         void BaseComponent::OnUpdate(double dt){}
-        void BaseComponent::OnFocused(){}
-        void BaseComponent::OnFocusLost(){}
     }
 }

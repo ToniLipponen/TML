@@ -12,6 +12,40 @@ namespace tml
             m_scrollbar = new Scrollbar<Vertical>(x + width - 21, y+1, height-2);
             m_scrollbar->Disable();
             AddChild(m_scrollbar);
+
+            AddListener("iMouseDown", [&](BaseComponent* c, Event& e)
+            {
+                if(m_state.MouseOver)
+                {
+                    const Vector2i mousePos = {e.mouseButton.x, e.mouseButton.y};
+                    auto PointInRect = [&](const Vector2i &tl, const Vector2i &br)
+                    {
+                        return (mousePos < br && mousePos > tl);
+                    };
+                    for(int i = 0; i < m_values.size(); i++)
+                    {
+                        if(PointInRect(m_pos + Vector2i(0, i * 20), m_pos + Vector2i(m_size.x - 20, (i * 20) + 20)))
+                        {
+                            m_selectedIndex = i + m_scrollbar->GetValue();
+                            break;
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            });
+            AddListener("iMouseScroll", [&](BaseComponent* c, Event& e)
+            {
+                if(m_state.MouseOver)
+                {
+                    if(e.mouseWheelScroll.delta > 0.0)
+                        m_scrollbar->SetValue(m_scrollbar->GetValue() - 1);
+                    else if(e.mouseWheelScroll.delta < 0.0)
+                        m_scrollbar->SetValue(m_scrollbar->GetValue() + 1);
+                    return true;
+                }
+                return false;
+            });
         }
 
         void Listbox::AddValue(std::string value)
@@ -93,7 +127,7 @@ namespace tml
         {
             const float valuesSize = (m_values.size() * 20.f);
             if(valuesSize > m_size.y)
-                return Math::Min<ui32>((valuesSize - m_size.y) / 20, 1);
+                return Math::Max<ui32>((valuesSize - m_size.y) / 20, 1);
 
             return 0;
         }
@@ -113,34 +147,6 @@ namespace tml
             {
                 m_scrollbar->Enable();
                 m_scrollbar->SetRange(0, overflow);
-            }
-        }
-
-        void Listbox::OnMouseClick(const Vector2i &mousePos)
-        {
-            auto PointInRect = [&](const Vector2i &tl, const Vector2i &br)
-            {
-                return (mousePos < br && mousePos > tl);
-            };
-            for(int i = 0; i < m_values.size(); i++)
-            {
-                if(PointInRect(m_pos + Vector2i(0, i * 20), m_pos + Vector2i(m_size.x - 20, (i * 20) + 20)))
-                {
-                    m_selectedIndex = i + m_scrollbar->GetValue();
-                    break;
-                }
-            }
-        }
-
-        void Listbox::OnUpdate(double dt)
-        {
-            const auto value = Mouse::GetScrollValue();
-            if(m_event.MouseOver && m_scrollbar->Enabled())
-            {
-                if(value > 0.0)
-                    m_scrollbar->SetValue(m_scrollbar->GetValue() - 1);
-                else if(value < 0.0)
-                    m_scrollbar->SetValue(m_scrollbar->GetValue() + 1);
             }
         }
 

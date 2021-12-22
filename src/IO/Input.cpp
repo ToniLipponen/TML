@@ -1,9 +1,10 @@
 #include <TML/IO/Input.h>
+#include <TML/IO/Event.h>
+#include <TML/Utilities/String.h>
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <map>
-#include <TML/Utilities/String.h>
-// Keycode and action
 
 static tml::ui32 s_keyboardLastKey = -1;
 static tml::ui32 s_keyboardChar = 0; // Last codepoint.
@@ -13,6 +14,8 @@ static std::map<tml::i32, tml::i32> s_mouseButtonMap;
 static std::wstring s_string;
 static double s_mouseScrollValue = 0;
 static tml::Vector2d s_mousePos;
+
+using tml::Event;
 
 extern "C" void MouseMoveCallback(GLFWwindow* window, double x, double y)
 {
@@ -29,6 +32,13 @@ extern "C" void CharCallback(GLFWwindow* window, unsigned int code)
 {
     s_string.push_back(static_cast<wchar_t>(code));
     s_keyboardChar = code;
+
+    Event event;
+    event.category = Event::Keyboard;
+    event.type = Event::TextEntered;
+    event.text.unicode = code;
+    event.sender = window;
+    tml::EventSystem::GetInstance().PushEvent(event);
 }
 
 extern "C" void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -37,6 +47,15 @@ extern "C" void KeyCallback(GLFWwindow* window, int key, int scancode, int actio
         s_string.pop_back();
     s_keyboardLastKey = key;
     s_keyMap[key] = action;
+
+    Event event;
+    event.category = Event::Keyboard;
+    event.type = (action == GLFW_PRESS || action == GLFW_REPEAT) ? Event::KeyPressed : Event::KeyReleased;
+    event.key.code = key;
+    event.key.control = (mods == GLFW_MOD_CONTROL);
+    event.key.shift = (mods == GLFW_MOD_SHIFT);
+    event.sender = window;
+    tml::EventSystem::GetInstance().PushEvent(event);
 }
 
 extern "C" void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
@@ -103,13 +122,5 @@ namespace tml
         auto r = s_mouseScrollValue;
         s_mouseScrollValue = 0;
         return r;
-    }
-
-    namespace Input
-    {
-        void PollEvents()
-        {
-            glfwPollEvents();
-        }
     }
 }

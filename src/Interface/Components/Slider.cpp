@@ -9,8 +9,8 @@ namespace tml
         template<ComponentAxis axis>
         Slider<axis>::Slider(i32 x, i32 y, ui32 size, ui32 thickness, float min, float max)
         {
-            m_min = Math::Min<float>(min, 0);
-            m_max = Math::Min<float>(max, 0);
+            m_min = Math::Max<float>(min, 0);
+            m_max = Math::Max<float>(max, 0);
             m_value = (m_min + m_max) / 2;
 
             if(axis == Horizontal)
@@ -27,27 +27,40 @@ namespace tml
                 m_vSizePolicy = Expand;
                 m_hSizePolicy = Fixed;
             }
+
+            AddListener("iMouseDown", [&](BaseComponent* c, Event& e)
+            {
+                if(m_state.MouseOver)
+                {
+                    m_state.MouseDown = e.mouseButton.button;
+                    if(axis == Horizontal)
+                        m_value = Math::Clamp(float(e.mouseButton.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
+                    else
+                        m_value = Math::Clamp(m_max - float((e.mouseButton.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
+                    return true;
+                }
+                return false;
+            });
+
+            AddListener("iMouseMoved", [&](BaseComponent* c, Event& e)
+            {
+                if(m_state.MouseDown != -1)
+                {
+                    if(axis == Horizontal)
+                        m_value = Math::Clamp(float(e.mouseMove.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
+                    else
+                        m_value = Math::Clamp(m_max - float((e.mouseMove.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
+                    return true;
+                }
+                return false;
+            });
+
         }
 
         template<ComponentAxis axis>
         void Slider<axis>::SetValue(float value)
         {
             m_value = Math::Clamp(value, m_min, m_max);
-        }
-
-        template<ComponentAxis axis>
-        void Slider<axis>::OnMouseDown(const Vector2i& mp)
-        {
-
-        }
-
-        template<ComponentAxis axis>
-        void Slider<axis>::OnMouseDrag(const Vector2i& mp)
-        {
-            if(axis == Horizontal)
-                m_value = Math::Clamp(float(mp.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
-            else
-                m_value = Math::Clamp(m_max - float((mp.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
         }
 
         template<ComponentAxis axis>

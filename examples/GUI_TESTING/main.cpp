@@ -1,5 +1,7 @@
 #include <TML/TML.h>
 #include <TML/Interface/Interface.h>
+#include <TML/IO/Event.h>
+
 using namespace tml;
 using namespace Interface;
 
@@ -44,9 +46,13 @@ int main()
 
     while(!window.ShouldClose())
     {
+        Event event = window.PollEvents();
+        if(event.type == Event::Closed)
+            window.Close();
+
         Renderer::Clear();
         {
-            hlayout.Update();
+            hlayout.Update(event);
         }
         Renderer::EndBatch();
         window.Display();

@@ -8,13 +8,6 @@ namespace tml
 {
     namespace Interface
     {
-
-        template<typename T>
-        NumericInput<T>::NumericInput()
-        {
-            m_value = 0;
-        }
-
         template<typename T>
         NumericInput<T>::NumericInput(i32 x, i32 y, ui32 w, ui32 h, T value)
         {
@@ -33,8 +26,30 @@ namespace tml
 
             m_incrementButton->SetTextSize(h * 0.8);
             m_decrementButton->SetTextSize(h * 0.8);
-            m_incrementButton->SetOnClick({[](BaseComponent* c){((NumericInput*)c->GetParent())->Increment();}});
-            m_decrementButton->SetOnClick({[](BaseComponent* c){((NumericInput*)c->GetParent())->Decrement();}});
+            m_incrementButton->AddListener("Click",[&](BaseComponent* c, Event& e)
+            {
+                if(c->GetState().MouseOver)
+                {
+                    ((NumericInput *) c->GetParent())->Increment();
+                    return true;
+                }
+                return false;
+            });
+            m_decrementButton->AddListener("Click",[&](BaseComponent* c, Event& e)
+            {
+                if(c->GetState().MouseOver)
+                {
+                    ((NumericInput *)c->GetParent())->Decrement();
+                    return true;
+                }
+                return false;
+            });
+            AddListener("iClick", [&](BaseComponent* c, Event& e)
+            {
+                if(m_state.MouseOver)
+                    return true;
+                return false;
+            });
         }
 
         template<typename T>
@@ -67,88 +82,9 @@ namespace tml
         }
 
         template<typename T>
-        void NumericInput<T>::OnMouseClick(const Vector2i &p)
-        {
-            Keyboard::BeginString();
-        }
-
-        template<typename T>
         void NumericInput<T>::OnUpdate(double dt)
         {
-            m_repeatTimer = Math::Max(m_repeatTimer += dt, 0.11f);
-            if(m_state.Focused)
-            {
-                if(m_repeatTimer > 0.1f)
-                {
-                    if(Keyboard::IsKeyDown(Keyboard::KEY_LEFT_CONTROL)
-                    && Keyboard::IsKeyDown(Keyboard::KEY_V)
-                    && !Clipboard::IsEmpty())
-                        SetValue(Util::StringToType<T>(Clipboard::GetString()));
-                    else if(Keyboard::IsKeyDown(Keyboard::KEY_BACKSPACE)
-                            && !m_valueStr.empty())
-                    {
-                        m_valueStr.erase(Math::Clamp<ui32>(m_cursorIndex-1, 0, m_valueStr.length() -1), 1);
-                        m_cursorIndex--;
-                    }
-                    else if(Keyboard::IsKeyDown(Keyboard::KEY_LEFT))
-                    {
-                        m_cursorIndex--;
-                    }
-                    else if(Keyboard::IsKeyDown(Keyboard::KEY_RIGHT))
-                    {
-                        m_cursorIndex++;
-                    }
-                    m_repeatTimer = 0;
-                }
-                else
-                {
-                    if(Keyboard::IsKeyPressed(Keyboard::KEY_BACKSPACE) && !m_valueStr.empty())
-                    {
-                        m_valueStr.erase(Math::Clamp<ui32>(m_cursorIndex-1, 0, m_valueStr.length() -1), 1);
-                        m_cursorIndex--;
-                    }
-                    else if(Keyboard::IsKeyPressed(Keyboard::KEY_LEFT))
-                    {
-                        m_cursorIndex--;
-                    }
-                    else if(Keyboard::IsKeyPressed(Keyboard::KEY_RIGHT))
-                    {
-                        m_cursorIndex++;
-                    }
-                    else if(Keyboard::IsKeyPressed(Keyboard::KEY_UP))
-                    {
-                        Increment();
-                    }
-                    else if(Keyboard::IsKeyPressed(Keyboard::KEY_DOWN))
-                    {
-                        Decrement();
-                    }
-                }
-                const auto str = Keyboard::EndString();
-                if(!str.empty())
-                {
-                    char c = str.at(0);
-                    if(std::is_integral<T>::value)
-                    {
-                        if(Math::InRange<char>(48, c, 57))
-                        {
-                            m_valueStr.insert(m_cursorIndex, 1, c);
-                            m_cursorIndex += 1;
-                        }
-                    }
-                    else
-                    {
-                        if(Math::InRange<char>(48, c, 57) || (c == '.' && m_valueStr.find('.') == m_valueStr.npos))
-                        {
-                            m_valueStr.insert(m_cursorIndex, 1, c);
-                            m_cursorIndex += 1;
-                        }
-                    }
-                }
-    //            m_value = Util::StringToType<T>(m_valueStr);
-                m_cursorIndex = Math::Clamp<i32>(m_cursorIndex, 0, m_valueStr.size());
-            }
-            m_value = Util::StringToType<T>(m_valueStr);
+
         }
 
         template<typename T>

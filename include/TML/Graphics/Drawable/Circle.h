@@ -13,14 +13,18 @@ namespace tml
         void SetRadius(float r);
         float GetRadius() const noexcept;
 
-        void SetTexture(const Texture &t)        = delete;
-        void Rotate(float d)                     = delete;
-        float GetRotation() const noexcept       = delete;
-        void SetRotation(float d) noexcept       = delete;
-        const Vector2f& GetSize() const noexcept = delete;
+        void SetTexture(const Texture &t) = delete;
 
     private:
         void Generate() noexcept override;
-        void SetSize(const Vector2f &) noexcept override {}
+
+        // -------------------------------- //
+        Vector2f SetSize(const Vector2f &)  noexcept override { return 0; }
+        Vector2f SetSize(float,float)       noexcept override { return 0; }
+        Vector2f Scale(const Vector2f&)     noexcept override { return 0; }
+        Vector2f Scale(float, float)        noexcept override { return 0; }
+        float Rotate(float)                 noexcept override { return 0; }
+        float SetRotation(float)            noexcept override { return 0; }
+
     };
 }

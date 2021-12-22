@@ -10,7 +10,6 @@ namespace tml
         class NumericInput : public BaseComponent
         {
         public:
-            NumericInput();
             NumericInput(i32 x, i32 y, ui32 w, ui32 h, T value = 0);
             void SetValue(T value);
             T GetValue() const;
@@ -18,7 +17,6 @@ namespace tml
         private:
             void Increment();
             void Decrement();
-            void OnMouseClick(const Vector2i& p) override;
             void OnUpdate(double dt) override;
             void OnMoved() override;
             void OnResized() override;

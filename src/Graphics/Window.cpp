@@ -1,6 +1,7 @@
 #include <TML/Graphics/Window.h>
 #include <TML/Utilities/Condition.h>
 #include <TML/Utilities/Platform.h>
+#include <TML/IO/Event.h>
 
 #define GLAD_GL_IMPLEMENTATION
 #define GLAD_GLES2_IMPLEMENTATION
@@ -32,6 +33,13 @@ extern "C" void MouseButtonCallback(GLFWwindow* window, int button, int action, 
 
 void WindowResizeCallback(GLFWwindow* f, int x, int y)
 {
+    tml::Event event;
+    event.category = tml::Event::Window;
+    event.type = tml::Event::Resized;
+    event.size.height = y;
+    event.size.width = x;
+
+    tml::EventSystem::GetInstance().PushEvent(event);
     glViewport(0, 0, x, y);
 }
 
@@ -70,13 +78,7 @@ namespace tml
         auto handle = static_cast<GLFWwindow *>(m_handle);
         glfwMakeContextCurrent(handle);
         glfwShowWindow(handle);
-        glfwSetWindowSizeCallback(handle, WindowResizeCallback);
-        glfwSetDropCallback(handle, DragAndDropCallback);
-        glfwSetCharCallback(handle, CharCallback);
-        glfwSetKeyCallback(handle, KeyCallback);
-        glfwSetMouseButtonCallback(handle, MouseButtonCallback);
-        glfwSetCursorPosCallback(handle, MouseMoveCallback);
-        glfwSetScrollCallback(handle, MouseScrollCallback);
+        SetCallbacks();
 
         GLFWimage img;
         int channels = 4;
@@ -113,17 +115,18 @@ namespace tml
         if(m_useVSync)
             glfwSwapBuffers(static_cast<GLFWwindow*>(m_handle));
         else
-            glFlush();
-        glfwPollEvents();
+            glad_glFlush();
     }
 
-    void Window::Close() const noexcept
+    void Window::Close() noexcept
     {
-        glfwSetWindowShouldClose(static_cast<GLFWwindow*>(m_handle), 1);
+        m_shouldClose = true;
+//        glfwSetWindowShouldClose(static_cast<GLFWwindow*>(m_handle), 1);
     }
 
     bool Window::ShouldClose() const noexcept
     {
+        return m_shouldClose;
         return static_cast<bool>(glfwWindowShouldClose(static_cast<GLFWwindow*>(m_handle)));
     }
 
@@ -158,6 +161,16 @@ namespace tml
         i32 x, y;
         glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &x, &y);
         return y;
+    }
+
+    Event Window::PollEvents() const noexcept
+    {
+        return EventSystem::GetInstance().PollEvents();
+    }
+
+    Event Window::WaitEvents() const noexcept
+    {
+        return EventSystem::GetInstance().WaitEvents();
     }
 
     Vector2i Window::GetPosition() const noexcept
@@ -208,12 +221,7 @@ namespace tml
         TML_ASSERT(m_handle != nullptr, "Failed to create a window handle.");
         glfwMakeContextCurrent(handle);
         glfwShowWindow(handle);
-        glfwSetWindowSizeCallback(handle, WindowResizeCallback);glfwSetDropCallback(handle, DragAndDropCallback);
-        glfwSetCharCallback(handle, CharCallback);
-        glfwSetKeyCallback(handle, KeyCallback);
-        glfwSetMouseButtonCallback(handle, MouseButtonCallback);
-        glfwSetCursorPosCallback(handle, MouseMoveCallback);
-        glfwSetScrollCallback(handle, MouseScrollCallback);
+        SetCallbacks();
     }
 
     void Window::SetActive() noexcept
@@ -229,5 +237,24 @@ namespace tml
         stbi_flip_vertically_on_write(1);
         stbi_write_png(filename.c_str(), w, h, 3, pixels, 0);
         delete[] pixels;
+    }
+
+    void Window::SetCallbacks()
+    {
+        GLFWwindow* handle = static_cast<GLFWwindow*>(m_handle);
+        glfwSetWindowSizeCallback(handle, WindowResizeCallback);
+        glfwSetDropCallback(handle, DragAndDropCallback);
+        glfwSetCharCallback(handle, CharCallback);
+        glfwSetKeyCallback(handle, KeyCallback);
+        glfwSetMouseButtonCallback(handle, MouseButtonCallback);
+        glfwSetCursorPosCallback(handle, MouseMoveCallback);
+        glfwSetScrollCallback(handle, MouseScrollCallback);
+        glfwSetWindowCloseCallback(handle, [](GLFWwindow* handle){
+            Event event;
+            event.category = Event::Window;
+            event.type = Event::Closed;
+            event.sender = handle;
+            EventSystem::GetInstance().PushEvent(event);
+        });
     }
 }

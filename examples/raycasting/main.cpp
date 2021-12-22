@@ -10,10 +10,10 @@ struct Scene
     void Raycast(const Vector2f& pos)
     {
         Ray ray(pos, 0);
-        for(ui32 i = 0; i < 360; i++)
+        for(ui16 i = 0; i < 360; i++)
         {
             ray.direction = Math::AngleToHeading(i);
-            float nearest = MAXFLOAT;
+            float nearest = 10000;
             for(auto& r : rects)
             {
                 const auto hitInfo = ray.IntersectsRect(r.GetPosition(), r.GetSize(), r.GetRotation());
@@ -37,17 +37,33 @@ struct Scene
 
 int main()
 {
-    Window window(1920, 1080, "Raycasting");
+    Window window(800, 600, "Raycasting", Window::VSync);
     Renderer::Init();
+    const Vector2f windowSize2 = window.GetSize() / 2;
+
     Scene scene;
-    scene.rects.push_back(Rectangle(0,0,window.GetWidth(), window.GetHeight()));
-    scene.rects.push_back(Rectangle(100,100,100,100));
-    scene.circles.push_back(Circle(window.GetSize() / 2, 200.f));
+    scene.rects.emplace_back(Rectangle(0,0,window.GetWidth(), window.GetHeight()));
+    scene.rects.emplace_back(Rectangle(100,100,100,100));
+    scene.circles.emplace_back(Circle(windowSize2, 200.f));
+
+    Clock clock;
+    double delta = 0;
+    Vector2f mousePos;
 
     while(!window.ShouldClose())
     {
+        delta = clock.Reset();
+        auto event = window.PollEvents();
+        if(event.type == Event::Closed)
+            window.Close();
+        else if(event.type == Event::MouseMoved)
+            mousePos = {event.mouseMove.x, event.mouseMove.y};
+        scene.rects.at(1).Rotate(delta * 100.0);
+
         Renderer::Clear();
-            scene.Raycast(Mouse::GetPosition());
+            Renderer::DrawCircle(windowSize2, 200.f, 0x007700ff);
+            Renderer::DrawRect({100, 100}, {100, 100}, 0x770000ff,0, scene.rects.at(1).GetRotation());
+            scene.Raycast(mousePos);
         Renderer::EndBatch();
         window.Display();
     }

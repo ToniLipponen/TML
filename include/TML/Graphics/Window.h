@@ -1,6 +1,7 @@
 #pragma once
 #include "TML/Utilities/Types.h"
 #include "TML/IO/Input.h"
+#include "TML/IO/Event.h"
 
 namespace tml
 {
@@ -23,9 +24,10 @@ namespace tml
         Window(const Window&&) = delete;
         Window &operator=(const Window&) = delete;
         Window &operator=(Window&&) = delete;
+
         virtual ~Window();
         virtual void Display();
-        void Close() const noexcept;
+        void Close() noexcept;
         bool ShouldClose() const noexcept;
         
         void *GetHandle() noexcept;
@@ -33,6 +35,9 @@ namespace tml
         i32 GetHeight() const noexcept;
         i32 GetX() const noexcept;
         i32 GetY() const noexcept;
+
+        Event PollEvents() const noexcept;
+        Event WaitEvents() const noexcept;
 
         Vector2i GetPosition() const noexcept;
         Vector2i GetSize() const noexcept;
@@ -44,8 +49,10 @@ namespace tml
         void SetActive() noexcept;
         void Screenshot(const std::string& filename) const noexcept;
     private:
+        void SetCallbacks();
         std::string m_title;
         bool m_useVSync = false;
+        bool m_shouldClose = false;
         void *m_handle;
     };
 }

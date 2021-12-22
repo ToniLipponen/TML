@@ -13,6 +13,10 @@ int main()
 
     while(!window.ShouldClose())
     {
+        auto event = window.PollEvents();
+        if(event.type == Event::Closed)
+            window.Close();
+
         Renderer::Clear();
         Renderer::DrawText("Playing: Kevin MacLeod - Study and Relax", {10,10}, 40, GREEN);
         Renderer::EndBatch();

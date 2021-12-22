@@ -14,6 +14,31 @@ namespace tml
             m_size = Vector2i(width, height);
             AddChild(m_listComponent = new Listbox(x, y + height + 2, width, 0));
             m_listComponent->Disable();
+
+            AddListener("iClick", [&](BaseComponent* c, Event& e)
+            {
+                if(m_state.MouseOver)
+                {
+                    m_listComponent->ToggleEnabled();
+                    return true;
+                }
+                return false;
+            });
+            AddListener("Click", [&](BaseComponent* c, Event& e)
+            {
+                m_listComponent->Disable();
+                return false;
+            });
+
+            AddListener("iFocused", [&](BaseComponent* c, Event& e)
+            {
+                if(m_state.MouseOver)
+                {
+                    m_listComponent->Enable();
+                    return true;
+                }
+                return false;
+            });
         }
 
         void DropMenu::AddValue(std::string value)
@@ -54,7 +79,9 @@ namespace tml
                 selected_value = m_listComponent->GetSelectedValue();
 
             Renderer::DrawRect(m_pos, m_size, m_pColor);
+            Renderer::SetBounds(m_pos, m_size);
             Renderer::DrawText(selected_value, m_pos, m_size.y, BLACK);
+            Renderer::ResetBounds();
 
             if(m_state.Focused)
                 Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
@@ -63,31 +90,10 @@ namespace tml
 
         }
 
-        void DropMenu::OnMouseClick(const Vector2i &mousePos)
-        {
-
-        }
-
-        void DropMenu::OnMouseDown(const Vector2i &mousePos)
-        {
-
-        }
-
         void DropMenu::OnUpdate(double dt)
         {
 
         }
-
-        void DropMenu::OnFocusLost()
-        {
-            m_listComponent->Disable();
-        }
-
-        void DropMenu::OnFocused()
-        {
-            m_listComponent->Enable();
-        }
-
 
         void DropMenu::OnMoved()
         {

@@ -3,85 +3,100 @@
 #include <TML/Graphics/Texture.h>
 #include <TML/Graphics/Drawable/Vertex.h>
 #include <vector>
+#include <TML/Graphics/Transformable.h>
 
 namespace tml
 {
-    class Drawable
+    class Drawable : public Transformable
     {
     public:
+        constexpr const Color& GetColor() const noexcept
+        {
+            return m_color;
+        }
+
         virtual void SetColor(const Color &c) noexcept
         {
             m_color = c;
             Generate();
         }
 
-        virtual void SetPosition(const Vector2f &p) noexcept
-        {
-            if(m_pos.x == p.x && m_pos.y == p.y) return;
-            m_pos = p;
-            Generate();
-        }
-
-        virtual void SetPosition(float x, float y) noexcept
-        {
-            m_pos = {x, y};
-            Generate();
-        }
-
-        virtual void SetSize(const Vector2f &s) noexcept
-        {
-            m_size = s;
-            Generate();
-        }
-
-        void SetTexture(const Texture &t) noexcept
-        {
-            m_tex = t;
-            Generate();
-        }
-
-        void Rotate(float d) noexcept
-        {
-            m_rotation += d;
-            Generate();
-        }
-
-        void SetRotation(float d) noexcept
-        {
-            m_rotation = d;
-            Generate();
-        }
-
-        void Translate(const Vector2f &offset) noexcept
+        virtual Vector2f Move(const Vector2f& offset) noexcept override
         {
             m_pos += offset;
             Generate();
-        }
-
-        void Translate(float x, float y) noexcept
-        {
-            m_pos += {x,y};
-            Generate();
-        }
-
-        const Vector2f& GetSize() const noexcept
-        {
-            return m_size;
-        }
-
-        const Vector2f& GetPosition() const noexcept
-        {
             return m_pos;
         }
 
-        constexpr float GetRotation() const noexcept
+        virtual Vector2f Move(float x, float y) noexcept override
         {
+            m_pos.x += x;
+            m_pos.y += y;
+            Generate();
+            return m_pos;
+        }
+
+        virtual Vector2f SetPosition(const Vector2f& position) noexcept override
+        {
+            m_pos = position;
+            Generate();
+            return m_pos;
+        }
+
+        virtual Vector2f SetPosition(float x, float y) noexcept override
+        {
+            m_pos = {x, y};
+            Generate();
+            return m_pos;
+        }
+
+        virtual Vector2f Scale(const Vector2f& scale) noexcept override
+        {
+            m_size += scale;
+            Generate();
+            return m_size;
+        }
+
+        virtual Vector2f Scale(float x, float y) noexcept override
+        {
+            m_size.x += x;
+            m_size.y += y;
+            Generate();
+            return m_size;
+        }
+
+        virtual Vector2f SetSize(const Vector2f& size) noexcept override
+        {
+            this->m_size = size;
+            Generate();
+            return m_size;
+        }
+
+        virtual Vector2f SetSize(float x, float y) noexcept override
+        {
+            m_size = {x, y};
+            Generate();
+            return m_size;
+        }
+
+        float Rotate(float degrees) noexcept override
+        {
+            m_rotation = std::fmod(m_rotation + degrees, 360.f);
+            if (m_rotation < 0)
+                m_rotation += 360.f;
+
+            Generate();
             return m_rotation;
         }
 
-        constexpr const Color& GetColor() const noexcept
+        float SetRotation(float degrees) noexcept override
         {
-            return m_color;
+            m_rotation = std::fmod(degrees, 360.f);
+            if (m_rotation < 0)
+                m_rotation += 360.f;
+
+            Generate();
+            return m_rotation;
         }
 
         friend class Renderer;
@@ -89,10 +104,7 @@ namespace tml
     protected:
         virtual void Generate() noexcept = 0; // Generate std::vector<Vertex>
         Color m_color = WHITE;
-        Vector2f m_pos = {0, 0};
-        Vector2f m_size = {0, 0};
         Texture m_tex;
-        float m_rotation = 0;
         std::vector<Vertex> m_vertexData;
         std::vector<ui32> m_indexData;
     };

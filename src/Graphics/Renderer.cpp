@@ -264,16 +264,16 @@ namespace tml
             PushQuad(pos+Vector2f{0.f, roundness}, dimensions - Vector2f{0.f, roundness*2}, color, *s_circleTexture, rotation, Vertex::COLOR);
             PushQuad(pos+Vector2f{roundness, 0.f}, dimensions - Vector2f{roundness*2, 0.f}, color, *s_circleTexture, rotation, Vertex::COLOR);
 
-            DrawCircle(Math::Rotate(origin, pos+Vector2f{roundness, roundness}, rotation), roundness * 2, color);
-            DrawCircle(Math::Rotate(origin, pos+Vector2f{dimensions.x - roundness, roundness}, rotation), roundness * 2, color);
-            DrawCircle(Math::Rotate(origin,pos+Vector2f{roundness,dimensions.y - roundness}, rotation), roundness * 2, color);
-            DrawCircle(Math::Rotate(origin,pos+dimensions-Vector2f{roundness, roundness}, rotation), roundness * 2, color);
+            DrawCircle(Math::Rotate(origin, pos+Vector2f{roundness, roundness}, rotation), roundness, color);
+            DrawCircle(Math::Rotate(origin, pos+Vector2f{dimensions.x - roundness, roundness}, rotation), roundness, color);
+            DrawCircle(Math::Rotate(origin,pos+Vector2f{roundness,dimensions.y - roundness}, rotation), roundness, color);
+            DrawCircle(Math::Rotate(origin,pos+dimensions-Vector2f{roundness, roundness}, rotation), roundness, color);
         }
     }
 
-    void Renderer::DrawCircle(const Vector2f& pos, float circumference, const Color& color) noexcept
+    void Renderer::DrawCircle(const Vector2f& pos, float radius, const Color& color) noexcept
     {
-        PushQuad(pos - Vector2f{circumference * 0.5}, {circumference}, color, *s_circleTexture, Vertex::TEXT);
+        PushQuad(pos - Vector2f{radius}, {radius * 2}, color, *s_circleTexture, Vertex::TEXT);
     }
 
     void Renderer::DrawBezier(const Vector2f &a, const Vector2f &cp1, const Vector2f &cp2, const Vector2f &b, float thickness,
@@ -397,7 +397,7 @@ namespace tml
             ++index;
         }
 
-        if(alreadyInMTextures == false)
+        if(!alreadyInMTextures)
         {
             texture.Bind(index);
             s_textures.push_back(id);
@@ -426,8 +426,6 @@ namespace tml
 
     void Renderer::EndBatch() noexcept
     {
-        if(s_vertexData.size() < 3)
-            return;
         s_shader->Bind();
 
         for(i32 i = 0; i < MAX_TEXTURE_COUNT; i++)

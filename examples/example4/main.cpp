@@ -15,21 +15,26 @@ int main()
     input.AddChild(button, "button");
     input.AddChild(list, "listbox");
 
-    button->SetOnClick({[](BaseComponent* c)
+    button->AddListener("Click", [](BaseComponent* c, const Event&)
     {
         auto* textInput = (TextInput*)c->GetRoot();
         if(textInput->GetValue().empty())
-            return;
+            return true;
         auto* listBox = (Listbox*)textInput->FindComponent("listbox");
         listBox->AddValue(textInput->GetValue());
         textInput->SetValue("");
-    }});
+        return true;
+    });
     input.Focus();
 
     while(!window.ShouldClose())
     {
+        auto event = window.PollEvents();
+        if(event.type == Event::Closed)
+            window.Close();
+
         Renderer::Clear();
-            input.Update();
+            input.Update(event);
         Renderer::EndBatch();
         window.Display();
     }

@@ -20,7 +20,7 @@ namespace tml
     Ray::Intersection Ray::IntersectsRect(const Vector2f& pos, const Vector2f& size, float rotation) const noexcept
     {
         std::vector<Vector2f> points(4);
-        const Vector2f origin = (pos + (pos + Vector2f(0.f, size.y))) / 2.0f;
+        const Vector2f origin = pos + (size * 0.5);
 
         points[0] = Math::Rotate(origin, pos, rotation);
         points[1] = Math::Rotate(origin, pos+Vector2f(size.x, 0), rotation);

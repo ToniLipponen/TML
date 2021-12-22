@@ -9,7 +9,7 @@ namespace tml
 
     Circle::Circle(const Vector2f &pos, float radius)
     {
-        radius = Math::Min(radius, 1.0f);
+        radius = Math::Max(radius, 1.0f);
         m_pos = pos;
         m_size = Vector2f{radius, radius};
         m_color = Color(255, 255, 255);

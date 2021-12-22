@@ -11,6 +11,10 @@ int main()
 
     while(!window.ShouldClose())
     {
+        auto event = window.PollEvents();
+        if(event.type == Event::Closed)
+            window.Close();
+
         Renderer::Clear();
             Renderer::Draw(sprite);
         Renderer::EndBatch();

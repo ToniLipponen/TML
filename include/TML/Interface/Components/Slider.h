@@ -14,8 +14,6 @@ namespace tml
             void SetValue(float value);
             inline float GetValue() const { return m_value; }
         private:
-            void OnMouseDown(const Vector2i& mp) override;
-            void OnMouseDrag(const Vector2i& mousePos) override;
             void Draw() override;
             float m_min, m_max, m_value;
         };

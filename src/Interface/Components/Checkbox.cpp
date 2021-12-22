@@ -10,18 +10,23 @@ namespace tml
             m_pos = Vector2f(x,y);
             m_size = Vector2f(size,size);
             m_value = checked;
+            AddListener("iClick", [&](BaseComponent*, Event& e)
+            {
+                if(m_state.MouseOver)
+                {
+                    m_value = !m_value;
+                    return true;
+                }
+                return false;
+            });
         }
 
         void Checkbox::Draw()
         {
+            Renderer::DrawRect(m_pos, m_size, m_pColor);
             Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor);
             if(m_value)
-                Renderer::DrawRect(m_pos + m_size * 0.2f, m_size * 0.6f, m_activeColor);
-        }
-
-        void Checkbox::OnMouseClick(const Vector2i& mousePos)
-        {
-            m_value = !m_value;
+                Renderer::DrawRect(static_cast<Vector2f>(m_pos) + static_cast<Vector2f>(m_size) * 0.2f, static_cast<Vector2f>(m_size) * 0.6f, m_activeColor);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace tml
         static void DrawRect(const Vector2f& pos, const Vector2f& dimensions, const Color& color, float roundness = 0.0f,
                              float rotation = 0.0f) noexcept;
 
-        static void DrawCircle(const Vector2f& pos, float circumference, const Color& color) noexcept;
+        static void DrawCircle(const Vector2f& pos, float radius, const Color& color) noexcept;
 
         // @brief Draws a cubic bezier-curve.
         // a and b are the end points, while cp1 and cp2 are the control points.

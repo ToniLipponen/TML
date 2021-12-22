@@ -28,20 +28,22 @@ namespace tml
             return value;
         }
 
+        // Returns the bigger of the two values
         template<typename T>
-        inline constexpr T Min(T value, T min) noexcept
+        inline constexpr T Max(T a, T b) noexcept
         {
-            if(value < min)
-                return min;
-            return value;
+            if(b < a)
+                return a;
+            return b;
         }
 
+        // Returns the smaller of the two values
         template<typename T>
-        inline constexpr T Max(T value, T max) noexcept
+        inline constexpr T Min(T a, T b) noexcept
         {
-            if(value > max)
-                return max;
-            return value;
+            if(b > a)
+                return a;
+            return b;
         }
 
         template<typename T>

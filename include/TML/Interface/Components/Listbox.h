@@ -26,8 +26,6 @@ namespace tml
         protected:
             void OnMoved() override;
             void OnResized() override;
-            void OnMouseClick(const Vector2i& mousePos) override;
-            void OnUpdate(double dt) override;
             void Draw() override;
             std::vector<std::string> m_values;
             Scrollbar<Vertical>* m_scrollbar = nullptr;

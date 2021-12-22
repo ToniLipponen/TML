@@ -11,9 +11,7 @@ namespace tml
     {
     public:
         Text();
-        void SetPosition(const Vector2f &pos) noexcept override;
         void SetSize(float s);
-        void SetColor(const Color &color) noexcept override;
         void SetString(const std::string& string, const std::string& font = "");
         void SetString(const std::wstring& string, const std::string& font = "");
         void SetFont(const Font &font);

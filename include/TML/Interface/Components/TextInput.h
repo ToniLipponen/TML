@@ -13,7 +13,7 @@ namespace tml
             void SetValue(const std::string& string){ m_value = Util::StringToWstring(string); m_cursorIndex = string.size(); }
             std::string GetValue() const { return Util::WstringToString(m_value); }
         private:
-            void OnMouseClick(const Vector2i& p) override;
+            void InitListeners();
             void OnUpdate(double dt) override;
             void Draw() override;
             std::wstring m_value;
