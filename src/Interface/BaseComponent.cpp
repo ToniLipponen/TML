@@ -93,13 +93,15 @@ namespace tml
                 if(name == "")
                 {
                     component->m_parent = this;
-                    component->m_id = 0;
+                    component->m_hash = 0;
+                    component->m_id = name;
                     m_children.push_back(component);
                 }
                 else
                 {
                     component->m_parent = this;
-                    component->m_id = s_hash(name);
+                    component->m_hash = s_hash(name);
+                    component->m_id = name;
                     m_children.push_back(component);
                 }
             }
@@ -118,7 +120,7 @@ namespace tml
 
             for(auto* i : m_children)
             {
-                if(i->m_id == hash)
+                if(i->m_hash == hash)
                     return i;
             }
             for(auto* i : m_children)
