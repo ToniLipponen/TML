@@ -31,25 +31,25 @@ namespace tml
             float height = 0, expandSize;
             for(auto& item : m_children)
             {
-                const auto itemSize = item.second->GetSize();
-                switch(item.second->GetVerticalSizePolicy())
+                const auto itemSize = item->GetSize();
+                switch(item->GetVerticalSizePolicy())
                 {
                     case Fixed:
                         height += itemSize.y;
                         break;
                     default:
-                        expandThese.push_back(item.second);
+                        expandThese.push_back(item);
                         expandedChildren++;
                         break;
                 }
-                switch(item.second->GetHorizontalSizePolicy())
+                switch(item->GetHorizontalSizePolicy())
                 {
                     case Expand:
-                        item.second->SetSize({m_size.x, itemSize.y});
+                        item->SetSize({m_size.x, itemSize.y});
                         break;
                     case Clamp:
                         if(itemSize.x > m_size.x)
-                            item.second->SetSize({m_size.x, itemSize.y});
+                            item->SetSize({m_size.x, itemSize.y});
                         break;
                     default:
                         break;
@@ -71,14 +71,14 @@ namespace tml
         {
             float offset = 0, height = 0, height2;
             for(auto& item : m_children)
-                height += item.second->GetSize().y;
+                height += item->GetSize().y;
             height += m_children.size() * 5.0f;
             height2 = height / 2;
 
             switch(m_vAlignPolicy)
             {
                 case Far:
-                    offset = m_size.y - m_children.at(m_children.size() - 1).second->GetSize().y;
+                    offset = m_size.y - m_children.at(m_children.size() - 1)->GetSize().y;
                     break;
                 case Center:
                     offset = (m_size.y / 2) - height2;
@@ -88,8 +88,8 @@ namespace tml
 
             for(auto item = m_children.rbegin(); item != m_children.rend(); ++item)
             {
-                auto* i = item->second;
-                auto next = Math::Clamp(item+1, m_children.rbegin(), m_children.rend()-1);
+                auto* i = *item;
+                auto* next = *Math::Clamp(item+1, m_children.rbegin(), m_children.rend()-1);
                 auto itemSize = i->GetSize();
                 switch(m_hAlignPolicy)
                 {
@@ -104,7 +104,7 @@ namespace tml
                         break;
                 }
                 if(m_vAlignPolicy == Far)
-                    offset -= next->second->GetSize().y + m_padding.y;
+                    offset -= next->GetSize().y + m_padding.y;
                 else
                     offset += i->GetSize().y + m_padding.y;
             }

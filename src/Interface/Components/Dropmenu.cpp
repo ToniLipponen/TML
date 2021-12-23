@@ -15,29 +15,12 @@ namespace tml
             AddChild(m_listComponent = new Listbox(x, y + height + 2, width, 0));
             m_listComponent->Disable();
 
-            AddListener("iClick", [&](BaseComponent* c, Event& e)
-            {
-                if(m_state.MouseOver)
-                {
-                    m_listComponent->ToggleEnabled();
-                    return true;
-                }
-                return false;
-            });
             AddListener("Click", [&](BaseComponent* c, Event& e)
             {
-                m_listComponent->Disable();
-                return false;
-            });
-
-            AddListener("iFocused", [&](BaseComponent* c, Event& e)
-            {
                 if(m_state.MouseOver)
-                {
-                    m_listComponent->Enable();
-                    return true;
-                }
-                return false;
+                    m_listComponent->ToggleEnabled();
+                else
+                    m_listComponent->Disable();
             });
         }
 

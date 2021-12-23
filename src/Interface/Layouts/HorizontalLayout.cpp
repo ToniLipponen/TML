@@ -30,27 +30,27 @@ namespace tml
             std::vector<BaseComponent*> expandThese;
             ui32 expandedChildren = 0;
             float width = 0, expandSize;
-            for(auto& item : m_children)
+            for(auto* item : m_children)
             {
-                const auto itemSize = item.second->GetSize();
-                switch(item.second->GetHorizontalSizePolicy())
+                const auto itemSize = item->GetSize();
+                switch(item->GetHorizontalSizePolicy())
                 {
                     case Fixed:
                         width += itemSize.x;
                         break;
                     default:
-                        expandThese.push_back(item.second);
+                        expandThese.push_back(item);
                         expandedChildren++;
                         break;
                 }
-                switch(item.second->GetVerticalSizePolicy())
+                switch(item->GetVerticalSizePolicy())
                 {
                     case Expand:
-                        item.second->SetSize({itemSize.x, m_size.y});
+                        item->SetSize({itemSize.x, m_size.y});
                         break;
                     case Clamp:
                         if(itemSize.y > m_size.y)
-                            item.second->SetSize({itemSize.x, m_size.y});
+                            item->SetSize({itemSize.x, m_size.y});
                         break;
                     default:
                         break;
@@ -71,15 +71,15 @@ namespace tml
         void HorizontalLayout::AlignChildren()
         {
             float offset = 0, width = 0, width2;
-            for(auto& item : m_children)
-                width += item.second->GetSize().x;
+            for(auto* item : m_children)
+                width += item->GetSize().x;
             width += m_children.size() * 5.0f;
             width2 = width / 2;
 
             switch(m_vAlignPolicy)
             {
                 case Far:
-                    offset = m_size.x - m_children.at(m_children.size() - 1).second->GetSize().x;
+                    offset = m_size.x - m_children.at(m_children.size() - 1)->GetSize().x;
                     break;
                 case Center:
                     offset = (m_size.x / 2) - width2;
@@ -89,8 +89,8 @@ namespace tml
 
             for(auto item = m_children.rbegin(); item != m_children.rend(); ++item)
             {
-                auto* i = item->second;
-                auto next = Math::Clamp(item+1, m_children.rbegin(), m_children.rend()-1);
+                auto* i = *item;
+                auto* next = *Math::Clamp(item+1, m_children.rbegin(), m_children.rend()-1);
                 auto itemSize = i->GetSize();
                 switch(m_hAlignPolicy)
                 {
@@ -105,7 +105,7 @@ namespace tml
                         break;
                 }
                 if(m_vAlignPolicy == Far)
-                    offset -= next->second->GetSize().x + m_padding.x;
+                    offset -= next->GetSize().x + m_padding.x;
                 else
                     offset += i->GetSize().x + m_padding.x;
             }

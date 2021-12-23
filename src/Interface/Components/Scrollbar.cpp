@@ -16,7 +16,7 @@ namespace tml
             m_sColor = 0x4d8be4ff;
             m_pColor = 0xccccccff;
 
-            AddListener("iMouseDown", [&](BaseComponent* c, Event& e)
+            AddListener("MouseDown", [&](BaseComponent* c, Event& e)
             {
                 if(m_state.MouseOver)
                 {
@@ -25,11 +25,9 @@ namespace tml
                         m_value = Math::Clamp<float>(float(e.mouseButton.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
                     else
                         m_value = m_max - Math::Clamp<float>(m_max - float((e.mouseButton.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
-                    return true;
                 }
-                return false;
             });
-            AddListener("iMouseMoved", [&](BaseComponent* c, Event& e)
+            AddListener("MouseMoved", [&](BaseComponent* c, Event& e)
             {
                 if(m_state.MouseDown != -1)
                 {
@@ -37,9 +35,7 @@ namespace tml
                         m_value = Math::Clamp<float>(float(e.mouseMove.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
                     else
                         m_value = m_max - Math::Clamp<float>(m_max - float((e.mouseMove.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
-                    return true;
                 }
-                return false;
             });
         }
 

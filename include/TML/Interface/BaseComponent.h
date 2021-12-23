@@ -30,7 +30,7 @@ namespace tml
                 bool Raise      = false;
             };
             enum SizePolicy { Fixed, Expand, Clamp };
-            using UIFunc = std::function<bool(BaseComponent*, Event&)>;
+            using UIFunc = std::function<void(BaseComponent*, Event&)>;
 
         public:
             BaseComponent();
@@ -55,7 +55,6 @@ namespace tml
              * MouseExit
              * MouseMoved
              * MouseScroll
-             * Drag
              * KeyPressed
              * KeyReleased
              * TextEntered
@@ -65,13 +64,16 @@ namespace tml
              * Event
              */
             void AddListener(const std::string& name, UIFunc callback);
+            void AddChild(BaseComponent* component, const std::string& id = "");
 
-            void AddChild(BaseComponent* component, const std::string& name = "");
-            BaseComponent* FindComponent(const std::string& name); // DANGER! Returns nullptr if not found.
-            BaseComponent* FindComponent(unsigned long hash); // DANGER! Returns nullptr if not found.
+            BaseComponent* FindComponent(const std::string& id); // DANGER! Returns nullptr if not found.
+            BaseComponent* FindComponent(ui64); // DANGER! Returns nullptr if not found.
 
             BaseComponent* GetParent(); // DANGER! Returns nullptr if the component doesn't have a parent.
             BaseComponent* GetRoot();
+
+            constexpr inline ui64 GetHash() const noexcept { return m_hash; }
+            constexpr inline const std::string& GetID() const noexcept { return m_id; }
             virtual bool ContainsPoint(const Vector2i& p);
             virtual void Update(Event event);
 
@@ -95,42 +97,24 @@ namespace tml
         protected:
             bool CallUIFunc(const std::string& name, Event& event);
             virtual void Draw() = 0;
-            // Internal events
-            virtual void OnEvent(Event& event);
-            virtual void OnUpdate(double dt);
+            virtual void OnUpdate(double dt){};
 
-            // Visual
-            float m_animSpeed = 4.f;
-            Color m_pColor, m_sColor, m_activeColor; // Primary and secondary color.
+            Color m_pColor;
+            Color m_sColor;
+            Color m_activeColor;
+
             SizePolicy m_hSizePolicy = Clamp; // Horizontal size policy.
             SizePolicy m_vSizePolicy = Fixed; // Vertical size policy.
 
-            std::deque<std::pair<unsigned long, BaseComponent*>> m_children;
-
-            /*
-            * Valid internal listeners:
-            * iClick
-            * iMouseDown
-            * iMouseOver
-            * iMouseEnter
-            * iMouseExit
-            * iMouseMoved
-            * iMouseScroll
-            * iDrag
-            * iKeyPressed
-            * iKeyReleased
-            * iTextEntered
-            * iUpdate
-            * iFocused
-            * iLostFocus
-            * iEvent
-            */
+            ui64 m_hash = 0; // hash of m_id
+            std::string m_id;
+            std::vector<BaseComponent*> m_children;
             std::unordered_map<std::string, std::vector<UIFunc>> m_listeners;
             BaseComponent* m_parent;
+            StateFlag m_state;
 
             static std::hash<std::string> s_hash;
             static std::vector<BaseComponent*> s_processStack;
-            StateFlag m_state;
         };
     }
 }

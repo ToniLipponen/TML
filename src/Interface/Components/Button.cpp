@@ -13,29 +13,23 @@ Button::Button(ui32 x, ui32 y, ui32 w, ui32 h, std::string str, UIFunc onClick)
     if(onClick)
         AddListener("Click", onClick);
 
-    AddListener("iClick", [&](BaseComponent* c, Event& e)
+    AddListener("Click", [&](BaseComponent* c, Event& e)
     {
         if(m_state.MouseOver || (m_state.MouseDown != -1))
         {
             m_state.MouseDown = e.mouseButton.button;
             UnFocus();
-            e = Event{};
-            return true;
         }
-        return false;
     });
 
-    AddListener("iMouseDown",[&](BaseComponent* c, Event& e)
+    AddListener("MouseDown",[&](BaseComponent* c, Event& e)
     {
         if(m_state.MouseOver)
         {
             Focus();
             m_state.MouseDown = e.mouseButton.button;
-            e = Event{};
-            return true;
         }
         UnFocus();
-        return false;
     });
 }
 

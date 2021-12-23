@@ -38,8 +38,8 @@ namespace tml
                 }
             }
 
-            for(auto& child : m_children)
-                delete child.second;
+            for(auto* child : m_children)
+                delete child;
         }
 
         void BaseComponent::Focus()
@@ -93,38 +93,40 @@ namespace tml
                 if(name == "")
                 {
                     component->m_parent = this;
-                    m_children.push_front(std::pair<unsigned long, BaseComponent*>(s_hash(std::to_string(m_children.size())), component));
+                    component->m_id = 0;
+                    m_children.push_back(component);
                 }
                 else
                 {
                     component->m_parent = this;
-                    m_children.push_front({ s_hash(name), component });
+                    component->m_id = s_hash(name);
+                    m_children.push_back(component);
                 }
             }
         }
 
         BaseComponent* BaseComponent::FindComponent(const std::string& name)
         {
-            const auto nameHash = s_hash(name);
-            return FindComponent(nameHash);
+            const ui64 hash = s_hash(name);
+            return FindComponent(hash);
         }
 
-        BaseComponent* BaseComponent::FindComponent(unsigned long nameHash)
+        BaseComponent* BaseComponent::FindComponent(ui64 hash)
         {
-            if(m_children.empty())
+            if(m_children.size() == 0)
                 return nullptr;
 
-            for(auto& i : m_children)
-                if(nameHash == i.first)
-                    return i.second;
-
-            for(auto i : m_children)
+            for(auto* i : m_children)
             {
-                auto child_result = i.second->FindComponent(nameHash);
-                if (child_result)
-                    return child_result;
+                if(i->m_id == hash)
+                    return i;
             }
-
+            for(auto* i : m_children)
+            {
+                auto* component = i->FindComponent(hash);
+                if(component)
+                    return component;
+            }
             return nullptr;
         }
 
@@ -159,8 +161,8 @@ namespace tml
                     break;
                 }
             }
-            for(auto& i : m_children)
-                i.second->Raise();
+            for(auto* i : m_children)
+                i->Raise();
         }
 
         void BaseComponent::ProcessEvents(Event& event)
@@ -170,52 +172,46 @@ namespace tml
                 default:
                 {
                     if(event.type != Event::EventType::Null)
-                        OnEvent(event);
+                        CallUIFunc("Any", event);
                 }
                 case Event::EventType::MouseButtonPressed:
                     CallUIFunc("MouseDown", event);
-                    CallUIFunc("iMouseDown", event);
                     break;
 
                 case Event::EventType::MouseButtonReleased:
                     if(m_state.MouseDown != -1)
                     {
                         CallUIFunc("Click", event);
-                        CallUIFunc("iClick", event);
                     }
                     m_state.MouseDown = -1;
-
+                    CallUIFunc("MouseUp", event);
                     break;
 
                 case Event::EventType::MouseMoved:
                     m_state.MouseOver = ContainsPoint({event.mouseMove.x, event.mouseMove.y});
                     CallUIFunc("MouseMoved", event);
-                    CallUIFunc("iMouseMoved", event);
                     break;
 
                 case Event::EventType::MouseWheelScrolled:
                     CallUIFunc("MouseScroll", event);
-                    CallUIFunc("iMouseScroll", event);
                     break;
 
                 case Event::EventType::KeyPressed:
                     CallUIFunc("KeyPressed", event);
-                    CallUIFunc("iKeyPressed", event);
                     break;
 
                 case Event::EventType::KeyReleased:
                     CallUIFunc("KeyReleased", event);
-                    CallUIFunc("iKeyReleased", event);
                     break;
 
                 case Event::EventType::TextEntered:
                     CallUIFunc("TextEntered", event);
-                    CallUIFunc("iTextEntered", event);
                     break;
 
                 case Event::EventType::Null:
                     break;
             }
+            CallUIFunc("Update", event);
         }
 
         void BaseComponent::Update(Event event)
@@ -244,19 +240,14 @@ namespace tml
         {
             if(m_listeners.find(name) != m_listeners.end())
             {
-                auto functions = m_listeners.at(name);
-                for(auto function : functions)
+                const auto& functions = m_listeners.at(name);
+                for(auto& function : functions)
                 {
-                    if(function(this, event))
-                        return true;
+                    function(this, event);
                 }
                 return true;
             }
             return false;
         }
-
-        // By default, these don't do anything. You can override these in derived classes to add your own functionality.
-        void BaseComponent::OnEvent(Event& event){}
-        void BaseComponent::OnUpdate(double dt){}
     }
 }

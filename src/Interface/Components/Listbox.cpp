@@ -13,12 +13,12 @@ namespace tml
             m_scrollbar->Disable();
             AddChild(m_scrollbar);
 
-            AddListener("iMouseDown", [&](BaseComponent* c, Event& e)
+            AddListener("MouseDown", [&](BaseComponent* c, Event& e)
             {
                 if(m_state.MouseOver)
                 {
                     const Vector2i mousePos = {e.mouseButton.x, e.mouseButton.y};
-                    auto PointInRect = [&](const Vector2i &tl, const Vector2i &br)
+                    static auto PointInRect = [&](const Vector2i &tl, const Vector2i &br)
                     {
                         return (mousePos < br && mousePos > tl);
                     };
@@ -30,11 +30,9 @@ namespace tml
                             break;
                         }
                     }
-                    return true;
                 }
-                return false;
             });
-            AddListener("iMouseScroll", [&](BaseComponent* c, Event& e)
+            AddListener("MouseScroll", [&](BaseComponent* c, Event& e)
             {
                 if(m_state.MouseOver)
                 {
@@ -42,9 +40,7 @@ namespace tml
                         m_scrollbar->SetValue(m_scrollbar->GetValue() - 1);
                     else if(e.mouseWheelScroll.delta < 0.0)
                         m_scrollbar->SetValue(m_scrollbar->GetValue() + 1);
-                    return true;
                 }
-                return false;
             });
         }
 

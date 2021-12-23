@@ -32,35 +32,33 @@ void TextInput::InitListeners()
         return index;
     };
 
-    AddListener("iMouseDown", [&](BaseComponent* c, Event& e)
+    AddListener("MouseDown", [&](BaseComponent* c, Event& e)
     {
         if(m_state.MouseOver)
         {
             m_state.MouseDown = e.mouseButton.button;
             e = Event{};
-            return true;
         }
         else
-        {
             UnFocus();
-            return false;
-        }
     });
-    AddListener("iClick", [&](BaseComponent* c, Event& e)
+    AddListener("Click", [&](BaseComponent* c, Event& e)
     {
         if(m_state.MouseOver)
         {
             Focus();
             e = Event{};
-            return true;
         }
-        return false;
+        else
+            UnFocus();
     });
 
-    AddListener("iKeyPressed", [&](BaseComponent* c, Event& e)
+    AddListener("KeyPressed", [&](BaseComponent* c, Event& e)
     {
-        if(m_state.Focused) {
-            switch(e.key.code) {
+        if(m_state.Focused)
+        {
+            switch(e.key.code)
+            {
                 case Keyboard::KEY_LEFT:
                     if(e.key.control)
                         m_cursorIndex = search_backwards();
@@ -76,25 +74,31 @@ void TextInput::InitListeners()
                     break;
 
                 case Keyboard::KEY_BACKSPACE:
-                    if(m_cursorIndex != 0) {
-                        if(e.key.control) {
+                    if(m_cursorIndex != 0)
+                    {
+                        if(e.key.control)
+                        {
                             const ui32 index = search_backwards();
                             m_value.erase(m_value.begin() + index, m_value.begin() + m_cursorIndex);
                             m_cursorIndex -= (m_cursorIndex - index);
                         }
-                        else {
+                        else
+                        {
                             m_value.erase(m_value.begin() + m_cursorIndex - 1);
                             m_cursorIndex = Math::Clamp<ui32>(--m_cursorIndex, 0, m_value.size());
                         }
                     }
                     break;
                 case Keyboard::KEY_DELETE:
-                    if(m_cursorIndex != m_value.size() - 1) {
-                        if(e.key.control) {
+                    if(m_cursorIndex != m_value.size() - 1)
+                    {
+                        if(e.key.control)
+                        {
                             const ui32 index = search_forwards();
                             m_value.erase(m_value.begin() + m_cursorIndex, m_value.begin() + index);
                         }
-                        else {
+                        else
+                        {
                             m_value.erase(m_value.begin() + m_cursorIndex);
                         }
                     }
@@ -103,20 +107,16 @@ void TextInput::InitListeners()
                 default:
                     break;
             }
-            return true;
         }
-        return false;
     });
 
-    AddListener("iTextEntered", [&](BaseComponent* c, Event& e)
+    AddListener("TextEntered", [&](BaseComponent* c, Event& e)
     {
         if(m_state.Focused)
         {
             m_value.insert(m_value.begin() + m_cursorIndex, e.text.unicode);
             m_cursorIndex++;
-            return true;
         }
-        return false;
     });
 }
 

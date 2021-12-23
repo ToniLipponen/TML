@@ -10,14 +10,10 @@ namespace tml
             m_pos = Vector2f(x,y);
             m_size = Vector2f(size,size);
             m_value = checked;
-            AddListener("iClick", [&](BaseComponent*, Event& e)
+            AddListener("Click", [&](BaseComponent*, Event& e)
             {
                 if(m_state.MouseOver)
-                {
                     m_value = !m_value;
-                    return true;
-                }
-                return false;
             });
         }
 

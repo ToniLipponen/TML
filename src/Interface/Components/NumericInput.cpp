@@ -29,26 +29,16 @@ namespace tml
             m_incrementButton->AddListener("Click",[&](BaseComponent* c, Event& e)
             {
                 if(c->GetState().MouseOver)
-                {
                     ((NumericInput *) c->GetParent())->Increment();
-                    return true;
-                }
-                return false;
             });
             m_decrementButton->AddListener("Click",[&](BaseComponent* c, Event& e)
             {
                 if(c->GetState().MouseOver)
-                {
                     ((NumericInput *)c->GetParent())->Decrement();
-                    return true;
-                }
-                return false;
             });
-            AddListener("iClick", [&](BaseComponent* c, Event& e)
+            AddListener("Click", [&](BaseComponent* c, Event& e)
             {
-                if(m_state.MouseOver)
-                    return true;
-                return false;
+
             });
         }
 
