@@ -40,7 +40,7 @@ namespace tml
                 }
             });
 
-            AddListener("iMouseMoved", [&](BaseComponent* c, Event& e)
+            AddListener("MouseMoved", [&](BaseComponent* c, Event& e)
             {
                 if(m_state.MouseDown != -1)
                 {

@@ -87,10 +87,10 @@ namespace tml
                 default: break;
             }
 
-            for(auto item = m_children.rbegin(); item != m_children.rend(); ++item)
+            for(auto item = m_children.begin(); item != m_children.end(); ++item)
             {
                 auto* i = *item;
-                auto* next = *Math::Clamp(item+1, m_children.rbegin(), m_children.rend()-1);
+                auto* next = *Math::Clamp(item+1, m_children.begin(), m_children.end()-1);
                 auto itemSize = i->GetSize();
                 switch(m_hAlignPolicy)
                 {

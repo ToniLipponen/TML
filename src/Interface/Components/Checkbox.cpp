@@ -1,5 +1,6 @@
 #include <TML/Interface/Components/Checkbox.h>
 #include <TML/Graphics/Renderer.h>
+#include <iostream>
 
 namespace tml
 {
@@ -10,10 +11,14 @@ namespace tml
             m_pos = Vector2f(x,y);
             m_size = Vector2f(size,size);
             m_value = checked;
+            AddListener("MouseDown", [&](BaseComponent*, Event& e){
+                if(m_state.MouseOver)
+                    m_state.MouseDown = e.mouseButton.button;
+            });
+
             AddListener("Click", [&](BaseComponent*, Event& e)
             {
-                if(m_state.MouseOver)
-                    m_value = !m_value;
+                m_value = !m_value;
             });
         }
 

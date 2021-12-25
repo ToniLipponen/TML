@@ -17,6 +17,7 @@ namespace tml
             {
                 if(m_state.MouseOver)
                 {
+                    m_state.MouseDown = e.mouseButton.button;
                     const Vector2i mousePos = {e.mouseButton.x, e.mouseButton.y};
                     static auto PointInRect = [&](const Vector2i &tl, const Vector2i &br)
                     {
@@ -30,6 +31,7 @@ namespace tml
                             break;
                         }
                     }
+                    e = Event{};
                 }
             });
             AddListener("MouseScroll", [&](BaseComponent* c, Event& e)
@@ -40,6 +42,8 @@ namespace tml
                         m_scrollbar->SetValue(m_scrollbar->GetValue() - 1);
                     else if(e.mouseWheelScroll.delta < 0.0)
                         m_scrollbar->SetValue(m_scrollbar->GetValue() + 1);
+
+                    e = Event{};
                 }
             });
         }

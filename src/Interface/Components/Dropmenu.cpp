@@ -14,11 +14,26 @@ namespace tml
             m_size = Vector2i(width, height);
             AddChild(m_listComponent = new Listbox(x, y + height + 2, width, 0));
             m_listComponent->Disable();
+            m_listComponent->AddListener("Click", [](BaseComponent* c, Event& e){
+                c->Disable();
+                e = Event{};
+            });
 
+            AddListener("MouseDown", [&](BaseComponent*, Event& e){
+                if(m_state.MouseOver)
+                {
+                    m_state.MouseDown = e.mouseButton.button;
+                    e = Event{};
+                }
+            });
             AddListener("Click", [&](BaseComponent* c, Event& e)
             {
                 if(m_state.MouseOver)
+                {
                     m_listComponent->ToggleEnabled();
+                    m_listComponent->Raise();
+                    e = Event{};
+                }
                 else
                     m_listComponent->Disable();
             });

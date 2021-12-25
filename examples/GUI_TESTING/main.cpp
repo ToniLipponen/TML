@@ -33,12 +33,11 @@ int main()
     hlayout.AddChild(list);
     hlayout.AddChild(vlayout);
 
-
     for(int i = 0; i < 20; i++)
     {
         list->AddValue("Item" + std::to_string(i));
+        dropmenu->AddValue("Item" + std::to_string(i));
     }
-    dropmenu->AddValue("Item" + std::to_string(1));
 
     Clock clock;
     clock.Reset();

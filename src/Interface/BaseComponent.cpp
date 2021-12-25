@@ -182,9 +182,7 @@ namespace tml
 
                 case Event::EventType::MouseButtonReleased:
                     if(m_state.MouseDown != -1)
-                    {
                         CallUIFunc("Click", event);
-                    }
                     m_state.MouseDown = -1;
                     CallUIFunc("MouseUp", event);
                     break;
@@ -231,7 +229,6 @@ namespace tml
             {
                 if(i->Enabled())
                 {
-//                    i->ProcessEvents(event);
                     i->OnUpdate(delta);
                     i->Draw();
                 }

@@ -29,7 +29,8 @@ Button::Button(ui32 x, ui32 y, ui32 w, ui32 h, std::string str, UIFunc onClick)
             Focus();
             m_state.MouseDown = e.mouseButton.button;
         }
-        UnFocus();
+        else
+            UnFocus();
     });
 }
 
