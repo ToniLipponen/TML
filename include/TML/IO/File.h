@@ -100,6 +100,11 @@ namespace tml
             return {};
         }
 
+        void Read(void* dest, ui64 bytes) noexcept
+        {
+            m_stream.read((char*)dest, bytes);
+        }
+
         std::vector<std::string> GetLines() noexcept
         {
             if (m_isValid)

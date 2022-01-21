@@ -214,7 +214,7 @@ namespace tml
             CallUIFunc("Update", event);
         }
 
-        void BaseComponent::Update(Event event)
+        void BaseComponent::Update(Event& event)
         {
             static Clock clock;
             const double delta = clock.Reset();

@@ -61,7 +61,7 @@ namespace tml
              * Update
              * Focused
              * LostFocus
-             * Event
+             * Any
              */
             void AddListener(const std::string& name, UIFunc callback);
             void AddChild(BaseComponent* component, const std::string& id = "");
@@ -75,7 +75,7 @@ namespace tml
             constexpr inline ui64 GetHash() const noexcept { return m_hash; }
             constexpr inline const std::string& GetID() const noexcept { return m_id; }
             virtual bool ContainsPoint(const Vector2i& p);
-            virtual void Update(Event event);
+            virtual void Update(Event& event);
 
             inline SizePolicy GetHorizontalSizePolicy() const { return m_hSizePolicy; }
             inline SizePolicy GetVerticalSizePolicy() const { return m_vSizePolicy; }

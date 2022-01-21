@@ -84,29 +84,26 @@ namespace tml
         ui32 tempCapInFrames = (sizeof(temp) / sizeof(float)) / decoder->outputChannels;
         ui32 totalFramesRead = 0;
 
-        while (totalFramesRead < frameCount) {
+        while(totalFramesRead < frameCount)
+        {
             ui32 iSample;
             ui32 framesReadThisIteration;
             ui32 totalFramesRemaining = frameCount - totalFramesRead;
             ui32 framesToReadThisIteration = tempCapInFrames;
-            if (framesToReadThisIteration > totalFramesRemaining) {
+            if(framesToReadThisIteration > totalFramesRemaining)
                 framesToReadThisIteration = totalFramesRemaining;
-            }
 
             framesReadThisIteration = (ui32)ma_decoder_read_pcm_frames(decoder, temp, framesToReadThisIteration);
-            if (framesReadThisIteration == 0) {
+            if(framesReadThisIteration == 0)
                 break;
-            }
 
-            for (iSample = 0; iSample < framesReadThisIteration*decoder->outputChannels; ++iSample) {
+            for(iSample = 0; iSample < framesReadThisIteration*decoder->outputChannels; ++iSample)
                 output[totalFramesRead*decoder->outputChannels + iSample] += temp[iSample] * m_volume;
-            }
 
             totalFramesRead += framesReadThisIteration;
 
-            if (framesReadThisIteration < framesToReadThisIteration) {
+            if(framesReadThisIteration < framesToReadThisIteration)
                 break;
-            }
         }
         m_framesRead += totalFramesRead * m_channels;
         return totalFramesRead;

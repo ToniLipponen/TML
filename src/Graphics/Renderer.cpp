@@ -20,7 +20,6 @@
 #include "DefaultText.h"
 #include <Circle.h> // Circle texture data
 
-
 extern tml::Text* DEFAULT_TEXT;
 extern tml::Font* DEFAULT_FONT;
 
@@ -246,7 +245,7 @@ namespace tml
         s_indexData.push_back(currentElements + 3);
         s_indexData.push_back(currentElements + 2);
 
-        if(rounded)
+        if(rounded) // Doesn't work well with translucent colors. Might do something to fix this in some point. TODO
         {
             Renderer::DrawCircle(a, thickness * 0.5f, color);
             Renderer::DrawCircle(b, thickness * 0.5f, color);
@@ -256,13 +255,14 @@ namespace tml
     void Renderer::DrawRect(const Vector2f& pos, const Vector2f& dimensions, const Color& color, float roundness, float rotation) noexcept
     {
         if(roundness < 3.f) // If roundness is too low, just draw a single quad
-            PushQuad(pos, dimensions, color, *s_circleTexture, rotation, Vertex::COLOR);
+            PushQuad(pos, dimensions, color, *s_circleTexture, Vertex::COLOR, rotation);
         else
         {
-            Vector2f origin = {origin.x = (pos.x + pos.x + dimensions.x) * 0.5f,
-                               origin.y = (pos.y + pos.y + dimensions.y) * 0.5f};
-            PushQuad(pos+Vector2f{0.f, roundness}, dimensions - Vector2f{0.f, roundness*2}, color, *s_circleTexture, rotation, Vertex::COLOR);
-            PushQuad(pos+Vector2f{roundness, 0.f}, dimensions - Vector2f{roundness*2, 0.f}, color, *s_circleTexture, rotation, Vertex::COLOR);
+            // Doesn't work well with translucent colors. Might do something to fix this in some point. TODO
+            const Vector2f origin = {(pos.x + pos.x + dimensions.x) * 0.5f,
+                                     (pos.y + pos.y + dimensions.y) * 0.5f};
+            PushQuad(pos+Vector2f{0.f, roundness}, dimensions - Vector2f{0.f, roundness*2}, color, *s_circleTexture, Vertex::COLOR, rotation);
+            PushQuad(pos+Vector2f{roundness, 0.f}, dimensions - Vector2f{roundness*2, 0.f}, color, *s_circleTexture, Vertex::COLOR, rotation);
 
             DrawCircle(Math::Rotate(origin, pos+Vector2f{roundness, roundness}, rotation), roundness, color);
             DrawCircle(Math::Rotate(origin, pos+Vector2f{dimensions.x - roundness, roundness}, rotation), roundness, color);
@@ -318,31 +318,19 @@ namespace tml
         PushQuad(pos, size, TRANSPARENT, tex, Vertex::TEXTURE);
     }
 
-    void Renderer::PushQuad(const Vector2f &pos, const Vector2f &size, const Color &col, Texture& texture, Vertex::DrawableType type) noexcept
+    void Renderer::DrawTextureRect(Texture& tex, const Vector2f& pos, const Vector2f& size, float rotation, const Vector2f& tl, const Vector2f& br) noexcept
     {
-        ui32 currentElements = s_vertexData.size();
-        if(currentElements >= MAX_VERTEX_COUNT - 4)
-            EndBatch();
-
-        const ui32 tex = PushTexture(texture);
-        const ui32 hex = col.Hex();
-        currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again
-
-        s_vertexData.emplace_back(Vertex{pos,                         {0.f, 0.f}, hex, tex, type});
-        s_vertexData.emplace_back(Vertex{pos + Vector2f{size.x, 0.f}, {1.f, 0.f}, hex, tex, type});
-        s_vertexData.emplace_back(Vertex{pos + Vector2f{0.f, size.y}, {0.f, 1.f}, hex, tex, type});
-        s_vertexData.emplace_back(Vertex{pos + size,                  {1.f, 1.f}, hex, tex, type});
-
-        s_indexData.emplace_back(currentElements + 0);
-        s_indexData.emplace_back(currentElements + 1);
-        s_indexData.emplace_back(currentElements + 2);
-
-        s_indexData.emplace_back(currentElements + 1);
-        s_indexData.emplace_back(currentElements + 3);
-        s_indexData.emplace_back(currentElements + 2);
+        PushQuad(pos, size, TRANSPARENT, tex, Vertex::TEXTURE, rotation, tl, br);
     }
 
-    void Renderer::PushQuad(const Vector2f &pos, const Vector2f &size, const Color &col, Texture& texture, float rotation, Vertex::DrawableType type) noexcept
+    void Renderer::PushQuad(const Vector2f &pos,
+                            const Vector2f &size,
+                            const Color &col,
+                            Texture& texture,
+                            Vertex::DrawableType type,
+                            float rotation,
+                            const Vector2f& tl,
+                            const Vector2f& br) noexcept
     {
         ui32 currentElements = s_vertexData.size();
         if(currentElements >= MAX_VERTEX_COUNT - 4)
@@ -353,11 +341,21 @@ namespace tml
 
         currentElements = s_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the s_vertexData.size() again
 
-        const Vector2f origin = (pos + pos + size) * 0.5f;
-        s_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos, rotation),                         {0.f, 0.f}, hex, tex, type});
-        s_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos + Vector2f{size.x, 0.f}, rotation), {1.f, 0.f}, hex, tex, type});
-        s_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos + Vector2f{0.f, size.y}, rotation), {0.f, 1.f}, hex, tex, type});
-        s_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos + size, rotation),                  {1.f, 1.f}, hex, tex, type});
+        if(rotation != 0)
+        {
+            const Vector2f origin = (pos + pos + size) * 0.5f;
+            s_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos, rotation),                         tl, hex, tex, type});
+            s_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos + Vector2f{size.x, 0.f}, rotation), {br.x, tl.y}, hex, tex, type});
+            s_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos + Vector2f{0.f, size.y}, rotation), {tl.x, br.y}, hex, tex, type});
+            s_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos + size, rotation),                  br, hex, tex, type});
+        }
+        else
+        {
+            s_vertexData.emplace_back(Vertex{pos,                         tl, hex, tex, type});
+            s_vertexData.emplace_back(Vertex{pos + Vector2f{size.x, 0.f}, {br.x, tl.y}, hex, tex, type});
+            s_vertexData.emplace_back(Vertex{pos + Vector2f{0.f, size.y}, {tl.x, br.y}, hex, tex, type});
+            s_vertexData.emplace_back(Vertex{pos + size,                  br, hex, tex, type});
+        }
 
         s_indexData.emplace_back(currentElements + 0);
         s_indexData.emplace_back(currentElements + 1);

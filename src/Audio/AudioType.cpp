@@ -1,6 +1,7 @@
 #include <TML/Audio/AudioType.h>
 #include <iostream>
 #include "Mixer.h"
+#include "TML/IO/Logger.h"
 
 namespace tml
 {

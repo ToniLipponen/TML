@@ -51,15 +51,22 @@ namespace tml
                              const Color& color, float thickness = 1.f, bool rounded = false) noexcept;
 
         static void DrawTexture(Texture& tex, const Vector2f& pos, const Vector2f& size) noexcept;
-
+        static void DrawTextureRect(Texture& tex, const Vector2f& pos, const Vector2f& size, float rotation, const Vector2f& tl, const Vector2f& br) noexcept;
         static void DrawText(const std::string& text, const Vector2f& pos, float size, const Color& color = WHITE) noexcept;
-
         static void EndBatch() noexcept;
 
     private:
         static void BeginBatch() noexcept;
-        static void PushQuad(const Vector2f&, const Vector2f&, const Color&, Texture&, Vertex::DrawableType) noexcept;
-        static void PushQuad(const Vector2f&, const Vector2f&, const Color&, Texture&, float, Vertex::DrawableType) noexcept;
+        static void PushQuad(
+                const Vector2f& pos,
+                const Vector2f& size,
+                const Color& color,
+                Texture& texture,
+                Vertex::DrawableType type,
+                float rotation = 0.0f,
+                const Vector2f& uvTopLeft = {0.0f, 0.0f},
+                const Vector2f& uvBottomRight = {1.0f, 1.0f}
+                ) noexcept;
         static ui32 PushTexture(Texture&) noexcept;
         static void PushVertexData(std::vector<Vertex>&, std::vector<ui32>&) noexcept;
         static void PushVertexData(std::vector<Vertex>&, std::vector<ui32>&, Texture&) noexcept;

@@ -42,16 +42,54 @@ namespace tml
                     e = Event{};
                 }
             });
+            AddListener("MouseDown", [&](BaseComponent* c, Event& e)
+            {
+                if(m_state.MouseOver)
+                {
+                    m_state.MouseDown = e.mouseButton.button;
+                    e = Event{};
+                }
+                else
+                    UnFocus();
+            });
             AddListener("Click", [&](BaseComponent* c, Event& e)
             {
                 if(m_state.MouseOver)
                 {
                     Focus();
+                    Raise();
                     e = Event{};
                 }
                 else
-                {
                     UnFocus();
+            });
+            AddListener("KeyPressed", [&](BaseComponent* c, Event& e)
+            {
+                if(m_state.Focused)
+                {
+                    if(e.key.code >= Keyboard::KEY_0 && e.key.code <= Keyboard::KEY_9)
+                    {
+                        m_valueStr = m_valueStr + std::to_string(e.key.code - 48);
+                        m_value = Util::StringToType<T>(m_valueStr);
+                    }
+                    else if(e.key.code == Keyboard::KEY_BACKSPACE)
+                    {
+                        if(m_valueStr.size() == 0)
+                            m_value = 0;
+                        else
+                        {
+                            m_valueStr.pop_back();
+                            m_value = Util::StringToType<T>(m_valueStr);
+                        }
+                    }
+                    else if(e.key.code == Keyboard::KEY_PERIOD)
+                    {
+                        if(std::is_floating_point<T>().value && m_valueStr.find('.') == m_valueStr.npos)
+                        {
+                            m_valueStr.push_back('.');
+                            m_value = Util::StringToType<T>(m_valueStr);
+                        }
+                    }
                     e = Event{};
                 }
             });

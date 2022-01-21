@@ -128,6 +128,7 @@ vec4 SampleTex(uint index)
         default:  return vec4(0.0); break;
     }
 }
+
 void main()
 {
    switch(vType)

@@ -82,7 +82,7 @@ namespace tml
 
         void AddSound(ui32 id, AudioType* snd)
         {
-            s_sounds.insert({id, snd});
+            s_sounds[id] = snd;
         }
 
         void RemoveSound(ui32 id)

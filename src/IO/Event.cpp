@@ -30,11 +30,14 @@ namespace tml
 
     Event EventSystem::WaitEvents() noexcept
     {
-        Event event;
-        while(event.type == Event::EventType::Null)
+        Event event = PollEvents();
+        if(event.type == Event::Null)
         {
-            event = PollEvents();
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            do
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                event = PollEvents();
+            }while(event.type == Event::EventType::Null);
         }
         return event;
     }
