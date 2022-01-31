@@ -66,12 +66,8 @@ namespace tml
         this->m_height = rhs.m_height;
         this->m_Bpp = rhs.m_Bpp;
 
-        // Reallocate memory only if the dimensions and bytes per pixel of the images don't match.
-        if(m_width != rhs.m_width || m_height != rhs.m_height || m_Bpp != rhs.m_Bpp)
-        {
-            delete[] m_data;
-            m_data = new ui8[m_width * m_height * m_Bpp];
-        }
+        delete[] m_data;
+        m_data = new ui8[m_width * m_height * m_Bpp];
         memcpy(m_data, rhs.m_data, m_width * m_height * m_Bpp);
         return *this;
     }

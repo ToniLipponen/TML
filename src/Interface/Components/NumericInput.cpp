@@ -90,7 +90,7 @@ namespace tml
                             m_value = Util::StringToType<T>(m_valueStr);
                         }
                     }
-                    e = Event{};
+//                    e = Event{};
                 }
             });
         }
@@ -122,12 +122,6 @@ namespace tml
             m_value -= m_increment;
             m_valueStr = std::to_string(m_value);
             m_cursorIndex = m_valueStr.size();
-        }
-
-        template<typename T>
-        void NumericInput<T>::OnUpdate(double dt)
-        {
-
         }
 
         template<typename T>

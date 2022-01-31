@@ -4,46 +4,30 @@
 #include <TML/Utilities/Clock.h>
 #include <string>
 #include <algorithm>
+#include "TML/IO/Logger.h"
 
 namespace tml
 {
     namespace Interface
     {
         std::hash<std::string> BaseComponent::s_hash = std::hash<std::string>();
-        std::vector<BaseComponent*> BaseComponent::s_processStack = std::vector<BaseComponent*>();
 
         BaseComponent::BaseComponent()
         : m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr)
         {
             m_state.Enabled = true;
-            s_processStack.push_back(this);
-        }
-
-        BaseComponent::BaseComponent(BaseComponent* parent)
-        : m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(parent)
-        {
-            m_state.Enabled = true;
-            m_parent->AddChild(this);
-            s_processStack.push_back(this);
         }
 
         BaseComponent::~BaseComponent()
         {
-            for(auto i = 0; i < s_processStack.size() - 1; ++i)
-            {
-                if(s_processStack.at(i) == this)
-                {
-                    s_processStack.erase(s_processStack.begin() + i);
-                    break;
-                }
-            }
-
+            RemoveFromProcessStack(this);
             for(auto* child : m_children)
                 delete child;
         }
 
         void BaseComponent::Focus()
         {
+            ClearFocused();
             m_state.Focused = true;
         }
 
@@ -96,6 +80,15 @@ namespace tml
                     component->m_hash = 0;
                     component->m_id = name;
                     m_children.push_back(component);
+                    AddToProcessStack(component);
+                    component->ForEachChild([](BaseComponent* c)
+                    {
+                        c->AddToProcessStack(c);
+                        c->ForEachChild([](BaseComponent* c2)
+                        {
+                            c2->AddToProcessStack(c2);
+                        });
+                    });
                 }
                 else
                 {
@@ -103,6 +96,15 @@ namespace tml
                     component->m_hash = s_hash(name);
                     component->m_id = name;
                     m_children.push_back(component);
+                    AddToProcessStack(component);
+                    component->ForEachChild([](BaseComponent* c)
+                    {
+                        c->AddToProcessStack(c);
+                        c->ForEachChild([](BaseComponent* c2)
+                        {
+                            c2->AddToProcessStack(c2);
+                        });
+                    });
                 }
             }
         }
@@ -115,7 +117,7 @@ namespace tml
 
         BaseComponent* BaseComponent::FindComponent(ui64 hash)
         {
-            if(m_children.size() == 0)
+            if(m_children.empty())
                 return nullptr;
 
             for(auto* i : m_children)
@@ -153,21 +155,13 @@ namespace tml
 
         void BaseComponent::Raise()
         {
-            for(auto i = 0; i < s_processStack.size(); i++)
-            {
-                auto item = s_processStack.at(i);
-                if(item == this)
-                {
-                    s_processStack.erase(s_processStack.begin() + i);
-                    s_processStack.push_back(item);
-                    break;
-                }
-            }
+            RemoveFromProcessStack(this);
+            AddToProcessStack(this);
             for(auto* i : m_children)
                 i->Raise();
         }
 
-        void BaseComponent::ProcessEvents(Event& event)
+        void BaseComponent::ProcessEvents(Event& event, double dt)
         {
             switch(event.type)
             {
@@ -211,27 +205,31 @@ namespace tml
                 case Event::EventType::Null:
                     break;
             }
-            CallUIFunc("Update", event);
+            Event updateEvent;
+            updateEvent.type = Event::EventType::Update;
+            updateEvent.update.delta = dt;
+            CallUIFunc("Update", updateEvent);
         }
 
         void BaseComponent::Update(Event& event)
         {
             static Clock clock;
             const double delta = clock.Reset();
+            if(!m_state.Enabled)
+                return;
             Renderer::ResetCamera();
 
-            for(auto i = s_processStack.rbegin(); i != s_processStack.rend(); i++)
+            for(auto i = m_processStack.rbegin(); i != m_processStack.rend(); i++)
             {
                 if((*i)->Enabled())
-                    (*i)->ProcessEvents(event);
+                    (*i)->ProcessEvents(event, delta);
             }
-            for(auto i : s_processStack)
+            ProcessEvents(event, delta);
+            Draw();
+            for(auto* i : m_processStack)
             {
                 if(i->Enabled())
-                {
-                    i->OnUpdate(delta);
                     i->Draw();
-                }
             }
         }
 
@@ -247,6 +245,40 @@ namespace tml
                 return true;
             }
             return false;
+        }
+
+        void BaseComponent::ClearFocused()
+        {
+            GetRoot()->ForEachChild([](BaseComponent* c)
+            {
+                c->UnFocus();
+                c->ForEachChild([](BaseComponent* c2)
+                {
+                    c2->UnFocus();
+                });
+            });
+        }
+
+        void BaseComponent::AddToProcessStack(BaseComponent* component)
+        {
+            if(component && component->GetRoot())
+                component->GetRoot()->m_processStack.push_back(component);
+        }
+
+        void BaseComponent::RemoveFromProcessStack(BaseComponent* component)
+        {
+            if(component && component->GetRoot())
+            {
+                auto& processStack = component->GetRoot()->m_processStack;
+                for(auto i = 0; i < processStack.size() - 1; ++i)
+                {
+                    if(processStack.at(i) == component)
+                    {
+                        processStack.erase(processStack.begin() + i);
+                        break;
+                    }
+                }
+            }
         }
     }
 }

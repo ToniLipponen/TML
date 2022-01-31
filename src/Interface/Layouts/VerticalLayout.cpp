@@ -11,17 +11,16 @@ namespace tml
             m_size = Vector2i(w,h);
             m_hSizePolicy = Expand;
             m_vSizePolicy = Expand;
-        }
-
-        void VerticalLayout::OnUpdate(double dt)
-        {
-            static ui64 oldChildrenSize = 0;
-            if(m_children.size() != oldChildrenSize)
+            AddListener("Update", [&](BaseComponent* c, Event& e)
             {
-                ScaleChildren();
-                AlignChildren();
-                oldChildrenSize = m_children.size();
-            }
+                static ui64 oldChildrenSize = 0;
+                if(m_children.size() != oldChildrenSize)
+                {
+                    ScaleChildren();
+                    AlignChildren();
+                    oldChildrenSize = m_children.size();
+                }
+            });
         }
 
         void VerticalLayout::ScaleChildren()

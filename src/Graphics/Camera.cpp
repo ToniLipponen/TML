@@ -73,4 +73,18 @@ namespace tml
 
         return Vector2f{res.x, res.y} + (m_pos - (m_pos / m_zoom));
     }
+
+    Vector2f Camera::WorldToScreen(const Vector2f &point) const noexcept
+    {
+        int f[4];
+        glad_glGetIntegerv(GL_VIEWPORT, f);
+        const auto n = glm::mat4(1.0f);
+        const auto t = glm::translate(n, glm::vec3(-m_pos.x, -m_pos.y, 0));
+        const auto r = glm::rotate(n, m_rotation, glm::vec3(0.f, 0.f, 1.f));
+        const auto s = glm::scale(n, glm::vec3(m_zoom, m_zoom, 1.f));
+        const auto o = glm::translate(n, glm::vec3(f[2]/2.f, f[3]/2.f, 0));
+        const glm::mat4 m = o*r*t*s;
+        const auto res = m * glm::vec4(point.x, point.y, -1, 1);
+        return Vector2f{res.x, res.y} + (m_pos - (m_pos / m_zoom)) * -1.f * m_zoom;
+    }
 }

@@ -8,15 +8,17 @@ int main()
     Window window(800, 600, "Example 3");
     Renderer::Init();
 
-    Music sound("res/Kevin MacLeod - Study and Relax.mp3");
-
+    Music music("res/Kevin MacLeod - Study and Relax.mp3");
+    music.Play();
+    
     while(!window.ShouldClose())
     {
         auto event = window.PollEvents();
         if(event.type == Event::Closed)
             window.Close();
-        if(event.type == Event::KeyReleased)
-            sound.Play();
+        if(event.type == Event::KeyPressed && event.key.code == Keyboard::KEY_SPACE)
+            music.IsPlaying() ? music.Pause() : music.Play();
+        
 
         Renderer::Clear();
         Renderer::DrawText("Playing: Kevin MacLeod - Study and Relax", {10,10}, 40, GREEN);

@@ -34,7 +34,6 @@ namespace tml
 
         public:
             BaseComponent();
-            BaseComponent(BaseComponent* parent);
             using Object::Object;
             virtual ~BaseComponent();
             void Focus();
@@ -91,13 +90,19 @@ namespace tml
             void SetActiveColor(const Color& color) { m_activeColor = color; }
             void Raise();
 
-        private:
-            void ProcessEvents(Event& event);
+            void ForEachChild(const std::function<void(BaseComponent* c)>& function)
+            {
+                for(auto* i : m_children)
+                    function(i);
+            }
 
         protected:
+            void ClearFocused();
+            void AddToProcessStack(BaseComponent* component);
+            void RemoveFromProcessStack(BaseComponent* component);
             bool CallUIFunc(const std::string& name, Event& event);
-            virtual void Draw() = 0;
-            virtual void OnUpdate(double dt){};
+            void ProcessEvents(Event& event, double dt);
+            virtual void Draw() = 0;;
 
             Color m_pColor;
             Color m_sColor;
@@ -110,11 +115,11 @@ namespace tml
             std::string m_id;
             std::vector<BaseComponent*> m_children;
             std::unordered_map<std::string, std::vector<UIFunc>> m_listeners;
+            std::vector<BaseComponent*> m_processStack;
             BaseComponent* m_parent;
             StateFlag m_state;
 
             static std::hash<std::string> s_hash;
-            static std::vector<BaseComponent*> s_processStack;
         };
     }
 }

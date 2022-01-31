@@ -36,6 +36,10 @@ namespace tml
         void SetMipMapLevel(ui8 level);
         void SetMinMagFilter(Filter min, Filter mag);
         void SetClampMode(ClampMode mode);
+
+        constexpr inline Filter GetMinFilter() const noexcept { return m_minFilter; }
+        constexpr inline Filter GetMagFilter() const noexcept { return m_magFilter; }
+        constexpr inline ClampMode GetClampMode() const noexcept { return m_clampMode; }
     friend class Renderer;
     private:
         inline void Generate() const;

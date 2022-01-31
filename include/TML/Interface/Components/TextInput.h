@@ -14,7 +14,6 @@ namespace tml
             std::string GetValue() const { return Util::WstringToString(m_value); }
         private:
             void InitListeners();
-            void OnUpdate(double dt) override;
             void Draw() override;
             std::wstring m_value;
             ui32 m_cursorIndex = 0;

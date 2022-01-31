@@ -168,7 +168,7 @@ namespace tml
             m_isValid = true;
             return true;
         }
-        void Write(const std::string& string)
+        void Write(const std::string &string, unsigned long i)
         {
             if(m_stream.is_open() && m_stream.good())
             {

@@ -8,8 +8,6 @@
 namespace tml
 {
     extern ma_decoder_config s_DecoderConfig;
-    volatile bool AudioInitialized = Mixer::Init();
-
     Sound::Sound(const std::string &filename)
     : m_samples(nullptr)
     {

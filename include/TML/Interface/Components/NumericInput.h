@@ -17,7 +17,6 @@ namespace tml
         private:
             void Increment();
             void Decrement();
-            void OnUpdate(double dt) override;
             void OnMoved() override;
             void OnResized() override;
             virtual void Draw() override;

@@ -3,6 +3,7 @@
 #include <cstdarg>
 #include <cstdlib>
 #include "TML/Utilities/Platform.h"
+#include "TML/Utilities/Types.h"
 
 namespace tml
 {

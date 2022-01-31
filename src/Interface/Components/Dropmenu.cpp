@@ -88,11 +88,6 @@ namespace tml
 
         }
 
-        void DropMenu::OnUpdate(double dt)
-        {
-
-        }
-
         void DropMenu::OnMoved()
         {
             m_listComponent->SetPosition({m_pos.x, m_pos.y + m_size.y + 2});

@@ -6,8 +6,6 @@
 namespace tml
 {
     extern ma_decoder_config s_DecoderConfig;
-    volatile bool AudioInitialized = Mixer::Init();
-
     Music::Music(const std::string &filename)
     {
         LoadFromFile(filename);

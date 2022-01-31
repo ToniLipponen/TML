@@ -34,7 +34,6 @@ extern "C" void MouseButtonCallback(GLFWwindow* window, int button, int action, 
 void WindowResizeCallback(GLFWwindow* f, int x, int y)
 {
     tml::Event event;
-    event.category = tml::Event::Window;
     event.type = tml::Event::Resized;
     event.size.height = y;
     event.size.width = x;
@@ -251,7 +250,6 @@ namespace tml
         glfwSetScrollCallback(handle, MouseScrollCallback);
         glfwSetWindowCloseCallback(handle, [](GLFWwindow* handle){
             Event event;
-            event.category = Event::Window;
             event.type = Event::Closed;
             event.sender = handle;
             EventSystem::GetInstance().PushEvent(event);

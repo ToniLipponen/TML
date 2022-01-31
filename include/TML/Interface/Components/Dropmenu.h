@@ -19,8 +19,6 @@ namespace tml
             void Clear();
         private:
             void Draw() override;
-            void OnUpdate(double dt) override;
-
             Listbox* m_listComponent;
         protected:
             void OnMoved() override;

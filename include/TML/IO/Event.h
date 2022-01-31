@@ -15,7 +15,7 @@ namespace tml
 
         struct KeyEvent
         {
-            i32 code;    //!< Code of the key that has been pressed
+            i32 code;     //!< Code of the key that has been pressed
             bool alt;     //!< Is the Alt key pressed?
             bool control; //!< Is the Control key pressed?
             bool shift;   //!< Is the Shift key pressed?
@@ -68,23 +68,17 @@ namespace tml
             MouseMoved,             //!< The mouse cursor moved (data in event.mouseMove)
             MouseEntered,           //!< The mouse cursor entered the area of the window (no data)
             MouseLeft,              //!< The mouse cursor left the area of the window (no data)
+            Update
         };
 
-        enum EventCategory
-        {
-            None, Window, Keyboard, Mouse
-        };
-
-        EventCategory category = EventCategory::None;
         EventType type = EventType::Null;
-
         void* sender = nullptr;
 
         union
         {
             ResizeEvent           size;
             KeyEvent              key;
-            UpdateEvent           update; // Not used
+            UpdateEvent           update;
             TextEvent             text;
             MouseMoveEvent        mouseMove;
             MouseButtonEvent      mouseButton;

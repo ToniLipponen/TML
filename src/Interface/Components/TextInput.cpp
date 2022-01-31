@@ -1,6 +1,7 @@
 #include <TML/Interface/Components/TextInput.h>
 #include <TML/Graphics/Renderer.h>
 #include <TML/IO/Clipboard.h>
+#include "TML/IO/Logger.h"
 
 using namespace tml::Interface;
 extern tml::Text* DEFAULT_TEXT;
@@ -51,6 +52,17 @@ void TextInput::InitListeners()
         }
         else
             UnFocus();
+    });
+    AddListener("Update", [&](BaseComponent* c, Event& e)
+    {
+        if(m_state.Focused)
+        {
+            if((m_blinkTimer += e.update.delta) > 1.0)
+            {
+                m_showLine = !m_showLine;
+                m_blinkTimer = 0;
+            }
+        }
     });
 
     AddListener("KeyPressed", [&](BaseComponent* c, Event& e)
@@ -118,18 +130,6 @@ void TextInput::InitListeners()
             m_cursorIndex++;
         }
     });
-}
-
-void TextInput::OnUpdate(double dt)
-{
-    if(m_state.Focused)
-    {
-        if((m_blinkTimer += dt) > 1.0)
-        {
-            m_showLine = !m_showLine;
-            m_blinkTimer = 0;
-        }
-    }
 }
 
 void TextInput::Draw()

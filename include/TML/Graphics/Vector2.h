@@ -42,10 +42,14 @@ namespace tml
         template<typename R>
         constexpr inline Vector2(const Vector2<R>& v) noexcept;
 
-        inline Vector2 operator+(const Vector2& rhs) const noexcept;
-        inline Vector2 operator-(const Vector2& rhs) const noexcept;
-        inline Vector2 operator/(const Vector2& rhs) const noexcept;
-        inline Vector2 operator*(const Vector2& rhs) const noexcept;
+        template<typename R>
+        inline Vector2 operator+(const Vector2<R>& rhs) const noexcept;
+        template<typename R>
+        inline Vector2 operator-(const Vector2<R>& rhs) const noexcept;
+        template<typename R>
+        inline Vector2 operator/(const Vector2<R>& rhs) const noexcept;
+        template<typename R>
+        inline Vector2 operator*(const Vector2<R>& rhs) const noexcept;
 
         template<typename R>
         inline constexpr Vector2 operator+(const R rhs) const noexcept;
@@ -149,23 +153,27 @@ namespace tml
     }
 
     template<typename T>
-    inline Vector2<T> Vector2<T>::operator+(const Vector2 &rhs) const noexcept {
+    template<typename R>
+    inline Vector2<T> Vector2<T>::operator+(const Vector2<R> &rhs) const noexcept {
         return {x + rhs.x, y + rhs.y};
     }
 
     template<typename T>
-    inline Vector2<T> Vector2<T>::operator-(const Vector2 &rhs) const noexcept {
-        return {x - rhs.x, y - rhs.y};
+    template<typename R>
+    inline Vector2<T> Vector2<T>::operator-(const Vector2<R> &rhs) const noexcept {
+        return {x - static_cast<T>(rhs.x), y - static_cast<T>(rhs.y)};
     }
 
     template<typename T>
-    inline Vector2<T> Vector2<T>::operator/(const Vector2 &rhs) const noexcept {
-        return {x / rhs.x, y / rhs.y};
+    template<typename R>
+    inline Vector2<T> Vector2<T>::operator/(const Vector2<R> &rhs) const noexcept {
+        return {x / static_cast<T>(rhs.x), y / static_cast<T>(rhs.y)};
     }
 
     template<typename T>
-    inline Vector2<T> Vector2<T>::operator*(const Vector2 &rhs) const noexcept {
-        return {x * rhs.x, y * rhs.y};
+    template<typename R>
+    inline Vector2<T> Vector2<T>::operator*(const Vector2<R> &rhs) const noexcept {
+        return {x * static_cast<T>(rhs.x), y * static_cast<T>(rhs.y)};
     }
 
     template<typename T>

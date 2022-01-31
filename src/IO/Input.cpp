@@ -34,7 +34,6 @@ extern "C" void CharCallback(GLFWwindow* window, unsigned int code)
     s_keyboardChar = code;
 
     Event event;
-    event.category = Event::Keyboard;
     event.type = Event::TextEntered;
     event.text.unicode = code;
     event.sender = window;
@@ -49,7 +48,6 @@ extern "C" void KeyCallback(GLFWwindow* window, int key, int scancode, int actio
     s_keyMap[key] = action;
 
     Event event;
-    event.category = Event::Keyboard;
     event.type = (action == GLFW_PRESS || action == GLFW_REPEAT) ? Event::KeyPressed : Event::KeyReleased;
     event.key.code = key;
     event.key.control = (mods == GLFW_MOD_CONTROL);

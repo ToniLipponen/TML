@@ -1,6 +1,7 @@
 #include <TML/Interface/Layouts/HorizontalLayout.h>
 #include <TML/Utilities/Utilities.h>
 #include <vector>
+#include "TML/IO/Logger.h"
 
 namespace tml
 {
@@ -12,17 +13,16 @@ namespace tml
             m_size = Vector2i(w,h);
             m_hSizePolicy = Expand;
             m_vSizePolicy = Expand;
-        }
-
-        void HorizontalLayout::OnUpdate(double dt)
-        {
-            static ui64 oldChildrenSize = 0;
-            if(m_children.size() != oldChildrenSize)
+            AddListener("Update", [&](BaseComponent* c, Event& e)
             {
-                ScaleChildren();
-                AlignChildren();
-                oldChildrenSize = m_children.size();
-            }
+                static ui64 oldChildrenSize = 0;
+                if(m_children.size() != oldChildrenSize)
+                {
+                    ScaleChildren();
+                    AlignChildren();
+                    oldChildrenSize = m_children.size();
+                }
+            });
         }
 
         void HorizontalLayout::ScaleChildren()
@@ -73,7 +73,7 @@ namespace tml
             float offset = 0, width = 0, width2;
             for(auto* item : m_children)
                 width += item->GetSize().x;
-            width += m_children.size() * 5.0f;
+            width += m_children.size() * 5;
             width2 = width / 2;
 
             switch(m_vAlignPolicy)
@@ -84,7 +84,8 @@ namespace tml
                 case Center:
                     offset = (m_size.x / 2) - width2;
                     break;
-                default: break;
+                default:
+                    break;
             }
 
             for(auto item = m_children.begin(); item != m_children.end(); ++item)
@@ -102,6 +103,7 @@ namespace tml
                         break;
                     default:
                         i->SetPosition({static_cast<int>(m_pos.x + offset), m_pos.y});
+//                        Logger::InfoMessage("X: %d Y: %d", i->GetPosition().x, i->GetPosition().y);
                         break;
                 }
                 if(m_vAlignPolicy == Far)

@@ -68,7 +68,6 @@ namespace tml
         if(x != oldX || y != oldY)
         {
             Event event;
-            event.category = Event::Mouse;
             event.type = Event::EventType::MouseMoved;
             event.mouseMove.x = x;
             event.mouseMove.y = y;
@@ -84,7 +83,6 @@ namespace tml
             if(oldButtonState != buttonState[i])
             {
                 Event event;
-                event.category = Event::Mouse;
                 event.type = (buttonState[i] == GLFW_PRESS) ? Event::EventType::MouseButtonPressed : Event::EventType::MouseButtonReleased;
                 event.mouseButton.button = i;
                 event.mouseButton.x = x;
@@ -96,7 +94,6 @@ namespace tml
         if(scrollValue != 0)
         {
             Event event;
-            event.category = Event::Mouse;
             event.type = Event::EventType::MouseWheelScrolled;
             event.mouseWheelScroll.delta = scrollValue;
             event.mouseWheelScroll.x = x;

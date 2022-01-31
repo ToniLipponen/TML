@@ -36,11 +36,15 @@ namespace tml
         inline constexpr Color operator+(const Color &color) const noexcept {
             return {r + color.r, g + color.g, b + color.b, a + color.a};
         }
+
+        inline constexpr Color operator-(const Color& color) const noexcept {
+            return {r - color.r, g - color.g, b - color.b, a - color.a};
+        }
         inline ui32 Hex() const noexcept {
-            ui32 h = (static_cast<ui32>(r) << 24);
-            h += (static_cast<ui32>(g) << 16);
-            h += (static_cast<ui32>(b) << 8);
-            h += static_cast<ui32>(a);
+            ui32 h = (static_cast<ui8>(r) << 24);
+            h     += (static_cast<ui8>(g) << 16);
+            h     += (static_cast<ui8>(b) << 8);
+            h     +=  static_cast<ui8>(a);
             return h;
         }
 
