@@ -21,7 +21,8 @@ namespace tml
                     const Vector2i mousePos = {e.mouseButton.x, e.mouseButton.y};
                     static auto PointInRect = [&](const Vector2i &tl, const Vector2i &br)
                     {
-                        return (mousePos < br && mousePos > tl);
+                        return (mousePos.x < br.x && mousePos.y < br.y
+                             && mousePos.x > tl.x && mousePos.y > tl.y);
                     };
                     for(int i = 0; i < m_values.size(); i++)
                     {

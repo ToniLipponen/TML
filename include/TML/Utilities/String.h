@@ -2,6 +2,7 @@
 #include <string>
 #include <locale>
 #include <codecvt>
+#include <exception>
 
 namespace tml
 {
@@ -21,20 +22,31 @@ namespace tml
             return converter.from_bytes(str);
         }
 
+        /** @brief Converts std::string to a given literal type.
+         * @throws std::runtime_error if convertable type is not a literal type.
+         */
         template<typename T>
-        inline constexpr T StringToType(const std::string& str) noexcept
+        inline constexpr T StringToType(const std::string& str)
         {
-            if(str.length() == 0 || str.length() > 10)
-                return 0;
-            if(std::is_integral<T>::value)
+            if(!std::is_class<T>::value)
             {
-                return std::stol(str);
+                if(std::is_integral<T>::value)
+                {
+                    if(std::is_same<T,bool>::value)
+                        return str == "true";
+                    else if(std::is_unsigned<T>::value)
+                        return std::stoull(str);
+                    return std::stoll(str);
+                }
+                else if(std::is_floating_point<T>::value)
+                {
+                    return std::stod(str);
+                }
+                else
+                    throw std::invalid_argument("Convertable type is not literal.");
             }
-            else if(std::is_floating_point<T>::value)
-            {
-                return std::stod(str);
-            }
-            return std::stoi(str);
+            else
+                throw std::invalid_argument("Convertable type is not literal.");
         }
     }
 }

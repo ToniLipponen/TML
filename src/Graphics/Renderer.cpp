@@ -403,7 +403,7 @@ namespace tml
 
         return index;
     }
-
+    
     void Renderer::PushVertexData(std::vector<Vertex>& vertices, std::vector<ui32>& indices) noexcept
     {
         if(MAX_VERTEX_COUNT <= s_vertexData.size() + vertices.size())

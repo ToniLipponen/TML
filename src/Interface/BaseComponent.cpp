@@ -5,6 +5,7 @@
 #include <string>
 #include <algorithm>
 #include "TML/IO/Logger.h"
+#include "TML/Utilities/Utilities.h"
 
 namespace tml
 {
@@ -150,7 +151,7 @@ namespace tml
 
         bool BaseComponent::ContainsPoint(const Vector2i& p)
         {
-            return (p > m_pos && p < m_pos + m_size);
+            return Util::PointInRect(p, m_pos, m_size, 0);
         }
 
         void BaseComponent::Raise()

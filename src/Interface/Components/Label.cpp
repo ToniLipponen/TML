@@ -1,5 +1,6 @@
 #include <TML/Interface/Components/Label.h>
 #include <TML/Graphics/Renderer.h>
+#include "TML/Utilities/Utilities.h"
 
 extern tml::Text* DEFAULT_TEXT;
 
@@ -33,7 +34,7 @@ namespace tml
         {
             DEFAULT_TEXT->SetString(m_text);
             DEFAULT_TEXT->SetSize(m_fontSize);
-            return (p > m_pos && p < (m_pos + m_size));
+            return Util::PointInRect(p, m_pos, m_size, 0);
         }
 
         void Label::Draw()

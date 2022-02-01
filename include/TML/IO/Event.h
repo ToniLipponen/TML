@@ -22,11 +22,6 @@ namespace tml
             bool system;  //!< Is the System key pressed?
         };
 
-        struct UpdateEvent
-        {
-            double delta;
-        };
-
         struct TextEvent
         {
             ui32 unicode; //!< UTF-32 Unicode value of the character
@@ -34,22 +29,33 @@ namespace tml
 
         struct MouseMoveEvent
         {
-            int x; //!< X position of the mouse pointer, relative to the left of the owner window
-            int y; //!< Y position of the mouse pointer, relative to the top of the owner window
+            i32 x; //!< X position of the mouse pointer, relative to the left of the owner window
+            i32 y; //!< Y position of the mouse pointer, relative to the top of the owner window
         };
 
         struct MouseButtonEvent
         {
             ui32 button; //!< Code of the button that has been pressed
-            int x;       //!< X position of the mouse pointer, relative to the left of the owner window
-            int y;       //!< Y position of the mouse pointer, relative to the top of the owner window
+            i32 x;       //!< X position of the mouse pointer, relative to the left of the owner window
+            i32 y;       //!< Y position of the mouse pointer, relative to the top of the owner window
         };
 
         struct MouseWheelScrollEvent
         {
-            float        delta; //!< Wheel offset (positive is up/left, negative is down/right). High-precision mice may use non-integral offsets.
-            int          x;     //!< X position of the mouse pointer, relative to the left of the owner window
-            int          y;     //!< Y position of the mouse pointer, relative to the top of the owner window
+            float delta; //!< Wheel offset (positive is up/left, negative is down/right). High-precision mice may use non-integral offsets.
+            i32 x;     //!< X position of the mouse pointer, relative to the left of the owner window
+            i32 y;     //!< Y position of the mouse pointer, relative to the top of the owner window
+        };
+
+        struct UpdateEvent
+        {
+            double delta;
+        };
+
+        struct DragAndDropEvent
+        {
+            i32 count;      //!< Number of dropped files
+            char** paths;   //!< File paths in UTF-8 strings (memory needs to be freed manually)
         };
 
         enum EventType
@@ -68,7 +74,9 @@ namespace tml
             MouseMoved,             //!< The mouse cursor moved (data in event.mouseMove)
             MouseEntered,           //!< The mouse cursor entered the area of the window (no data)
             MouseLeft,              //!< The mouse cursor left the area of the window (no data)
-            Update
+            Update,                 //!< tml::Interface component update event. (data in event.update)
+            FileDragAndDropped,     //!< File or files dragged onto a window. (data in event.dragAndDrop)
+
         };
 
         EventType type = EventType::Null;
@@ -83,6 +91,7 @@ namespace tml
             MouseMoveEvent        mouseMove;
             MouseButtonEvent      mouseButton;
             MouseWheelScrollEvent mouseWheelScroll;
+            DragAndDropEvent      dragAndDrop;
         };
     };
 

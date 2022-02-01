@@ -10,7 +10,8 @@ namespace tml
         inline bool PointInRect(const Vector2f& point, const Vector2f& p, const Vector2f& s, float rotation)
         {
             const auto npoint = Math::Rotate(p + (s*0.5), point, -rotation);
-            return (p < npoint && npoint < p+s);
+            return (npoint.x >= p.x && npoint.x <= p.x+s.x
+                &&  npoint.y >= p.y && npoint.y <= p.y+s.y);
         }
 
         inline bool PointInCircle(const Vector2f& point, const Vector2f& p, float r)
