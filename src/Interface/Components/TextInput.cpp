@@ -1,7 +1,5 @@
 #include <TML/Interface/Components/TextInput.h>
-#include <TML/Graphics/Renderer.h>
 #include <TML/IO/Clipboard.h>
-#include "TML/IO/Logger.h"
 
 using namespace tml::Interface;
 
@@ -10,12 +8,20 @@ TextInput::TextInput(i32 x, i32 y, i32 width, i32 height)
     m_pos = Vector2i(x,y);
     m_size = Vector2i(width, height);
     m_text.SetPosition(m_pos);
-    m_text.SetColor(BLACK);
+    m_text.SetColor(Color::Black);
     m_cursorPos = Math::Clamp<int>(m_pos.x + 2, m_pos.x, m_pos.x + m_size.x - 4);
 
     m_hSizePolicy = Expand;
     m_vSizePolicy = Fixed;
     InitListeners();
+}
+
+void TextInput::SetValue(const std::string &string)
+{
+    m_value = Util::StringToWstring(string);
+    m_text.SetString(string);
+    m_cursorIndex = string.length();
+    m_cursorPos = m_text.GetDimensions().x;
 }
 
 void TextInput::InitListeners()
@@ -153,24 +159,23 @@ void TextInput::InitListeners()
     });
 }
 
-void TextInput::Draw()
+void TextInput::Draw(RenderWindow& window)
 {
-
-    Renderer::DrawRect(m_pos, m_size, m_pColor);
-    Renderer::SetBounds(m_pos, m_size);
-    Renderer::Draw(m_text);
+    window.DrawRect(m_pos, m_size, m_pColor);
+    window.SetBounds(m_pos, m_size);
+    window.Draw(m_text);
 
     if(m_state.Focused)
     {
         if(m_showLine)
-            Renderer::DrawLine({m_cursorPos, m_pos.y + (m_size.y / 10.0f)}, {m_cursorPos, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
+            window.DrawLine({m_cursorPos, m_pos.y + (m_size.y / 10.0f)}, {m_cursorPos, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, Color::Black, 0);
 
-        Renderer::ResetBounds();
-        Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
+        window.ResetBounds();
+        window.DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
     }
     else
     {
-        Renderer::ResetBounds();
-        Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
+        window.ResetBounds();
+        window.DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
     }
 }

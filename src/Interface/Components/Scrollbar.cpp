@@ -1,5 +1,4 @@
 #include <TML/Interface/Components/Scrollbar.h>
-#include <TML/Graphics/Renderer.h>
 
 namespace tml
 {
@@ -46,23 +45,23 @@ namespace tml
         }
 
         template<ComponentAxis axis>
-        void Scrollbar<axis>::Draw()
+        void Scrollbar<axis>::Draw(RenderWindow& window)
         {
             if(axis == Vertical)
             {
                 const float barSize = m_size.y / m_max;
                 const auto barPos = Math::Min(m_pos.y + barSize * m_value, m_pos.y + m_size.y - barSize);
 
-                Renderer::DrawRect(m_pos, m_size, m_pColor);
-                Renderer::DrawRect(Vector2f(m_pos.x, barPos), Vector2f(m_size.x, barSize), m_sColor);
+                window.DrawRect(m_pos, m_size, m_pColor);
+                window.DrawRect(Vector2f(m_pos.x, barPos), Vector2f(m_size.x, barSize), m_sColor);
             }
             else
             {
                 const float barSize = m_size.x / m_max;
                 const auto barPos = Math::Min(m_pos.x + barSize * m_value, m_pos.x + m_size.x - barSize);
 
-                Renderer::DrawRect(m_pos, m_size, m_pColor);
-                Renderer::DrawRect(Vector2f(barPos, m_pos.y), Vector2f(barSize, m_size.y), m_sColor);
+                window.DrawRect(m_pos, m_size, m_pColor);
+                window.DrawRect(Vector2f(barPos, m_pos.y), Vector2f(barSize, m_size.y), m_sColor);
             }
 
         }

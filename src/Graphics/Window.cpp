@@ -105,7 +105,7 @@ namespace tml
     Window::~Window()
     {
         glfwDestroyWindow(static_cast<GLFWwindow*>(m_handle));
-        glfwTerminate();
+//        glfwTerminate();
     }
 
     void Window::Display()
@@ -119,13 +119,11 @@ namespace tml
     void Window::Close() noexcept
     {
         m_shouldClose = true;
-//        glfwSetWindowShouldClose(static_cast<GLFWwindow*>(m_handle), 1);
     }
 
     bool Window::ShouldClose() const noexcept
     {
         return m_shouldClose;
-        return static_cast<bool>(glfwWindowShouldClose(static_cast<GLFWwindow*>(m_handle)));
     }
 
     void *Window::GetHandle() noexcept
@@ -239,7 +237,7 @@ namespace tml
 
     void Window::SetCallbacks()
     {
-        GLFWwindow* handle = static_cast<GLFWwindow*>(m_handle);
+        auto* handle = static_cast<GLFWwindow*>(m_handle);
         glfwSetWindowSizeCallback(handle, WindowResizeCallback);
         glfwSetDropCallback(handle, DragAndDropCallback);
         glfwSetCharCallback(handle, CharCallback);

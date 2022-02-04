@@ -48,7 +48,7 @@ namespace tml
         void SetFullscreen(bool fullscreen, i32 w = -1, i32 h = -1) noexcept;
         void SetActive() noexcept;
         void Screenshot(const std::string& filename) const noexcept;
-    private:
+    protected:
         void SetCallbacks();
         std::string m_title;
         bool m_useVSync = false;

@@ -1,6 +1,4 @@
 #include <TML/Interface/Components/Button.h>
-#include <TML/Graphics/Renderer.h>
-#include <iostream>
 
 using namespace tml::Interface;
 
@@ -11,7 +9,7 @@ Button::Button(i32 x, i32 y, ui32 w, ui32 h, std::string str, UIFunc onClick)
     m_vSizePolicy = SizePolicy::Clamp;
     m_text.SetString(str);
     m_text.SetSize(h*0.6);
-    m_text.SetColor(BLACK);
+    m_text.SetColor(Color::Black);
 
     const Vector2i textSize = m_text.GetDimensions();
     m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
@@ -52,19 +50,19 @@ void Button::SetText(const std::string &str)
     m_text.SetString(str);
 }
 
-void Button::Draw()
+void Button::Draw(RenderWindow& window)
 {
     if(m_state.Focused)
-        Renderer::DrawRect(m_pos, m_size, m_activeColor);
+        window.DrawRect(m_pos, m_size, m_activeColor);
     else
-        Renderer::DrawRect(m_pos, m_size, m_pColor);
+        window.DrawRect(m_pos, m_size, m_pColor);
 
-    Renderer::SetBounds(m_pos, m_size);
-    Renderer::Draw(m_text);
-    Renderer::ResetBounds();
+    window.SetBounds(m_pos, m_size);
+    window.Draw(m_text);
+    window.ResetBounds();
 
     if(m_state.Focused)
-        Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor,1);
+        window.DrawGrid(m_pos, m_size, 1, 1, m_activeColor,1);
     else
-        Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor,1);
+        window.DrawGrid(m_pos, m_size, 1, 1, m_sColor,1);
 }

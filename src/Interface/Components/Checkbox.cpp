@@ -1,6 +1,4 @@
 #include <TML/Interface/Components/Checkbox.h>
-#include <TML/Graphics/Renderer.h>
-#include <iostream>
 
 namespace tml
 {
@@ -22,12 +20,12 @@ namespace tml
             });
         }
 
-        void Checkbox::Draw()
+        void Checkbox::Draw(RenderWindow& window)
         {
-            Renderer::DrawRect(m_pos, m_size, m_pColor);
-            Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor);
+            window.DrawRect(m_pos, m_size, m_pColor);
+            window.DrawGrid(m_pos, m_size, 1, 1, m_sColor);
             if(m_value)
-                Renderer::DrawRect(static_cast<Vector2f>(m_pos) + static_cast<Vector2f>(m_size) * 0.2f, static_cast<Vector2f>(m_size) * 0.6f, m_activeColor);
+                window.DrawRect(static_cast<Vector2f>(m_pos) + static_cast<Vector2f>(m_size) * 0.2f, static_cast<Vector2f>(m_size) * 0.6f, m_activeColor);
         }
     }
 }

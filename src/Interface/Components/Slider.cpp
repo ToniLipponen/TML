@@ -1,6 +1,5 @@
 #include <TML/Interface/Components/Slider.h>
 #include <TML/Utilities/Utilities.h>
-#include <TML/Graphics/Renderer.h>
 
 namespace tml
 {
@@ -60,17 +59,17 @@ namespace tml
         }
 
         template<ComponentAxis axis>
-        void Slider<axis>::Draw()
+        void Slider<axis>::Draw(RenderWindow& window)
         {
-            Renderer::DrawRect(m_pos, m_size, m_pColor);
+            window.DrawRect(m_pos, m_size, m_pColor);
             if(m_state.Focused)
-                Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor);
+                window.DrawGrid(m_pos, m_size, 1, 1, m_activeColor);
             else
-                Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor);
+                window.DrawGrid(m_pos, m_size, 1, 1, m_sColor);
             if(axis == Horizontal)
-                Renderer::DrawRect(m_pos, {Math::Lerp<Vector2f>({0.f,0.f}, m_size, m_value / m_max).x, (float)m_size.y}, m_activeColor);
+                window.DrawRect(m_pos, {Math::Lerp<Vector2f>({0.f,0.f}, m_size, m_value / m_max).x, (float)m_size.y}, m_activeColor);
             else
-                Renderer::DrawRect(m_pos + Vector2i(0, Math::Lerp<Vector2f>({0,0}, m_size, 1.0 - m_value / m_max).y),
+                window.DrawRect(m_pos + Vector2i(0, Math::Lerp<Vector2f>({0,0}, m_size, 1.0 - m_value / m_max).y),
                                Vector2f(m_size.x, m_size.y - Math::Lerp<Vector2f>({0,0}, m_size, 1.0 - m_value / m_max).y), m_activeColor);
         }
         template class Slider<Vertical>;

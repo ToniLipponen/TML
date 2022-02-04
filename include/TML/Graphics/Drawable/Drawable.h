@@ -103,7 +103,7 @@ namespace tml
 
     protected:
         virtual void Generate() noexcept = 0; // Generate std::vector<Vertex>
-        Color m_color = WHITE;
+        Color m_color = Color::White;
         Texture m_tex;
         std::vector<Vertex> m_vertexData;
         std::vector<ui32> m_indexData;

@@ -1,11 +1,9 @@
 #include <TML/TML.h>
-
 using namespace tml;
 
 int main()
 {
-    Window window(800, 600, "Example1");
-    Renderer::Init();
+    RenderWindow window(800, 600, "Example1");
 
     while(!window.ShouldClose())
     {
@@ -13,9 +11,9 @@ int main()
         if(event.type == Event::Closed)
             window.Close();
 
-        Renderer::Clear();
-            Renderer::DrawCircle(Mouse::GetPosition(), 100, GREEN);
-        Renderer::EndBatch();
+        window.Clear();
+        window.DrawCircle(window.GetSize() / 2, 100, Color::Red);
+        window.DrawFps({0,0});
         window.Display();
     }
     return 0;
