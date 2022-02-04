@@ -4,12 +4,14 @@
 #include "TML/IO/Logger.h"
 
 using namespace tml::Interface;
-extern tml::Text* DEFAULT_TEXT;
 
 TextInput::TextInput(i32 x, i32 y, i32 width, i32 height)
 {
     m_pos = Vector2i(x,y);
     m_size = Vector2i(width, height);
+    m_text.SetPosition(m_pos);
+    m_text.SetColor(BLACK);
+    m_cursorPos = Math::Clamp<int>(m_pos.x + 2, m_pos.x, m_pos.x + m_size.x - 4);
 
     m_hSizePolicy = Expand;
     m_vSizePolicy = Fixed;
@@ -53,7 +55,7 @@ void TextInput::InitListeners()
         else
             UnFocus();
     });
-    AddListener("Update", [&](BaseComponent* c, Event& e)
+    AddListener("InterfaceUpdate", [&](BaseComponent* c, Event& e)
     {
         if(m_state.Focused)
         {
@@ -75,14 +77,14 @@ void TextInput::InitListeners()
                     if(e.key.control)
                         m_cursorIndex = search_backwards();
                     else
-                        m_cursorIndex--;
+                        m_cursorIndex = Math::Clamp<i32>(--m_cursorIndex, 0, m_value.size());
                     break;
 
                 case Keyboard::KEY_RIGHT:
                     if(e.key.control)
                         m_cursorIndex = search_forwards();
                     else
-                        m_cursorIndex = Math::Clamp<ui32>(++m_cursorIndex, 0, m_value.size() - 1);
+                        m_cursorIndex = Math::Clamp<i32>(++m_cursorIndex, 0, m_value.size());
                     break;
 
                 case Keyboard::KEY_BACKSPACE:
@@ -115,10 +117,20 @@ void TextInput::InitListeners()
                         }
                     }
                     break;
-
+                case Keyboard::KEY_V:
+                    if(e.key.control)
+                    {
+                        const auto str = Clipboard::GetString();
+                        m_value.insert(m_cursorIndex, Util::StringToWstring(Clipboard::GetString()));
+                        m_cursorIndex += str.length();
+                    }
+                    break;
                 default:
                     break;
             }
+            m_text.SetString(m_value.substr(0, m_cursorIndex));
+            m_cursorPos = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
+            m_text.SetString(m_value);
         }
     });
 
@@ -126,30 +138,32 @@ void TextInput::InitListeners()
     {
         if(m_state.Focused)
         {
-            m_value.insert(m_value.begin() + m_cursorIndex, e.text.unicode);
+            m_value.insert(m_cursorIndex, 1, static_cast<wchar_t>(e.text.unicode));
             m_cursorIndex++;
+            m_text.SetString(m_value.substr(0, m_cursorIndex));
+            m_cursorPos = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
+            m_text.SetString(m_value);
         }
+    });
+
+    AddListener("Moved", [&](BaseComponent* c, Event& e)
+    {
+        m_text.SetPosition(e.move.x, e.move.y);
+        m_cursorPos = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
     });
 }
 
 void TextInput::Draw()
 {
-    // Setting DEFAULT_TEXT values here, so I can measure the dimensions of the text.
-    DEFAULT_TEXT->SetPosition(m_pos);
-    DEFAULT_TEXT->SetSize(m_size.y * 0.8);
-    DEFAULT_TEXT->SetString(m_value.substr(0, m_cursorIndex));
-    const float cursorX = Math::Clamp<int>(m_pos.x + DEFAULT_TEXT->GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
-
-    DEFAULT_TEXT->SetString(m_value);
 
     Renderer::DrawRect(m_pos, m_size, m_pColor);
     Renderer::SetBounds(m_pos, m_size);
-    Renderer::DrawText(Util::WstringToString(m_value), m_pos + Vector2i(0, m_size.y * 0.2f), m_size.y * 0.8, BLACK);
+    Renderer::Draw(m_text);
 
     if(m_state.Focused)
     {
         if(m_showLine)
-            Renderer::DrawLine({cursorX, m_pos.y + (m_size.y / 10.0f)}, {cursorX, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
+            Renderer::DrawLine({m_cursorPos, m_pos.y + (m_size.y / 10.0f)}, {m_cursorPos, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
 
         Renderer::ResetBounds();
         Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);

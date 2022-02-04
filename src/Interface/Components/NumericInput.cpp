@@ -3,45 +3,21 @@
 #include <TML/Graphics/Renderer.h>
 #include <TML/IO/Clipboard.h>
 
-extern tml::Text* DEFAULT_TEXT;
 namespace tml
 {
     namespace Interface
     {
         template<typename T>
         NumericInput<T>::NumericInput(i32 x, i32 y, ui32 w, ui32 h, T value)
+        : BaseComponent(x,y,w,h)
         {
-            m_pos = Vector2i(x,y);
-            m_size = Vector2i(w,h);
             m_value = value;
             m_valueStr = std::to_string(m_value);
             m_cursorIndex = m_valueStr.length();
+            m_text.SetPosition(m_pos);
+            m_text.SetColor(BLACK);
+            m_text.SetString(m_valueStr);
 
-            Vector2i buttonPos = m_pos;
-            buttonPos.x += m_size.x - m_size.y / 2;
-            m_incrementButton = new Button(buttonPos.x, buttonPos.y,        h/2, h/2, "+");
-            m_decrementButton = new Button(buttonPos.x, buttonPos.y + h/2,  h/2, h/2, "-");
-            AddChild(m_decrementButton);
-            AddChild(m_incrementButton);
-
-            m_incrementButton->SetTextSize(h * 0.8);
-            m_decrementButton->SetTextSize(h * 0.8);
-            m_incrementButton->AddListener("Click",[&](BaseComponent* c, Event& e)
-            {
-                if(c->GetState().MouseOver)
-                {
-                    ((NumericInput *) c->GetParent())->Increment();
-                    e = Event{};
-                }
-            });
-            m_decrementButton->AddListener("Click",[&](BaseComponent* c, Event& e)
-            {
-                if(c->GetState().MouseOver)
-                {
-                    ((NumericInput *)c->GetParent())->Decrement();
-                    e = Event{};
-                }
-            });
             AddListener("MouseDown", [&](BaseComponent* c, Event& e)
             {
                 if(m_state.MouseOver)
@@ -58,40 +34,77 @@ namespace tml
                 {
                     Focus();
                     Raise();
+                    m_cursorIndex = m_valueStr.length();
                     e = Event{};
                 }
                 else
                     UnFocus();
             });
+
             AddListener("KeyPressed", [&](BaseComponent* c, Event& e)
             {
                 if(m_state.Focused)
                 {
-                    if(e.key.code >= Keyboard::KEY_0 && e.key.code <= Keyboard::KEY_9)
+                    switch(e.key.code)
                     {
-                        m_valueStr = m_valueStr + std::to_string(e.key.code - 48);
-                        m_value = Util::StringToType<T>(m_valueStr);
-                    }
-                    else if(e.key.code == Keyboard::KEY_BACKSPACE)
-                    {
-                        if(m_valueStr.size() == 0)
-                            m_value = 0;
-                        else
-                        {
-                            m_valueStr.pop_back();
+                        case Keyboard::KEY_0:
+                        case Keyboard::KEY_1:
+                        case Keyboard::KEY_2:
+                        case Keyboard::KEY_3:
+                        case Keyboard::KEY_4:
+                        case Keyboard::KEY_5:
+                        case Keyboard::KEY_6:
+                        case Keyboard::KEY_7:
+                        case Keyboard::KEY_8:
+                        case Keyboard::KEY_9:
+                            m_valueStr.insert(m_cursorIndex, 1, char(e.key.code));
+                            m_cursorIndex++;
                             m_value = Util::StringToType<T>(m_valueStr);
-                        }
+                            break;
+                        case Keyboard::KEY_BACKSPACE:
+                            if(m_valueStr.length() == 0)
+                                m_value = 0;
+                            else
+                            {
+                                m_valueStr.pop_back();
+                                if(m_valueStr.length() == 0)
+                                    m_value = 0;
+                                else
+                                    m_value = Util::StringToType<T>(m_valueStr);
+                                m_cursorIndex = Math::Clamp<ui32>(m_cursorIndex--, 0, m_valueStr.length());
+                            }
+                            break;
+                        case Keyboard::KEY_PERIOD:
+                            if(std::is_floating_point<T>().value && m_valueStr.find('.') == m_valueStr.npos)
+                            {
+                                m_valueStr.insert(m_cursorIndex, 1, '.');
+                                m_cursorIndex++;
+                                m_value = Util::StringToType<T>(m_valueStr + "0");
+                            }
+                            break;
+                        case Keyboard::KEY_LEFT:
+                            m_cursorIndex = Math::Clamp<i32>(--m_cursorIndex, 0, m_valueStr.length());
+                            break;
+                        case Keyboard::KEY_RIGHT:
+                            m_cursorIndex = Math::Clamp<i32>(++m_cursorIndex, 0, m_valueStr.length());
+                            break;
+                        case Keyboard::KEY_UP:
+                            Increment();
+                            break;
+                        case Keyboard::KEY_DOWN:
+                            Decrement();
+                            break;
+                        default:
+                            break;
+
                     }
-                    else if(e.key.code == Keyboard::KEY_PERIOD)
-                    {
-                        if(std::is_floating_point<T>().value && m_valueStr.find('.') == m_valueStr.npos)
-                        {
-                            m_valueStr.push_back('.');
-                            m_value = Util::StringToType<T>(m_valueStr);
-                        }
-                    }
-//                    e = Event{};
+                    m_text.SetString(m_valueStr);
+                    e = Event{};
                 }
+            });
+            AddListener("Moved", [&](BaseComponent* c, Event& e)
+            {
+                m_text.SetPosition(e.move.x, e.move.y);
             });
         }
 
@@ -100,6 +113,7 @@ namespace tml
         {
             m_value = value;
             m_valueStr = std::to_string(m_value);
+            m_text.SetString(m_valueStr);
         }
 
         template<typename T>
@@ -113,7 +127,8 @@ namespace tml
         {
             m_value += m_increment;
             m_valueStr = std::to_string(m_value);
-            m_cursorIndex = m_valueStr.size();
+            m_cursorIndex = m_valueStr.length();
+            m_text.SetString(m_valueStr);
         }
 
         template<typename T>
@@ -121,59 +136,31 @@ namespace tml
         {
             m_value -= m_increment;
             m_valueStr = std::to_string(m_value);
-            m_cursorIndex = m_valueStr.size();
+            m_cursorIndex = m_valueStr.length();
+            m_text.SetString(m_valueStr);
         }
-
-        template<typename T>
-        void NumericInput<T>::OnMoved()
-        {
-            auto buttonPos = m_pos;
-            buttonPos.x += m_size.x - m_size.y / 2;
-
-            ((Object*)m_incrementButton)->SetSize({m_size.y / 2, (m_size.y / 2)});
-            ((Object*)m_decrementButton)->SetSize({m_size.y / 2, (m_size.y / 2)});
-            ((Object*)m_incrementButton)->SetPosition(buttonPos);
-            ((Object*)m_decrementButton)->SetPosition({buttonPos.x, buttonPos.y + (m_size.y / 2)});
-        }
-
-        template<typename T>
-        void NumericInput<T>::OnResized()
-        {
-            auto buttonPos = m_pos;
-            buttonPos.x += m_size.x - m_size.y / 2;
-            ((Object*)m_incrementButton)->SetSize(Vector2i{m_size.y / 2, (m_size.y / 2)});
-            ((Object*)m_decrementButton)->SetSize({m_size.y / 2, (m_size.y / 2)});
-            ((Object*)m_incrementButton)->SetPosition(buttonPos);
-            ((Object*)m_decrementButton)->SetPosition({buttonPos.x, buttonPos.y + (m_size.y / 2)});
-        }
-
 
         template<typename T>
         void NumericInput<T>::Draw()
         {
-            DEFAULT_TEXT->SetPosition(m_pos);
-            DEFAULT_TEXT->SetSize(m_size.y * 0.8f);
-            DEFAULT_TEXT->SetString(m_valueStr.substr(0, m_cursorIndex));
-            DEFAULT_TEXT->SetString(m_valueStr);
-
+            float cursorX = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x);
             const Vector2i pos = m_pos + Vector2i(1,1);
             const Vector2i size = m_size - Vector2i(2,2);
-            const float cursorX = Math::Clamp<int>(pos.x + DEFAULT_TEXT->GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x);
 
             Renderer::DrawRect(m_pos, m_size, m_pColor);
             Renderer::SetBounds(m_pos, m_size);
-            Renderer::DrawText(m_valueStr, m_pos + Vector2i(0, m_size.y * 0.2f), m_size.y * 0.8f, BLACK);
+            Renderer::Draw(m_text);
 
             if(m_state.Focused)
             {
                 Renderer::DrawLine(Vector2f{cursorX, m_pos.y + (m_size.y / 10.0f)}, {cursorX, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
                 Renderer::ResetBounds();
-                Renderer::DrawGrid(pos, size - Vector2i(m_size.y/2, 0), 1, 1, m_activeColor, 1);
+                Renderer::DrawGrid(pos, size, 1, 1, m_activeColor, 1);
             }
             else
             {
                 Renderer::ResetBounds();
-                Renderer::DrawGrid(pos, size - Vector2i(m_size.y/2, 0), 1, 1, m_sColor, 1);
+                Renderer::DrawGrid(pos, size, 1, 1, m_sColor, 1);
             }
         }
 

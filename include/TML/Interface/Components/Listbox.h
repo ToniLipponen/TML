@@ -24,8 +24,6 @@ namespace tml
         private:
             ui32 GetOverFlow() const noexcept; // Get count of items that do not fit int the visible area.
         protected:
-            void OnMoved() override;
-            void OnResized() override;
             void Draw() override;
             std::vector<std::string> m_values;
             Scrollbar<Vertical>* m_scrollbar = nullptr;

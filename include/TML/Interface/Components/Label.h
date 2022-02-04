@@ -1,5 +1,6 @@
 #pragma once
 #include <TML/Interface/BaseComponent.h>
+#include <TML/Graphics/Drawable/Text.h>
 
 namespace tml
 {
@@ -13,8 +14,7 @@ namespace tml
             virtual bool ContainsPoint(const Vector2i& p) override;
         private:
             virtual void Draw() override;
-            std::string m_text;
-            float m_fontSize = 20;
+            Text m_text;
         };
     }
 }

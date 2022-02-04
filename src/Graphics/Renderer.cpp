@@ -17,11 +17,7 @@
 #include "Buffers.h"
 #include "Shader.h"
 #include "Shaders.h"
-#include "DefaultText.h"
 #include <Circle.h> // Circle texture data
-
-extern tml::Text* DEFAULT_TEXT;
-extern tml::Font* DEFAULT_FONT;
 
 namespace tml
 {
@@ -37,9 +33,10 @@ namespace tml
     static glm::mat4 s_scale = glm::mat4(1.f);
     static Vector2f  s_viewSize = {0, 0};
     static Camera s_camera;
+    static Text s_text;
 
     // Render batch related stuff
-    constexpr static ui32 MAX_VERTEX_COUNT  = 100000;
+    constexpr static ui32 MAX_VERTEX_COUNT = 100000;
     static i32 MAX_TEXTURE_COUNT = 8;
 
     static std::vector<Vertex>  s_vertexData;
@@ -96,7 +93,6 @@ namespace tml
         s_indexBuffer   = new IndexBuffer(nullptr, MAX_VERTEX_COUNT * 1.5);
         s_shader        = new Shader();
         s_circleTexture = new Texture();
-        LoadDefaultText();
 
         s_vao->Bind();
         s_layout.Push(2, 4, BufferLayout::VERTEX_FLOAT);
@@ -132,9 +128,6 @@ namespace tml
         delete s_vertexBuffer;
         delete s_indexBuffer;
         delete s_shader;
-
-        delete DEFAULT_TEXT;
-        delete DEFAULT_FONT;
     }
 
     void Renderer::SetClearColor(const Color &color) noexcept
@@ -368,11 +361,11 @@ namespace tml
 
     void Renderer::DrawText(const std::string &text, const Vector2f &pos, float size, const Color &color) noexcept
     {
-        DEFAULT_TEXT->SetString(text);
-        DEFAULT_TEXT->SetSize(size);
-        DEFAULT_TEXT->SetColor(color);
-        DEFAULT_TEXT->SetPosition(pos);
-        Draw(*DEFAULT_TEXT);
+        s_text.SetString(text);
+        s_text.SetSize(size);
+        s_text.SetColor(color);
+        s_text.SetPosition(pos);
+        Draw(s_text);
     }
 
     // Finds a parking spot for the texture.
@@ -426,7 +419,7 @@ namespace tml
     {
         s_shader->Bind();
 
-        for(i32 i = 0; i < MAX_TEXTURE_COUNT; i++)
+        for(i32 i = 0; i < s_textures.size(); i++)
             s_shader->Uniform1i("uTexture" + std::to_string(i), i);
 
         s_shader->SetVec2("uViewSize", s_viewSize);

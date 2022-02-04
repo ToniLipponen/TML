@@ -9,8 +9,14 @@ namespace tml
     public:
         struct ResizeEvent
         {
-            ui32 width;
-            ui32 height;
+            i32 x;
+            i32 y;
+        };
+
+        struct MoveEvent
+        {
+            i32 x;
+            i32 y;
         };
 
         struct KeyEvent
@@ -62,7 +68,9 @@ namespace tml
         {
             Null,
             Closed,                 //!< The window requested to be closed (no data)
-            Resized,                //!< The window was resized (data in event.size)
+            WindowResized,          //!< The window was resized (data in event.size)
+            InterfaceResized,       //!< tml::Interface component is resized (data in event.size)
+            InterfaceMoved,         //!< tml::Interface component is moved (data in event.move)
             LostFocus,              //!< The window lost the focus (no data)
             GainedFocus,            //!< The window gained the focus (no data)
             TextEntered,            //!< A character was entered (data in event.text)
@@ -74,7 +82,7 @@ namespace tml
             MouseMoved,             //!< The mouse cursor moved (data in event.mouseMove)
             MouseEntered,           //!< The mouse cursor entered the area of the window (no data)
             MouseLeft,              //!< The mouse cursor left the area of the window (no data)
-            Update,                 //!< tml::Interface component update event. (data in event.update)
+            InterfaceUpdate,        //!< tml::Interface component update event. (data in event.update)
             FileDragAndDropped,     //!< File or files dragged onto a window. (data in event.dragAndDrop)
 
         };
@@ -84,6 +92,7 @@ namespace tml
 
         union
         {
+            MoveEvent             move;
             ResizeEvent           size;
             KeyEvent              key;
             UpdateEvent           update;

@@ -1,6 +1,5 @@
 #include <TML/Graphics/Texture.h>
 #include <GLHeader.h>
-#include <TML/IO/Logger.h>
 #include "GlDebug.h"
 
 
@@ -89,28 +88,25 @@ namespace tml
             GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MAX_LEVEL, 8));
         #endif
 
-        if(m_width > 0 && m_height > 0)
+        if(m_width > 0 && m_height > 0 && m_pixelData)
         {
-            if(m_pixelData)
+            i32 ch = 0, chi = 0; // Channels & channels Headers.
+            switch(m_bpp)
             {
-                i32 ch = 0, chi = 0; // Channels & channels Headers.
-                switch(m_bpp)
-                {
-                    case 1: ch = GL_R8;     chi = GL_RED;   break;
-                    case 2: ch = GL_RG8;    chi = GL_RG;    break;
-                    case 3: ch = GL_RGB8;   chi = GL_RGB;   break;
-                    case 4: ch = GL_RGBA8;  chi = GL_RGBA;  break;
-                    default:                                break;
-                }
-                #ifdef TML_USE_GLES
-                    GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, m_pixelData));
-                    GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
-                #else
-                    GL_CALL(glTextureStorage2D(m_id, 8, ch, m_width, m_height));
-                    GL_CALL(glTextureSubImage2D(m_id, m_mipmapLevel, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, m_pixelData));
-                    GL_CALL(glGenerateTextureMipmap(m_id));
-                #endif
+                case 1: ch = GL_R8;     chi = GL_RED;   break;
+                case 2: ch = GL_RG8;    chi = GL_RG;    break;
+                case 3: ch = GL_RGB8;   chi = GL_RGB;   break;
+                case 4: ch = GL_RGBA8;  chi = GL_RGBA;  break;
+                default:                                break;
             }
+            #ifdef TML_USE_GLES
+                GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, m_pixelData));
+                GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
+            #else
+                GL_CALL(glTextureStorage2D(m_id, 8, ch, m_width, m_height));
+                GL_CALL(glTextureSubImage2D(m_id, m_mipmapLevel, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, m_pixelData));
+                GL_CALL(glGenerateTextureMipmap(m_id));
+            #endif
         }
     }
 }

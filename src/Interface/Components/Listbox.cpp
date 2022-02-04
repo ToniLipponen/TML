@@ -47,6 +47,24 @@ namespace tml
                     e = Event{};
                 }
             });
+
+            AddListener("Moved", [&](BaseComponent* c, Event& e)
+            {
+                m_scrollbar->SetPosition(m_pos + Vector2i(m_size.x - 21, 1));
+            });
+
+            AddListener("WindowResized", [&](BaseComponent* c, Event& e)
+            {
+                m_scrollbar->SetPosition(m_pos + Vector2i(m_size.x - 21, 1));
+                m_scrollbar->SetSize({m_scrollbar->GetSize().x, m_size.y - 2});
+
+                const auto overflow = GetOverFlow();
+                if(overflow > 0)
+                {
+                    m_scrollbar->Enable();
+                    m_scrollbar->SetRange(0, overflow);
+                }
+            });
         }
 
         void Listbox::AddValue(std::string value)
@@ -131,24 +149,6 @@ namespace tml
                 return Math::Max<ui32>((valuesSize - m_size.y) / 20, 1);
 
             return 0;
-        }
-
-        void Listbox::OnMoved()
-        {
-            m_scrollbar->SetPosition(m_pos + Vector2i(m_size.x - 21, 1));
-        }
-
-        void Listbox::OnResized()
-        {
-            m_scrollbar->SetPosition(m_pos + Vector2i(m_size.x - 21, 1));
-            m_scrollbar->SetSize({m_scrollbar->GetSize().x, m_size.y - 2});
-
-            const auto overflow = GetOverFlow();
-            if(overflow > 0)
-            {
-                m_scrollbar->Enable();
-                m_scrollbar->SetRange(0, overflow);
-            }
         }
 
         void Listbox::Draw()

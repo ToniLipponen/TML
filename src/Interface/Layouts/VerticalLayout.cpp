@@ -6,12 +6,11 @@ namespace tml
     namespace Interface
     {
         VerticalLayout::VerticalLayout(i32 x, i32 y, ui32 w, ui32 h)
+        : BaseComponent(x,y,w,h)
         {
-            m_pos = Vector2i(x,y);
-            m_size = Vector2i(w,h);
             m_hSizePolicy = Expand;
             m_vSizePolicy = Expand;
-            AddListener("Update", [&](BaseComponent* c, Event& e)
+            AddListener("InterfaceUpdate", [&](BaseComponent* c, Event& e)
             {
                 static ui64 oldChildrenSize = 0;
                 if(m_children.size() != oldChildrenSize)
@@ -21,24 +20,38 @@ namespace tml
                     oldChildrenSize = m_children.size();
                 }
             });
+
+            AddListener("Resized", [&](BaseComponent* c, Event& e)
+            {
+                ScaleChildren();
+                AlignChildren();
+            });
+
+            AddListener("Moved", [&](BaseComponent* c, Event& e)
+            {
+                ScaleChildren();
+                AlignChildren();
+            });
         }
 
         void VerticalLayout::ScaleChildren()
         {
-            std::vector<BaseComponent*> expandThese;
-            ui32 expandedChildren = 0;
-            float height = 0, expandSize;
+            std::vector<BaseComponent*> expandThese, clampThese;
+            float height = 0, expandSize, clampHeight = 0;
             for(auto& item : m_children)
             {
                 const auto itemSize = item->GetSize();
                 switch(item->GetVerticalSizePolicy())
                 {
                     case Fixed:
-                        height += itemSize.y;
+                        height += itemSize.y + m_padding.y;
                         break;
-                    default:
+                    case Clamp:
+                        clampHeight += itemSize.y + m_padding.y;
+                        clampThese.push_back(item);
+                        break;
+                    default: /// Expand
                         expandThese.push_back(item);
-                        expandedChildren++;
                         break;
                 }
                 switch(item->GetHorizontalSizePolicy())
@@ -55,12 +68,10 @@ namespace tml
                 }
             }
 
-            if(expandedChildren == 0)
-                return;
+            const auto expandedChildren = expandThese.size();
+            const auto clampedChildren = clampThese.size();
 
-            expandSize = Math::Min<float>(((m_size.y - height) / expandedChildren) - (m_padding.y / 2) - 1, 0);
-            if(expandSize < 1)
-                return;
+            expandSize = Math::Max<float>(((m_size.y - height) / expandedChildren) - (m_padding.y / 2) - 1, 0);
 
             for(auto i : expandThese)
                 i->SetSize({i->GetSize().x, static_cast<int>(expandSize)});
@@ -107,18 +118,6 @@ namespace tml
                 else
                     offset += i->GetSize().y + m_padding.y;
             }
-        }
-
-        void VerticalLayout::OnResized()
-        {
-            ScaleChildren();
-            AlignChildren();
-        }
-
-        void VerticalLayout::OnMoved()
-        {
-            ScaleChildren();
-            AlignChildren();
         }
     }
 }

@@ -1,7 +1,6 @@
 #include <TML/Interface/Layouts/HorizontalLayout.h>
 #include <TML/Utilities/Utilities.h>
 #include <vector>
-#include "TML/IO/Logger.h"
 
 namespace tml
 {
@@ -12,8 +11,8 @@ namespace tml
             m_pos = Vector2i(x,y);
             m_size = Vector2i(w,h);
             m_hSizePolicy = Expand;
-            m_vSizePolicy = Expand;
-            AddListener("Update", [&](BaseComponent* c, Event& e)
+            m_vSizePolicy = Fixed;
+            AddListener("InterfaceUpdate", [&](BaseComponent* c, Event& e)
             {
                 static ui64 oldChildrenSize = 0;
                 if(m_children.size() != oldChildrenSize)
@@ -22,6 +21,18 @@ namespace tml
                     AlignChildren();
                     oldChildrenSize = m_children.size();
                 }
+            });
+
+            AddListener("Resized", [&](BaseComponent* c, Event& e)
+            {
+                ScaleChildren();
+                AlignChildren();
+            });
+
+            AddListener("Moved", [&](BaseComponent* c, Event& e)
+            {
+                ScaleChildren();
+                AlignChildren();
             });
         }
 
@@ -111,18 +122,6 @@ namespace tml
                 else
                     offset += i->GetSize().x + m_padding.x;
             }
-        }
-
-        void HorizontalLayout::OnResized()
-        {
-            ScaleChildren();
-            AlignChildren();
-        }
-
-        void HorizontalLayout::OnMoved()
-        {
-            ScaleChildren();
-            AlignChildren();
         }
     }
 }

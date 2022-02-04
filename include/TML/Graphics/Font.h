@@ -13,7 +13,10 @@ namespace tml
     {
     public:
         Font();
+        Font(const Font& rhs);
         ~Font();
+        Font& operator=(const Font& rhs);
+
         void LoadFromFile(const std::string &filename);
         void LoadFromMemory(const ui8 *data, ui32 size);
         friend class Text;
@@ -22,5 +25,6 @@ namespace tml
         void* m_cdata;
         void* m_font_info;
         Texture m_texture;
+        Image m_image;
     };
 }
