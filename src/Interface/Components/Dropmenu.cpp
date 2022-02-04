@@ -37,6 +37,10 @@ namespace tml
                 else
                     m_listComponent->Disable();
             });
+            AddListener("Moved", [&](BaseComponent* c, Event& e)
+            {
+                m_listComponent->SetPosition({m_pos.x, m_pos.y + m_size.y + 2});
+            });
         }
 
         void DropMenu::AddValue(std::string value)
@@ -85,16 +89,6 @@ namespace tml
                 Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
             else
                 Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
-
-        }
-
-        void DropMenu::OnMoved()
-        {
-            m_listComponent->SetPosition({m_pos.x, m_pos.y + m_size.y + 2});
-        }
-
-        void DropMenu::OnResized()
-        {
 
         }
     }

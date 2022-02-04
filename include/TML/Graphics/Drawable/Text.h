@@ -2,6 +2,7 @@
 #include "TML/Graphics/Font.h"
 #include "Vertex.h"
 #include "Drawable.h"
+#include "TML/Utilities/String.h"
 #include <vector>
 #include <string>
 
@@ -15,8 +16,13 @@ namespace tml
         void SetString(const std::string& string, const std::string& font = "");
         void SetString(const std::wstring& string, const std::string& font = "");
         void SetFont(const Font &font);
-        void SetSpacing(ui32 s);
-        inline Vector2f GetDimensions() const noexcept { return m_dimensions; }
+        void SetSpacing(float spacing);
+        void SetKerning(float kerning);
+
+        std::wstring GetWString() const noexcept { return m_string; }
+        std::string GetString() const noexcept { return Util::WstringToString(m_string); }
+
+        inline constexpr Vector2f GetDimensions() const noexcept { return m_dimensions; }
         friend class Renderer;
 
     private:
@@ -29,6 +35,7 @@ namespace tml
     private:
         void Generate() noexcept override;
         Font m_font;
+        bool m_hasFont = false;
         std::wstring m_string;
         float m_lineSpacing = 0;
         float m_kerning = 0;

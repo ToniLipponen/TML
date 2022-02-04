@@ -1,16 +1,27 @@
 #pragma once
 #include <TML/Graphics/Vector2.h>
 #include <cmath>
-#define DEG2RAD(x) (x * 0.01745329f)
 
 namespace tml
 {
     namespace Math
     {
-        template<typename T>
-        inline Vector2<T> Rotate(const Vector2<T> &origin, Vector2<T> p, double r)
+        /// @brief Converts from degrees to radians.
+        inline constexpr double DegToRad(double x) noexcept
         {
-            r = DEG2RAD(r);
+            return x * 0.01745329252;
+        }
+
+        /// @brief Converts from radians to degrees.
+        inline constexpr double RadToDeg(double x) noexcept
+        {
+            return x * 57.295779513;
+        }
+
+        template<typename T>
+        inline Vector2<T> Rotate(const Vector2<T> &origin, Vector2<T> p, double r) noexcept
+        {
+            r = DegToRad(r);
             p -= origin;
             const double cos_r = cos(r);
             const double sin_r = sin(r);
@@ -28,7 +39,7 @@ namespace tml
             return value;
         }
 
-        // Returns the bigger of the two values
+        /// Returns the bigger of the two values
         template<typename T>
         inline constexpr T Max(T a, T b) noexcept
         {
@@ -37,7 +48,7 @@ namespace tml
             return b;
         }
 
-        // Returns the smaller of the two values
+        /// Returns the smaller of the two values
         template<typename T>
         inline constexpr T Min(T a, T b) noexcept
         {
@@ -61,18 +72,15 @@ namespace tml
             return t * t * (3.0 - 2.0 * t);
         }
 
-        // Need types with +, - and * operators
-        // T operator+(const T& rhs)
-        // T operator-(const T& rhs)
-        // T operator*(float rhs)
+        /// Linear interpolation
         template<typename T>
-        inline constexpr T Lerp(const T &a, const T &b, float m) noexcept
+        inline constexpr T Lerp(const T &a, const T &b, double m) noexcept
         {
             return a + ((b - a) * m);
         }
 
         template<typename T>
-        inline constexpr T Quadratic(const T &p0, const T &p1, const T &p2, const float t) noexcept
+        inline constexpr T Quadratic(const T &p0, const T &p1, const T &p2, const double t) noexcept
         {
             return Lerp(
                     Lerp(p0, p1, t),
@@ -81,7 +89,7 @@ namespace tml
         }
 
         template<typename T>
-        inline constexpr T Cubic(const T &p0, const T &p1, const T &p2, const T &p3, const float t) noexcept
+        inline constexpr T Cubic(const T &p0, const T &p1, const T &p2, const T &p3, const double t) noexcept
         {
             return Lerp(
                     Quadratic(p0, p1, p2, t),
@@ -89,23 +97,22 @@ namespace tml
                     t);
         }
 
-        inline double Distance(const Vector2f &a, const Vector2f &b) noexcept
+        template<typename T>
+        inline double Distance(const Vector2<T>& a, const Vector2<T>& b) noexcept
         {
             return sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
         }
 
-        inline Vector2f AngleToHeading(float degrees) noexcept
+        inline Vector2f AngleToHeading(double degrees) noexcept
         {
-            return Vector2f(std::cos(degrees * 0.01745329f), std::sin(degrees * 0.01745329f)).Normalized();
+            return Vector2f(std::cos(DegToRad(degrees)), std::sin(DegToRad(degrees))).Normalized();
         }
 
-        // @brief Checks whether a value is withing given range
-        template <typename T>
-        inline constexpr bool InRange(const T& min, const T& value, const T& max) noexcept
+        /// Checks whether a value is withing given range
+        template<typename T>
+        inline constexpr bool InRange(const T& value, const T& min, const T& max) noexcept
         {
-            if(value >= min && value <= max)
-                return true;
-            return false;
+            return (value >= min && value <= max);
         }
     }
 }

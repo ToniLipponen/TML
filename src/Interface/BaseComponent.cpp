@@ -4,7 +4,6 @@
 #include <TML/Utilities/Clock.h>
 #include <string>
 #include <algorithm>
-#include "TML/IO/Logger.h"
 #include "TML/Utilities/Utilities.h"
 
 namespace tml
@@ -15,6 +14,12 @@ namespace tml
 
         BaseComponent::BaseComponent()
         : m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr)
+        {
+            m_state.Enabled = true;
+        }
+
+        BaseComponent::BaseComponent(i32 x, i32 y, ui32 w, ui32 h)
+        : m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr), m_pos(x,y), m_size(w,h)
         {
             m_state.Enabled = true;
         }
@@ -30,6 +35,8 @@ namespace tml
         {
             ClearFocused();
             m_state.Focused = true;
+            Event e{};
+            CallUIFunc("GainedFocus", e);
         }
 
         void BaseComponent::UnFocus()
@@ -162,30 +169,57 @@ namespace tml
                 i->Raise();
         }
 
+        void BaseComponent::SetPosition(const Vector2i &position)
+        {
+            if(position != m_pos)
+            {
+                m_pos = position;
+                Event e{};
+                e.type = Event::InterfaceMoved;
+                e.move.x = position.x;
+                e.move.y = position.y;
+                CallUIFunc("Moved", e);
+            }
+        }
+
+        void BaseComponent::SetSize(const Vector2i &size)
+        {
+            m_size = size;
+            Event e{};
+            e.type = Event::InterfaceResized;
+            e.size.x = size.x;
+            e.size.y = size.y;
+            CallUIFunc("Resized", e);
+        }
+
         void BaseComponent::ProcessEvents(Event& event, double dt)
         {
             switch(event.type)
             {
                 default:
-                {
-                    if(event.type != Event::EventType::Null)
-                        CallUIFunc("Any", event);
-                }
+                    CallUIFunc("Any", event);
+
                 case Event::EventType::MouseButtonPressed:
                     CallUIFunc("MouseDown", event);
                     break;
 
                 case Event::EventType::MouseButtonReleased:
-                    if(m_state.MouseDown != -1)
+                    if(m_state.MouseDown != -1 && m_state.MouseOver)
                         CallUIFunc("Click", event);
-                    m_state.MouseDown = -1;
+
                     CallUIFunc("MouseUp", event);
+                    m_state.MouseDown = -1;
                     break;
 
                 case Event::EventType::MouseMoved:
+                {
+                    const bool oldMouseOver = m_state.MouseOver;
                     m_state.MouseOver = ContainsPoint({event.mouseMove.x, event.mouseMove.y});
                     CallUIFunc("MouseMoved", event);
-                    break;
+                    if(m_state.MouseOver && !oldMouseOver)
+                        CallUIFunc("MouseEnter", event);
+                }
+                break;
 
                 case Event::EventType::MouseWheelScrolled:
                     CallUIFunc("MouseScroll", event);
@@ -206,10 +240,11 @@ namespace tml
                 case Event::EventType::Null:
                     break;
             }
+
             Event updateEvent;
-            updateEvent.type = Event::EventType::Update;
+            updateEvent.type = Event::EventType::InterfaceUpdate;
             updateEvent.update.delta = dt;
-            CallUIFunc("Update", updateEvent);
+            CallUIFunc("InterfaceUpdate", updateEvent);
         }
 
         void BaseComponent::Update(Event& event)
@@ -220,10 +255,14 @@ namespace tml
                 return;
             Renderer::ResetCamera();
 
-            for(auto i = m_processStack.rbegin(); i != m_processStack.rend(); i++)
+            if(!m_processStack.empty())
             {
-                if((*i)->Enabled())
-                    (*i)->ProcessEvents(event, delta);
+                for(i64 i = m_processStack.size() - 1; i >= 0; --i)
+                {
+                    auto* item = m_processStack.at(i);
+                    if(item->Enabled())
+                        item->ProcessEvents(event, delta);
+                }
             }
             ProcessEvents(event, delta);
             Draw();
@@ -239,9 +278,11 @@ namespace tml
             if(m_listeners.find(name) != m_listeners.end())
             {
                 const auto& functions = m_listeners.at(name);
-                for(auto& function : functions)
+
+                /// Iterating functions in reverse, so that the user added functions are called first.
+                for(auto function = functions.rbegin(); function != functions.rend(); function++)
                 {
-                    function(this, event);
+                    (*function)(this, event);
                 }
                 return true;
             }

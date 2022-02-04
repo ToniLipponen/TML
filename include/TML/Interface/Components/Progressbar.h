@@ -15,6 +15,7 @@ namespace tml
         private:
             void Draw() override;
             float m_value = 0;
+            Text m_text;
         };
     }
 }

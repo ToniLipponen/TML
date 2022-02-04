@@ -1,6 +1,6 @@
 #pragma once
 #include "../BaseComponent.h"
-#include <TML/Utilities/Utilities.h>
+#include <TML/Graphics/Drawable/Text.h>
 
 namespace tml
 {
@@ -10,15 +10,17 @@ namespace tml
         {
         public:
             TextInput(i32 x, i32 y, i32 width, i32 height = 30);
-            void SetValue(const std::string& string){ m_value = Util::StringToWstring(string); m_cursorIndex = string.size(); }
-            std::string GetValue() const { return Util::WstringToString(m_value); }
+            void SetValue(const std::string& string){ m_text.SetString(string); m_cursorIndex = string.size(); }
+            std::string GetValue() const { return m_text.GetString(); }
         private:
             void InitListeners();
-            void Draw() override;
+            void Draw();
+            Text m_text;
             std::wstring m_value;
-            ui32 m_cursorIndex = 0;
+            i32 m_cursorIndex = 0;
             double m_blinkTimer = 0;
             bool m_showLine = true;
+            float m_cursorPos = 0;
         };
     }
 }

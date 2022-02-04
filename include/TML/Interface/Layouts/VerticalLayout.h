@@ -13,8 +13,6 @@ namespace tml
 
         private:
             void Draw() override {};
-            void OnResized() override;
-            void OnMoved() override;
             void ScaleChildren();
             void AlignChildren();
         };

@@ -34,10 +34,9 @@ extern "C" void MouseButtonCallback(GLFWwindow* window, int button, int action, 
 void WindowResizeCallback(GLFWwindow* f, int x, int y)
 {
     tml::Event event;
-    event.type = tml::Event::Resized;
-    event.size.height = y;
-    event.size.width = x;
-
+    event.type = tml::Event::WindowResized;
+    event.size.x = x;
+    event.size.y = y;
     tml::EventSystem::GetInstance().PushEvent(event);
     glViewport(0, 0, x, y);
 }

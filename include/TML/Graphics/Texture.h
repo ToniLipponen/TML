@@ -31,19 +31,21 @@ namespace tml
         ~Texture();
         void LoadFromImage(Image& image);
         void LoadFromFile(const std::string& filename);
-        void LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data); // @data has to be alive throughout the use of this texture
+        void LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data);
+
         void Bind(ui32 slot = 0) const;
         void SetMipMapLevel(ui8 level);
         void SetMinMagFilter(Filter min, Filter mag);
         void SetClampMode(ClampMode mode);
 
-        constexpr inline Filter GetMinFilter() const noexcept { return m_minFilter; }
-        constexpr inline Filter GetMagFilter() const noexcept { return m_magFilter; }
-        constexpr inline ClampMode GetClampMode() const noexcept { return m_clampMode; }
-    friend class Renderer;
+        inline constexpr Filter     GetMinFilter() const noexcept { return m_minFilter; }
+        inline constexpr Filter     GetMagFilter() const noexcept { return m_magFilter; }
+        inline constexpr ClampMode  GetClampMode() const noexcept { return m_clampMode; }
+        inline constexpr ui32       GetID()        const noexcept { return m_id;        }
+
     private:
         inline void Generate() const;
-        constexpr ui32 GetID() const { return m_id; }
+        
     private:
         ClampMode m_clampMode = ClampToBorder;
         Filter m_minFilter = LinearMipmapLinear;

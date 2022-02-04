@@ -20,9 +20,6 @@ namespace tml
         private:
             void Draw() override;
             Listbox* m_listComponent;
-        protected:
-            void OnMoved() override;
-            void OnResized() override;
         };
     }
 }
