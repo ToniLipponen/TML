@@ -28,6 +28,7 @@ if(TML_USE_GLES)
 endif()
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp external/incbin/incbin.c)
+
 add_subdirectory(external/glfw/)
 add_subdirectory(external/libwebp)
 include_directories(external/glm external/glfw/include include external res external/libwebp/src/)

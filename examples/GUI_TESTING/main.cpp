@@ -11,9 +11,8 @@ using namespace Interface;
 
 int main()
 {
-    Window window(800, 600, "GUI TESTING", Window::Resizeable | Window::VSync);
-    Renderer::Init();
-    Renderer::SetClearColor(WHITE);
+    RenderWindow window(800, 600, "GUI TESTING", Window::Resizeable);
+    window.SetClearColor(Color::White);
 
     HorizontalLayout hlayout(0,0, 800, 600);
     Listbox* list = new Listbox(0, 30, 400, 300);
@@ -49,11 +48,8 @@ int main()
         if(event.type == Event::Closed)
             window.Close();
 
-        Renderer::Clear();
-        {
-            hlayout.Update(event);
-        }
-        Renderer::EndBatch();
+        window.Clear();
+            hlayout.Update(event, window);
         window.Display();
         runTime += clock.Reset();
         progressbar->SetValue(runTime / 100.0);

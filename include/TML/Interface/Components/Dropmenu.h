@@ -18,7 +18,7 @@ namespace tml
             std::string GetSelectedValue() const;
             void Clear();
         private:
-            void Draw() override;
+            void Draw(RenderWindow& renderWindow) override;
             Listbox* m_listComponent;
         };
     }

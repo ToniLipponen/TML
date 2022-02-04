@@ -1,6 +1,5 @@
 #include <TML/Interface/Components/NumericInput.h>
 #include <TML/Utilities/Utilities.h>
-#include <TML/Graphics/Renderer.h>
 #include <TML/IO/Clipboard.h>
 
 namespace tml
@@ -15,7 +14,7 @@ namespace tml
             m_valueStr = std::to_string(m_value);
             m_cursorIndex = m_valueStr.length();
             m_text.SetPosition(m_pos);
-            m_text.SetColor(BLACK);
+            m_text.SetColor(Color::Black);
             m_text.SetString(m_valueStr);
 
             AddListener("MouseDown", [&](BaseComponent* c, Event& e)
@@ -141,26 +140,26 @@ namespace tml
         }
 
         template<typename T>
-        void NumericInput<T>::Draw()
+        void NumericInput<T>::Draw(RenderWindow& window)
         {
             float cursorX = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x);
             const Vector2i pos = m_pos + Vector2i(1,1);
             const Vector2i size = m_size - Vector2i(2,2);
 
-            Renderer::DrawRect(m_pos, m_size, m_pColor);
-            Renderer::SetBounds(m_pos, m_size);
-            Renderer::Draw(m_text);
+            window.DrawRect(m_pos, m_size, m_pColor);
+            window.SetBounds(m_pos, m_size);
+            window.Draw(m_text);
 
             if(m_state.Focused)
             {
-                Renderer::DrawLine(Vector2f{cursorX, m_pos.y + (m_size.y / 10.0f)}, {cursorX, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, BLACK, 0);
-                Renderer::ResetBounds();
-                Renderer::DrawGrid(pos, size, 1, 1, m_activeColor, 1);
+                window.DrawLine(Vector2f{cursorX, m_pos.y + (m_size.y / 10.0f)}, {cursorX, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, Color::Black, 0);
+                window.ResetBounds();
+                window.DrawGrid(pos, size, 1, 1, m_activeColor, 1);
             }
             else
             {
-                Renderer::ResetBounds();
-                Renderer::DrawGrid(pos, size, 1, 1, m_sColor, 1);
+                window.ResetBounds();
+                window.DrawGrid(pos, size, 1, 1, m_sColor, 1);
             }
         }
 

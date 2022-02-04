@@ -7,10 +7,10 @@ struct Scene
     std::vector<Rectangle> rects;
     std::vector<Circle> circles;
 
-    void Raycast(const Vector2f& pos)
+    void Raycast(const Vector2f& pos, RenderWindow& window)
     {
         Ray ray(pos, 0);
-        for(ui16 i = 0; i < 360; i++)
+        for(ui32 i = 0; i < 360; i++)
         {
             ray.direction = Math::AngleToHeading(i);
             float nearest = 10000;
@@ -30,15 +30,14 @@ struct Scene
                     nearest = hitInfo.points.at(0).distance;
                 }
             }
-            Renderer::DrawLine(pos, pos + ray.direction * nearest, 1, 0xffffff66, false);
+            window.DrawLine(pos, pos + ray.direction * nearest, 1, 0xffffff66, false);
         }
     }
 };
 
 int main()
 {
-    Window window(800, 600, "Raycasting", Window::VSync);
-    Renderer::Init();
+    RenderWindow window(800, 600, "Raycasting", Window::VSync);
     const Vector2f windowSize2 = window.GetSize() / 2;
 
     Scene scene;
@@ -60,11 +59,10 @@ int main()
             mousePos = {event.mouseMove.x, event.mouseMove.y};
         scene.rects.at(1).Rotate(delta * 100.0);
 
-        Renderer::Clear();
-            Renderer::DrawCircle(windowSize2, 200.f, 0x007700ff);
-            Renderer::DrawRect({100, 100}, {100, 100}, 0x770000ff,0, scene.rects.at(1).GetRotation());
-            scene.Raycast(mousePos);
-        Renderer::EndBatch();
+        window.Clear();
+            window.DrawCircle(windowSize2, 200.f, 0x007700ff);
+            window.DrawRect({100, 100}, {100, 100}, 0x770000ff,0, scene.rects.at(1).GetRotation());
+            scene.Raycast(mousePos, window);
         window.Display();
     }
 }

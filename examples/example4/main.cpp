@@ -6,8 +6,7 @@ using namespace Interface;
 
 int main()
 {
-    Window window(300, 400, "Example 4", Window::VSync);
-    Renderer::Init();
+    RenderWindow window(300, 400, "Example 4", Window::VSync);
 
     TextInput input(0, 0, 200, 30);
     auto* button = new Button(200, 0, 100, 30, "Add to list");
@@ -20,6 +19,7 @@ int main()
         auto* textInput = (TextInput*)c->GetRoot();
         if(textInput->GetValue().empty())
             return true;
+
         auto* listBox = (Listbox*)textInput->FindComponent("listbox");
         listBox->AddValue(textInput->GetValue());
         textInput->SetValue("");
@@ -33,9 +33,8 @@ int main()
         if(event.type == Event::Closed)
             window.Close();
 
-        Renderer::Clear();
-            input.Update(event);
-        Renderer::EndBatch();
+        window.Clear();
+        input.Update(event, window);
         window.Display();
     }
 }

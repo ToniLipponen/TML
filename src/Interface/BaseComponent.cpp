@@ -13,13 +13,13 @@ namespace tml
         std::hash<std::string> BaseComponent::s_hash = std::hash<std::string>();
 
         BaseComponent::BaseComponent()
-        : m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr)
+        : m_pColor(Color::White), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr)
         {
             m_state.Enabled = true;
         }
 
         BaseComponent::BaseComponent(i32 x, i32 y, ui32 w, ui32 h)
-        : m_pColor(WHITE), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr), m_pos(x,y), m_size(w,h)
+        : m_pColor(Color::White), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr), m_pos(x,y), m_size(w,h)
         {
             m_state.Enabled = true;
         }
@@ -247,13 +247,13 @@ namespace tml
             CallUIFunc("InterfaceUpdate", updateEvent);
         }
 
-        void BaseComponent::Update(Event& event)
+        void BaseComponent::Update(Event& event, RenderWindow& window)
         {
             static Clock clock;
             const double delta = clock.Reset();
             if(!m_state.Enabled)
                 return;
-            Renderer::ResetCamera();
+            window.ResetCamera();
 
             if(!m_processStack.empty())
             {
@@ -265,11 +265,11 @@ namespace tml
                 }
             }
             ProcessEvents(event, delta);
-            Draw();
+            Draw(window);
             for(auto* i : m_processStack)
             {
                 if(i->Enabled())
-                    i->Draw();
+                    i->Draw(window);
             }
         }
 

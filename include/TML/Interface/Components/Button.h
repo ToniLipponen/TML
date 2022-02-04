@@ -16,7 +16,7 @@ namespace tml
             void SetTextColor(const Color& color){ m_text.SetColor(color); }
         private:
             Text m_text;
-            void Draw() override;
+            void Draw(RenderWindow& renderWindow) override;
         };
     }
 }

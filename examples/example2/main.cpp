@@ -4,8 +4,7 @@ using namespace tml;
 
 int main()
 {
-    Window window(800, 600, "Example2");
-    Renderer::Init();
+    RenderWindow window(800, 600, "Example2");
     Sprite sprite;
     sprite.LoadFromFile("res/Logo.png");
 
@@ -15,9 +14,8 @@ int main()
         if(event.type == Event::Closed)
             window.Close();
 
-        Renderer::Clear();
-            Renderer::Draw(sprite);
-        Renderer::EndBatch();
+        window.Clear();
+        window.Draw(sprite);
         window.Display();
     }
     return 0;

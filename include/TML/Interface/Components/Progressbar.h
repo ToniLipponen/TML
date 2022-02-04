@@ -13,7 +13,7 @@ namespace tml
             inline constexpr float GetValue() const noexcept { return m_value; }
             inline constexpr void SetValue(float value) noexcept { m_value = Math::Clamp(value, 0.0f, 1.0f); }
         private:
-            void Draw() override;
+            void Draw(RenderWindow& renderWindow) override;
             float m_value = 0;
             Text m_text;
         };

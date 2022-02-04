@@ -1,9 +1,6 @@
 #include <TML/Interface/Components/Dropmenu.h>
-#include <TML/Graphics/Renderer.h>
-
 #include <utility>
 
-extern tml::Text* DEFAULT_TEXT;
 namespace tml
 {
     namespace Interface
@@ -74,21 +71,21 @@ namespace tml
             m_listComponent->Clear();
         }
 
-        void DropMenu::Draw()
+        void DropMenu::Draw(RenderWindow& window)
         {
             std::string selected_value;
             if(m_listComponent)
                 selected_value = m_listComponent->GetSelectedValue();
 
-            Renderer::DrawRect(m_pos, m_size, m_pColor);
-            Renderer::SetBounds(m_pos, m_size);
-            Renderer::DrawText(selected_value, m_pos, m_size.y, BLACK);
-            Renderer::ResetBounds();
+            window.DrawRect(m_pos, m_size, m_pColor);
+            window.SetBounds(m_pos, m_size);
+            window.DrawText(selected_value, m_pos, m_size.y, Color::Black);
+            window.ResetBounds();
 
             if(m_state.Focused)
-                Renderer::DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
+                window.DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
             else
-                Renderer::DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
+                window.DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
 
         }
     }

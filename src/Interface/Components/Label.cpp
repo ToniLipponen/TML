@@ -1,6 +1,5 @@
 #include <TML/Interface/Components/Label.h>
-#include <TML/Graphics/Renderer.h>
-#include "TML/Utilities/Utilities.h"
+#include <TML/Utilities/Utilities.h>
 
 namespace tml
 {
@@ -12,7 +11,7 @@ namespace tml
             m_pos.y = y;
             m_text.SetString(str);
             m_text.SetSize(s);
-            m_text.SetColor(BLACK);
+            m_text.SetColor(Color::Black);
             m_size = m_text.GetDimensions();
             AddListener("Moved", [&](BaseComponent*, Event& e)
             {
@@ -31,9 +30,9 @@ namespace tml
             return Util::PointInRect(p, m_pos, m_size, 0);
         }
 
-        void Label::Draw()
+        void Label::Draw(RenderWindow& window)
         {
-            Renderer::Draw(m_text);
+            window.Draw(m_text);
         }
     }
 }

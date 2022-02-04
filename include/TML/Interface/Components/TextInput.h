@@ -10,11 +10,11 @@ namespace tml
         {
         public:
             TextInput(i32 x, i32 y, i32 width, i32 height = 30);
-            void SetValue(const std::string& string){ m_text.SetString(string); m_cursorIndex = string.size(); }
+            void SetValue(const std::string& string);
             std::string GetValue() const { return m_text.GetString(); }
         private:
             void InitListeners();
-            void Draw();
+            void Draw(RenderWindow& renderWindow);
             Text m_text;
             std::wstring m_value;
             i32 m_cursorIndex = 0;

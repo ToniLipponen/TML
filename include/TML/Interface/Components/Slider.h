@@ -14,7 +14,7 @@ namespace tml
             void SetValue(float value);
             inline float GetValue() const { return m_value; }
         private:
-            void Draw() override;
+            void Draw(RenderWindow& renderWindow) override;
             float m_min, m_max, m_value;
         };
         using VSlider = Slider<Vertical>;
