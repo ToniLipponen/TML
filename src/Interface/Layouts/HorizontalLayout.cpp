@@ -71,9 +71,7 @@ namespace tml
             if(expandedChildren == 0)
                 return;
 
-            expandSize = Math::Min<float>(((m_size.x - width) / expandedChildren) - (m_padding.x / 2), 0);
-            if(expandSize < 1)
-                return;
+            expandSize = Math::Max<float>(((m_size.x - width) / expandedChildren) - (m_padding.x / 2), 0);
 
             for(auto i : expandThese)
                 i->SetSize({static_cast<int>(expandSize), i->GetSize().y});
