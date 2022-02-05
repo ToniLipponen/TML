@@ -11,8 +11,8 @@
 
 #include "GlDebug.h"
 #include "_Assert.h"
-#include "Buffers.h"
-#include "Shader.h"
+#include "TML/Graphics/Core/Buffers.h"
+#include "TML/Graphics/Core/Shader.h"
 #include "Shaders.h"
 #include <Circle.h> // Circle texture data
 
@@ -89,7 +89,7 @@ namespace tml
         GL_CALL(glad_glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
     }
 
-    void Renderer::SetCamera(Camera &cam) noexcept
+    void Renderer::SetCamera(const Camera &cam) noexcept
     {
         ResetCamera();
         const auto pos = cam.GetPosition();
@@ -143,7 +143,7 @@ namespace tml
         ResetBounds();
     }
 
-    void Renderer::Draw(Rectangle& r) noexcept
+    void Renderer::Draw(const Rectangle& r) noexcept
     {
         PushVertexData(r.m_vertexData, r.m_indexData);
     }
@@ -163,7 +163,7 @@ namespace tml
         PushVertexData(r.m_vertexData, r.m_indexData, r.m_font.m_texture);
     }
 
-    void Renderer::Draw(Video& r) noexcept
+    void Renderer::Draw(const Video& r) noexcept
     {
         if(m_textures.size() >= MAX_TEXTURE_COUNT - 3)
             EndBatch();
@@ -183,7 +183,6 @@ namespace tml
         // dx and dy for normals
         const float dx = b.x - a.x;
         const float dy = b.y - a.y;
-        thickness = ceilf(thickness);
 
         m_vertexData.push_back({((Vector2f(-dy, dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), 0, Vertex::COLOR});
         m_vertexData.push_back({((Vector2f(dy, -dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), 0, Vertex::COLOR});
@@ -219,8 +218,8 @@ namespace tml
 
             DrawCircle(Math::Rotate(origin, pos+Vector2f{roundness, roundness}, rotation), roundness, color);
             DrawCircle(Math::Rotate(origin, pos+Vector2f{dimensions.x - roundness, roundness}, rotation), roundness, color);
-            DrawCircle(Math::Rotate(origin,pos+Vector2f{roundness,dimensions.y - roundness}, rotation), roundness, color);
-            DrawCircle(Math::Rotate(origin,pos+dimensions-Vector2f{roundness, roundness}, rotation), roundness, color);
+            DrawCircle(Math::Rotate(origin, pos+Vector2f{roundness,dimensions.y - roundness}, rotation), roundness, color);
+            DrawCircle(Math::Rotate(origin, pos+dimensions-Vector2f{roundness, roundness}, rotation), roundness, color);
         }
     }
 
@@ -266,12 +265,12 @@ namespace tml
                      top_left + Vector2f{(size.x / columns) * i, size.y}, thickness, color, false);
     }
 
-    void Renderer::DrawTexture(Texture &tex, const Vector2f &pos, const Vector2f &size) noexcept
+    void Renderer::DrawTexture(const Texture &tex, const Vector2f &pos, const Vector2f &size) noexcept
     {
         PushQuad(pos, size, Color::Transparent, tex, Vertex::TEXTURE);
     }
 
-    void Renderer::DrawTextureRect(Texture& tex, const Vector2f& pos, const Vector2f& size, float rotation, const Vector2f& tl, const Vector2f& br) noexcept
+    void Renderer::DrawTextureRect(const Texture& tex, const Vector2f& pos, const Vector2f& size, float rotation, const Vector2f& tl, const Vector2f& br) noexcept
     {
         PushQuad(pos, size, Color::Transparent, tex, Vertex::TEXTURE, rotation, tl, br);
     }
@@ -279,7 +278,7 @@ namespace tml
     void Renderer::PushQuad(const Vector2f &pos,
                             const Vector2f &size,
                             const Color &col,
-                            Texture& texture,
+                            const Texture& texture,
                             Vertex::DrawableType type,
                             float rotation,
                             const Vector2f& tl,
@@ -329,7 +328,7 @@ namespace tml
     }
 
     // Finds a parking spot for the texture.
-    ui32 Renderer::PushTexture(Texture &texture) noexcept
+    ui32 Renderer::PushTexture(const Texture &texture) noexcept
     {
         if(m_textures.size() >= MAX_TEXTURE_COUNT)
             EndBatch();
@@ -357,7 +356,7 @@ namespace tml
         return index;
     }
     
-    void Renderer::PushVertexData(std::vector<Vertex>& vertices, std::vector<ui32>& indices) noexcept
+    void Renderer::PushVertexData(const std::vector<Vertex>& vertices, const std::vector<ui32>& indices) noexcept
     {
         if(MAX_VERTEX_COUNT <= m_vertexData.size() + vertices.size())
             EndBatch();
@@ -367,7 +366,7 @@ namespace tml
             m_indexData.push_back(size + i);
     }
 
-    void Renderer::PushVertexData(std::vector<Vertex>& vertices, std::vector<ui32>& indices, Texture& tex) noexcept
+    void Renderer::PushVertexData(std::vector<Vertex>& vertices, const std::vector<ui32>& indices, const Texture& tex) noexcept
     {
         const ui32 slot = PushTexture(tex);
         for(Vertex& i : vertices)

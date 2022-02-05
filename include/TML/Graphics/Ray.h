@@ -11,11 +11,11 @@ namespace tml
         {
             struct Info
             {
-                Vector2f position;
-                float distance;
+                Vector2f position = {0,0};
+                float distance = 0;
             };
-            bool operator==(bool) { return  intersects; }
-            bool operator!=(bool) { return !intersects; }
+            bool operator==(bool) const { return  intersects; }
+            bool operator!=(bool) const { return !intersects; }
             Info& operator[](ui32 index) { return points.at(index); }
 
             bool intersects = false;
