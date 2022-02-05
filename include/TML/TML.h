@@ -23,8 +23,9 @@
 #pragma once
 #include <TML/Audio/Audio.h>
 #include <TML/Graphics/Ray.h>
-#include <TML/Graphics/Vector2.h>
+#include <TML/Graphics/RenderTexture.h>
 #include <TML/Graphics/RenderWindow.h>
+#include <TML/Graphics/Vector2.h>
 #include <TML/IO/Clipboard.h>
 #include <TML/IO/Event.h>
 #include <TML/IO/File.h>

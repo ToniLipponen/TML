@@ -1,5 +1,5 @@
-#include <TML/Graphics/Texture.h>
-#include <GLHeader.h>
+#include "TML/Graphics/Core/Texture.h"
+#include "GLHeader.h"
 #include "GlDebug.h"
 
 
@@ -52,12 +52,6 @@ namespace tml
         #endif
     }
 
-    void Texture::SetMipMapLevel(ui8 level)
-    {
-        m_mipmapLevel = level;
-        Generate();
-    }
-
     void Texture::SetMinMagFilter(Filter min, Filter mag)
     {
         m_minFilter = min;
@@ -88,7 +82,7 @@ namespace tml
             GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MAX_LEVEL, 8));
         #endif
 
-        if(m_width > 0 && m_height > 0 && m_pixelData)
+        if(m_width > 0 && m_height > 0)
         {
             i32 ch = 0, chi = 0; // Channels & channels Headers.
             switch(m_bpp)
@@ -104,7 +98,7 @@ namespace tml
                 GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
             #else
                 GL_CALL(glTextureStorage2D(m_id, 8, ch, m_width, m_height));
-                GL_CALL(glTextureSubImage2D(m_id, m_mipmapLevel, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, m_pixelData));
+                GL_CALL(glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, m_pixelData));
                 GL_CALL(glGenerateTextureMipmap(m_id));
             #endif
         }

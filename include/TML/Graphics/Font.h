@@ -5,7 +5,7 @@
 
 #include "TML/Utilities/Types.h"
 #include "Vector2.h"
-#include "Texture.h"
+#include "TML/Graphics/Core/Texture.h"
 
 namespace tml
 {

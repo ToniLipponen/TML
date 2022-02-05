@@ -1,6 +1,6 @@
 #pragma once
 #include "TML/Utilities/Types.h"
-#include "Vector2.h"
+#include "TML/Graphics/Vector2.h"
 #include "TML/Graphics/Image.h"
 #include <string>
 
@@ -34,7 +34,6 @@ namespace tml
         void LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data);
 
         void Bind(ui32 slot = 0) const;
-        void SetMipMapLevel(ui8 level);
         void SetMinMagFilter(Filter min, Filter mag);
         void SetClampMode(ClampMode mode);
 
@@ -53,6 +52,5 @@ namespace tml
         ui32 m_id;
         i32 m_width, m_height, m_bpp;
         ui8 *m_pixelData = nullptr;
-        ui8 m_mipmapLevel = 0;
     };
 }

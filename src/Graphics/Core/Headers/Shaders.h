@@ -43,7 +43,7 @@ in vec4 vColor;
 in vec2 vUV;
 flat in uint vTexID;
 flat in uint vType;
-out vec4 outColor;
+layout (location = 0) out vec4 outColor;
 
 // uniform sampler2D uTextures[32];
 // Ditching sampler array for separate samplers.
@@ -209,7 +209,7 @@ in mediump vec2 vUV;
 in mediump vec2 vViewSize;
 flat in uint vTexID;
 flat in uint vType;
-out mediump vec4 outColor;
+layout (location = 0) out mediump vec4 outColor;
 
 uniform sampler2D uTexture0;
 uniform sampler2D uTexture1;

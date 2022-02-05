@@ -1,6 +1,6 @@
 #pragma once
 #include <TML/Utilities/Types.h>
-#include <TML/Graphics/Texture.h>
+#include "TML/Graphics/Core/Texture.h"
 #include <TML/Graphics/Drawable/Vertex.h>
 #include <vector>
 #include <TML/Graphics/Transformable.h>
