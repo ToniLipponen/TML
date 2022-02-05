@@ -21,6 +21,7 @@ namespace tml
         void ResetCamera() noexcept;
 
         void SetBounds(const Vector2i& pos, const Vector2i& size) noexcept;
+        void SetViewport(const Vector2i& pos, const Vector2i& size) noexcept;
         void ResetBounds() noexcept;
 
         virtual void Clear() noexcept;
@@ -64,7 +65,7 @@ namespace tml
         void PushVertexData(const std::vector<Vertex>& vertices, const std::vector<ui32>& indices) noexcept;
         void PushVertexData(std::vector<Vertex>& vertices, const std::vector<ui32>& indices, const Texture& texture) noexcept;
     protected:
-        void EndBatch() noexcept;
+        void EndBatch(bool flip = false) noexcept;
         void BeginBatch() noexcept;
         void PushQuad(
                 const Vector2f& pos,
@@ -88,7 +89,7 @@ namespace tml
         float m_view[16];
         float m_proj[16];
         float m_scale[16];
-        Vector2f  m_viewSize = {0, 0};
+        TexRect m_viewport;
         Text      m_text;
         Texture   m_circleTexture;
 

@@ -19,6 +19,8 @@ namespace tml
         if(!m_target)
             m_target = new RenderTarget();
 
+        m_width = width;
+        m_height = height;
         m_texture.LoadFromMemory(width, height, 4, nullptr);
         m_texture.SetMinMagFilter(Texture::Nearest, Texture::Nearest);
     }
@@ -36,9 +38,15 @@ namespace tml
         }
     }
 
+    void RenderTexture::Clear() noexcept
+    {
+        SetViewport({0,0}, {m_width, m_height});
+        Renderer::Clear();
+    }
+
     void RenderTexture::Display() noexcept
     {
-        Renderer::EndBatch();
+        Renderer::EndBatch(true);
         SetActive(false);
     }
 

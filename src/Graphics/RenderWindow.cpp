@@ -20,6 +20,7 @@ namespace tml
     void RenderWindow::Clear() noexcept
     {
         glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_handle));
+        Renderer::SetViewport({0,0}, {GetWidth(),GetHeight()});
         Renderer::Clear();
     }
 

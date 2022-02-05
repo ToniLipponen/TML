@@ -114,8 +114,21 @@ namespace tml
     void Renderer::SetBounds(const Vector2i& pos, const Vector2i& size) noexcept
     {
         EndBatch();
-        GL_CALL(glad_glScissor(pos.x, m_viewSize.y - pos.y - size.y, size.x, size.y));
+        GL_CALL(glad_glScissor(pos.x, m_viewport.size.y - pos.y - size.y, size.x, size.y));
         GL_CALL(glad_glEnable(GL_SCISSOR_TEST));
+    }
+
+    void Renderer::SetViewport(const Vector2i &pos, const Vector2i &size) noexcept
+    {
+        m_viewport = {pos, size};
+        GL_CALL(glad_glViewport(pos.x, pos.y, size.x, size.y));
+
+        *reinterpret_cast<glm::mat4*>(m_proj) = glm::ortho(
+                static_cast<float>(pos.x),
+                static_cast<float>(pos.x+size.x),
+                static_cast<float>(pos.y+size.y),
+                static_cast<float>(pos.y)
+        );
     }
 
     void Renderer::ResetBounds() noexcept
@@ -129,16 +142,6 @@ namespace tml
         GL_CALL(glad_glClear(GL_COLOR_BUFFER_BIT));
         GL_CALL(BeginBatch());
 
-        int f[4];
-        GL_CALL(glad_glGetIntegerv(GL_VIEWPORT, f));
-        m_viewSize = Vector2f{static_cast<float>(f[2]), static_cast<float>(f[3])};
-
-        *reinterpret_cast<glm::mat4*>(m_proj) = glm::ortho(
-            static_cast<float>(f[0]),
-            static_cast<float>(f[2]),
-            static_cast<float>(f[3]),
-            static_cast<float>(f[1])
-        );
         ResetCamera();
         ResetBounds();
     }
@@ -374,14 +377,16 @@ namespace tml
         PushVertexData(vertices, indices);
     }
 
-    void Renderer::EndBatch() noexcept
+    void Renderer::EndBatch(bool flip) noexcept
     {
         m_shader->Bind();
 
         for(i32 i = 0; i < m_textures.size(); i++)
             m_shader->Uniform1i("uTexture" + std::to_string(i), i);
 
-        m_shader->SetVec2("uViewSize", m_viewSize);
+        if(flip)
+            m_view[5] = -m_view[5];
+        m_shader->SetVec2("uViewSize", m_viewport.size);
         m_shader->UniformMat4fv("uView",  1, false, m_view);
         m_shader->UniformMat4fv("uProj",  1, false, m_proj);
         m_shader->UniformMat4fv("uScale", 1, false, m_scale);
@@ -396,6 +401,9 @@ namespace tml
 
         GL_CALL(glad_glDrawElements(GL_TRIANGLES, m_indexBuffer->Elements(), GL_UNSIGNED_INT, nullptr));
         Renderer::BeginBatch();
+
+        if(flip)
+            m_view[5] = -m_view[5];
     }
 
     void Renderer::BeginBatch() noexcept

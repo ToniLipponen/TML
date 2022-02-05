@@ -12,10 +12,13 @@ namespace tml
 
         bool Create(ui32 width, ui32 height) noexcept;
         bool SetActive(bool active = true);
+        void Clear() noexcept override;
         void Display() noexcept;
 
         const Texture& GetTexture() const noexcept;
     private:
+        i32 m_width = 0;
+        i32 m_height = 0;
         Texture m_texture;
         class RenderTarget* m_target;
     };
