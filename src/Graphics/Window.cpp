@@ -17,7 +17,6 @@
 #include "_Assert.h"
 
 #if PLATFORM_UNIX
-    #include <glfw_config.h>
     #include <incbin/incbin.h>
     INCBIN(TML_ICON, "../res/Logo.png");
 #else
