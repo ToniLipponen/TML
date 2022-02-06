@@ -23,6 +23,7 @@ namespace tml
         m_height = height;
         m_texture.LoadFromMemory(width, height, 4, nullptr);
         m_texture.SetMinMagFilter(Texture::Nearest, Texture::Nearest);
+        m_texture.SetClampMode(Texture::Repeat);
     }
 
     bool RenderTexture::SetActive(bool active)
