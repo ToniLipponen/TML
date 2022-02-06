@@ -8,15 +8,16 @@ namespace tml
     class Window
     {
     public:
-        enum Settings
+        enum Settings : ui32
         {
-            None        = 0,
+            None        = (0 << 0),
             Fullscreen  = (1 << 0),
             Resizeable  = (1 << 1),
             Maximized   = (1 << 2),
             VSync       = (1 << 3),
             Antialias   = (1 << 4),
-            NoTopBar    = (1 << 5)
+            NoTopBar    = (1 << 5),
+            LimitAspect = (1 << 6)
         };
     public:
         Window(i32 width, i32 height, const std::string& title, ui32 settings = None);
