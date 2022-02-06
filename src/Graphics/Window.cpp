@@ -193,6 +193,26 @@ namespace tml
         glfwSetWindowTitle(static_cast<GLFWwindow *>(m_handle), title.c_str());
     }
 
+    void Window::SetAspectRatio(i32 x, i32 y) noexcept
+    {
+        glfwSetWindowAspectRatio(static_cast<GLFWwindow*>(m_handle), x, y);
+    }
+
+    void Window::SetAspectRatio(const Vector2i &ratio) noexcept
+    {
+        glfwSetWindowAspectRatio(static_cast<GLFWwindow*>(m_handle), ratio.x, ratio.y);
+    }
+
+    void Window::SetSizeLimits(i32 minWidth, i32 minHeight, i32 maxWidth, i32 maxHeight) noexcept
+    {
+        glfwSetWindowSizeLimits(static_cast<GLFWwindow*>(m_handle), minWidth, minHeight, maxWidth, maxHeight);
+    }
+
+    void Window::SetSizeLimits(const Vector2i &min, const Vector2i &max) noexcept
+    {
+        glfwSetWindowSizeLimits(static_cast<GLFWwindow*>(m_handle), min.x, min.y, max.x, max.y);
+    }
+
     void Window::Maximize() noexcept
     {
         glfwMaximizeWindow(static_cast<GLFWwindow *>(m_handle));

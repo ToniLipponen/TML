@@ -35,15 +35,20 @@ namespace tml
         i32 GetHeight() const noexcept;
         i32 GetX() const noexcept;
         i32 GetY() const noexcept;
+        Vector2i GetSize() const noexcept;
+        Vector2i GetPosition() const noexcept;
 
         Event PollEvents() const noexcept;
         Event WaitEvents() const noexcept;
 
-        Vector2i GetPosition() const noexcept;
-        Vector2i GetSize() const noexcept;
-
         void SetSize(ui32 width, ui32 height) noexcept;
         void SetTitle(const std::string& title) noexcept;
+
+        void SetAspectRatio(i32 x, i32 y) noexcept;
+        void SetAspectRatio(const Vector2i& ratio) noexcept;
+        void SetSizeLimits(i32 minWidth, i32 minHeight, i32 maxWidth, i32 maxHeight) noexcept;
+        void SetSizeLimits(const Vector2i& min, const Vector2i& max) noexcept;
+
         void Maximize() noexcept;
         void SetFullscreen(bool fullscreen, i32 w = -1, i32 h = -1) noexcept;
         void SetActive() noexcept;
