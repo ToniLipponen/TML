@@ -21,9 +21,9 @@ namespace tml
         void LoadFromMemory(const ui8 *data, ui32 size);
         friend class Text;
         friend class Renderer;
+
     private:
         void* m_cdata;
-        void* m_font_info;
         Texture m_texture;
         Image m_image;
     };

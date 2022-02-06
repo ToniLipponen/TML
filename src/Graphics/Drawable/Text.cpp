@@ -61,16 +61,16 @@ namespace tml
     // First normalizes the quad coordinates, then scales them to size and translates them to xy.
     inline constexpr void NormalizeQuad(stbtt_aligned_quad& q, double s, double x, double y) noexcept
     {
-        (q.x0 = (q.x0 * (s / 64.0))) += x;
-        (q.x1 = (q.x1 * (s / 64.0))) += x;
-        (q.y0 = (q.y0 * (s / 64.0))) += y - (s / 3.0);
-        (q.y1 = (q.y1 * (s / 64.0))) += y - (s / 3.0);
+        q.x1 = ((q.x1 * (s / 128.0)) + x);
+        q.x0 = ((q.x0 * (s / 128.0)) + x);
+        q.y0 = ((q.y0 * (s / 128.0)) + y);
+        q.y1 = ((q.y1 * (s / 128.0)) + y);
     }
 
     void Text::Generate() noexcept
     {
         m_dimensions = Vector2f{0, m_size.y};
-        float x = 0, y = 64.f;
+        float x = 0, y = 96;
         float width = 0, height = 0;
         ui32 count = 0;
         m_vertexData.clear();
@@ -83,13 +83,14 @@ namespace tml
             {
                 m_dimensions.x = Math::Max(width, m_dimensions.x);
                 m_dimensions.y = Math::Max(height, m_dimensions.y);
-                y += 64.f + m_lineSpacing;
+                y += 96 + m_lineSpacing;
                 x = 0;
                 width = 0;
                 continue;
             }
+
             stbtt_aligned_quad q;
-            stbtt_GetBakedQuad((stbtt_bakedchar*)m_font.m_cdata, 1024, 1024, int(c-32), &x, &y,&q, 1);
+            stbtt_GetPackedQuad(((const stbtt_packedchar *)m_font.m_cdata), 2048, 2048,int(c-32),&x,&y,&q,1);
             NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
 
             q.x0 = roundf(q.x0);
