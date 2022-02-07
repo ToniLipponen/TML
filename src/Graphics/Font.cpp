@@ -1,13 +1,18 @@
 #include <TML/Graphics/Font.h>
 #include "_Assert.h"
+
+#define STB_RECT_PACK_IMPLEMENTATION 1
 #define STB_TRUETYPE_IMPLEMENTATION 1
+#include <stb/stb_rect_pack.h>
 #include <stb/stb_truetype.h>
+
 #include <TML/Graphics/Image.h>
 #include <fstream>
 #include <cstring>
 
-#define ATLAS_SIZE 2048
-#define GLYPH_SIZE ATLAS_SIZE / 16.0
+#define ATLAS_SIZE 4096
+#define OVER_SAMPLING 4
+#define GLYPH_SIZE ATLAS_SIZE / 16.0 / OVER_SAMPLING
 using namespace tml;
 
 Font::Font()
@@ -58,8 +63,10 @@ void Font::LoadFromMemory(const ui8* data, ui32 size)
     m_image.LoadFromMemory(ATLAS_SIZE, ATLAS_SIZE, 1, nullptr);
     stbtt_pack_context context;
     stbtt_PackBegin(&context, m_image.GetData(), ATLAS_SIZE, ATLAS_SIZE, 0, 1, nullptr);
-    stbtt_PackSetOversampling(&context, 1,1);
+    stbtt_PackSetOversampling(&context, OVER_SAMPLING, OVER_SAMPLING);
+    stbtt_PackSetSkipMissingCodepoints(&context, 1);
     stbtt_PackFontRange(&context, data, 0, GLYPH_SIZE, 32, 512, (stbtt_packedchar*)m_cdata);
     stbtt_PackEnd(&context);
+    m_texture.SetMinMagFilter(Texture::Nearest, Texture::Linear);
     m_texture.LoadFromImage(m_image);
 }
