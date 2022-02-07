@@ -14,7 +14,7 @@ namespace tml
         delete m_target;
     }
 
-    bool RenderTexture::Create(ui32 width, ui32 height) noexcept
+    void RenderTexture::Create(ui32 width, ui32 height) noexcept
     {
         if(!m_target)
             m_target = new RenderTarget();

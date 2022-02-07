@@ -10,7 +10,7 @@ namespace tml
         RenderTexture();
         virtual ~RenderTexture() noexcept;
 
-        bool Create(ui32 width, ui32 height) noexcept;
+        void Create(ui32 width, ui32 height) noexcept;
         bool SetActive(bool active = true);
         void Clear() noexcept override;
         void Display() noexcept;
