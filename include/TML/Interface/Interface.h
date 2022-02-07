@@ -1,5 +1,4 @@
 #pragma once
-#warning("This is purely for testing purposes. Not suitable for use in any serious project.")
 #include "Components/Button.h"
 #include "Components/Checkbox.h"
 #include "Components/Slider.h"
