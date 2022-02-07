@@ -10,6 +10,8 @@ namespace tml
             m_size = Vector2i(width, height);
             m_scrollbar = new Scrollbar<Vertical>(x + width - 21, y+1, height-2);
             m_scrollbar->Disable();
+            m_hSizePolicy = Expand;
+            m_vSizePolicy = Expand;
             AddChild(m_scrollbar);
 
             AddListener("MouseDown", [&](BaseComponent* c, Event& e)
@@ -153,13 +155,13 @@ namespace tml
         void Listbox::Draw(RenderWindow& window)
         {
             window.DrawRect(m_pos, m_size, m_pColor);
+            window.SetBounds(m_pos, m_size);
 
             if(m_selectedIndex >= 0 && m_selectedIndex < m_values.size() && Math::InRange<float>(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20), m_size.y - 20))
             {
                 window.DrawRect(m_pos + Vector2i(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20)), Vector2f(m_size.x, 20.f), m_activeColor);
             }
 
-            window.SetBounds(m_pos, m_size);
             for(int i = 0; i < m_values.size(); i++)
             {
                 window.DrawText(m_values.at(i), m_pos + Vector2i(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20, Color::Black);

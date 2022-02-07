@@ -109,8 +109,6 @@ namespace tml
     private:
         EventSystem();
     public:
-        const static ui64 AnyID = 0;
-    public:
         EventSystem(EventSystem&)           = delete;
         EventSystem(EventSystem&&)          = delete;
         void operator=(const EventSystem&)  = delete;
@@ -125,7 +123,6 @@ namespace tml
         void PollMouse() noexcept;
     private:
         std::queue<Event> m_eventQueue;
-        ui64 m_counter = 0;
         static EventSystem* m_instance;
     };
 }

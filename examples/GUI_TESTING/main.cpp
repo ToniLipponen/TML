@@ -1,46 +1,60 @@
 #include <TML/TML.h>
 #include <TML/Interface/Interface.h>
-#include <TML/IO/Event.h>
 
 using namespace tml;
 using namespace Interface;
 
-/*
+/**
  * This is just a testing ground for GUI components.
  */
 
 int main()
 {
     RenderWindow window(800, 600, "GUI TESTING", Window::Resizeable);
-    window.SetClearColor(Color::White);
 
-    HorizontalLayout hlayout(0,0, 800, 600);
-    Listbox* list = new Listbox(0, 30, 400, 300);
-    DropMenu* dropmenu = new DropMenu(0,0, 400, 30);
-    Progressbar* progressbar = new Progressbar(0,0, 400, 30);
-    VerticalLayout* vlayout = new VerticalLayout(0,0,400,600);
+    WindowContainer guiRoot(window);
+    HorizontalLayout* hLayout = new HorizontalLayout(0,0,800, 600);
+    VerticalLayout* vLayout1 = new VerticalLayout(0,0,0,0);
+    VerticalLayout* vLayout2 = new VerticalLayout(0,0,0,0);
+    Listbox* listbox = new Listbox(0,0,300,300);
+    Viewport* view = new Viewport(0,0,400,200);
 
-    vlayout->AddChild(new Label(0,0,30));
-    vlayout->AddChild(new Button(0,0,400, 30, "Button"));
-    vlayout->AddChild(new TextInput(0,0,400, 30));
-    vlayout->AddChild(new NumericInput<int>(0,0,400,30));
-    vlayout->AddChild(progressbar);
-    vlayout->AddChild(new Slider<Horizontal>(0,0, 400, 15));
-    vlayout->AddChild(dropmenu);
-    vlayout->AddChild(new Checkbox(0,0,20));
-
-    hlayout.AddChild(list);
-    hlayout.AddChild(vlayout);
-
-    for(int i = 0; i < 20; i++)
+    view->AddListener("InterfaceUpdate", [&](BaseComponent* c, Event& e)
     {
-        list->AddValue("Item" + std::to_string(i));
-        dropmenu->AddValue("Item" + std::to_string(i));
-    }
+        auto& surface = ((Viewport*)c)->GetSurface();
+        surface.SetActive();
+        surface.Clear();
+        surface.DrawText("Viewport component", {0,0}, 40, Color::Green);
+        surface.Display();
+        window.SetViewport({0, 0},window.GetSize());
+    });
 
+    vLayout1->AddChild(new Label(0,0,20, "Label"));
+    vLayout1->AddChild(new Button(0,0,200,30,"Button"));
+    vLayout1->AddChild(new TextInput(0,0,200,30));
+    vLayout1->AddChild(new NumericInput<int>(0,0,200,30));
+    vLayout1->AddChild(new Label(0,0,20, "Vertical slider"));
+    vLayout1->AddChild(new VSlider(0,0,200));
+    vLayout1->AddChild(new Spacer);
+    vLayout1->AddChild(view);
+
+    vLayout2->AddChild(new Label(0,0,20, "Horizontal slider"));
+    vLayout2->AddChild(new HSlider(0,0,200));
+    vLayout2->AddChild(new Label(0,0,20, "Listbox"));
+    vLayout2->AddChild(listbox);
+    vLayout2->AddChild(new Label(0,0,20, "Checkbox"));
+    vLayout2->AddChild(new Checkbox(0,0,20));
+
+    hLayout->AddChild(vLayout1);
+    hLayout->AddChild(vLayout2);
+    guiRoot.AddChild(hLayout);
+
+    for(int i = 0; i < 30; i++)
+    {
+        listbox->AddValue("Listitem" + std::to_string(i));
+    }
     Clock clock;
     clock.Reset();
-    double runTime = 0;
 
     while(!window.ShouldClose())
     {
@@ -49,10 +63,8 @@ int main()
             window.Close();
 
         window.Clear();
-            hlayout.Update(event, window);
+            guiRoot.Update(event, window);
         window.Display();
-        runTime += clock.Reset();
-        progressbar->SetValue(runTime / 100.0);
     }
     return 0;
 }

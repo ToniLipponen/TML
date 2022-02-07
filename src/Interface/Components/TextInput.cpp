@@ -56,6 +56,7 @@ void TextInput::InitListeners()
         if(m_state.MouseOver)
         {
             Focus();
+            Raise();
             e = Event{};
         }
         else

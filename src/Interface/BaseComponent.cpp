@@ -19,7 +19,7 @@ namespace tml
         }
 
         BaseComponent::BaseComponent(i32 x, i32 y, ui32 w, ui32 h)
-        : m_pColor(Color::White), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr), m_pos(x,y), m_size(w,h)
+        : m_pColor(Color::White), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr), m_pos(x,y), m_size(w,h), m_originalSize(w,h)
         {
             m_state.Enabled = true;
         }

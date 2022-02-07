@@ -98,6 +98,7 @@ namespace tml
             void SetSize(const Vector2i& size);
             inline constexpr Vector2i GetPosition() const { return m_pos; }
             inline constexpr Vector2i GetSize() const { return m_size; }
+            inline constexpr Vector2i GetOriginalSize() const { return m_originalSize; };
 
 
         protected:

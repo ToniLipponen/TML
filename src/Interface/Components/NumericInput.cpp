@@ -16,6 +16,7 @@ namespace tml
             m_text.SetPosition(m_pos);
             m_text.SetColor(Color::Black);
             m_text.SetString(m_valueStr);
+            m_hSizePolicy = Expand;
 
             AddListener("MouseDown", [&](BaseComponent* c, Event& e)
             {

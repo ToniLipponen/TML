@@ -8,7 +8,7 @@ TML is a simple library for making games and applications. It provides simple in
 
 # Building
 Before building on Linux, you might need to install the X11 development packages.<br>
-On Ubuntu base distributions: <code>sudo apt install xorg-dev</code><br>
+On Ubuntu based distributions: <code>sudo apt install xorg-dev</code><br>
 On RHEL/Fedora based distributions:
 <code>sudo dnf install libXcursor-devel libXi-devel libXinerama-devel libXrandr-devel</code><br><br>
 And then in terminal / CMD:<br>
@@ -20,7 +20,7 @@ And then in terminal / CMD:<br>
 This should build the project into the <b>build</b> directory. In the build directory there is a folder called lib, which contains the library file. And in the examples folder there are some small example programs.
 
 # Using
-Currently there are no API documentation or tutorials on how to use this library. There are some VERY simple examples in the <b>examples</b> directory. Once this project is a bit more matured, I will take the time to document the API and make some tutorials.
+Currently, there are no API documentation or tutorials on how to use this library. There are some VERY simple examples in the <b>examples</b> directory. Once this project is a bit more matured, I will take the time to document the API and make some tutorials.
 
 # Contributing
 If you're interested in this project, you can help us in a couple different ways. 

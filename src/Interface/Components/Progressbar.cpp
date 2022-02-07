@@ -1,4 +1,5 @@
 #include <TML/Interface/Components/Progressbar.h>
+
 namespace tml
 {
     namespace Interface
@@ -7,6 +8,23 @@ namespace tml
         {
             m_pos = Vector2i(x,y);
             m_size = Vector2i(w,h);
+            m_hSizePolicy = Expand;
+            m_text.SetColor(Color::Black);
+        }
+
+        float Progressbar::GetValue() const noexcept
+        {
+            return m_value;
+        }
+
+        void Progressbar::SetValue(float value) noexcept
+        {
+            m_value = Math::Clamp(value, 0.0f, 1.0f);
+        }
+
+        void Progressbar::SetTextColor(const Color &color) noexcept
+        {
+            m_text.SetColor(color);
         }
 
         void Progressbar::Draw(RenderWindow& window)

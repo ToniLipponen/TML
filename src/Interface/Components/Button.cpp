@@ -43,6 +43,13 @@ Button::Button(i32 x, i32 y, ui32 w, ui32 h, std::string str, UIFunc onClick)
         const Vector2i textSize = m_text.GetDimensions();
         m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
     });
+
+    AddListener("Resized", [&](BaseComponent* c, Event& e)
+    {
+        m_text.SetSize(e.size.y*0.6);
+        const Vector2i textSize = m_text.GetDimensions();
+        m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
+    });
 }
 
 void Button::SetText(const std::string &str)

@@ -1,7 +1,6 @@
 #include <TML/IO/Event.h>
 #include <TML/IO/Input.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
 #include <thread>
 #include <chrono>
 

@@ -44,6 +44,7 @@ namespace tml
             for(auto* item : m_children)
             {
                 const auto itemSize = item->GetSize();
+                const auto originalSize = item->GetOriginalSize();
                 switch(item->GetHorizontalSizePolicy())
                 {
                     case Fixed:
@@ -62,6 +63,8 @@ namespace tml
                     case Clamp:
                         if(itemSize.y > m_size.y)
                             item->SetSize({itemSize.x, m_size.y});
+                        else if(itemSize.y < originalSize.y)
+                            item->SetSize({itemSize.x, Math::Min<i32>(originalSize.y, m_size.y)});
                         break;
                     default:
                         break;
@@ -71,7 +74,7 @@ namespace tml
             if(expandedChildren == 0)
                 return;
 
-            expandSize = Math::Max<float>(((m_size.x - width) / expandedChildren) - (m_padding.x / 2), 0);
+            expandSize = Math::Max<float>(((m_size.x - width) / expandedChildren) - (m_padding.x * m_children.size() / 2), 0);
 
             for(auto i : expandThese)
                 i->SetSize({static_cast<int>(expandSize), i->GetSize().y});

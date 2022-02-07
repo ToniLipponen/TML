@@ -9,6 +9,9 @@
 #include "Components/Label.h"
 #include "Components/Progressbar.h"
 #include "Components/Scrollbar.h"
+#include "Components/Spacer.h"
+#include "Components/WindowContainer.h"
+#include "Components/Viewport.h"
 
 #include "Layouts/VerticalLayout.h"
 #include "Layouts/HorizontalLayout.h"
