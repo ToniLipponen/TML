@@ -4,27 +4,20 @@
 TML is a simple library for making games and applications. It provides relatively simple interfaces for window creation, graphics rendering, audio playback and keyboard/mouse input. 
 
 # Building
-<h2>Linux:</h2>
 Before building on Linux, you might need to install the X11 development packages.<br>
 On Ubuntu base distributions: <code>sudo apt install xorg-dev</code><br>
 On RHEL/Fedora based distributions:
 <code>sudo dnf install libXcursor-devel libXi-devel libXinerama-devel libXrandr-devel</code><br><br>
-And then in terminal:<br>
+And then in terminal / CMD:<br>
 1. <code>git clone --recursive "https://github.com/ToniLipponen/TML.git"</code><br>
 2. <code>cd TML</code><br>
-3. <code>cmake .</code><br>
-4. <code>make -j8</code><br>
+3. <code>cmake -B build</code><br>
+4. <code>cmake --build build</code><br>
 
-<h2>Windows (Visual Studio):</h2>
-In CMD:<br>
-1. <code>git clone --recursive "https://github.com/ToniLipponen/TML.git"</code><br>
-2. <code>cd TML</code><br>
-3. <code>cmake -G "Visual Studio 17"</code><br>
-4. Open the generated .sln in Visual Studio<br>
-5. Build.
+This should build the project into the <b>build</b> directory. In the build directory there is a folder called lib, which contains the library file. And in the examples folder there are some small example programs.
 
 # Using
-Currently there are no API documentation or tutorials on how to use this library. There are some VERY simple examples in the <b>examples</b> directory. Once this project is a bit more mature, I will take the time to document the API and make some tutorials.
+Currently there are no API documentation or tutorials on how to use this library. There are some VERY simple examples in the <b>examples</b> directory. Once this project is a bit more matured, I will take the time to document the API and make some tutorials.
 
 # Contributing
 If you're interested in this project, you can help us in a couple different ways. 
