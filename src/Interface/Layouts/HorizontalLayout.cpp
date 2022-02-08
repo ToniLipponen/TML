@@ -1,6 +1,5 @@
 #include <TML/Interface/Layouts/HorizontalLayout.h>
 #include <TML/Utilities/Utilities.h>
-#include <vector>
 
 namespace tml
 {
@@ -12,15 +11,10 @@ namespace tml
             m_size = Vector2i(w,h);
             m_hSizePolicy = Expand;
             m_vSizePolicy = Fixed;
-            AddListener("InterfaceUpdate", [&](BaseComponent* c, Event& e)
+            AddListener("ChildAdded", [&](BaseComponent* c, Event& e)
             {
-                static ui64 oldChildrenSize = 0;
-                if(m_children.size() != oldChildrenSize)
-                {
-                    ScaleChildren();
-                    AlignChildren();
-                    oldChildrenSize = m_children.size();
-                }
+                ScaleChildren();
+                AlignChildren();
             });
 
             AddListener("Resized", [&](BaseComponent* c, Event& e)
@@ -88,40 +82,13 @@ namespace tml
             width += m_children.size() * 5;
             width2 = width / 2;
 
-            switch(m_vAlignPolicy)
-            {
-                case Far:
-                    offset = m_size.x - m_children.at(m_children.size() - 1)->GetSize().x;
-                    break;
-                case Center:
-                    offset = (m_size.x / 2) - width2;
-                    break;
-                default:
-                    break;
-            }
-
             for(auto item = m_children.begin(); item != m_children.end(); ++item)
             {
                 auto* i = *item;
                 auto* next = *Math::Clamp(item+1, m_children.begin(), m_children.end()-1);
                 auto itemSize = i->GetSize();
-                switch(m_hAlignPolicy)
-                {
-                    case Far:
-                        i->SetPosition({static_cast<int>(m_pos.x + offset), m_pos.y + m_size.y - itemSize.y});
-                        break;
-                    case Center:
-                        i->SetPosition({static_cast<int>(m_pos.x + offset), m_pos.y + ((m_size.y - itemSize.y) / 2)});
-                        break;
-                    default:
-                        i->SetPosition({static_cast<int>(m_pos.x + offset), m_pos.y});
-//                        Logger::InfoMessage("X: %d Y: %d", i->GetPosition().x, i->GetPosition().y);
-                        break;
-                }
-                if(m_vAlignPolicy == Far)
-                    offset -= next->GetSize().x + m_padding.x;
-                else
-                    offset += i->GetSize().x + m_padding.x;
+                i->SetPosition({static_cast<int>(m_pos.x + offset), m_pos.y});
+                offset += i->GetSize().x + m_padding.x;
             }
         }
     }

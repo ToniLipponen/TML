@@ -13,13 +13,13 @@ int main()
     RenderWindow window(800, 600, "GUI TESTING", Window::Resizeable);
 
     WindowContainer guiRoot(window);
-    HorizontalLayout* hLayout = new HorizontalLayout(0,0,800, 600);
-    VerticalLayout* vLayout1 = new VerticalLayout(0,0,0,0);
-    VerticalLayout* vLayout2 = new VerticalLayout(0,0,0,0);
-    Listbox* listbox = new Listbox(0,0,300,300);
-    Viewport* view = new Viewport(0,0,400,200);
+    auto* hLayout = new HorizontalLayout(0,0,800, 600);
+    auto* vLayout1 = new VerticalLayout(0,0,0,0);
+    auto* vLayout2 = new VerticalLayout(0,0,0,0);
+    auto* listbox = new Listbox(0,0,300,300);
+    auto* view = new Viewport(0,0,400,200);
 
-    view->AddListener("InterfaceUpdate", [&](BaseComponent* c, Event& e)
+    view->AddListener("Update", [&](BaseComponent* c, Event& e)
     {
         auto& surface = ((Viewport*)c)->GetSurface();
         surface.SetActive();
@@ -49,7 +49,7 @@ int main()
     hLayout->AddChild(vLayout2);
     guiRoot.AddChild(hLayout);
 
-    for(int i = 0; i < 30; i++)
+    for(int i = 0; i < 20; i++)
     {
         listbox->AddValue("Listitem" + std::to_string(i));
     }

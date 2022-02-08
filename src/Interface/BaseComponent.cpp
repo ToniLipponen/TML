@@ -42,6 +42,8 @@ namespace tml
         void BaseComponent::UnFocus()
         {
             m_state.Focused = false;
+            Event e{};
+            CallUIFunc("LostFocus", e);
         }
 
         void BaseComponent::Enable()
@@ -114,6 +116,8 @@ namespace tml
                         });
                     });
                 }
+                Event e{};
+                CallUIFunc("ChildAdded", e);
             }
         }
 
@@ -218,6 +222,8 @@ namespace tml
                     CallUIFunc("MouseMoved", event);
                     if(m_state.MouseOver && !oldMouseOver)
                         CallUIFunc("MouseEnter", event);
+                    else if(!m_state.MouseOver && oldMouseOver)
+                        CallUIFunc("MouseExit", event);
                 }
                 break;
 
@@ -237,6 +243,10 @@ namespace tml
                     CallUIFunc("TextEntered", event);
                     break;
 
+                case Event::EventType::WindowResized:
+                    CallUIFunc("WindowResized", event);
+                    break;
+
                 case Event::EventType::Null:
                     break;
             }
@@ -244,7 +254,7 @@ namespace tml
             Event updateEvent;
             updateEvent.type = Event::EventType::InterfaceUpdate;
             updateEvent.update.delta = dt;
-            CallUIFunc("InterfaceUpdate", updateEvent);
+            CallUIFunc("Update", updateEvent);
         }
 
         void BaseComponent::Update(Event& event, RenderWindow& window)
@@ -293,10 +303,12 @@ namespace tml
         {
             GetRoot()->ForEachChild([](BaseComponent* c)
             {
-                c->UnFocus();
+                if(c->Focused())
+                    c->UnFocus();
                 c->ForEachChild([](BaseComponent* c2)
                 {
-                    c2->UnFocus();
+                    if(c2->Focused())
+                        c2->UnFocus();
                 });
             });
         }

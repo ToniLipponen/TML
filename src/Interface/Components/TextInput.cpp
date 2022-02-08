@@ -62,7 +62,7 @@ void TextInput::InitListeners()
         else
             UnFocus();
     });
-    AddListener("InterfaceUpdate", [&](BaseComponent* c, Event& e)
+    AddListener("Update", [&](BaseComponent* c, Event& e)
     {
         if(m_state.Focused)
         {

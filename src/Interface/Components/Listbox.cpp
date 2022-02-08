@@ -1,4 +1,5 @@
 #include <TML/Interface/Components/Listbox.h>
+#include <TML/IO/Logger.h>
 
 namespace tml
 {
@@ -8,34 +9,41 @@ namespace tml
         {
             m_pos = Vector2i(x, y);
             m_size = Vector2i(width, height);
-            m_scrollbar = new Scrollbar<Vertical>(x + width - 21, y+1, height-2);
-            m_scrollbar->Disable();
+            m_scrollbar = new Scrollbar<Vertical>(x + width - 21, y, height);
             m_hSizePolicy = Expand;
             m_vSizePolicy = Expand;
             AddChild(m_scrollbar);
+            m_scrollbar->Disable();
+
+            AddListener("Click", [&](BaseComponent* c, Event& e)
+            {
+                const Vector2i mousePos = {e.mouseButton.x, e.mouseButton.y};
+                static auto PointInRect = [&](const Vector2i &tl, const Vector2i &br)
+                {
+                    return (mousePos.x <= br.x && mousePos.y <= br.y
+                         && mousePos.x >= tl.x && mousePos.y >= tl.y);
+                };
+                for(int i = 0; i < m_values.size(); i++)
+                {
+                    if(PointInRect(m_pos + Vector2i(0, i * 20), m_pos + Vector2i(m_size.x - 20, (i * 20) + 20)))
+                    {
+                        m_selectedIndex = i + m_scrollbar->GetValue();
+                        break;
+                    }
+                }
+                e = Event{};
+            });
 
             AddListener("MouseDown", [&](BaseComponent* c, Event& e)
             {
-                if(m_state.MouseOver)
+                if(c->ContainsPoint({e.mouseButton.x, e.mouseButton.y}))
                 {
+                    Raise();
                     m_state.MouseDown = e.mouseButton.button;
-                    const Vector2i mousePos = {e.mouseButton.x, e.mouseButton.y};
-                    static auto PointInRect = [&](const Vector2i &tl, const Vector2i &br)
-                    {
-                        return (mousePos.x < br.x && mousePos.y < br.y
-                             && mousePos.x > tl.x && mousePos.y > tl.y);
-                    };
-                    for(int i = 0; i < m_values.size(); i++)
-                    {
-                        if(PointInRect(m_pos + Vector2i(0, i * 20), m_pos + Vector2i(m_size.x - 20, (i * 20) + 20)))
-                        {
-                            m_selectedIndex = i + m_scrollbar->GetValue();
-                            break;
-                        }
-                    }
                     e = Event{};
                 }
             });
+
             AddListener("MouseScroll", [&](BaseComponent* c, Event& e)
             {
                 if(m_state.MouseOver)
@@ -54,10 +62,10 @@ namespace tml
                 m_scrollbar->SetPosition(m_pos + Vector2i(m_size.x - 21, 1));
             });
 
-            AddListener("WindowResized", [&](BaseComponent* c, Event& e)
+            AddListener("Resized", [&](BaseComponent* c, Event& e)
             {
-                m_scrollbar->SetPosition(m_pos + Vector2i(m_size.x - 21, 1));
-                m_scrollbar->SetSize({m_scrollbar->GetSize().x, m_size.y - 2});
+                m_scrollbar->SetPosition(m_pos + Vector2i(m_size.x - 21, 0));
+                m_scrollbar->SetSize({m_scrollbar->GetSize().x, m_size.y});
 
                 const auto overflow = GetOverFlow();
                 if(overflow > 0)
@@ -65,6 +73,9 @@ namespace tml
                     m_scrollbar->Enable();
                     m_scrollbar->SetRange(0, overflow);
                 }
+                else
+                    m_scrollbar->Disable();
+
             });
         }
 
@@ -77,6 +88,8 @@ namespace tml
                 m_scrollbar->Enable();
                 m_scrollbar->SetRange(0, overflow);
             }
+            else
+                m_scrollbar->Disable();
         }
 
         void Listbox::SetValue(ui32 index, std::string value)
@@ -131,7 +144,7 @@ namespace tml
                 m_selectedIndex = -1;
 
                 const auto overflow = GetOverFlow();
-                if(overflow == 0)
+                if(overflow < 0)
                     m_scrollbar->Disable();
                 else
                     m_scrollbar->SetRange(0, overflow);
@@ -143,31 +156,23 @@ namespace tml
             m_values.clear();
         }
 
-        ui32 Listbox::GetOverFlow() const noexcept
+        i32 Listbox::GetOverFlow() const noexcept
         {
             const float valuesSize = (m_values.size() * 20.f);
-            if(valuesSize > m_size.y)
-                return Math::Max<ui32>((valuesSize - m_size.y) / 20, 1);
-
-            return 0;
+            return Math::Max<i32>((valuesSize - m_size.y) / 20, 0);
         }
 
         void Listbox::Draw(RenderWindow& window)
         {
             window.DrawRect(m_pos, m_size, m_pColor);
             window.SetBounds(m_pos, m_size);
-
-            if(m_selectedIndex >= 0 && m_selectedIndex < m_values.size() && Math::InRange<float>(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20), m_size.y - 20))
-            {
-                window.DrawRect(m_pos + Vector2i(0, m_selectedIndex * 20 - (m_scrollbar->GetValue() * 20)), Vector2f(m_size.x, 20.f), m_activeColor);
-            }
+            window.DrawRect(m_pos + Vector2f(0, (m_selectedIndex-m_scrollbar->GetValue()) * 20), Vector2f(m_size.x, 20.f), m_activeColor);
 
             for(int i = 0; i < m_values.size(); i++)
             {
                 window.DrawText(m_values.at(i), m_pos + Vector2i(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20, Color::Black);
             }
             window.ResetBounds();
-
             if(m_state.Focused)
                 window.DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
             else

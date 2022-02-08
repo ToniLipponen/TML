@@ -8,17 +8,9 @@ namespace tml
         class Layout
         {
         public:
-            enum AlignPolicy { Near, Far, Center };
-        public:
-            void SetHorizontalAlign(AlignPolicy alignPolicy) { m_hAlignPolicy = alignPolicy;}
-            void SetVerticalAlign(AlignPolicy alignPolicy) { m_vAlignPolicy = alignPolicy;}
-            inline constexpr AlignPolicy GetHorizontalAlign() const noexcept { return m_hAlignPolicy; }
-            inline constexpr AlignPolicy GetVerticalAlign() const noexcept { return m_vAlignPolicy; }
             void SetPadding(const Vector2i& padding){ m_padding = padding; }
             Vector2i GetPadding() const noexcept { return m_padding; }
         protected:
-            AlignPolicy m_hAlignPolicy = Near; // Horizontal align policy.
-            AlignPolicy m_vAlignPolicy = Near; // Vertical align policy.
             Vector2i m_padding = {5, 5};
         };
     }

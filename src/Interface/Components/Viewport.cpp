@@ -30,10 +30,7 @@ namespace tml
         {
             m_surface.Create(m_size.x, m_size.y);
             m_surface.SetClearColor(Color::Black);
-            AddListener("Resized", [&](BaseComponent* c, Event& e)
-            {
-//                m_surface.Create(e.size.x, e.size.y);
-            });
+            // No callbacks
         }
     }
 }

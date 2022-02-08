@@ -10,15 +10,11 @@ namespace tml
         {
             m_hSizePolicy = Expand;
             m_vSizePolicy = Expand;
-            AddListener("InterfaceUpdate", [&](BaseComponent* c, Event& e)
+
+            AddListener("ChildAdded", [&](BaseComponent* c, Event& e)
             {
-                static ui64 oldChildrenSize = 0;
-                if(m_children.size() != oldChildrenSize)
-                {
-                    ScaleChildren();
-                    AlignChildren();
-                    oldChildrenSize = m_children.size();
-                }
+                ScaleChildren();
+                AlignChildren();
             });
 
             AddListener("Resized", [&](BaseComponent* c, Event& e)
@@ -72,7 +68,6 @@ namespace tml
             }
 
             const auto expandedChildren = expandThese.size();
-            const auto clampedChildren = clampThese.size();
 
             expandSize = Math::Max<float>(((m_size.y - height) / expandedChildren) - (m_padding.y * m_children.size() / 2), 0);
 
@@ -88,38 +83,13 @@ namespace tml
             height += m_children.size() * 5.0f;
             height2 = height / 2;
 
-            switch(m_vAlignPolicy)
-            {
-                case Far:
-                    offset = m_size.y - m_children.at(m_children.size() - 1)->GetSize().y;
-                    break;
-                case Center:
-                    offset = (m_size.y / 2) - height2;
-                    break;
-                default: break;
-            }
-
             for(auto item = m_children.begin(); item != m_children.end(); ++item)
             {
                 auto* i = *item;
                 auto* next = *Math::Clamp(item+1, m_children.begin(), m_children.end()-1);
                 auto itemSize = i->GetSize();
-                switch(m_hAlignPolicy)
-                {
-                    case Far:
-                        i->SetPosition({m_pos.x + m_size.x - itemSize.x, static_cast<int>(m_pos.y + offset)});
-                        break;
-                    case Center:
-                        i->SetPosition({m_pos.x + ((m_size.x - itemSize.x) / 2), static_cast<int>(m_pos.y + offset)});
-                        break;
-                    default:
-                        i->SetPosition({m_pos.x, static_cast<int>(m_pos.y + offset)});
-                        break;
-                }
-                if(m_vAlignPolicy == Far)
-                    offset -= next->GetSize().y + m_padding.y;
-                else
-                    offset += i->GetSize().y + m_padding.y;
+                i->SetPosition({m_pos.x, static_cast<int>(m_pos.y + offset)});
+                offset += i->GetSize().y + m_padding.y;
             }
         }
     }

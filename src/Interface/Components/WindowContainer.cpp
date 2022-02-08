@@ -8,14 +8,15 @@ namespace tml
         : BaseComponent(0,0, window.GetWidth(), window.GetHeight())
         {
             m_pColor = Color::White;
-            AddListener("Any", [&](BaseComponent* c, Event& e)
+            AddListener("WindowResized", [&](BaseComponent* c, Event& e)
             {
-               if(e.type == Event::WindowResized)
-               {
-                   c->SetSize({e.size.x, e.size.y});
-                   if(!m_children.empty())
-                       m_children.at(0)->SetSize(m_size);
-               }
+               c->SetSize({e.size.x, e.size.y});
+               if(!m_children.empty())
+                   m_children.at(0)->SetSize(m_size);
+            });
+            AddListener("ChildAdded", [&](BaseComponent* c, Event& e)
+            {
+                m_children.at(0)->SetSize(m_size);
             });
         }
 

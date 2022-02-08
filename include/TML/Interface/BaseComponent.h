@@ -58,15 +58,17 @@ namespace tml
              * @LostFocus When the component loses focus.
              * @Resized When the size of the component is changed.
              * @Moved When the position of the component is changed.
+             * @ChildAdded When a child gets added to the component.
+             * @WindowResized When a window returns a resize event.
              * @Any When an event occurs.
              */
             void AddListener(const std::string& name, UIFunc callback);
             void AddChild(BaseComponent* component, const std::string& id = "");
 
-            BaseComponent* FindComponent(const std::string& id); // DANGER! Returns nullptr if not found.
-            BaseComponent* FindComponent(ui64); // DANGER! Returns nullptr if not found.
+            BaseComponent* FindComponent(const std::string& id); /// DANGER! Returns nullptr if not found.
+            BaseComponent* FindComponent(ui64); /// DANGER! Returns nullptr if not found.
 
-            BaseComponent* GetParent(); // DANGER! Returns nullptr if the component doesn't have a parent.
+            BaseComponent* GetParent(); /// DANGER! Returns nullptr if the component doesn't have a parent.
             BaseComponent* GetRoot();
 
             constexpr inline ui64 GetHash() const noexcept { return m_hash; }

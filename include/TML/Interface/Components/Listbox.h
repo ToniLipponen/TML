@@ -22,7 +22,7 @@ namespace tml
             void Clear();
             friend class DropMenu;
         private:
-            ui32 GetOverFlow() const noexcept; // Get count of items that do not fit int the visible area.
+            i32 GetOverFlow() const noexcept; // Get count of items that do not fit int the visible area.
         protected:
             void Draw(RenderWindow& renderWindow) override;
             std::vector<std::string> m_values;
