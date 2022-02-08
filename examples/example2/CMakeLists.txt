@@ -7,7 +7,7 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         ${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res)
 
 if(UNIX)
-    target_link_libraries(example2 TML dl pthread)
+    target_link_libraries(example2 TML-Graphics TML-System dl pthread)
 else()
-    target_link_libraries(example2 TML)
+    target_link_libraries(example2 TML-Graphics TML-System)
 endif()

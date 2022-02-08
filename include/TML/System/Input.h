@@ -1,11 +1,10 @@
 #pragma once
-#include "TML/Utilities/Types.h"
+#include "TML/Types.h"
 
 namespace tml
 {
-    class Keyboard
+    namespace Keyboard
     {
-    public:
         enum Key {
             KEY_SPACE = 32,
             KEY_APOSTROPHE = 39,  /* ' */
@@ -129,26 +128,15 @@ namespace tml
             KEY_RIGHT_SUPER = 347,
             KEY_MENU = 348
         };
-        static void BeginString();
-        static std::string EndString();
-        static std::string GetString();
-        static ui32 GetChar();
-        static ui32 GetKey();
-        static bool IsKeyPressed(Key key);
-        static bool IsKeyDown(Key key);
+        bool IsKeyPressed(Key key);
+        bool IsKeyDown(Key key);
     };
 
-    class Mouse
+    namespace Mouse
     {
-    public:
         enum Button {Left, Right, Middle, Four, Five, Six, Seven, Last};
 
-        static Vector2d GetPosition();
-        static bool ButtonDown(Button button);
-        static double GetScrollValue();
+        Vector2d GetPosition();
+        bool ButtonDown(Button button);
     };
-    namespace Input
-    {
-        void PollEvents();
-    }
 }

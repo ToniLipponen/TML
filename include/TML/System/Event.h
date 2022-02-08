@@ -1,5 +1,5 @@
 #pragma once
-#include <TML/Utilities/Types.h>
+#include "TML/Types.h"
 #include <queue>
 
 namespace tml
@@ -118,9 +118,8 @@ namespace tml
         Event WaitEvents() noexcept;
         void PushEvent(Event& event); // Pushed new event to the event queue.
         Event PopEvent(bool block = false) noexcept; // Get event from event queue. Might return Null event. Event::EventType::Null
-
     protected:
-        void PollMouse() noexcept;
+        void PollMouse();
     private:
         std::queue<Event> m_eventQueue;
         static EventSystem* m_instance;

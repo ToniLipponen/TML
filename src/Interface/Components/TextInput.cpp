@@ -1,5 +1,5 @@
 #include <TML/Interface/Components/TextInput.h>
-#include <TML/IO/Clipboard.h>
+#include <TML/System/Clipboard.h>
 
 using namespace tml::Interface;
 
@@ -18,7 +18,7 @@ TextInput::TextInput(i32 x, i32 y, i32 width, i32 height)
 
 void TextInput::SetValue(const std::string &string)
 {
-    m_value = Util::StringToWstring(string);
+    m_value = string;
     m_text.SetString(string);
     m_cursorIndex = string.length();
     m_cursorPos = m_text.GetDimensions().x;
@@ -128,7 +128,7 @@ void TextInput::InitListeners()
                     if(e.key.control)
                     {
                         const auto str = Clipboard::GetString();
-                        m_value.insert(m_cursorIndex, Util::StringToWstring(Clipboard::GetString()));
+                        m_value.insert(m_cursorIndex, str);
                         m_cursorIndex += str.length();
                     }
                     break;
@@ -138,6 +138,7 @@ void TextInput::InitListeners()
             m_text.SetString(m_value.substr(0, m_cursorIndex));
             m_cursorPos = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
             m_text.SetString(m_value);
+            e = Event{};
         }
     });
 
@@ -145,11 +146,12 @@ void TextInput::InitListeners()
     {
         if(m_state.Focused)
         {
-            m_value.insert(m_cursorIndex, 1, static_cast<wchar_t>(e.text.unicode));
+            m_value.insert(m_value.begin() + m_cursorIndex, e.text.unicode);
             m_cursorIndex++;
             m_text.SetString(m_value.substr(0, m_cursorIndex));
             m_cursorPos = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
             m_text.SetString(m_value);
+            e = Event{};
         }
     });
 

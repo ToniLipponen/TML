@@ -1,6 +1,5 @@
 #include <TML/Graphics/Drawable/Sprite.h>
-#include <TML/Utilities/Condition.h>
-#include <TML/Utilities/Math.h>
+#include "TML/System/Math.h"
 
 namespace tml
 {
@@ -41,8 +40,8 @@ namespace tml
     void Sprite::SetInterpolation(bool interpolate)
     {
         m_tex.SetMinMagFilter(
-                tml::Condition(interpolate, Texture::Linear, Texture::Nearest),
-                tml::Condition(interpolate, Texture::Linear, Texture::Nearest)
+                interpolate ? Texture::Linear : Texture::Nearest,
+                interpolate ? Texture::Linear : Texture::Nearest
         );
     }
 

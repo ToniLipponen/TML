@@ -1,5 +1,4 @@
 #include <TML/Graphics/Renderer.h>
-#include <TML/Utilities/Utilities.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

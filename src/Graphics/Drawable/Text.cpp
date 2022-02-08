@@ -1,7 +1,7 @@
 #include <TML/Graphics/Drawable/Text.h>
-#include <TML/Utilities/Utilities.h>
 #include <stb/stb_truetype.h>
 #include <Font.h>
+#include <TML/System/Math.h>
 
 namespace tml
 {
@@ -18,12 +18,7 @@ namespace tml
         Generate();
     }
 
-    void Text::SetString(const std::string& string, const std::string& font)
-    {
-        SetString(Util::StringToWstring(string), font);
-    }
-
-    void Text::SetString(const std::wstring& string, const std::string& font)
+    void Text::SetString(const String& string, const String& font)
     {
         m_string = string;
         if(!m_hasFont)
@@ -33,7 +28,7 @@ namespace tml
                 m_font.LoadFromMemory(DEFAULT_FONT.data(), DEFAULT_FONT.size());
             }
             else
-                m_font.LoadFromFile(font);
+                m_font.LoadFromFile(font.cpp_str());
             m_hasFont = true;
         }
         Generate();
@@ -102,7 +97,7 @@ namespace tml
 
                 default:
                     stbtt_aligned_quad q;
-                    stbtt_GetPackedQuad(((const stbtt_packedchar *)m_font.m_cdata), 4096, 4096, int(c-32), &x, &y, &q, 1);
+                    stbtt_GetPackedQuad(((const stbtt_packedchar *)m_font.m_cdata), 4096, 4096, int(c-32), &x, &y, &q, 0);
                     NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
 
                     m_vertexData.push_back({{q.x0, q.y0}, {q.s0, q.t0}, hex, 0, Vertex::TEXT});

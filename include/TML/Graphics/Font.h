@@ -3,7 +3,7 @@
 #include <map>
 #include <unordered_map>
 
-#include "TML/Utilities/Types.h"
+#include "TML/Types.h"
 #include "Vector2.h"
 #include "TML/Graphics/Core/Texture.h"
 
@@ -25,6 +25,6 @@ namespace tml
     private:
         void* m_cdata;
         Texture m_texture;
-        Image m_image;
+        ui8* m_bitmap = nullptr;
     };
 }

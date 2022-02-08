@@ -1,7 +1,7 @@
 #pragma once
-#include "TML/Utilities/Types.h"
-#include "TML/IO/Input.h"
-#include "TML/IO/Event.h"
+#include "TML/Types.h"
+#include <TML/System/Input.h>
+#include <TML/System/Event.h>
 
 namespace tml
 {

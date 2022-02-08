@@ -1,8 +1,9 @@
-#include <TML/IO/Event.h>
-#include <TML/IO/Input.h>
+#include <TML/System/Event.h>
+#include <TML/System/Input.h>
 #include <GLFW/glfw3.h>
 #include <thread>
 #include <chrono>
+#include <iostream>
 
 namespace tml
 {
@@ -38,7 +39,7 @@ namespace tml
                 event = PollEvents();
             }while(event.type == Event::EventType::Null);
         }
-        return event;
+        return PopEvent();
     }
 
     void EventSystem::PushEvent(Event &event)
@@ -58,7 +59,7 @@ namespace tml
         return event;
     }
 
-    void EventSystem::PollMouse() noexcept
+    void EventSystem::PollMouse()
     {
         static double x = 0, y = 0;
         double oldX = x, oldY = y;
@@ -88,16 +89,6 @@ namespace tml
                 event.mouseButton.y = y;
                 PushEvent(event);
             }
-        }
-        const double scrollValue = Mouse::GetScrollValue();
-        if(scrollValue != 0)
-        {
-            Event event;
-            event.type = Event::EventType::MouseWheelScrolled;
-            event.mouseWheelScroll.delta = scrollValue;
-            event.mouseWheelScroll.x = x;
-            event.mouseWheelScroll.y = y;
-            PushEvent(event);
         }
     }
 }

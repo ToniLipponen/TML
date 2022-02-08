@@ -1,7 +1,6 @@
 #include <TML/Graphics/Window.h>
-#include <TML/Utilities/Condition.h>
-#include <TML/Utilities/Platform.h>
-#include <TML/IO/Event.h>
+#include "TML/Platform.h"
+#include <TML/System/Event.h>
 
 #define GLAD_GL_IMPLEMENTATION
 #define GLAD_GLES2_IMPLEMENTATION
@@ -16,29 +15,17 @@
 #include <stb/stb_image.h>
 #include "_Assert.h"
 
-#if PLATFORM_UNIX
-    #include <incbin/incbin.h>
-    INCBIN(TML_ICON, "../res/Logo.png");
-#else
-    #include <Logo.h>
-#endif
+#include <Logo.h> /// Logo data
+#include <cstring>
 
-extern "C" void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);
-extern "C" void MouseMoveCallback(GLFWwindow* window, double x, double y);
-extern "C" void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-extern "C" void CharCallback(GLFWwindow* window, unsigned int code);
-extern "C" void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-extern "C" void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);
+void MouseMoveCallback(GLFWwindow* window, double x, double y);
+void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+void CharCallback(GLFWwindow* window, unsigned int code);
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+void WindowResizeCallback(GLFWwindow* window, int x, int y);
 
-void WindowResizeCallback(GLFWwindow* f, int x, int y)
-{
-    tml::Event event;
-    event.type = tml::Event::WindowResized;
-    event.size.x = x;
-    event.size.y = y;
-    tml::EventSystem::GetInstance().PushEvent(event);
-    glViewport(0, 0, x, y);
-}
 
 namespace tml
 {
@@ -80,23 +67,13 @@ namespace tml
         GLFWimage img;
         int channels = 4;
 
-        #if PLATFORM_UNIX
-            img.pixels = stbi_load_from_memory(
-                gTML_ICONData,
-                static_cast<int>(gTML_ICONSize),
-                &img.width,
-                &img.height,
-                &channels,
-                4);
-        #else
-            img.pixels = stbi_load_from_memory(
-                LOGO_DATA.data(),
-                static_cast<int>(LOGO_DATA.size()),
-                &img.width,
-                &img.height,
-                &channels,
-                4);
-        #endif
+        img.pixels = stbi_load_from_memory(
+            LOGO_DATA.data(),
+            static_cast<int>(LOGO_DATA.size()),
+            &img.width,
+            &img.height,
+            &channels,
+            4);
         glfwSetWindowIcon(handle,1, &img);
         delete[] img.pixels;
     }
@@ -104,7 +81,6 @@ namespace tml
     Window::~Window()
     {
         glfwDestroyWindow(static_cast<GLFWwindow*>(m_handle));
-//        glfwTerminate();
     }
 
     void Window::Display()
@@ -227,8 +203,8 @@ namespace tml
         m_handle = nullptr;
         glfwGetMonitorWorkarea(monitor, &x, &y, &w, &h);
         m_handle = glfwCreateWindow(
-                tml::Condition(user_w == -1, w, user_w),
-                tml::Condition(user_h == -1, h, user_h),
+                (user_w == -1) ? w : user_w,
+                (user_h == -1) ? h : user_h,
                 m_title.c_str(),
                 monitor,
                 nullptr);
@@ -262,7 +238,6 @@ namespace tml
         glfwSetCharCallback(handle, CharCallback);
         glfwSetKeyCallback(handle, KeyCallback);
         glfwSetMouseButtonCallback(handle, MouseButtonCallback);
-        glfwSetCursorPosCallback(handle, MouseMoveCallback);
         glfwSetScrollCallback(handle, MouseScrollCallback);
         glfwSetWindowCloseCallback(handle, [](GLFWwindow* handle){
             Event event;
@@ -271,4 +246,92 @@ namespace tml
             EventSystem::GetInstance().PushEvent(event);
         });
     }
+}
+
+
+/// GLFW callbacks
+
+using tml::Event;
+
+void MouseMoveCallback(GLFWwindow* window, double x, double y)
+{
+//    Event event{};
+//    event.type = Event::MouseMoved;
+//    event.mouseMove.x = x;
+//    event.mouseMove.y = y;
+//    event.sender = window;
+//    tml::EventSystem::GetInstance().PushEvent(event);
+}
+
+void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    Event event{};
+    event.type = Event::MouseWheelScrolled;
+    event.mouseWheelScroll.x = 0;
+    event.mouseWheelScroll.y = 0;
+    event.mouseWheelScroll.delta = yoffset;
+    event.sender = window;
+    tml::EventSystem::GetInstance().PushEvent(event);
+}
+
+void CharCallback(GLFWwindow* window, unsigned int code)
+{
+    Event event;
+    event.type = Event::TextEntered;
+    event.text.unicode = code;
+    event.sender = window;
+    tml::EventSystem::GetInstance().PushEvent(event);
+}
+
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    Event event;
+    event.type = (action == GLFW_PRESS || action == GLFW_REPEAT) ? Event::KeyPressed : Event::KeyReleased;
+    event.key.code = key;
+    event.key.control = (mods == GLFW_MOD_CONTROL);
+    event.key.shift = (mods == GLFW_MOD_SHIFT);
+    event.sender = window;
+    tml::EventSystem::GetInstance().PushEvent(event);
+}
+
+void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    double x, y;
+    glfwGetCursorPos(window, &x, &y);
+
+    Event event;
+    event.type = (action == GLFW_PRESS) ? Event::EventType::MouseButtonPressed : Event::EventType::MouseButtonReleased;
+    event.mouseButton.button = button;
+    event.mouseButton.x = x;
+    event.mouseButton.y = y;
+    event.sender = window;
+    tml::EventSystem::GetInstance().PushEvent(event);
+}
+
+void DragAndDropCallback(GLFWwindow* window, int count, const char** files)
+{
+    Event event;
+    event.type = Event::FileDragAndDropped;
+    event.dragAndDrop.count = count;
+    event.dragAndDrop.paths = new char*[count];
+    for(int i = 0; i < count; i++)
+    {
+        const auto str = std::string(files[i]);
+        const auto len = str.size();
+
+        event.dragAndDrop.paths[i] = new char[len]; /// Using new here
+        std::memcpy(event.dragAndDrop.paths[i], str.data(), len);
+    }
+    event.sender = window;
+    tml::EventSystem::GetInstance().PushEvent(event);
+}
+
+void WindowResizeCallback(GLFWwindow* window, int x, int y)
+{
+    tml::Event event;
+    event.type = tml::Event::WindowResized;
+    event.size.x = x;
+    event.size.y = y;
+    event.sender = window;
+    tml::EventSystem::GetInstance().PushEvent(event);
 }

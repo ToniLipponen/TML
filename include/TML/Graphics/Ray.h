@@ -1,6 +1,6 @@
 #pragma once
 #include <TML/Graphics/Vector2.h>
-#include <TML/Utilities/Types.h>
+#include "TML/Types.h"
 #include <vector>
 
 namespace tml

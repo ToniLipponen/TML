@@ -1,5 +1,4 @@
 #include <TML/Interface/Layouts/VerticalLayout.h>
-#include <TML/Utilities/Utilities.h>
 
 namespace tml
 {

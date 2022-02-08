@@ -1,7 +1,7 @@
 #pragma once
 #include <TML/Graphics/Window.h>
 #include <TML/Graphics/Renderer.h>
-#include <TML/Utilities/Clock.h>
+#include <TML/System/Clock.h>
 
 namespace tml
 {

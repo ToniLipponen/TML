@@ -1,6 +1,5 @@
 #include <TML/Interface/Components/NumericInput.h>
-#include <TML/Utilities/Utilities.h>
-#include <TML/IO/Clipboard.h>
+#include <TML/System/Clipboard.h>
 
 namespace tml
 {
@@ -59,7 +58,7 @@ namespace tml
                         case Keyboard::KEY_9:
                             m_valueStr.insert(m_cursorIndex, 1, char(e.key.code));
                             m_cursorIndex++;
-                            m_value = Util::StringToType<T>(m_valueStr);
+                            m_value = StringToType<T>(m_valueStr);
                             break;
                         case Keyboard::KEY_BACKSPACE:
                             if(m_valueStr.length() == 0)
@@ -70,7 +69,7 @@ namespace tml
                                 if(m_valueStr.length() == 0)
                                     m_value = 0;
                                 else
-                                    m_value = Util::StringToType<T>(m_valueStr);
+                                    m_value = StringToType<T>(m_valueStr);
                                 m_cursorIndex = Math::Clamp<ui32>(m_cursorIndex--, 0, m_valueStr.length());
                             }
                             break;
@@ -79,7 +78,7 @@ namespace tml
                             {
                                 m_valueStr.insert(m_cursorIndex, 1, '.');
                                 m_cursorIndex++;
-                                m_value = Util::StringToType<T>(m_valueStr + "0");
+                                m_value = StringToType<T>(m_valueStr + "0");
                             }
                             break;
                         case Keyboard::KEY_LEFT:

@@ -1,7 +1,6 @@
 #pragma once
-
 #include <TML/Graphics/RenderWindow.h>
-
+#include <TML/System/String.h>
 #include <deque>
 #include <functional>
 #include <vector>

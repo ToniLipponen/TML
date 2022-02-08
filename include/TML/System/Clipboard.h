@@ -1,6 +1,5 @@
 #pragma once
-#include <string>
-#include <vector>
+#include <TML/System/String.h>
 
 namespace tml
 {
@@ -9,6 +8,6 @@ namespace tml
     public:
         static bool IsEmpty();
         static void Clear();
-        static std::string GetString();
+        static String GetString();
     };
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include <TML/Utilities/Types.h>
+#include "TML/Types.h"
 #include <TML/Audio/Music.h>
 #include <map>
 #include <memory>

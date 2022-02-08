@@ -3,8 +3,8 @@
 #include <tuple>
 #include <cstdarg>
 #include <cstdlib>
-#include "TML/Utilities/Platform.h"
-#include "TML/Utilities/Types.h"
+#include "TML/Platform.h"
+#include "TML/Types.h"
 
 namespace tml
 {

@@ -1,10 +1,8 @@
 #include <TML/Interface/BaseComponent.h>
 #include <TML/Graphics/Renderer.h>
-#include <TML/IO/Input.h>
-#include <TML/Utilities/Clock.h>
+#include "TML/System/Clock.h"
 #include <string>
 #include <algorithm>
-#include "TML/Utilities/Utilities.h"
 
 namespace tml
 {
@@ -162,7 +160,7 @@ namespace tml
 
         bool BaseComponent::ContainsPoint(const Vector2i& p)
         {
-            return Util::PointInRect(p, m_pos, m_size, 0);
+            return Math::PointInRect(p, m_pos, m_size, 0);
         }
 
         void BaseComponent::Raise()

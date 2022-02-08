@@ -16,7 +16,7 @@ namespace tml
             void InitListeners();
             void Draw(RenderWindow& renderWindow);
             Text m_text;
-            std::wstring m_value;
+            tiny_utf8::string m_value;
             i32 m_cursorIndex = 0;
             double m_blinkTimer = 0;
             bool m_showLine = true;

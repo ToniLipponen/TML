@@ -1,5 +1,5 @@
 #pragma once
-#include <TML/Graphics/Vector2.h>
+#include "TML/Graphics/Vector2.h"
 #include <cmath>
 
 namespace tml
@@ -113,6 +113,17 @@ namespace tml
         inline constexpr bool InRange(const T& value, const T& min, const T& max) noexcept
         {
             return (value >= min && value <= max);
+        }
+
+        inline bool PointInRect(const Vector2f& point, const Vector2f& p, const Vector2f& s, float rotation) noexcept
+        {
+            const auto rp = Rotate(p + (s * 0.5), point, -rotation);
+            return (InRange(rp.x, p.x, p.x + s.x) && InRange(rp.y, p.y, p.y + s.y));
+        }
+
+        inline bool PointInCircle(const Vector2f& point, const Vector2f& p, float r) noexcept
+        {
+            return (Distance(point, p) <= r);
         }
     }
 }

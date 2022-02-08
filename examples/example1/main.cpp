@@ -4,7 +4,8 @@ using namespace tml;
 int main()
 {
     RenderWindow window(800, 600, "Example1");
-
+    Text text;
+    text.SetString("åöä");
     while(!window.ShouldClose())
     {
         auto event = window.PollEvents();
@@ -13,6 +14,7 @@ int main()
 
         window.Clear();
         window.DrawCircle(window.GetSize() / 2, 100, Color::Red);
+        window.Draw(text);
         window.Display();
     }
     return 0;

@@ -1,5 +1,4 @@
 #include <TML/Interface/Components/Label.h>
-#include <TML/Utilities/Utilities.h>
 
 namespace tml
 {
@@ -27,7 +26,7 @@ namespace tml
 
         bool Label::ContainsPoint(const Vector2i &p)
         {
-            return Util::PointInRect(p, m_pos, m_size, 0);
+            return Math::PointInRect(p, m_pos, m_size, 0);
         }
 
         void Label::Draw(RenderWindow& window)
