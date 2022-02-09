@@ -1,10 +1,8 @@
 #pragma once
 #include <TML/Graphics/Font.h>
-#include "Vertex.h"
-#include "Drawable.h"
+#include <TML/Graphics/Drawable/Vertex.h>
+#include <TML/Graphics/Drawable/Drawable.h>
 #include <TML/System/String.h>
-#include <vector>
-#include <string>
 
 namespace tml
 {

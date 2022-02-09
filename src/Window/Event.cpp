@@ -1,6 +1,6 @@
-#include <TML/System/Event.h>
-#include <TML/System/Input.h>
-#include <GLFW/glfw3.h>
+#include "TML/Window/Event.h"
+#include "TML/Window/Input.h"
+#include "GLFW/glfw3.h"
 #include <thread>
 #include <chrono>
 #include <iostream>

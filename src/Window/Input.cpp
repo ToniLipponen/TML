@@ -1,8 +1,8 @@
-#include <TML/System/Input.h>
-#include <TML/System/Event.h>
+#include "TML/Window/Input.h"
+#include "TML/Window/Event.h"
 
 #define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+#include "GLFW/glfw3.h"
 
 using tml::Event;
 

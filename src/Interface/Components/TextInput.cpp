@@ -127,9 +127,12 @@ void TextInput::InitListeners()
                 case Keyboard::KEY_V:
                     if(e.key.control)
                     {
-                        const auto str = Clipboard::GetString();
-                        m_value.insert(m_cursorIndex, str);
-                        m_cursorIndex += str.length();
+                        String str;
+                        if(Clipboard::GetString(str))
+                        {
+                            m_value.insert(m_cursorIndex, str);
+                            m_cursorIndex += str.length();
+                        }
                     }
                     break;
                 default:

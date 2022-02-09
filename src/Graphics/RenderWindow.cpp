@@ -24,19 +24,10 @@ namespace tml
         Renderer::Clear();
     }
 
-    void RenderWindow::DrawFps(const Vector2f &position, float size, const Color& color) noexcept
-    {
-        DrawText("FPS: " + std::to_string(int(1.0 / m_deltaTime)), position, size, color);
-    }
-
     void RenderWindow::Display()
     {
         EndBatch();
-        if(m_useVSync)
-            glfwSwapBuffers(static_cast<GLFWwindow*>(m_handle));
-        else
-            glad_glFlush();
-        m_deltaTime = m_clock.Reset();
+        Window::Display();
     }
 
 }

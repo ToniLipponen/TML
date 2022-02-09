@@ -1,5 +1,5 @@
 #pragma once
-#include <TML/Platform.h>
+#include "TML/System/Platform.h"
 
 #ifdef TML_USE_GLES
     #ifdef PLATFORM_WINDOWS

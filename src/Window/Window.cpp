@@ -1,21 +1,14 @@
-#include <TML/Graphics/Window.h>
-#include "TML/Platform.h"
-#include <TML/System/Event.h>
-
-#define GLAD_GL_IMPLEMENTATION
-#define GLAD_GLES2_IMPLEMENTATION
-#define GLAD_EGL_IMPLEMENTATION
-#define GLAD_WGL_IMPLEMENTATION
-#define GLAD_GLX_IMPLEMENTATION
-#include <GLHeader.h>
+#include "TML/Window/Window.h"
+#include "TML/Window/Event.h"
+#include "Headers/GLHeader.h"
 
 #define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-#include <stb/stb_image_write.h>
-#include <stb/stb_image.h>
+#include "GLFW/glfw3.h"
+#include "stb/stb_image_write.h"
+#include "stb/stb_image.h"
 #include "_Assert.h"
 
-#include <Logo.h> /// Logo data
+#include "Logo.h" /// Logo data
 #include <cstring>
 
 void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);
@@ -134,12 +127,12 @@ namespace tml
         return y;
     }
 
-    Event Window::PollEvents() const noexcept
+    Event Window::PollEvents() noexcept
     {
         return EventSystem::GetInstance().PollEvents();
     }
 
-    Event Window::WaitEvents() const noexcept
+    Event Window::WaitEvents() noexcept
     {
         return EventSystem::GetInstance().WaitEvents();
     }
@@ -252,16 +245,6 @@ namespace tml
 /// GLFW callbacks
 
 using tml::Event;
-
-void MouseMoveCallback(GLFWwindow* window, double x, double y)
-{
-//    Event event{};
-//    event.type = Event::MouseMoved;
-//    event.mouseMove.x = x;
-//    event.mouseMove.y = y;
-//    event.sender = window;
-//    tml::EventSystem::GetInstance().PushEvent(event);
-}
 
 void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {

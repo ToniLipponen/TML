@@ -3,14 +3,14 @@
 #include <tuple>
 #include <cstdarg>
 #include <cstdlib>
-#include "TML/Platform.h"
+#include "Platform.h"
 #include "TML/Types.h"
 
 namespace tml
 {
     namespace Logger
     {
-        #if PLATFORM_WINDOWS
+        #ifdef PLATFORM_WINDOWS
             template<typename... Args> static void Message(const std::string& msg, Args... args) noexcept
             {
                 std::printf("[Message]: ");
@@ -38,7 +38,6 @@ namespace tml
                 std::printf(msg.c_str(), args...);
                 std::puts("");
             }
-
         #else
             template<typename... Args> static void Message(const std::string& msg, Args... args) noexcept
             {

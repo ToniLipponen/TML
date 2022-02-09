@@ -1,5 +1,4 @@
 #include <TML/TML.h>
-#include <TML/Interface/Interface.h>
 
 using namespace tml;
 using namespace Interface;
@@ -64,6 +63,7 @@ int main()
 
         window.Clear();
             guiRoot.Update(event, window);
+            window.DrawText("FPS: " + std::to_string(int(1.0 / clock.Reset())), {0,0}, 30,Color::Blue);
         window.Display();
     }
     return 0;

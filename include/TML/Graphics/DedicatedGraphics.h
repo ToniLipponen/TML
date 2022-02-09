@@ -1,5 +1,5 @@
 #pragma once
-#include <TML/Platform.h>
+#include "TML/System/Platform.h"
 
 #ifdef PLATFORM_WINDOWS
     extern "C" __declspec(dllexport) unsigned long NvOptimusEnablement = 1; \

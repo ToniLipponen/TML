@@ -1,7 +1,7 @@
 #pragma once
-#include "TML/Types.h"
-#include <TML/System/Input.h>
-#include <TML/System/Event.h>
+#include <TML/Types.h>
+#include <TML/Window/Input.h>
+#include <TML/Window/Event.h>
 
 namespace tml
 {
@@ -39,8 +39,8 @@ namespace tml
         Vector2i GetSize() const noexcept;
         Vector2i GetPosition() const noexcept;
 
-        Event PollEvents() const noexcept;
-        Event WaitEvents() const noexcept;
+        Event PollEvents() noexcept;
+        Event WaitEvents() noexcept;
 
         void SetSize(ui32 width, ui32 height) noexcept;
         void SetTitle(const std::string& title) noexcept;

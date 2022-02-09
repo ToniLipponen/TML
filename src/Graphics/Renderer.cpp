@@ -2,6 +2,12 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#define GLAD_GL_IMPLEMENTATION
+#define GLAD_GLES2_IMPLEMENTATION
+#define GLAD_EGL_IMPLEMENTATION
+#define GLAD_WGL_IMPLEMENTATION
+#define GLAD_GLX_IMPLEMENTATION
 #include <GLHeader.h>
 
 #include <algorithm>
