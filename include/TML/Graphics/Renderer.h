@@ -61,7 +61,7 @@ namespace tml
          * because the vertex data is going to have to be constructed on each draw.
          * If you are going to be drawing text that doesn't change each frame, you should use Renderer::Draw(Text& text) instead
         */
-        void DrawText(const std::string& text, const Vector2f& pos, float size, const Color& color = Color::White) noexcept;
+        void DrawText(const String& text, const Vector2f& pos, float size, const Color& color = Color::White) noexcept;
         void PushVertexData(const std::vector<Vertex>& vertices, const std::vector<ui32>& indices) noexcept;
         void PushVertexData(std::vector<Vertex>& vertices, const std::vector<ui32>& indices, const Texture& texture) noexcept;
     protected:
@@ -99,5 +99,7 @@ namespace tml
         std::vector<Vertex>  m_vertexData;
         std::vector<ui32>    m_indexData;
         std::vector<ui32>    m_textures;
+
+        void DrawTextA(const String &text, const Vector2f &pos, float size, const Color &color);
     };
 }

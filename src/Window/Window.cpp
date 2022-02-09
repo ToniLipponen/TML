@@ -19,7 +19,6 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void WindowResizeCallback(GLFWwindow* window, int x, int y);
 
-
 namespace tml
 {
     Window::Window(i32 w, i32 h, const std::string& title, ui32 settings)
@@ -31,7 +30,7 @@ namespace tml
             Logger::ErrorMessage("Wayland not supported at the moment!");
             exit(66);
         #endif
-        #ifdef TML_USE_GLES
+        #if defined(TML_USE_GLES) && !defined(PLATFORM_WINDOWS)
             glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
