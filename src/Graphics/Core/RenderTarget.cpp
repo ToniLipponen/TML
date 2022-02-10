@@ -34,6 +34,6 @@ namespace tml
         GL_CALL(glad_glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture.GetID(), 0));
 #endif
         GL_CALL(glad_glDrawBuffers(1, drawBuffers));
-        return (GL_CALL(glad_glCheckFramebufferStatus(GL_FRAMEBUFFER)) == GL_FRAMEBUFFER_COMPLETE);
+        return (glad_glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
     }
 }

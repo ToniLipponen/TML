@@ -85,8 +85,8 @@ namespace tml
 
 #ifndef TML_USE_GLES
     #ifndef TML_NO_GL_DEBUGGING
-        glEnable(GL_DEBUG_OUTPUT);
-        glDebugMessageCallback(GLMessageCallback, nullptr);
+//        glEnable(GL_DEBUG_OUTPUT);
+//        glDebugMessageCallback(GLMessageCallback, nullptr);
     #endif
 #endif
         return true;
@@ -397,7 +397,8 @@ namespace tml
 
         if(flip)
             m_view[5] = -m_view[5];
-        m_shader->SetVec2("uViewSize", m_viewport.size);
+
+        m_shader->Uniform2f("uViewSize", m_viewport.size.x, m_viewport.size.y);
         m_shader->UniformMat4fv("uView",  1, false, m_view);
         m_shader->UniformMat4fv("uProj",  1, false, m_proj);
         m_shader->UniformMat4fv("uScale", 1, false, m_scale);
