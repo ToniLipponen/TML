@@ -28,12 +28,11 @@ endif()
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp external/incbin/incbin.c)
 file(GLOB_RECURSE HEADERS_FILES include/TML/*.h)
+include_directories(external/glm external/glfw/include include external res external/libwebp/src/ src/Graphics/Core/ src/Graphics/Core/Headers)
 
-add_custom_command(OUTPUT src/file.cpp COMMAND touch src/file.cpp)
+# Add external libraries
 add_subdirectory(external/glfw/)
 add_subdirectory(external/libwebp)
-
-include_directories(external/glm external/glfw/include include external res external/libwebp/src/ src/Graphics/Core/ src/Graphics/Core/Headers)
 
 # Add modules
 add_subdirectory(src/Audio)
@@ -42,7 +41,7 @@ add_subdirectory(src/Interface)
 add_subdirectory(src/System)
 add_subdirectory(src/Window)
 
-add_library(TML src/file.cpp ${HEADER_FILES})
+add_library(TML ${CMAKE_SOURCE_DIR}/src/TOKEN_SOURCE_FILE.cpp ${HEADER_FILES})
 target_link_libraries(TML TML-Audio TML-Graphics TML-Interface TML-System TML-Window)
 
 set(CMAKE_INSTALL_PREFIX /usr/)
@@ -57,3 +56,11 @@ if(TML_BUILD_EXAMPLES)
     add_subdirectory(examples/Raycasting/)
     add_subdirectory(examples/GUI_TESTING)
 endif()
+
+# Removing TML library file, because it doesn't actually contain anything.
+# It is here just so that the TML library modules build.
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libTML.a
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libTML.so
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/TML.lib)

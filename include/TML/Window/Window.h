@@ -17,7 +17,8 @@ namespace tml
             VSync       = (1 << 3),
             Antialias   = (1 << 4),
             NoTopBar    = (1 << 5),
-            LimitAspect = (1 << 6)
+            LimitAspect = (1 << 6),
+            DontShow    = (1 << 7)  /// Makes an invisible window.
         };
     public:
         Window(i32 width, i32 height, const std::string& title, ui32 settings = None);
@@ -53,7 +54,10 @@ namespace tml
         void Maximize() noexcept;
         void SetFullscreen(bool fullscreen, i32 w = -1, i32 h = -1) noexcept;
         void SetActive() noexcept;
-        void Screenshot(const std::string& filename) const noexcept;
+        void SetVisible(bool visible = true) const noexcept;
+        void Show() const noexcept;
+        void Hide() const noexcept;
+
     protected:
         void SetCallbacks();
         std::string m_title;

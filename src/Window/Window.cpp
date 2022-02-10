@@ -1,6 +1,4 @@
 #include "TML/Window/Window.h"
-#include "TML/Window/Event.h"
-#include "Headers/GLHeader.h"
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -9,10 +7,10 @@
 #include "_Assert.h"
 
 #include "Logo.h" /// Logo data
+#include "TML/System/Image.h"
 #include <cstring>
 
 void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);
-void MouseMoveCallback(GLFWwindow* window, double x, double y);
 void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void CharCallback(GLFWwindow* window, unsigned int code);
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -45,6 +43,7 @@ namespace tml
         glfwWindowHint(GLFW_RESIZABLE,      (settings & Settings::Resizeable)   != 0);
         glfwWindowHint(GLFW_MAXIMIZED,      (settings & Settings::Maximized)    != 0);
         glfwWindowHint(GLFW_DOUBLEBUFFER,   (settings & Settings::VSync)        != 0);
+        glfwWindowHint(GLFW_VISIBLE,        (settings & Settings::DontShow)     == 0);
         glfwWindowHint(GLFW_SAMPLES, static_cast<int>(((settings & Settings::Antialias) >> 4) * 4));
         glfwSetErrorCallback([](int, const char* m){ Logger::ErrorMessage("GLFW ERROR: %s", m);});
 
@@ -52,22 +51,17 @@ namespace tml
         TML_ASSERT(m_handle != nullptr, "Failed to create a window handle.");
         auto handle = static_cast<GLFWwindow *>(m_handle);
         glfwMakeContextCurrent(handle);
-        glfwShowWindow(handle);
         SetCallbacks();
         if((settings & Settings::LimitAspect) != 0)
             SetAspectRatio(w,h);
-        GLFWimage img;
-        int channels = 4;
 
-        img.pixels = stbi_load_from_memory(
-            LOGO_DATA.data(),
-            static_cast<int>(LOGO_DATA.size()),
-            &img.width,
-            &img.height,
-            &channels,
-            4);
-        glfwSetWindowIcon(handle,1, &img);
-        delete[] img.pixels;
+        Image image(LOGO_DATA.data(), static_cast<int>(LOGO_DATA.size()));
+        GLFWimage img;
+
+        img.width = image.GetWidth();
+        img.height = image.GetHeight();
+        img.pixels = image.GetData();
+        glfwSetWindowIcon(handle, 1, &img);
     }
 
     Window::~Window()
@@ -77,10 +71,7 @@ namespace tml
 
     void Window::Display()
     {
-        if(m_useVSync)
-            glfwSwapBuffers(static_cast<GLFWwindow*>(m_handle));
-        else
-            glad_glFlush();
+        glfwSwapBuffers(static_cast<GLFWwindow*>(m_handle));
     }
 
     void Window::Close() noexcept
@@ -212,14 +203,19 @@ namespace tml
         glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_handle));
     }
 
-    void Window::Screenshot(const std::string& filename) const noexcept
+    void Window::SetVisible(bool visible) const noexcept
     {
-        const i32 w = GetWidth(), h = GetHeight();
-        ui8* pixels = new ui8[3 * w * h];
-        glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-        stbi_flip_vertically_on_write(1);
-        stbi_write_png(filename.c_str(), w, h, 3, pixels, 0);
-        delete[] pixels;
+        visible ? Show() : Hide();
+    }
+
+    void Window::Show() const noexcept
+    {
+        glfwShowWindow(static_cast<GLFWwindow*>(m_handle));
+    }
+
+    void Window::Hide() const noexcept
+    {
+        glfwHideWindow(static_cast<GLFWwindow*>(m_handle));
     }
 
     void Window::SetCallbacks()
