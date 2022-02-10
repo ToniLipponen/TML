@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector2.h"
+#include <TML/Graphics/Vector2.h>
 #include <cmath>
 
 namespace tml
@@ -9,7 +9,7 @@ namespace tml
     public:
         inline Vector2f GetPosition()   const noexcept { return m_pos;      }
         inline Vector2f GetSize()       const noexcept { return m_size;     }
-        inline float GetRotation()   const noexcept { return m_rotation; }
+        inline float GetRotation()      const noexcept { return m_rotation; }
 
         virtual Vector2f Move(const Vector2f& offset) noexcept
         {

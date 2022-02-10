@@ -1,6 +1,6 @@
 #pragma once
 #include <TML/Graphics/Drawable/Drawable.h>
-#include <TML/Graphics/Image.h>
+#include "TML/System/Image.h"
 
 namespace tml
 {

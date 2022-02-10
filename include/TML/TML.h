@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Toni Lipponen
+ * Copyright (C) 2021-2022 Toni Lipponen
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the authors be held liable for any damages
@@ -21,16 +21,7 @@
  */
 
 #pragma once
-#include <TML/Audio/Audio.h>
-#include <TML/Graphics/Ray.h>
-#include <TML/Graphics/RenderTexture.h>
-#include <TML/Graphics/RenderWindow.h>
-#include <TML/Graphics/Vector2.h>
-#include <TML/IO/Clipboard.h>
-#include <TML/IO/Event.h>
-#include <TML/IO/File.h>
-#include <TML/IO/Input.h>
-#include <TML/IO/Logger.h>
-#include <TML/Utilities/Clock.h>
-#include <TML/Utilities/Math.h>
-#include <TML/Utilities/Utilities.h>
+#include <TML/Audio.h>
+#include <TML/Graphics.h>
+#include <TML/Interface.h>
+#include <TML/System.h>

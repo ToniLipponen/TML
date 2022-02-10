@@ -28,7 +28,11 @@ namespace tml
     {
         Bind();
         GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
+#ifdef TML_USE_GLES
+        GL_CALL(glad_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.GetID(), 0));
+#else
         GL_CALL(glad_glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture.GetID(), 0));
+#endif
         GL_CALL(glad_glDrawBuffers(1, drawBuffers));
         return (GL_CALL(glad_glCheckFramebufferStatus(GL_FRAMEBUFFER)) == GL_FRAMEBUFFER_COMPLETE);
     }

@@ -1,7 +1,7 @@
 #include <TML/Audio/Sound.h>
 #include <miniaudio/miniaudio.h>
 #include <memory.h>
-#include <TML/Utilities/Math.h>
+#include "TML/System/Math.h"
 #include <_Assert.h>
 #include "Mixer.h"
 

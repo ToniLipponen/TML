@@ -1,11 +1,15 @@
 #include <TML/Graphics/Renderer.h>
-#include <TML/Utilities/Utilities.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#define GLAD_GL_IMPLEMENTATION
+#define GLAD_GLES2_IMPLEMENTATION
+#define GLAD_EGL_IMPLEMENTATION
+#define GLAD_WGL_IMPLEMENTATION
+#define GLAD_GLX_IMPLEMENTATION
 #include <GLHeader.h>
 
-#include <algorithm>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -36,7 +40,11 @@ namespace tml
 
         int result = 0;
 #ifdef TML_USE_GLES
+    #ifdef PLATFORM_WINDOWS
+        result = gladLoadGL((GLADloadfunc)glfwGetProcAddress);
+    #else
         result = gladLoadGLES2((GLADloadfunc)glfwGetProcAddress);
+    #endif
 #else
         result = gladLoadGL((GLADloadfunc)glfwGetProcAddress);
 #endif
@@ -321,15 +329,6 @@ namespace tml
         m_indexData.emplace_back(currentElements + 2);
     }
 
-    void Renderer::DrawText(const std::string &text, const Vector2f &pos, float size, const Color &color) noexcept
-    {
-        m_text.SetString(text);
-        m_text.SetSize(size);
-        m_text.SetColor(color);
-        m_text.SetPosition(pos);
-        Draw(m_text);
-    }
-
     // Finds a parking spot for the texture.
     ui32 Renderer::PushTexture(const Texture &texture) noexcept
     {
@@ -357,6 +356,18 @@ namespace tml
         }
 
         return index;
+    }
+
+#ifdef PLATFORM_WINDOWS
+    #undef DrawText
+#endif
+    void Renderer::DrawText(const String& text, const Vector2f& pos, float size, const Color& color) noexcept
+    {
+        m_text.SetString(text);
+        m_text.SetSize(size);
+        m_text.SetColor(color);
+        m_text.SetPosition(pos);
+        Draw(m_text);
     }
     
     void Renderer::PushVertexData(const std::vector<Vertex>& vertices, const std::vector<ui32>& indices) noexcept

@@ -1,7 +1,7 @@
 #pragma once
-#include "TML/Utilities/Types.h"
+#include "TML/Types.h"
 #include "TML/Graphics/Vector2.h"
-#include "TML/Graphics/Image.h"
+#include "TML/System/Image.h"
 #include <string>
 
 namespace tml

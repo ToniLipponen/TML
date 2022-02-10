@@ -1,5 +1,4 @@
 #include <TML/Interface/Components/Slider.h>
-#include <TML/Utilities/Utilities.h>
 
 namespace tml
 {
