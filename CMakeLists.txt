@@ -55,6 +55,7 @@ if(TML_BUILD_EXAMPLES)
     add_subdirectory("examples/Simple GUI/")
     add_subdirectory(examples/Raycasting/)
     add_subdirectory(examples/GUI_TESTING)
+    add_subdirectory(examples/Compute)
 endif()
 
 # Removing TML library file, because it doesn't actually contain anything.

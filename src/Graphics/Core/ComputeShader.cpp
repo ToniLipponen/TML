@@ -5,16 +5,15 @@
 
 namespace tml
 {
-    void ComputeShader::LoadFromFile(const String &filename) noexcept
+    bool ComputeShader::LoadFromFile(const String &filename) noexcept
     {
         InFile file;
         file.Open(filename.cpp_str());
         auto src = file.GetString();
-
-        LoadFromString(src);
+        return LoadFromString(src);
     }
 
-    void ComputeShader::LoadFromString(const String &source) noexcept
+    bool ComputeShader::LoadFromString(const String &source) noexcept
     {
         if(m_id == 0)
             m_id = GL_CALL(glad_glCreateProgram());
@@ -34,6 +33,7 @@ namespace tml
             i32 vertex_message_len = 0;
             GL_CALL(glad_glGetShaderInfoLog(shaderID, 1024, &vertex_message_len, vertex_message));
             tml::Logger::ErrorMessage("Compute shader error at %s", vertex_message);
+            return false;
         }
 
         GL_CALL(glad_glAttachShader(m_id, shaderID));
@@ -45,19 +45,27 @@ namespace tml
         GL_CALL(glGetProgramiv(m_id, GL_VALIDATE_STATUS, &validationStatus));
 
         if(linkStatus != GL_TRUE)
+        {
             Logger::ErrorMessage("Failed to link shader program");
+            return false;
+        }
 
         if(validationStatus != GL_TRUE)
+        {
             Logger::ErrorMessage("Failed to validate shader program");
+            return false;
+        }
 
         GL_CALL(glad_glDetachShader(m_id, shaderID));
         GL_CALL(glad_glDeleteShader(shaderID));
+        return true;
     }
 
-    void ComputeShader::ConnectBuffer(const String &name, ui32 index)
+    void ComputeShader::ConnectBuffer(const String &name, ui32 index, StorageBuffer& buffer)
     {
         const ui32 block_index = GL_CALL(glGetProgramResourceIndex(m_id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
         GL_CALL(glShaderStorageBlockBinding(m_id, block_index, index));
+        buffer.BindBufferBase(index);
     }
 
     void ComputeShader::Dispatch(i16 x, i16 y)

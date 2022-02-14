@@ -72,7 +72,7 @@ namespace tml
         m_layout->Push(1, 4, BufferLayout::VERTEX_UNSIGNED_INT);
         m_layout->Push(1, 4, BufferLayout::VERTEX_UNSIGNED_INT);
 
-        m_shader->FromString(VERTEX_STRING, FRAGMENT_STRING);
+        m_shader->LoadFromString(VERTEX_STRING, FRAGMENT_STRING);
         m_shader->Bind();
 
         Image circleImage;

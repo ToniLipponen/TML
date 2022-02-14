@@ -50,10 +50,10 @@ namespace tml
     {
         std::string vert = ReadFile(vs);
         std::string frag = ReadFile(fs);
-        FromString(vert, frag);
+        LoadFromString(vert, frag);
     }
 
-    void Shader::FromString(const std::string& vs, const std::string& fs) const noexcept
+    void Shader::LoadFromString(const std::string& vs, const std::string& fs) const noexcept
     {
         if(m_id == 0)
             m_id = GL_CALL(glad_glCreateProgram());

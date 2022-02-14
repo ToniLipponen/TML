@@ -34,6 +34,14 @@ namespace tml
         GL_CALL(glad_glUnmapBuffer(GL_SHADER_STORAGE_BUFFER));
     }
 
+    void StorageBuffer::RetrieveData(void *data, ui32 bytes)
+    {
+        Bind();
+        void* p = GL_CALL(glad_glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY));
+        std::memcpy(data, p, bytes);
+        GL_CALL(glad_glUnmapBuffer(GL_SHADER_STORAGE_BUFFER));
+    }
+
     void StorageBuffer::BindBufferBase(ui32 index)
     {
         GL_CALL(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, m_id));

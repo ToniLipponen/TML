@@ -14,7 +14,7 @@ namespace tml
         void Bind() const noexcept;
         void Unbind() const noexcept;
         void LoadFromFile(const std::string& vs, const std::string& fs) const noexcept;
-        void FromString(const std::string& vs, const std::string& fs) const noexcept;
+        void LoadFromString(const std::string& vs, const std::string& fs) const noexcept;
 
         void Uniform1f(const std::string&, f32 x) const noexcept;
         void Uniform2f(const std::string&, f32 x, f32 y) const noexcept;
@@ -52,8 +52,6 @@ namespace tml
 
     private:
         inline i32 GetUniformLocation(const std::string& name) const noexcept;
-
-    private:
         mutable std::unordered_map<std::string, i32> m_uniform_cache;
     protected:
         mutable ui32 m_id = 0;

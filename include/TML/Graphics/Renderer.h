@@ -99,7 +99,5 @@ namespace tml
         std::vector<Vertex>  m_vertexData;
         std::vector<ui32>    m_indexData;
         std::vector<ui32>    m_textures;
-
-        void DrawTextA(const String &text, const Vector2f &pos, float size, const Color &color);
     };
 }

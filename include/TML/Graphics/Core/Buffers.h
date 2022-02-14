@@ -121,7 +121,10 @@ namespace tml
         void Unbind();
         void BufferData(const void* data, ui32 bytes);
         void UpdateData(const void* data, ui32 bytes);
+        void RetrieveData(void* data, ui32 bytes);
+    protected:
         void BindBufferBase(ui32 index);
+        friend class ComputeShader;
     private:
         ui32 m_id;
     };

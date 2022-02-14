@@ -1,5 +1,6 @@
 #pragma once
 #include "Shader.h"
+#include "Buffers.h"
 #include <TML/System/String.h>
 
 namespace tml
@@ -8,9 +9,9 @@ namespace tml
     {
     public:
         ComputeShader() = default;
-        void LoadFromFile(const String& filename) noexcept;
-        void LoadFromString(const String& source) noexcept;
-        void ConnectBuffer(const String& name, ui32 index);
+        bool LoadFromFile(const String& filename) noexcept;
+        bool LoadFromString(const String& source) noexcept;
+        void ConnectBuffer(const String& name, ui32 index, StorageBuffer& buffer);
         void Dispatch(i16 x, i16 y);
         void Wait();
     };
