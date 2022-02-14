@@ -73,7 +73,7 @@ int main()
         circles.positions.push_back(Vector2f{rand() % 800, rand() % 600});
         circles.velocities.push_back(Vector2f{(rand() % 500) - 250});
         circles.radii.push_back(float(rand() % 20));
-        circleColors.push_back(Color(int(rand())));
+        circleColors.push_back(Color(rand() % 255, rand() % 255, rand() % 255));
         circleColors.at(circleColors.size()-1).a = 255;
     }
     StorageBuffer posData, momentData, radData;
