@@ -5,9 +5,9 @@ using namespace Interface;
 
 int main()
 {
-    RenderWindow window(800, 600, "Example 3");
+    RenderWindow window(800, 600, "Music");
 
-    Music music("res/Kevin MacLeod - Study and Relax.mp3");
+    Music music("Kevin MacLeod - Study and Relax.mp3");
     music.Play();
 
     while(!window.ShouldClose())

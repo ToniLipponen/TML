@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
-project(example1)
+project(Circle)
 
-add_executable(example1 main.cpp)
+add_executable(Circle main.cpp)
 
 if(UNIX)
-    target_link_libraries(example1 TML-Graphics TML-Window TML-System dl pthread)
+    target_link_libraries(Circle TML-Graphics TML-Window TML-System dl pthread)
 else()
-    target_link_libraries(example1 TML-Graphics TML-Window TML-System)
+    target_link_libraries(Circle TML-Graphics TML-Window TML-System)
 endif()

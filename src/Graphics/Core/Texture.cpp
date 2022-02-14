@@ -1,7 +1,6 @@
-#include "TML/Graphics/Core/Texture.h"
+#include <TML/Graphics/Core/Texture.h>
 #include "GLHeader.h"
 #include "GlDebug.h"
-
 
 namespace tml
 {
@@ -65,16 +64,19 @@ namespace tml
         Generate();
     }
 
-    ui8* Texture::GetData() const noexcept
+    void Texture::GetData(Image& image) const noexcept
     {
-        ui8* data = new ui8[m_width * m_height * m_bpp];
+        // Doing it like this to avoid one malloc and one copy.
+        image.LoadFromMemory(m_width, m_height, 4, nullptr);
+        auto* imgData = image.GetData();
         Bind();
-        GL_CALL(glad_glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
-        return data;
+        GL_CALL(glad_glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData));
     }
 
     inline void Texture::Generate() const
     {
+        if(m_id == 0)
+            return;
         #ifdef TML_USE_GLES
             GL_CALL(glBindTexture(GL_TEXTURE_2D, m_id));
             GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
@@ -92,7 +94,7 @@ namespace tml
 
         if(m_width > 0 && m_height > 0)
         {
-            i32 ch = 0, chi = 0; // Channels & channels Headers.
+            i32 ch = 0, chi = 0; // Format & internal format
             switch(m_bpp)
             {
                 case 1: ch = GL_R8;     chi = GL_RED;   break;

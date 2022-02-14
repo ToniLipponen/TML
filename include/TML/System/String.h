@@ -8,9 +8,7 @@
 namespace tml
 {
     using String = tiny_utf8::utf8_string;
-    /** @brief Converts std::string to a given literal type.
-     * @throws std::runtime_error if convertable type is not a literal type.
-     */
+    
     template<typename T>
     inline constexpr T StringToType(const std::string& str)
     {

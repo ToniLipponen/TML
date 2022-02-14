@@ -41,7 +41,7 @@ namespace tml
         inline constexpr Filter     GetMagFilter() const noexcept { return m_magFilter; }
         inline constexpr ClampMode  GetClampMode() const noexcept { return m_clampMode; }
         inline constexpr ui32       GetID()        const noexcept { return m_id;        }
-        ui8* GetData() const noexcept;
+        void GetData(Image& image)                 const noexcept;
 
     protected:
         virtual inline void Generate() const;

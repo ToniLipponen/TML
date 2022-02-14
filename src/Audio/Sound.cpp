@@ -1,7 +1,7 @@
 #include <TML/Audio/Sound.h>
+#include <TML/System/Math.h>
 #include <miniaudio/miniaudio.h>
-#include <memory.h>
-#include "TML/System/Math.h"
+#include <cstring>
 #include <_Assert.h>
 #include "Mixer.h"
 
@@ -26,7 +26,7 @@ namespace tml
         delete[] m_samples;
     }
 
-    Sound& Sound::operator=(const Sound& sound)
+    Sound& Sound::operator=(const Sound& sound) noexcept
     {
         delete[] m_samples;
         m_samples = new float[sound.m_frameCount];
@@ -43,7 +43,7 @@ namespace tml
         return *this;
     }
 
-    Sound& Sound::operator=(Sound&& sound)
+    Sound& Sound::operator=(Sound&& sound) noexcept
     {
         m_samples = sound.m_samples;
         sound.m_samples = nullptr;
@@ -59,7 +59,7 @@ namespace tml
         return *this;
     }
 
-    bool Sound::LoadFromFile(const std::string &filename)
+    bool Sound::LoadFromFile(const std::string &filename) noexcept
     {
         m_state = Stopped;
         Mixer::RemoveSound(m_id);
@@ -87,7 +87,7 @@ namespace tml
         return true;
     }
 
-    bool Sound::LoadFromData(const void *data, ui64 bytes)
+    bool Sound::LoadFromData(const void *data, ui64 bytes) noexcept
     {
         m_state = Stopped;
         Mixer::RemoveSound(m_id);
@@ -112,14 +112,15 @@ namespace tml
         return true;
     }
 
-    bool Sound::LoadFromMemory(const float *data, ui8 channels, ui64 sampleCount)
+    bool Sound::LoadFromMemory(const float *data, ui8 channels, ui64 sampleCount) noexcept
     {
         delete[] m_samples;
         m_samples = new float[sampleCount];
-        memcpy(m_samples, data, sampleCount * sizeof(float));
+        std::memcpy(m_samples, data, sampleCount * sizeof(float));
         m_frameCount = sampleCount;
         m_framesRead = 0;
         m_channels = channels;
+        m_valid = true;
         return true;
     }
 

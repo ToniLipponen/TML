@@ -53,19 +53,18 @@ namespace tml
         Generate();
     }
 
-    // First normalizes the quad coordinates, then scales them to size and translates them to xy.
     inline constexpr void NormalizeQuad(stbtt_aligned_quad& q, double s, double x, double y) noexcept
     {
-        q.x1 = ((q.x1 * (s / 64.0)) + x);
-        q.x0 = ((q.x0 * (s / 64.0)) + x);
-        q.y0 = ((q.y0 * (s / 64.0)) + y);
-        q.y1 = ((q.y1 * (s / 64.0)) + y);
+        q.x1 = float((q.x1 * (s / 256.0)) + x);
+        q.x0 = float((q.x0 * (s / 256.0)) + x);
+        q.y0 = float((q.y0 * (s / 256.0)) + y);
+        q.y1 = float((q.y1 * (s / 256.0)) + y);
     }
 
     void Text::Generate() noexcept
     {
         m_dimensions = Vector2f{0, m_size.y};
-        float x = 0, y = 48.0;
+        float x = 0, y = 256.0 - (256.0 / 3.0);
         float width = 0, height = 0;
         ui32 count = 0;
         m_vertexData.clear();

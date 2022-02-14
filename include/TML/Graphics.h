@@ -11,4 +11,3 @@
 #include <TML/Graphics/Transformable.h>
 #include <TML/Graphics/Vector2.h>
 #include <TML/Window/Window.h>
-

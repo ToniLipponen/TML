@@ -29,9 +29,9 @@ namespace tml
     void StorageBuffer::UpdateData(const void *data, ui32 bytes)
     {
         Bind();
-        void* p = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY);
+        void* p = GL_CALL(glad_glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY));
         std::memcpy(p, data, bytes);
-        glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+        GL_CALL(glad_glUnmapBuffer(GL_SHADER_STORAGE_BUFFER));
     }
 
     void StorageBuffer::BindBufferBase(ui32 index)

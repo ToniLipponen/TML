@@ -1,8 +1,10 @@
 #pragma once
-#include <string>
+#include <TML/System/Platform.h>
+#include <TML/System/String.h>
+#include <TML/System/Logger.h>
+
 #include <vector>
 #include <fstream>
-#include "Logger.h"
 
 namespace tml
 {
@@ -10,10 +12,9 @@ namespace tml
     {
     public:
         FileBase() = default;
-        explicit FileBase(const std::string& filename)
+        explicit FileBase(const String& filename)
         {
-//            m_stream.open(filename, std::ios::in | std::ios::out | std::ios::binary);
-            m_stream.open(filename, std::ios::ate | std::ios::in | std::ios::out | std::ios::binary);
+            m_stream.open(filename.c_str(), std::ios::ate | std::ios::in | std::ios::out | std::ios::binary);
             if (!m_stream.is_open() || m_stream.fail())
             {
                 m_isValid = false;
@@ -35,11 +36,11 @@ namespace tml
             m_stream.close();
         }
 
-        virtual bool Open(const std::string& filename) = 0;
+        virtual bool Open(const String& filename) = 0;
 
-        static bool FileExists(const std::string& filename)
+        static bool FileExists(const String& filename)
         {
-            std::ifstream file(filename);
+            std::ifstream file(filename.c_str());
             const bool exists = file.is_open();
             file.close();
             return exists;
@@ -50,9 +51,9 @@ namespace tml
             return m_dataLen;
         }
 
-        static i64 FileSize(const std::string &filename)
+        static i64 FileSize(const String &filename)
         {
-            std::ifstream file(filename);
+            std::ifstream file(filename.c_str());
             if (!file.is_open() || file.fail())
                 return 0;
 
@@ -72,10 +73,11 @@ namespace tml
     public:
         using FileBase::FileBase;
 
-        bool Open(const std::string& filename) override
+        bool Open(const String& filename) override
         {
             m_stream.clear();
-            m_stream.open(filename, std::ios::ate | std::ios::in);
+            m_stream.open(filename.c_str(), std::ios::ate | std::ios::in);
+
             if (!m_stream.is_open() || m_stream.fail())
             {
                 m_isValid = false;
@@ -89,15 +91,13 @@ namespace tml
             return true;
         }
 
-        std::vector<char> GetBytes() noexcept
+        void GetBytes(std::vector<char>& dest) noexcept
         {
             if(m_isValid)
             {
-                std::vector<char> data(m_dataLen);
-                m_stream.read(data.data(), m_dataLen);
-                return data;
+                dest.reserve(m_dataLen);
+                m_stream.read(dest.data(), m_dataLen);
             }
-            return {};
         }
 
         void Read(void* dest, ui64 bytes) noexcept
@@ -105,6 +105,7 @@ namespace tml
             m_stream.read((char*)dest, bytes);
         }
 
+        /// @brief Reads every line of the file into a vector.
         std::vector<std::string> GetLines() noexcept
         {
             if (m_isValid)
@@ -119,23 +120,23 @@ namespace tml
             return {};
         }
 
-        // Reads the entire file to a string and returns it.
-        std::string GetString() noexcept
+        /// @brief Reads the entire file to a string and returns it.
+        String GetString() noexcept
         {
             if (m_isValid)
             {
-                std::string str(m_dataLen, 0);
-                m_stream.read(&str[0], m_dataLen);
+                String str;
+                m_stream.read(str.data(), m_dataLen);
                 return str;
             }
             else
                 return "";
         }
 
-        // Reads the entire file to a string and returns it.
-        static std::string GetString(const std::string &filename)
+        /// @brief Opens a file and reads its contents to a string and returns it.
+        static std::string GetString(const String &filename)
         {
-            std::ifstream file(filename, std::ios::ate);
+            std::ifstream file(filename.c_str(), std::ios::ate);
 
             if (file.is_open())
             {
@@ -154,10 +155,13 @@ namespace tml
     {
     public:
         using FileBase::FileBase;
-        bool Open(const std::string& filename) override
+
+        /// @brief Opens an output file.
+        /// @returns true if successful, otherwise returns false.
+        bool Open(const String& filename) override
         {
             m_stream.clear();
-            m_stream.open(filename, std::ios::out);
+            m_stream.open(filename.c_str(), std::ios::out);
             if (!m_stream.is_open() || m_stream.fail())
             {
                 m_isValid = false;
@@ -168,7 +172,9 @@ namespace tml
             m_isValid = true;
             return true;
         }
-        void Write(const std::string &string, unsigned long i)
+
+        /// @brief Appends string to the file.
+        void Write(const String& string)
         {
             if(m_stream.is_open() && m_stream.good())
             {
@@ -176,12 +182,16 @@ namespace tml
                 m_dataLen += string.size();
             }
         }
-        void Write(const char* data, ui64 dataSize)
+
+        /// @brief Appends n amount of byte to the file.
+        /// @param data pointer to data you want to append.
+        /// @param n the size of data in bytes.
+        void Write(const char* data, ui64 n)
         {
             if(data && m_stream.is_open() && m_stream.good())
             {
-                m_stream.write(data, dataSize);
-                m_dataLen += dataSize;
+                m_stream.write(data, n);
+                m_dataLen += n;
             }
         }
     };
