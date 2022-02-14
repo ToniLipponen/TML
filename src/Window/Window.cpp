@@ -24,10 +24,7 @@ namespace tml
     {
         const auto result = glfwInit();
         TML_ASSERT(result, "Failed to initialize window.");
-        #ifdef _GLFW_WAYLAND // We don't support wayland at the moment.
-            Logger::ErrorMessage("Wayland not supported at the moment!");
-            exit(66);
-        #endif
+
         #if defined(TML_USE_GLES) && !defined(PLATFORM_WINDOWS)
             glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -43,7 +40,7 @@ namespace tml
         glfwWindowHint(GLFW_RESIZABLE,      (settings & Settings::Resizeable)   != 0);
         glfwWindowHint(GLFW_MAXIMIZED,      (settings & Settings::Maximized)    != 0);
         glfwWindowHint(GLFW_DOUBLEBUFFER,   (settings & Settings::VSync)        != 0);
-        glfwWindowHint(GLFW_VISIBLE,        (settings & Settings::DontShow)     == 0);
+        glfwWindowHint(GLFW_VISIBLE,        (settings & Settings::Hidden)       == 0);
         glfwWindowHint(GLFW_SAMPLES, static_cast<int>(((settings & Settings::Antialias) >> 4) * 4));
         glfwSetErrorCallback([](int, const char* m){ Logger::ErrorMessage("GLFW ERROR: %s", m);});
 

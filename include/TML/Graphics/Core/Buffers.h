@@ -4,8 +4,10 @@
 #include <vector>
 #include <tuple>
 
-namespace tml {
-    class VertexBuffer {
+namespace tml
+{
+    class VertexBuffer
+    {
     public:
         VertexBuffer();
         VertexBuffer(const void *data, ui32 vertexSize, ui32 numOfVertices);
@@ -17,13 +19,8 @@ namespace tml {
         void SetData(void *data, ui32 vertexSize, ui32 numOfVertices);
         void Flush();
 
-        constexpr ui32 DataSize() const {
-            return m_dataSize;
-        }
-
-        constexpr ui32 VertexCount() const {
-            return m_vertexCount;
-        }
+        constexpr ui32 DataSize() const { return m_dataSize; }
+        constexpr ui32 VertexCount() const { return m_vertexCount; }
 
     public:
         friend class VertexArray;
@@ -43,9 +40,7 @@ namespace tml {
         void PushData(const ui32 *data, ui32 elements);
         void SetData(const ui32 *data, ui32 elements);
         void Flush();
-        constexpr ui32 Elements() const noexcept {
-            return m_elements;
-        }
+        inline constexpr ui32 Elements() const noexcept { return m_elements; }
 
     public:
         friend class VertexArray;
@@ -55,7 +50,8 @@ namespace tml {
         mutable ui32 m_elements;
     };
 
-    class BufferLayout {
+    class BufferLayout
+    {
     public:
         enum DataType
         {
@@ -97,12 +93,12 @@ namespace tml {
         }
 
     private:
-        //				  Elements | size | GL_TYPE
         std::vector<Attribute> m_layout;
         ui32 m_stride;
     };
 
-    class VertexArray {
+    class VertexArray
+    {
     public:
         VertexArray();
         VertexArray(VertexBuffer &vb, BufferLayout &layout);
@@ -111,11 +107,25 @@ namespace tml {
         void Unbind() const noexcept;
         void BufferData(VertexBuffer &vb, BufferLayout &layout) noexcept;
         void BufferData(VertexBuffer &vb, IndexBuffer &ib, BufferLayout &layout) noexcept;
-        constexpr ui32 VertexCount() const noexcept {
-            return m_vertexCount;
-        }
+        constexpr ui32 VertexCount() const noexcept { return m_vertexCount; }
 
     private:
         ui32 m_id, m_vertexCount;
+    };
+
+    class StorageBuffer /// Shader Storage Buffer
+    {
+    public:
+        StorageBuffer();
+        void Bind();
+        void Unbind();
+        void BufferData(const void* data, ui32 bytes);
+        void UpdateData(const void* data, ui32 bytes);
+        void RetrieveData(void* data, ui32 bytes);
+    protected:
+        void BindBufferBase(ui32 index);
+        friend class ComputeShader;
+    private:
+        ui32 m_id;
     };
 }

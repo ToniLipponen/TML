@@ -41,11 +41,10 @@ namespace tml
         inline constexpr Filter     GetMagFilter() const noexcept { return m_magFilter; }
         inline constexpr ClampMode  GetClampMode() const noexcept { return m_clampMode; }
         inline constexpr ui32       GetID()        const noexcept { return m_id;        }
+        void GetData(Image& image)                 const noexcept;
 
-    private:
-        inline void Generate() const;
-        
-    private:
+    protected:
+        virtual inline void Generate() const;
         ClampMode m_clampMode = ClampToBorder;
         Filter m_minFilter = LinearMipmapLinear;
         Filter m_magFilter = LinearMipmapLinear;

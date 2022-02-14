@@ -4,9 +4,9 @@ using namespace tml;
 
 int main()
 {
-    RenderWindow window(800, 600, "Example2");
+    RenderWindow window(800, 600, "Sprite");
     Sprite sprite;
-    sprite.LoadFromFile("res/Logo.png");
+    sprite.LoadFromFile("Logo.png");
 
     while(!window.ShouldClose())
     {

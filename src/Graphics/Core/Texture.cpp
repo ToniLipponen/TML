@@ -1,7 +1,6 @@
-#include "TML/Graphics/Core/Texture.h"
+#include <TML/Graphics/Core/Texture.h>
 #include "GLHeader.h"
 #include "GlDebug.h"
-
 
 namespace tml
 {
@@ -65,10 +64,21 @@ namespace tml
         Generate();
     }
 
+    void Texture::GetData(Image& image) const noexcept
+    {
+        // Doing it like this to avoid one malloc and one copy.
+        image.LoadFromMemory(m_width, m_height, 4, nullptr);
+        auto* imgData = image.GetData();
+        Bind();
+        GL_CALL(glad_glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData));
+    }
+
     inline void Texture::Generate() const
     {
-        GL_CALL(glBindTexture(GL_TEXTURE_2D, m_id));
+        if(m_id == 0)
+            return;
         #ifdef TML_USE_GLES
+            GL_CALL(glBindTexture(GL_TEXTURE_2D, m_id));
             GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
             GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
             GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_minFilter));
@@ -84,7 +94,7 @@ namespace tml
 
         if(m_width > 0 && m_height > 0)
         {
-            i32 ch = 0, chi = 0; // Channels & channels Headers.
+            i32 ch = 0, chi = 0; // Format & internal format
             switch(m_bpp)
             {
                 case 1: ch = GL_R8;     chi = GL_RED;   break;
@@ -95,10 +105,12 @@ namespace tml
             }
             #ifdef TML_USE_GLES
                 GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, m_pixelData));
+                GL_CALL(glBindImageTexture(0, m_id, 0, GL_FALSE, 0, GL_READ_WRITE, ch));
                 GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
             #else
                 GL_CALL(glTextureStorage2D(m_id, 8, ch, m_width, m_height));
                 GL_CALL(glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, m_pixelData));
+                GL_CALL(glBindImageTexture(0, m_id, 0, GL_FALSE, 0, GL_READ_WRITE, ch));
                 GL_CALL(glGenerateTextureMipmap(m_id));
             #endif
         }

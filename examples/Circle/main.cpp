@@ -3,7 +3,7 @@ using namespace tml;
 
 int main()
 {
-    RenderWindow window(800, 600, "Example1");
+    RenderWindow window(800, 600, "Circle");
 
     while(!window.ShouldClose())
     {

@@ -6,7 +6,7 @@ using namespace Interface;
 
 int main()
 {
-    RenderWindow window(300, 400, "Example 4", Window::VSync);
+    RenderWindow window(300, 400, "Simple GUI", Window::VSync);
 
     TextInput input(0, 0, 200, 30);
     auto* button = new Button(200, 0, 100, 30, "Add to list");

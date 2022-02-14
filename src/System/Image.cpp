@@ -2,10 +2,10 @@
 #include "stb/stb_image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
-#include "TML/System/Image.h"
 #include "libwebp/src/webp/decode.h"
 #include "libwebp/src/webp/encode.h"
-#include "TML/System/File.h"
+#include <TML/System/Image.h>
+#include <TML/System/File.h>
 #include <cstring>
 
 namespace tml
@@ -29,7 +29,7 @@ namespace tml
         LoadFromData(data, s);
     }
 
-    Image::Image(const std::string& fileName) noexcept
+    Image::Image(const String& fileName) noexcept
     : m_width(0), m_height(0), m_Bpp(0), m_data(nullptr)
     {
         LoadFromFile(fileName);
@@ -84,7 +84,7 @@ namespace tml
         return *this;
     }
 
-    bool Image::LoadFromFile(const std::string& fileName) noexcept
+    bool Image::LoadFromFile(const String& fileName) noexcept
     {
         delete[] m_data;
         m_data = nullptr;
@@ -121,7 +121,7 @@ namespace tml
             return true;
     }
 
-    bool Image::WriteToFile(const std::string& fileName, int quality) noexcept
+    bool Image::WriteToFile(const String& fileName, int quality) noexcept
     {
         const auto type = GetTypeFromFilename(fileName);
 
@@ -144,11 +144,12 @@ namespace tml
         }
     }
 
-    bool Image::LoadWebp(const std::string &filename) noexcept
+    bool Image::LoadWebp(const String &filename) noexcept
     {
         InFile file;
         file.Open(filename);
-        const auto data = file.GetBytes();
+        std::vector<char> data;
+        file.GetBytes(data);
 
        return LoadWebp(reinterpret_cast<const ui8*>(data.data()), data.size());
     }
@@ -177,15 +178,15 @@ namespace tml
         return false;
     }
 
-    bool Image::SaveWebp(const std::string& filename, int quality) noexcept
+    bool Image::SaveWebp(const String& filename, int quality) noexcept
     {
         ui8* output = nullptr;
         ui64 size = 0;
 
         if(m_Bpp == 3)
-            size = WebPEncodeRGB(m_data, m_width, m_height, m_width*m_Bpp, static_cast<float>(quality), &output);
+            size = WebPEncodeRGB(m_data, m_width, m_height, m_width * m_Bpp, static_cast<float>(quality), &output);
         else if(m_Bpp == 4)
-            size = WebPEncodeRGBA(m_data, m_width, m_height, m_width*m_Bpp, static_cast<float>(quality), &output);
+            size = WebPEncodeRGBA(m_data, m_width, m_height, m_width * m_Bpp, static_cast<float>(quality), &output);
 
         if(size && output)
         {
@@ -197,9 +198,19 @@ namespace tml
         return false;
     }
 
-    Image::ImageType Image::GetTypeFromFilename(const std::string &filename) noexcept
+    Image::ImageType Image::GetTypeFromFilename(const String &filename) noexcept
     {
-        const auto str = filename.substr(filename.find_last_of('.'), filename.length());
+        String point(".");
+
+        ui64 pos = 0;
+        for(pos = filename.length()-1; pos >= 0; --pos)
+        {
+            if(filename.at(pos) == '.')
+                break;
+        }
+
+        const auto len = filename.length() - pos;
+        const auto str = filename.substr(pos, len);
 
         if(str == ".png")
             return Image::Png;

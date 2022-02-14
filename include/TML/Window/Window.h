@@ -18,7 +18,7 @@ namespace tml
             Antialias   = (1 << 4),
             NoTopBar    = (1 << 5),
             LimitAspect = (1 << 6),
-            DontShow    = (1 << 7)  /// Makes an invisible window.
+            Hidden      = (1 << 7)
         };
     public:
         Window(i32 width, i32 height, const std::string& title, ui32 settings = None);

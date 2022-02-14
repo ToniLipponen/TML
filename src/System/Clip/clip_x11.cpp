@@ -23,9 +23,7 @@
 #include <thread>
 #include <vector>
 
-#ifdef HAVE_PNG_H
-  #include "clip_x11_png.h"
-#endif
+#include "clip_x11_png.h"
 
 #define CLIP_SUPPORT_SAVE_TARGETS 1
 
@@ -38,9 +36,7 @@ enum CommonAtom {
   INCR,
   TARGETS,
   CLIPBOARD,
-#ifdef HAVE_PNG_H
   MIME_IMAGE_PNG,
-#endif
 #ifdef CLIP_SUPPORT_SAVE_TARGETS
   ATOM_PAIR,
   SAVE_TARGETS,
@@ -54,9 +50,7 @@ const char* kCommonAtomNames[] = {
   "INCR",
   "TARGETS",
   "CLIPBOARD",
-#ifdef HAVE_PNG_H
   "image/png",
-#endif
 #ifdef CLIP_SUPPORT_SAVE_TARGETS
   "ATOM_PAIR",
   "SAVE_TARGETS",
@@ -339,12 +333,7 @@ public:
 
     m_image = image;
 
-#ifdef HAVE_PNG_H
-    // Put a nullptr in the m_data for image/png format and then we'll
-    // encode the png data when the image is requested in this format.
     m_data[get_atom(MIME_IMAGE_PNG)] = buffer_ptr();
-#endif
-
     return true;
   }
 
@@ -356,7 +345,6 @@ public:
         return true;
       }
     }
-#ifdef HAVE_PNG_H
     else if (owner &&
              get_data_from_selection_owner(
                { get_atom(MIME_IMAGE_PNG) },
@@ -367,7 +355,6 @@ public:
                })) {
       return true;
     }
-#endif
     return false;
   }
 
@@ -379,7 +366,6 @@ public:
         return true;
       }
     }
-#ifdef HAVE_PNG_H
     else if (owner &&
              get_data_from_selection_owner(
                { get_atom(MIME_IMAGE_PNG) },
@@ -390,7 +376,6 @@ public:
                })) {
       return true;
     }
-#endif
     return false;
   }
 
@@ -832,9 +817,8 @@ private:
 
   const atoms& get_image_format_atoms() const {
     if (m_image_atoms.empty()) {
-#ifdef HAVE_PNG_H
+
       m_image_atoms.push_back(get_atom(MIME_IMAGE_PNG));
-#endif
     }
     return m_image_atoms;
   }
@@ -921,7 +905,7 @@ private:
   }
 
   void encode_data_on_demand(std::pair<const xcb_atom_t, buffer_ptr>& e) {
-#ifdef HAVE_PNG_H
+
     if (e.first == get_atom(MIME_IMAGE_PNG)) {
       assert(m_image.is_valid());
       if (!m_image.is_valid())
@@ -935,7 +919,6 @@ private:
       }
       // else { TODO report png conversion errors }
     }
-#endif
   }
 
   // Access to the whole Manager

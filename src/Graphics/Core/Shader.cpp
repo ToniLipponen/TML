@@ -46,14 +46,14 @@ namespace tml
         GL_CALL(glad_glUseProgram(0));
     }
 
-    void Shader::Load(const std::string& vs, const std::string& fs) const noexcept
+    void Shader::LoadFromFile(const std::string& vs, const std::string& fs) const noexcept
     {
         std::string vert = ReadFile(vs);
         std::string frag = ReadFile(fs);
-        FromString(vert, frag);
+        LoadFromString(vert, frag);
     }
 
-    void Shader::FromString(const std::string& vs, const std::string& fs) const noexcept
+    void Shader::LoadFromString(const std::string& vs, const std::string& fs) const noexcept
     {
         if(m_id == 0)
             m_id = GL_CALL(glad_glCreateProgram());
@@ -320,23 +320,5 @@ namespace tml
     {
         i32 loc = GetUniformLocation(name);
         GL_CALL(glad_glProgramUniformMatrix4x3fv(m_id, loc, count, transpose, value));
-    }
-
-    void Shader::SetFloat(const std::string& name, float value) const noexcept
-    {
-        int loc = GetUniformLocation(name);
-        GL_CALL(glad_glProgramUniform1f(m_id, loc, value));
-    }
-
-    void Shader::SetInt(const std::string &name, int value) const noexcept
-    {
-        int loc = GetUniformLocation(name);
-        GL_CALL(glad_glProgramUniform1i(m_id, loc, value));
-    }
-
-    void Shader::SetVec2(const std::string &name, const Vector2f &vector) const noexcept
-    {
-       int loc = GetUniformLocation(name);
-       GL_CALL(glad_glUniform2f(loc, vector.x, vector.y));
     }
 }

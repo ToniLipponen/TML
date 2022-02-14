@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
-project(raycasting)
+project(Raycasting)
 
-add_executable(raycasting main.cpp)
+add_executable(Raycasting main.cpp)
 
 if(UNIX)
-    target_link_libraries(raycasting TML-Graphics TML-Window TML-System dl pthread)
+    target_link_libraries(Raycasting TML-Graphics TML-Window TML-System dl pthread)
 else()
-    target_link_libraries(raycasting TML-Graphics TML-Window TML-System)
+    target_link_libraries(Raycasting TML-Graphics TML-Window TML-System)
 endif()

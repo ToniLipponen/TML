@@ -68,6 +68,13 @@ namespace tml
         spec.height = image.GetHeight();
         spec.bytes_per_row = spec.width * image.GetBpp();
 
+        spec.red_mask    = 0x000000ff;
+        spec.green_mask  = 0x0000ff00;
+        spec.blue_mask   = 0x00ff0000;
+        spec.red_shift   = 0;
+        spec.green_shift = 8;
+        spec.blue_shift  = 16;
+
         clip::image clipImage(image.GetData(), spec);
         clip::set_image(clipImage);
     }
