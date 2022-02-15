@@ -12,14 +12,13 @@ namespace tml
 
     }
 
-    RenderWindow::~RenderWindow()
-    {
-
-    }
+    RenderWindow::~RenderWindow() = default;
 
     void RenderWindow::Clear() noexcept
     {
-        glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_handle));
+        auto* handle = static_cast<GLFWwindow*>(m_handle);
+        if(handle == glfwGetCurrentContext())
+            glfwMakeContextCurrent(handle);
         Renderer::SetViewport({0,0}, {GetWidth(),GetHeight()});
         Renderer::Clear();
     }
@@ -29,5 +28,4 @@ namespace tml
         EndBatch();
         Window::Display();
     }
-
 }

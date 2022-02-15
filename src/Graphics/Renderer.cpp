@@ -31,6 +31,7 @@ namespace tml
         delete m_vao;
         delete m_vertexBuffer;
         delete m_indexBuffer;
+        delete m_layout;
         delete m_shader;
     }
     bool Renderer::Init() noexcept
@@ -195,10 +196,10 @@ namespace tml
         const float dx = b.x - a.x;
         const float dy = b.y - a.y;
 
-        m_vertexData.push_back({((Vector2f(-dy, dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), 0, Vertex::COLOR});
-        m_vertexData.push_back({((Vector2f(dy, -dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), 0, Vertex::COLOR});
-        m_vertexData.push_back({((Vector2f(-dy, dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), 0, Vertex::COLOR});
-        m_vertexData.push_back({((Vector2f(dy, -dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), 0, Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{((Vector2f(-dy, dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), 0, Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{((Vector2f(dy, -dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), 0, Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{((Vector2f(-dy, dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), 0, Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{((Vector2f(dy, -dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), 0, Vertex::COLOR});
 
         m_indexData.push_back(currentElements + 0);
         m_indexData.push_back(currentElements + 1);
@@ -217,20 +218,67 @@ namespace tml
 
     void Renderer::DrawRect(const Vector2f& pos, const Vector2f& dimensions, const Color& color, float roundness, float rotation) noexcept
     {
-        if(roundness < 3.f) // If roundness is too low, just draw a single quad
+        if(roundness < 1.f) // If roundness is too low, just draw a single quad
             PushQuad(pos, dimensions, color, m_circleTexture, Vertex::COLOR, rotation);
         else
         {
-            // Doesn't work well with translucent colors. Might do something to fix this in some point. TODO
-            const Vector2f origin = {(pos.x + pos.x + dimensions.x) * 0.5f,
-                                     (pos.y + pos.y + dimensions.y) * 0.5f};
-            PushQuad(pos+Vector2f{0.f, roundness}, dimensions - Vector2f{0.f, roundness*2}, color, m_circleTexture, Vertex::COLOR, rotation);
-            PushQuad(pos+Vector2f{roundness, 0.f}, dimensions - Vector2f{roundness*2, 0.f}, color, m_circleTexture, Vertex::COLOR, rotation);
+            roundness = Math::Clamp<float>(roundness, 0, Math::Min(dimensions.y, dimensions.x) / 2);
+            const Vector2f origin = (pos + pos + dimensions) * 0.5f;
 
-            DrawCircle(Math::Rotate(origin, pos+Vector2f{roundness, roundness}, rotation), roundness, color);
-            DrawCircle(Math::Rotate(origin, pos+Vector2f{dimensions.x - roundness, roundness}, rotation), roundness, color);
-            DrawCircle(Math::Rotate(origin, pos+Vector2f{roundness,dimensions.y - roundness}, rotation), roundness, color);
-            DrawCircle(Math::Rotate(origin, pos+dimensions-Vector2f{roundness, roundness}, rotation), roundness, color);
+            auto w = Vector2f{dimensions.x, 0.f};
+            auto h = Vector2f{0.f, dimensions.y};
+            auto rx = Vector2f{roundness, 0.f};
+            auto ry = Vector2f{0.f, roundness};
+
+            auto hex = color.Hex();
+            const auto slot = PushTexture(m_circleTexture);
+            std::vector<Vertex> cornerVertices;
+            std::vector<ui32> cornerIndices = {
+                     0, 1, 2,    1, 3, 2,
+                     4, 5, 6,    5, 7, 6,
+                     8, 9,10,    9,11,10,
+                    12,13,14,   13,15,14,
+                    16,17,18,   16,19,18,
+                    20,21,22,   20,23,22
+            };
+
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos,       rotation), {0.0f,0.0f}, hex, slot, Vertex::TEXT});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+rx,    rotation), {0.5f,0.0f}, hex, slot, Vertex::TEXT});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+ry,    rotation), {0.0f,0.5f}, hex, slot, Vertex::TEXT});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+rx+ry, rotation), {0.5f,0.5f}, hex, slot, Vertex::TEXT});
+
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w-rx,   rotation), {0.5f,0.0f}, hex, slot, Vertex::TEXT});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w,      rotation), {1.0f,0.0f}, hex, slot, Vertex::TEXT});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w-rx+ry,rotation), {0.5f,0.5f}, hex, slot, Vertex::TEXT});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+ry,   rotation), {1.0f,0.5f}, hex, slot, Vertex::TEXT});
+
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+h-rx-ry,   rotation), {0.5f,0.5f}, hex, slot, Vertex::TEXT});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+h-ry,      rotation), {1.0f,0.5f}, hex, slot, Vertex::TEXT});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+h-rx,rotation), {0.5f,1.0f}, hex, slot, Vertex::TEXT});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+h,   rotation), {1.0f,1.0f}, hex, slot, Vertex::TEXT});
+
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+h-ry,       rotation), {0.0f,0.5f}, hex, slot, Vertex::TEXT});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+h+rx-ry,    rotation), {0.5f,0.5f}, hex, slot, Vertex::TEXT});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+h,    rotation), {0.0f,1.0f}, hex, slot, Vertex::TEXT});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+h+rx, rotation), {0.5f,1.0f}, hex, slot, Vertex::TEXT});
+
+            // top rect
+            auto pos2 = pos + rx;
+            auto size = w+ry-rx-rx;
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2,                     rotation), {0.0f,0.5f}, hex, slot, Vertex::COLOR});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2+Vector2f(size.x, 0), rotation), {0.5f,0.5f}, hex, slot, Vertex::COLOR});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2+size,                rotation), {0.5f,1.0f}, hex, slot, Vertex::COLOR});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2+Vector2f(0, size.y), rotation), {0.0f,1.0f}, hex, slot, Vertex::COLOR});
+
+            // bottom rect
+            auto pos3 = pos + Vector2f(0,dimensions.y) + rx - ry;
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3,                     rotation), {0.0f,0.5f}, hex, slot, Vertex::COLOR});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3+Vector2f(size.x, 0), rotation), {0.5f,0.5f}, hex, slot, Vertex::COLOR});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3+size,                rotation), {0.5f,1.0f}, hex, slot, Vertex::COLOR});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3+Vector2f(0, size.y), rotation), {0.0f,1.0f}, hex, slot, Vertex::COLOR});
+
+            PushQuad(pos+ry, dimensions-ry-ry, color, m_circleTexture, Vertex::COLOR, rotation);
+            PushVertexData(cornerVertices, cornerIndices);
         }
     }
 
@@ -239,8 +287,8 @@ namespace tml
         PushQuad(pos - Vector2f{radius}, {radius * 2}, color, m_circleTexture, Vertex::TEXT);
     }
 
-    void Renderer::DrawBezier(const Vector2f &a, const Vector2f &cp1, const Vector2f &cp2, const Vector2f &b, float thickness,
-                              const Color &color, bool rounded, float step) noexcept
+    void Renderer::DrawBezier(const Vector2f& a, const Vector2f& cp1, const Vector2f& cp2, const Vector2f& b, float thickness,
+                              const Color& color, bool rounded, float step) noexcept
     {
         Vector2f begin = a;
         for(float i = 0; i < 1.f; i += step)
@@ -251,8 +299,8 @@ namespace tml
         }
     }
 
-    void Renderer::DrawBezier(const Vector2f &a, const Vector2f &cp, const Vector2f &b, float thickness,
-                              const Color &color, bool rounded, float step) noexcept
+    void Renderer::DrawBezier(const Vector2f& a, const Vector2f& cp, const Vector2f& b, float thickness,
+                              const Color& color, bool rounded, float step) noexcept
     {
         Vector2f begin = a;
         for(float i = 0; i < 1.f; i += step)
@@ -263,7 +311,7 @@ namespace tml
         }
     }
 
-    void Renderer::DrawGrid(const Vector2f &top_left, const Vector2f &size, ui32 rows, ui32 columns, const Color &color,
+    void Renderer::DrawGrid(const Vector2f& top_left, const Vector2f& size, ui32 rows, ui32 columns, const Color& color,
                             float thickness, bool rounded) noexcept
     {
         for(int i = 0; i <= rows; ++i)
@@ -276,7 +324,7 @@ namespace tml
                      top_left + Vector2f{(size.x / columns) * i, size.y}, thickness, color, false);
     }
 
-    void Renderer::DrawTexture(const Texture &tex, const Vector2f &pos, const Vector2f &size) noexcept
+    void Renderer::DrawTexture(const Texture& tex, const Vector2f& pos, const Vector2f& size) noexcept
     {
         PushQuad(pos, size, Color::Transparent, tex, Vertex::TEXTURE);
     }
@@ -286,9 +334,9 @@ namespace tml
         PushQuad(pos, size, Color::Transparent, tex, Vertex::TEXTURE, rotation, tl, br);
     }
 
-    void Renderer::PushQuad(const Vector2f &pos,
-                            const Vector2f &size,
-                            const Color &col,
+    inline void Renderer::PushQuad(const Vector2f& pos,
+                            const Vector2f& size,
+                            const Color& col,
                             const Texture& texture,
                             Vertex::DrawableType type,
                             float rotation,
@@ -320,17 +368,17 @@ namespace tml
             m_vertexData.emplace_back(Vertex{pos + size, br, hex, tex, type});
         }
 
-        m_indexData.emplace_back(currentElements + 0);
-        m_indexData.emplace_back(currentElements + 1);
-        m_indexData.emplace_back(currentElements + 2);
+        m_indexData.push_back(currentElements + 0);
+        m_indexData.push_back(currentElements + 1);
+        m_indexData.push_back(currentElements + 2);
 
-        m_indexData.emplace_back(currentElements + 1);
-        m_indexData.emplace_back(currentElements + 3);
-        m_indexData.emplace_back(currentElements + 2);
+        m_indexData.push_back(currentElements + 1);
+        m_indexData.push_back(currentElements + 3);
+        m_indexData.push_back(currentElements + 2);
     }
 
-    // Finds a parking spot for the texture.
-    ui32 Renderer::PushTexture(const Texture &texture) noexcept
+    /// Finds a parking spot for the texture.
+    inline ui32 Renderer::PushTexture(const Texture &texture) noexcept
     {
         if(m_textures.size() >= MAX_TEXTURE_COUNT)
             EndBatch();

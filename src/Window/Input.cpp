@@ -1,5 +1,5 @@
-#include "TML/Window/Input.h"
-#include "TML/Window/Event.h"
+#include <TML/Window/Input.h>
+#include <TML/Window/Event.h>
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"

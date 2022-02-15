@@ -23,8 +23,8 @@ namespace tml
         {
             r = DegToRad(r);
             p -= origin;
-            const double cos_r = cos(r);
-            const double sin_r = sin(r);
+            const double cos_r = std::cos(r);
+            const double sin_r = std::sin(r);
             return {origin.x + p.x * cos_r - p.y * sin_r,
                     origin.y + p.x * sin_r + p.y * cos_r};
         }
@@ -100,7 +100,7 @@ namespace tml
         template<typename T>
         inline double Distance(const Vector2<T>& a, const Vector2<T>& b) noexcept
         {
-            return sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
+            return std::sqrt(std::pow(b.x - a.x, 2) + std::pow(b.y - a.y, 2));
         }
 
         inline Vector2f AngleToHeading(double degrees) noexcept

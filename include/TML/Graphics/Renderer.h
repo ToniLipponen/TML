@@ -13,7 +13,6 @@ namespace tml
     public:
         Renderer();
         virtual ~Renderer();
-        /// Use Renderer::QuietInit() if you don't want GPU info in terminal on initialization.
         bool Init() noexcept;
 
         void SetClearColor(const Color& color) noexcept;
@@ -67,7 +66,7 @@ namespace tml
     protected:
         void EndBatch(bool flip = false) noexcept;
         void BeginBatch() noexcept;
-        void PushQuad(
+        inline void PushQuad(
                 const Vector2f& pos,
                 const Vector2f& size,
                 const Color& color,
@@ -77,7 +76,7 @@ namespace tml
                 const Vector2f& uvTopLeft = {0.0f, 0.0f},
                 const Vector2f& uvBottomRight = {1.0f, 1.0f}
                 ) noexcept;
-        ui32 PushTexture(const Texture&) noexcept;
+        inline ui32 PushTexture(const Texture&) noexcept;
 
     protected:
         class VertexArray*  m_vao          = nullptr;
@@ -86,14 +85,14 @@ namespace tml
         class Shader*       m_shader       = nullptr;
         class BufferLayout* m_layout       = nullptr;
 
-        float m_view[16];
-        float m_proj[16];
-        float m_scale[16];
+        float   m_view[16];
+        float   m_proj[16];
+        float   m_scale[16];
         TexRect m_viewport;
-        Text      m_text;
-        Texture   m_circleTexture;
+        Text    m_text;
+        Texture m_circleTexture;
 
-        constexpr static ui32 MAX_VERTEX_COUNT = 100000;
+        constexpr static ui32 MAX_VERTEX_COUNT = 1000000;
         i32 MAX_TEXTURE_COUNT = 8;
 
         std::vector<Vertex>  m_vertexData;

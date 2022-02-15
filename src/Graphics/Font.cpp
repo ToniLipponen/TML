@@ -1,25 +1,25 @@
 #include <TML/Graphics/Font.h>
+#include <TML/System/File.h>
 #include "_Assert.h"
-#include "TML/System/File.h"
-
-#define STB_RECT_PACK_IMPLEMENTATION 1
-#define STB_TRUETYPE_IMPLEMENTATION 1
+#define STB_RECT_PACK_IMPLEMENTATION
+#define STB_TRUETYPE_IMPLEMENTATION
 #include <stb/stb_rect_pack.h>
 #include <stb/stb_truetype.h>
 #include <cstring>
 #include <vector>
 
 #define ATLAS_SIZE 4096
-#define OVER_SAMPLING 1
+#define OVER_SAMPLING 4
 #define GLYPH_SIZE ATLAS_SIZE / 16.0 / OVER_SAMPLING
 
+#define FILTER_MODE Texture::LinearMipmapLinear
 namespace tml
 {
     Font::Font()
     {
         m_cdata = new stbtt_packedchar[512];
         m_bitmap = new ui8[ATLAS_SIZE*ATLAS_SIZE];
-        m_texture.SetMinMagFilter(Texture::Linear, Texture::Linear);
+        m_texture.SetMinMagFilter(FILTER_MODE, FILTER_MODE);
     }
 
     Font::Font(const Font& rhs)
@@ -30,7 +30,7 @@ namespace tml
         std::memcpy(m_bitmap, rhs.m_bitmap, ATLAS_SIZE*ATLAS_SIZE);
 
         m_texture.LoadFromMemory(ATLAS_SIZE, ATLAS_SIZE, 1, m_bitmap);
-        m_texture.SetMinMagFilter(Texture::Linear, Texture::Linear);
+        m_texture.SetMinMagFilter(FILTER_MODE, FILTER_MODE);
     }
 
     Font::~Font()

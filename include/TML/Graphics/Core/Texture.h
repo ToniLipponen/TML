@@ -45,7 +45,7 @@ namespace tml
 
     protected:
         virtual inline void Generate() const;
-        ClampMode m_clampMode = ClampToBorder;
+        ClampMode m_clampMode = ClampToEdge;
         Filter m_minFilter = LinearMipmapLinear;
         Filter m_magFilter = LinearMipmapLinear;
         ui32 m_id;

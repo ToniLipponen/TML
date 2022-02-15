@@ -116,8 +116,8 @@ namespace tml
 
         Event PollEvents() noexcept;
         Event WaitEvents() noexcept;
-        void PushEvent(Event& event); // Pushed new event to the event queue.
-        Event PopEvent(bool block = false) noexcept; // Get event from event queue. Might return Null event. Event::EventType::Null
+        void PushEvent(Event& event);   /// Pushed new event to the event queue.
+        Event PopEvent() noexcept;      /// Get event from event queue. Might return Null event. Event::EventType::Null
     protected:
         void PollMouse();
     private:

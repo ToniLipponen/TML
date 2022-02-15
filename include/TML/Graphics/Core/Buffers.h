@@ -9,18 +9,18 @@ namespace tml
     class VertexBuffer
     {
     public:
-        VertexBuffer();
-        VertexBuffer(const void *data, ui32 vertexSize, ui32 numOfVertices);
-        ~VertexBuffer();
-        void Bind() const; // Doesn't do anything on GL 4.5
-        void Unbind() const;
-        void BufferData(void *data, ui32 vertexSize, ui32 numOfVertices);
-        void PushData(void *data, ui32 vertexSize, ui32 numOfVertices);
-        void SetData(void *data, ui32 vertexSize, ui32 numOfVertices);
-        void Flush();
+        VertexBuffer() noexcept;
+        VertexBuffer(const void *data, ui32 vertexSize, ui32 numOfVertices) noexcept;
+        ~VertexBuffer() noexcept;
+        void Bind() const noexcept; // Doesn't do anything on GL 4.5
+        void Unbind() const noexcept;
+        void BufferData(void *data, ui32 vertexSize, ui32 numOfVertices) noexcept;
+        void PushData(void *data, ui32 vertexSize, ui32 numOfVertices) noexcept;
+        void SetData(void *data, ui32 vertexSize, ui32 numOfVertices) noexcept;
+        void Flush() noexcept;
 
-        constexpr ui32 DataSize() const { return m_dataSize; }
-        constexpr ui32 VertexCount() const { return m_vertexCount; }
+        constexpr ui32 DataSize() const noexcept { return m_dataSize; }
+        constexpr ui32 VertexCount() const noexcept { return m_vertexCount; }
 
     public:
         friend class VertexArray;
@@ -31,15 +31,15 @@ namespace tml
 
     class IndexBuffer {
     public:
-        IndexBuffer();
-        IndexBuffer(const ui32 *data, ui32 elements);
-        ~IndexBuffer();
-        void Bind() const; // Doesn't do anything on GL 4.5
-        void Unbind() const;
-        void BufferData(const ui32 *data, ui32 elements);
-        void PushData(const ui32 *data, ui32 elements);
-        void SetData(const ui32 *data, ui32 elements);
-        void Flush();
+        IndexBuffer() noexcept;
+        IndexBuffer(const ui32 *data, ui32 elements) noexcept;
+        ~IndexBuffer() noexcept;
+        void Bind() const noexcept; // Doesn't do anything on GL 4.5
+        void Unbind() const noexcept;
+        void BufferData(const ui32 *data, ui32 elements) noexcept;
+        void PushData(const ui32 *data, ui32 elements) noexcept;
+        void SetData(const ui32 *data, ui32 elements) noexcept;
+        void Flush() noexcept;
         inline constexpr ui32 Elements() const noexcept { return m_elements; }
 
     public:
@@ -71,10 +71,10 @@ namespace tml
     public:
         BufferLayout() : m_stride(0) {}
 
-        explicit BufferLayout(std::vector<Attribute> layout)
+        explicit BufferLayout(std::vector<Attribute> layout) noexcept
         : m_layout(std::move(layout)), m_stride(0) {}
 
-        void Push(ui32 elements, ui32 size, DataType type) {
+        void Push(ui32 elements, ui32 size, DataType type) noexcept {
             m_layout.push_back(Attribute{elements, size, type});
             m_stride += elements * size;
         }
@@ -84,11 +84,11 @@ namespace tml
             m_stride = 0;
         }
 
-        constexpr std::vector<Attribute> const &GetData() const {
+        constexpr std::vector<Attribute> const &GetData() const noexcept {
             return m_layout;
         }
 
-        constexpr ui32 GetStride() const {
+        constexpr ui32 GetStride() const noexcept {
             return m_stride;
         }
 
@@ -100,9 +100,9 @@ namespace tml
     class VertexArray
     {
     public:
-        VertexArray();
-        VertexArray(VertexBuffer &vb, BufferLayout &layout);
-        ~VertexArray();
+        VertexArray() noexcept;
+        VertexArray(VertexBuffer &vb, BufferLayout &layout) noexcept;
+        ~VertexArray() noexcept;
         void Bind() const noexcept;
         void Unbind() const noexcept;
         void BufferData(VertexBuffer &vb, BufferLayout &layout) noexcept;
@@ -116,14 +116,14 @@ namespace tml
     class StorageBuffer /// Shader Storage Buffer
     {
     public:
-        StorageBuffer();
-        void Bind();
-        void Unbind();
-        void BufferData(const void* data, ui32 bytes);
-        void UpdateData(const void* data, ui32 bytes);
-        void RetrieveData(void* data, ui32 bytes);
+        StorageBuffer() noexcept;
+        void Bind() const noexcept;
+        void Unbind() const noexcept;
+        void BufferData(const void* data, ui32 bytes) noexcept;
+        void UpdateData(const void* data, ui32 bytes) noexcept;
+        void RetrieveData(void* data, ui32 bytes) noexcept;
     protected:
-        void BindBufferBase(ui32 index);
+        void BindBufferBase(ui32 index) const noexcept;
         friend class ComputeShader;
     private:
         ui32 m_id;

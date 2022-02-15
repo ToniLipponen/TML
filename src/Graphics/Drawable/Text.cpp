@@ -55,16 +55,16 @@ namespace tml
 
     inline constexpr void NormalizeQuad(stbtt_aligned_quad& q, double s, double x, double y) noexcept
     {
-        q.x1 = float((q.x1 * (s / 256.0)) + x);
-        q.x0 = float((q.x0 * (s / 256.0)) + x);
-        q.y0 = float((q.y0 * (s / 256.0)) + y);
-        q.y1 = float((q.y1 * (s / 256.0)) + y);
+        q.x1 = float((q.x1 * (s / 64.0)) + x);
+        q.x0 = float((q.x0 * (s / 64.0)) + x);
+        q.y0 = float((q.y0 * (s / 64.0)) + y);
+        q.y1 = float((q.y1 * (s / 64.0)) + y);
     }
 
     void Text::Generate() noexcept
     {
         m_dimensions = Vector2f{0, m_size.y};
-        float x = 0, y = 256.0 - (256.0 / 3.0);
+        float x = 0, y = 64.0 - (64.0 / 3.0);
         float width = 0, height = 0;
         ui32 count = 0;
         m_vertexData.clear();
@@ -98,6 +98,11 @@ namespace tml
                     stbtt_aligned_quad q;
                     stbtt_GetPackedQuad(((const stbtt_packedchar *)m_font.m_cdata), 4096, 4096, int(c-32), &x, &y, &q, 0);
                     NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
+
+                    q.x0 = ceilf(q.x0);
+                    q.x1 = ceilf(q.x1);
+                    q.y0 = ceilf(q.y0);
+                    q.y1 = ceilf(q.y1);
 
                     m_vertexData.push_back({{q.x0, q.y0}, {q.s0, q.t0}, hex, 0, Vertex::TEXT});
                     m_vertexData.push_back({{q.x1, q.y0}, {q.s1, q.t0}, hex, 0, Vertex::TEXT});

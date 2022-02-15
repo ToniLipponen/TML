@@ -14,9 +14,9 @@ namespace tml
                 Vector2f position = {0,0};
                 float distance = 0;
             };
-            bool operator==(bool) const { return  intersects; }
-            bool operator!=(bool) const { return !intersects; }
-            Info& operator[](ui32 index) { return points.at(index); }
+            inline constexpr bool operator==(bool) const noexcept { return  intersects; }
+            inline constexpr bool operator!=(bool) const noexcept { return !intersects; }
+            inline Info& operator[](ui32 index) noexcept { return points.at(index); }
 
             bool intersects = false;
             std::vector<Info> points;

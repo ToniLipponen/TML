@@ -1,9 +1,8 @@
-#include "TML/Window/Event.h"
-#include "TML/Window/Input.h"
+#include <TML/Window/Event.h>
+#include <TML/Window/Input.h>
 #include "GLFW/glfw3.h"
 #include <thread>
 #include <chrono>
-#include <iostream>
 
 namespace tml
 {
@@ -47,7 +46,7 @@ namespace tml
         m_eventQueue.push(event);
     }
 
-    Event EventSystem::PopEvent(bool block) noexcept
+    Event EventSystem::PopEvent() noexcept
     {
         Event event{};
         if(m_eventQueue.empty())

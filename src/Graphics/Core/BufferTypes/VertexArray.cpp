@@ -4,13 +4,13 @@
 using namespace tml;
 
 #ifndef TML_USE_GLES
-VertexArray::VertexArray()
+VertexArray::VertexArray() noexcept
 : m_id(0), m_vertexCount(0)
 {
     GL_CALL(glCreateVertexArrays(1, &m_id));
 }
 
-VertexArray::VertexArray(VertexBuffer& vb, BufferLayout& layout)
+VertexArray::VertexArray(VertexBuffer& vb, BufferLayout& layout) noexcept
 : m_id(0), m_vertexCount(vb.VertexCount())
 {
     GL_CALL(glCreateVertexArrays(1, &m_id));
@@ -31,7 +31,7 @@ VertexArray::VertexArray(VertexBuffer& vb, BufferLayout& layout)
     }
 }
 
- VertexArray::~VertexArray()
+ VertexArray::~VertexArray() noexcept
  {
  	GL_CALL(glDeleteVertexArrays(1, &m_id));
  }
@@ -87,13 +87,13 @@ void VertexArray::Unbind() const noexcept
     GL_CALL(glBindVertexArray(0));
 }
 #else
-VertexArray::VertexArray()
+VertexArray::VertexArray() noexcept
 : m_id(0), m_vertexCount(0)
 {
     GL_CALL(glGenVertexArrays(1, &m_id));
 }
 
-VertexArray::VertexArray(VertexBuffer& vb, BufferLayout& layout)
+VertexArray::VertexArray(VertexBuffer& vb, BufferLayout& layout) noexcept
 : m_id(0), m_vertexCount(vb.VertexCount())
 {
     GL_CALL(glGenVertexArrays(1, &m_id));
@@ -104,7 +104,7 @@ VertexArray::VertexArray(VertexBuffer& vb, BufferLayout& layout)
     BufferData(vb, layout);
 }
 
-VertexArray::~VertexArray()
+VertexArray::~VertexArray() noexcept
 {
     GL_CALL(glDeleteVertexArrays(1, &m_id));
 }

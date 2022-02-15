@@ -36,7 +36,7 @@ namespace tml
         template<typename R> inline constexpr Vector2& operator/=(R rhs) noexcept;
 
         inline constexpr float Length() const noexcept;
-        inline constexpr Vector2 &Normalize() noexcept;
+        inline constexpr Vector2& Normalize() noexcept;
         inline constexpr Vector2 Normalized() const noexcept;
 
         template<typename R> inline constexpr double Dot(const Vector2<R>& rhs) const noexcept;
@@ -101,7 +101,7 @@ namespace tml
     template<typename T>
     template<typename R>
     inline constexpr Vector2<T> Vector2<T>::operator+(const Vector2<R> &rhs) const noexcept {
-        return {x + rhs.x, y + rhs.y};
+        return {x + static_cast<T>(rhs.x), y + static_cast<T>(rhs.y)};
     }
 
     template<typename T>

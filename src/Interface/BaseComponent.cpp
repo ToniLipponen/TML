@@ -82,7 +82,7 @@ namespace tml
         {
             if(component)
             {
-                if(name == "")
+                if(name.empty())
                 {
                     component->m_parent = this;
                     component->m_hash = 0;

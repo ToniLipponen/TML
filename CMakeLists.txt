@@ -13,8 +13,15 @@ set(GLFW_LIBRARY_TYPE OBJECT)
 set(GLFW_INSTALL no)
 set(GLFW_BUILD_DOCS no)
 set(GLFW_BUILD_TESTS no)
-
 set(CMAKE_CXX_STANDARD 14)
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
+    if(UNIX)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse3")
+    else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch:SSE3")
+    endif()
+endif()
 
 if(NOT TML_ASSERT)
     add_compile_definitions(TML_NO_DEBUGGING=1)
