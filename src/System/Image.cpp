@@ -7,7 +7,6 @@
 
 #include "libwebp/src/webp/decode.h"
 #include "libwebp/src/webp/encode.h"
-#include "TML/System/Math.h"
 #include <lunasvg.h>
 #include <TML/System/Image.h>
 #include <TML/System/File.h>
@@ -181,7 +180,6 @@ namespace tml
 
     bool Image::LoadSvg(const ui8* data, ui32 dataSize, ui32 requestedWidth, ui32 requestedHeight)
     {
-        Logger::InfoMessage("Loadsvg");
         auto document = lunasvg::Document::loadFromData(reinterpret_cast<const char*>(data), dataSize);
         if(!document)
             return false;
