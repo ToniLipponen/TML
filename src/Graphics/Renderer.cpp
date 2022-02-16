@@ -184,6 +184,11 @@ namespace tml
         PushTexture(r.m_cr);
     }
 
+    void Renderer::Draw(const Shape& shape) noexcept
+    {
+        PushVertexData(shape.m_vertexData, shape.m_indexData);
+    }
+
     void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, float thickness, Color color, bool rounded) noexcept
     {
         ui32 currentElements = m_vertexData.size();

@@ -5,6 +5,7 @@
 #include <TML/Graphics/Drawable/Sprite.h>
 #include <TML/Graphics/Drawable/Text.h>
 #include <TML/Graphics/Drawable/Video.h>
+#include <TML/Graphics/Drawable/Shape.h>
 
 namespace tml
 {
@@ -29,6 +30,7 @@ namespace tml
         void Draw(Sprite& sprite) noexcept;
         void Draw(Text& text) noexcept;
         void Draw(const Video& video) noexcept; /// @warning You need to call video.Advance() before drawing
+        void Draw(const Shape& shape) noexcept;
 
         void DrawLine(const Vector2f& a, const Vector2f& b, float thickness, Color color, bool rounded = true) noexcept;
         void DrawRect(const Vector2f& pos, const Vector2f& dimensions, const Color& color, float roundness = 0.0f,
