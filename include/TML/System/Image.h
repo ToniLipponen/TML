@@ -10,7 +10,7 @@ namespace tml
         Image() noexcept;
         Image(i32 w, i32 h, i32 Bpp, const ui8* data) noexcept;
         Image(const ui8* data, ui32 dataSize) noexcept;
-        explicit Image(const String& fileName) noexcept;
+        Image(const String& fileName, ui32 requestedWidth = 0, ui32 requestedHeight = 0) noexcept;
         Image(const Image& image) noexcept;
         Image(Image&& image) noexcept;
         ~Image() noexcept;
@@ -24,7 +24,7 @@ namespace tml
         inline constexpr ui8* GetData()   const noexcept { return m_data;   }     /// @returns Pointer to pixel data.
 
         /// @brief Loads image from file.
-        bool LoadFromFile(const String& fileName) noexcept;
+        bool LoadFromFile(const String& fileName, ui32 requestedWidth = 0, ui32 requestedHeight = 0) noexcept;
 
         /// @brief Creates image from pixel data in memory.
         /// @param w Width in pixels.
@@ -39,8 +39,11 @@ namespace tml
         /// @brief Saves image to file. Uses postfix to deduce image file type. eg. .jpg .png ..
         /// @returns true if successful, or false if unsuccessful.
         bool WriteToFile(const String& fileName, i32 quality = 90) noexcept;
+        bool Resize(ui32 requestedWidth = 0, ui32 requestedHeight = 0) noexcept;
     private:
-        enum ImageType { None, Jpg, Png, Bmp, Tga, Pic, Pnm, Webp };
+        enum ImageType { None, Jpg, Png, Bmp, Tga, Pic, Pnm, Webp, Svg };
+        bool LoadSvg(const String& filename, ui32 requestedWidth = 0, ui32 requestedHeight = 0);
+        bool LoadSvg(const ui8* data, ui32 dataSize, ui32 requestedWidth = 0, ui32 requestedHeight = 0);
         bool LoadWebp(const String& filename) noexcept;
         bool LoadWebp(const ui8* data, ui32 size) noexcept;
         bool SaveWebp(const String& filename, i32 quality = 90) noexcept;

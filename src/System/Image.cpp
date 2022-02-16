@@ -1,9 +1,14 @@
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
+#include "stb/stb_image.h"
 #include "stb/stb_image_write.h"
+#include "stb/stb_image_resize.h"
+
 #include "libwebp/src/webp/decode.h"
 #include "libwebp/src/webp/encode.h"
+#include "TML/System/Math.h"
+#include <lunasvg.h>
 #include <TML/System/Image.h>
 #include <TML/System/File.h>
 #include <cstring>
@@ -29,10 +34,10 @@ namespace tml
         LoadFromData(data, s);
     }
 
-    Image::Image(const String& fileName) noexcept
+    Image::Image(const String& fileName, ui32 w, ui32 h) noexcept
     : m_width(0), m_height(0), m_Bpp(0), m_data(nullptr)
     {
-        LoadFromFile(fileName);
+        LoadFromFile(fileName, w, h);
     }
 
     Image::Image(const Image& image) noexcept
@@ -84,20 +89,24 @@ namespace tml
         return *this;
     }
 
-    bool Image::LoadFromFile(const String& fileName) noexcept
+    bool Image::LoadFromFile(const String& fileName, ui32 w, ui32 h) noexcept
     {
         delete[] m_data;
         m_data = nullptr;
 
         const auto imageType = GetTypeFromFilename(fileName);
-        if(imageType == Image::Webp)
+        switch(imageType)
         {
-            if(!LoadWebp(fileName))
-                return false;
+            case Image::Webp:
+                return LoadWebp(fileName) && Resize(w,h);
+
+            case Image::Svg:
+                return LoadSvg(fileName, w, h);
+
+            default:
+                m_data = stbi_load(fileName.c_str(), &m_width, &m_height, &m_Bpp, 0);
+                return (m_data != nullptr) && Resize(w,h);
         }
-        else
-            m_data = stbi_load(fileName.c_str(), &m_width, &m_height, &m_Bpp, 0);
-        return (m_data != nullptr);
     }
 
     void Image::LoadFromMemory(i32 w, i32 h, i32 Bpp, const ui8* data) noexcept
@@ -115,8 +124,8 @@ namespace tml
     {
         delete[] m_data; m_data = nullptr;
         m_data = stbi_load_from_memory(data, static_cast<int>(dataSize), &m_width, &m_height, &m_Bpp, 0);
-        if(m_data == nullptr)
-            return LoadWebp(data, dataSize);
+        if(m_data == nullptr && !LoadWebp(data, dataSize))
+            return LoadSvg(data, dataSize);
         else
             return true;
     }
@@ -142,6 +151,46 @@ namespace tml
             default:
                 return stbi_write_jpg(fileName.c_str(), m_width, m_height, m_Bpp, m_data, quality) != 0;
         }
+    }
+
+    bool Image::Resize(ui32 requestedWidth, ui32 requestedHeight) noexcept
+    {
+        if(m_data == nullptr || m_width == 0 || m_height == 0 || (requestedWidth == m_width && requestedHeight == m_height) || (requestedWidth == 0 && requestedHeight == 0))
+            return false;
+
+        if(requestedWidth == 0)
+            requestedWidth = requestedHeight * m_height / m_width;
+
+        else if(requestedHeight == 0)
+            requestedHeight = requestedWidth * m_width / m_height;
+
+        auto* newData = new ui8[requestedWidth * requestedHeight * m_Bpp];
+        stbir_resize_uint8(m_data, m_width, m_height, 0, newData, requestedWidth, requestedHeight, 0, m_Bpp);
+        delete[] m_data;
+        m_data = newData;
+        m_width = requestedWidth;
+        m_height = requestedHeight;
+        return m_data != nullptr;
+    }
+
+    bool Image::LoadSvg(const String& filename, ui32 requestedWidth, ui32 requestedHeight)
+    {
+        auto data = InFile::GetString(filename);
+        return LoadSvg(reinterpret_cast<const ui8 *>(data.data()), static_cast<ui32>(data.size()), requestedWidth, requestedHeight);
+    }
+
+    bool Image::LoadSvg(const ui8* data, ui32 dataSize, ui32 requestedWidth, ui32 requestedHeight)
+    {
+        Logger::InfoMessage("Loadsvg");
+        auto document = lunasvg::Document::loadFromData(reinterpret_cast<const char*>(data), dataSize);
+        if(!document)
+            return false;
+
+        m_Bpp = 4;
+        m_width = requestedWidth;
+        m_height = requestedHeight;
+        m_data = document->render(m_width, m_height);
+        return m_data != nullptr;
     }
 
     bool Image::LoadWebp(const String &filename) noexcept
@@ -212,6 +261,7 @@ namespace tml
         const auto len = filename.length() - pos;
         const auto str = filename.substr(pos, len);
 
+        /// Doing a bunch of string compares :[
         if(str == ".png")
             return Image::Png;
         else if(str == ".jpg" || str == ".jpeg")
@@ -226,8 +276,9 @@ namespace tml
             return Image::Pic;
         else if(str == ".ppm")
             return Image::Pnm;
+        else if(str == ".svg")
+            return Image::Svg;
 
         return Image::None;
     }
-
 }
