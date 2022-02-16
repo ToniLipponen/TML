@@ -42,3 +42,4 @@ If you're interested in this project, you can help us in a couple different ways
 |David Reid|https://github.com/mackron/miniaudio|miniaudio|Public Domain|
 |Dominic Szablewski|https://github.com/phoboslab/pl_mpeg|pl_mpeg|MIT|
 |David Capello|https://github.com/dacap/clip|clip|MIT|
+|Nwutobo Samuel Ugochukwu|https://github.com/sammycage|lunasvg|MIT|
