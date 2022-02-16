@@ -41,7 +41,7 @@ namespace tml
 
     Font& Font::operator=(const Font& rhs)
     {
-        std::memcpy(m_cdata, rhs.m_cdata, sizeof(stbtt_aligned_quad) * 512);
+        std::memcpy(m_cdata, rhs.m_cdata, sizeof(stbtt_packedchar) * 512);
         std::memcpy(m_bitmap, rhs.m_bitmap, ATLAS_SIZE*ATLAS_SIZE);
         m_texture.LoadFromMemory(ATLAS_SIZE, ATLAS_SIZE, 1, m_bitmap);
         return *this;
