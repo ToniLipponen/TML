@@ -370,10 +370,10 @@ namespace tml
             const float cos_r = std::cos(Math::DegToRad(rotation));
             const float sin_r = std::sin(Math::DegToRad(rotation));
 
-            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos, cos_r), tl, hex, typeAndTex});
-            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos + Vector2f{size.x, 0.f}, cos_r), {br.x, tl.y}, hex, typeAndTex});
-            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos + Vector2f{0.f, size.y}, cos_r), {tl.x, br.y}, hex, typeAndTex});
-            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos + size, cos_r), br, hex, typeAndTex});
+            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos, cos_r, sin_r), tl, hex, typeAndTex});
+            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos + Vector2f{size.x, 0.f}, cos_r, sin_r), {br.x, tl.y}, hex, typeAndTex});
+            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos + Vector2f{0.f, size.y}, cos_r, sin_r), {tl.x, br.y}, hex, typeAndTex});
+            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos + size, cos_r, sin_r), br, hex, typeAndTex});
         }
         else
         {
