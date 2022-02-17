@@ -7,15 +7,15 @@ namespace tml
 {
     namespace Interface
     {
-        class DropMenu : public BaseComponent
+        class Dropmenu : public BaseComponent
         {
         public:
-            DropMenu(i32 x, i32 y, ui32 width, ui32 height = 20);
-            void AddValue(std::string value);
-            void SetValue(ui32 index, std::string value);
+            Dropmenu(i32 x, i32 y, ui32 width, ui32 height = 20);
+            void AddValue(String value);
+            void SetValue(ui32 index, String value);
             i32 GetSelectedIndex() const;
-            std::string GetValue(ui32 index);
-            std::string GetSelectedValue() const;
+            String GetValue(ui32 index);
+            String GetSelectedValue() const;
             void Clear();
         private:
             void Draw(RenderWindow& renderWindow) override;

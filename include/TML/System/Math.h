@@ -30,6 +30,14 @@ namespace tml
         }
 
         template<typename T>
+        inline constexpr Vector2<T> Rotate(const Vector2<T>& origin, Vector2<T> p, float cos_r, float sin_r) noexcept
+        {
+            p -= origin;
+            return {origin.x + p.x * cos_r - p.y * sin_r,
+                    origin.y + p.x * sin_r + p.y * cos_r};
+        }
+
+        template<typename T>
         inline constexpr T Clamp(T value, T min, T max) noexcept
         {
             if(value > max)

@@ -64,7 +64,7 @@ namespace tml
     void Text::Generate() noexcept
     {
         m_dimensions = Vector2f{0, m_size.y};
-        float x = 0, y = 64.0 - (64.0 / 3.0);
+        float x = 0, y = 48; //64.0 - (64.0 / 3.0);
         float width = 0, height = 0;
         ui32 count = 0;
         m_vertexData.clear();
@@ -85,7 +85,7 @@ namespace tml
                 case '\n':
                     m_dimensions.x = Math::Max(width, m_dimensions.x);
                     m_dimensions.y = Math::Max(height+m_size.x+m_lineSpacing, m_dimensions.y);
-                    y += 48 + m_lineSpacing;
+                    y += 64.0 - (64.0 / 3.0) + m_lineSpacing;
                     x = 0;
                     width = 0;
                     break;
@@ -104,10 +104,10 @@ namespace tml
                     q.y0 = ceilf(q.y0);
                     q.y1 = ceilf(q.y1);
 
-                    m_vertexData.push_back({{q.x0, q.y0}, {q.s0, q.t0}, hex, 0, Vertex::TEXT});
-                    m_vertexData.push_back({{q.x1, q.y0}, {q.s1, q.t0}, hex, 0, Vertex::TEXT});
-                    m_vertexData.push_back({{q.x0, q.y1}, {q.s0, q.t1}, hex, 0, Vertex::TEXT});
-                    m_vertexData.push_back({{q.x1, q.y1}, {q.s1, q.t1}, hex, 0, Vertex::TEXT});
+                    m_vertexData.push_back({{q.x0, q.y0}, {q.s0, q.t0}, hex, Vertex::TEXT});
+                    m_vertexData.push_back({{q.x1, q.y0}, {q.s1, q.t0}, hex, Vertex::TEXT});
+                    m_vertexData.push_back({{q.x0, q.y1}, {q.s0, q.t1}, hex, Vertex::TEXT});
+                    m_vertexData.push_back({{q.x1, q.y1}, {q.s1, q.t1}, hex, Vertex::TEXT});
 
                     m_indexData.push_back(count + 0);
                     m_indexData.push_back(count + 1);

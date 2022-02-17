@@ -1,25 +1,37 @@
 #include <TML/Interface/Components/Button.h>
+#include <utility>
 
 using namespace tml::Interface;
 
-Button::Button(i32 x, i32 y, ui32 w, ui32 h, std::string str, UIFunc onClick)
+Button::Button(const std::string& text, i32 x, i32 y, ui32 w, ui32 h, const UIFunc& onClick, bool expand)
 : BaseComponent(x,y,w,h)
 {
-    m_hSizePolicy = SizePolicy::Expand;
+    m_hSizePolicy = expand ? SizePolicy::Expand : SizePolicy::Clamp;
     m_vSizePolicy = SizePolicy::Clamp;
-    m_text.SetString(str);
-    m_text.SetSize(h*0.6);
+    m_text.SetString(text);
     m_text.SetColor(Color::Black);
+    if(w == 0)
+    {
+        m_text.SetSize(20);
+        m_size = m_text.GetDimensions() + Vector2f(10, 0);
+        m_originalSize = m_size;
+    }
+    else
+    {
+        m_text.SetSize(h*0.8f);
+    }
 
     const Vector2i textSize = m_text.GetDimensions();
     m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
-    if(onClick)
-        AddListener("Click", std::move(onClick));
 
     AddListener("Click", [&](BaseComponent* c, Event& e)
     {
         UnFocus();
+        e = Event{};
     });
+
+    if(onClick)
+        AddListener("Click", std::move(onClick));
 
     AddListener("MouseUp", [&](BaseComponent* c, Event& e)
     {
@@ -33,6 +45,7 @@ Button::Button(i32 x, i32 y, ui32 w, ui32 h, std::string str, UIFunc onClick)
         {
             Focus();
             m_state.MouseDown = e.mouseButton.button;
+            e = Event{};
         }
         else
             UnFocus();
@@ -46,11 +59,12 @@ Button::Button(i32 x, i32 y, ui32 w, ui32 h, std::string str, UIFunc onClick)
 
     AddListener("Resized", [&](BaseComponent* c, Event& e)
     {
-        m_text.SetSize(e.size.y*0.6);
+        m_text.SetSize(e.size.y*0.8);
         const Vector2i textSize = m_text.GetDimensions();
         m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
     });
 }
+
 
 void Button::SetText(const std::string &str)
 {

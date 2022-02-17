@@ -9,10 +9,11 @@ namespace tml
         class Button : public BaseComponent
         {
         public:
-            Button(i32 x, i32 y, ui32 w, ui32 h, std::string text = "", UIFunc onClick = nullptr);
+            explicit Button(const std::string& text, i32 x = 0, i32 y = 0, ui32 w = 0, ui32 h = 0,
+                            const UIFunc& onClick = nullptr, bool expand = false);
             void SetText(const std::string& str);
             void SetTextSize(float s) { m_text.SetSize(s);}
-            std::string GetText() const { return m_text.GetString(); }
+            inline constexpr const String& GetText() const noexcept { return m_text.GetString(); }
             void SetTextColor(const Color& color){ m_text.SetColor(color); }
         private:
             Text m_text;

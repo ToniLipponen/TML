@@ -5,7 +5,7 @@ namespace tml
 {
     namespace Interface
     {
-        DropMenu::DropMenu(i32 x, i32 y, ui32 width, ui32 height)
+        Dropmenu::Dropmenu(i32 x, i32 y, ui32 width, ui32 height)
         {
             m_pos = Vector2i(x,y);
             m_size = Vector2i(width, height);
@@ -40,40 +40,40 @@ namespace tml
             });
         }
 
-        void DropMenu::AddValue(std::string value)
+        void Dropmenu::AddValue(String value)
         {
             m_listComponent->AddValue(std::move(value));
             m_listComponent->SetSize(Vector2i(m_size.x, m_listComponent->GetElementsCount() * 20.f));
         }
 
-        void DropMenu::SetValue(ui32 index, std::string value)
+        void Dropmenu::SetValue(ui32 index, String value)
         {
             m_listComponent->SetValue(index, value);
         }
 
-        std::string DropMenu::GetValue(ui32 index)
+        String Dropmenu::GetValue(ui32 index)
         {
             return m_listComponent->GetValue(index);
         }
 
-        std::string DropMenu::GetSelectedValue() const
+        String Dropmenu::GetSelectedValue() const
         {
             return m_listComponent->GetSelectedValue();
         }
 
-        tml::i32 DropMenu::GetSelectedIndex() const
+        tml::i32 Dropmenu::GetSelectedIndex() const
         {
             return m_listComponent->GetSelectedIndex();
         }
 
-        void DropMenu::Clear()
+        void Dropmenu::Clear()
         {
             m_listComponent->Clear();
         }
 
-        void DropMenu::Draw(RenderWindow& window)
+        void Dropmenu::Draw(RenderWindow& window)
         {
-            std::string selected_value;
+            String selected_value;
             if(m_listComponent)
                 selected_value = m_listComponent->GetSelectedValue();
 
@@ -86,7 +86,6 @@ namespace tml
                 window.DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
             else
                 window.DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
-
         }
     }
 }

@@ -61,7 +61,6 @@ namespace tml
     protected:
         void SetCallbacks();
         std::string m_title;
-        bool m_useVSync = false;
         bool m_shouldClose = false;
         void *m_handle;
     };

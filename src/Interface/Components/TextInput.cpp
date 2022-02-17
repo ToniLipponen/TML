@@ -9,6 +9,9 @@ TextInput::TextInput(i32 x, i32 y, i32 width, i32 height)
     m_size = Vector2i(width, height);
     m_text.SetPosition(m_pos);
     m_text.SetColor(Color::Black);
+    m_text.SetSize(height*0.8f);
+    const Vector2i textSize = m_text.GetDimensions();
+    m_text.SetPosition(m_pos + Vector2i(0, m_size.y / 2.f - textSize.y / 2.f));
     m_cursorPos = Math::Clamp<int>(m_pos.x + 2, m_pos.x, m_pos.x + m_size.x - 4);
 
     m_hSizePolicy = Expand;
@@ -163,6 +166,13 @@ void TextInput::InitListeners()
         m_text.SetPosition(e.move.x, e.move.y);
         m_cursorPos = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
     });
+
+    AddListener("Resized", [&](BaseComponent* c, Event& e)
+    {
+        m_text.SetSize(e.size.y);
+        const Vector2i textSize = m_text.GetDimensions();
+        m_text.SetPosition(m_pos + Vector2i(0, m_size.y / 2.f - textSize.y / 2.f));
+    });
 }
 
 void TextInput::Draw(RenderWindow& window)
@@ -177,11 +187,11 @@ void TextInput::Draw(RenderWindow& window)
             window.DrawLine({m_cursorPos, m_pos.y + (m_size.y / 10.0f)}, {m_cursorPos, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, Color::Black, 0);
 
         window.ResetBounds();
-        window.DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
+        window.DrawGrid(m_pos+Vector2i(1,1), m_size-Vector2i(1,1), 1, 1, m_activeColor, 1);
     }
     else
     {
         window.ResetBounds();
-        window.DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
+        window.DrawGrid(m_pos+Vector2i(1,1), m_size-Vector2i(1,1), 1, 1, m_sColor, 1);
     }
 }

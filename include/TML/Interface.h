@@ -10,7 +10,7 @@
 #include <TML/Interface/Components/Progressbar.h>
 #include <TML/Interface/Components/Scrollbar.h>
 #include <TML/Interface/Components/Spacer.h>
-#include <TML/Interface/Components/WindowContainer.h>
+#include <TML/Interface/Components/Menubar.h>
 #include <TML/Interface/Components/Viewport.h>
 
 #include <TML/Interface/Layouts/VerticalLayout.h>

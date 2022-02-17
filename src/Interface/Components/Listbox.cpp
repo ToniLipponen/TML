@@ -79,7 +79,7 @@ namespace tml
             });
         }
 
-        void Listbox::AddValue(std::string value)
+        void Listbox::AddValue(String value)
         {
             m_values.push_back(std::move(value));
             const auto overflow = GetOverFlow();
@@ -92,7 +92,7 @@ namespace tml
                 m_scrollbar->Disable();
         }
 
-        void Listbox::SetValue(ui32 index, std::string value)
+        void Listbox::SetValue(ui32 index, String value)
         {
             if(index > m_values.size() - 1)
                 return;
@@ -100,15 +100,15 @@ namespace tml
                 m_values.at(index) = std::move(value);
         }
 
-        std::string Listbox::GetValue(ui32 index)
+        String Listbox::GetValue(ui32 index)
         {
             if(index >= m_values.size())
-                return "";
+                return {};
             else
                 return m_values.at(index);
         }
 
-        std::string Listbox::GetSelectedValue() const
+        String Listbox::GetSelectedValue() const
         {
             if(m_selectedIndex > -1 && m_selectedIndex < m_values.size())
             {

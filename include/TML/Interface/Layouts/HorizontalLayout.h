@@ -9,6 +9,7 @@ namespace tml
         class HorizontalLayout : public BaseComponent, public Layout
         {
         public:
+            HorizontalLayout();
             HorizontalLayout(i32 x, i32 y, ui32 w, ui32 h);
 
         private:

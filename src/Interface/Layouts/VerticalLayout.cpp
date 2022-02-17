@@ -32,7 +32,7 @@ namespace tml
         void VerticalLayout::ScaleChildren()
         {
             std::vector<BaseComponent*> expandThese, clampThese;
-            float height = 0, expandSize, clampHeight = 0;
+            float height = 0;
             for(auto& item : m_children)
             {
                 const auto itemSize = item->GetSize();
@@ -43,7 +43,6 @@ namespace tml
                         height += itemSize.y + m_padding.y;
                         break;
                     case Clamp:
-                        clampHeight += itemSize.y + m_padding.y;
                         clampThese.push_back(item);
                         break;
                     default: /// Expand
@@ -66,12 +65,32 @@ namespace tml
                 }
             }
 
+            float heightMinusFixedHeight = Math::Max<float>(m_size.y - height, 0);
+            float expandSize = heightMinusFixedHeight;
+
+            if(!clampThese.empty())
+            {
+                auto multiplier = Math::Max<float>(heightMinusFixedHeight / height, 0);
+                for(auto i : clampThese)
+                {
+                    auto iSize = i->GetSize();
+                    auto iOldSize = i->GetOriginalSize();
+                    auto scale = Math::Clamp<float>(multiplier, 0, iOldSize.y / float(iSize.y));
+                    auto iNewSize = Vector2i(iSize.x, iSize.y * scale);
+                    i->SetSize(iNewSize);
+
+                    expandSize -= iNewSize.y;
+                }
+            }
+
             const auto expandedChildren = expandThese.size();
+            if(expandedChildren != 0)
+            {
+                auto size = Math::Max<float>((expandSize / expandedChildren) - (m_padding.y * m_children.size() / 2), 0);
 
-            expandSize = Math::Max<float>(((m_size.y - height) / expandedChildren) - (m_padding.y * m_children.size() / 2), 0);
-
-            for(auto i : expandThese)
-                i->SetSize({i->GetSize().x, static_cast<int>(expandSize)});
+                for(auto i : expandThese)
+                    i->SetSize(Vector2i(i->GetSize().x, size));
+            }
         }
 
         void VerticalLayout::AlignChildren()

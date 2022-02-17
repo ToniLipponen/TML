@@ -53,10 +53,14 @@ namespace tml
         const Vector2f tl = m_rect.pos / m_texSize;
         const Vector2f br = (m_rect.pos + m_rect.size) / m_texSize;
         const Vector2f origin = (m_pos + m_pos + m_size) * 0.5f;
-        m_vertexData.push_back(Vertex{Math::Rotate(origin, m_pos, m_rotation),                           tl,           0x0, 0, Vertex::TEXTURE});
-        m_vertexData.push_back(Vertex{Math::Rotate(origin, m_pos + Vector2f(m_size.x, 0.f), m_rotation), {br.x, tl.y}, 0x0, 0, Vertex::TEXTURE});
-        m_vertexData.push_back(Vertex{Math::Rotate(origin, m_pos + Vector2f(0.f, m_size.y), m_rotation), {tl.x, br.y}, 0x0, 0, Vertex::TEXTURE});
-        m_vertexData.push_back(Vertex{Math::Rotate(origin, m_pos + m_size, m_rotation),                  br,           0x0, 0, Vertex::TEXTURE});
+
+        const float cos_r = std::cos(Math::DegToRad(m_rotation));
+        const float sin_r = std::sin(Math::DegToRad(m_rotation));
+
+        m_vertexData.push_back(Vertex{Math::Rotate(origin, m_pos, cos_r, sin_r),                           tl,           0x0, Vertex::TEXTURE});
+        m_vertexData.push_back(Vertex{Math::Rotate(origin, m_pos + Vector2f(m_size.x, 0.f), cos_r, sin_r), {br.x, tl.y}, 0x0, Vertex::TEXTURE});
+        m_vertexData.push_back(Vertex{Math::Rotate(origin, m_pos + Vector2f(0.f, m_size.y), cos_r, sin_r), {tl.x, br.y}, 0x0, Vertex::TEXTURE});
+        m_vertexData.push_back(Vertex{Math::Rotate(origin, m_pos + m_size, cos_r, sin_r),                  br,           0x0, Vertex::TEXTURE});
 
         m_indexData.push_back(0);
         m_indexData.push_back(1);

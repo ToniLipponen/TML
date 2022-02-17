@@ -71,7 +71,6 @@ namespace tml
         m_layout->Push(2, 4, BufferLayout::VERTEX_FLOAT);
         m_layout->Push(1, 4, BufferLayout::VERTEX_UNSIGNED_INT);
         m_layout->Push(1, 4, BufferLayout::VERTEX_UNSIGNED_INT);
-        m_layout->Push(1, 4, BufferLayout::VERTEX_UNSIGNED_INT);
 
         m_shader->LoadFromString(VERTEX_STRING, FRAGMENT_STRING);
         m_shader->Bind();
@@ -201,10 +200,10 @@ namespace tml
         const float dx = b.x - a.x;
         const float dy = b.y - a.y;
 
-        m_vertexData.emplace_back(Vertex{((Vector2f(-dy, dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), 0, Vertex::COLOR});
-        m_vertexData.emplace_back(Vertex{((Vector2f(dy, -dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), 0, Vertex::COLOR});
-        m_vertexData.emplace_back(Vertex{((Vector2f(-dy, dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), 0, Vertex::COLOR});
-        m_vertexData.emplace_back(Vertex{((Vector2f(dy, -dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), 0, Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{((Vector2f(-dy, dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{((Vector2f(dy, -dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{((Vector2f(-dy, dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{((Vector2f(dy, -dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), Vertex::COLOR});
 
         m_indexData.push_back(currentElements + 0);
         m_indexData.push_back(currentElements + 1);
@@ -236,7 +235,7 @@ namespace tml
             auto ry = Vector2f{0.f, roundness};
 
             auto hex = color.Hex();
-            const auto slot = PushTexture(m_circleTexture);
+            const ui32 slot = PushTexture(m_circleTexture);
             std::vector<Vertex> cornerVertices;
             std::vector<ui32> cornerIndices = {
                      0, 1, 2,    1, 3, 2,
@@ -247,40 +246,46 @@ namespace tml
                     20,21,22,   20,23,22
             };
 
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos,       rotation), {0.0f,0.0f}, hex, slot, Vertex::TEXT});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+rx,    rotation), {0.5f,0.0f}, hex, slot, Vertex::TEXT});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+ry,    rotation), {0.0f,0.5f}, hex, slot, Vertex::TEXT});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+rx+ry, rotation), {0.5f,0.5f}, hex, slot, Vertex::TEXT});
+            const float cos_r = std::cos(Math::DegToRad(rotation));
+            const float sin_r = std::sin(Math::DegToRad(rotation));
 
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w-rx,   rotation), {0.5f,0.0f}, hex, slot, Vertex::TEXT});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w,      rotation), {1.0f,0.0f}, hex, slot, Vertex::TEXT});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w-rx+ry,rotation), {0.5f,0.5f}, hex, slot, Vertex::TEXT});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+ry,   rotation), {1.0f,0.5f}, hex, slot, Vertex::TEXT});
+            ui32 typeAndTex = slot | Vertex::TEXT;
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos,       cos_r, sin_r), {0.0f,0.0f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+rx,    cos_r, sin_r), {0.5f,0.0f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+ry,    cos_r, sin_r), {0.0f,0.5f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+rx+ry, cos_r, sin_r), {0.5f,0.5f}, hex, typeAndTex});
 
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+h-rx-ry,   rotation), {0.5f,0.5f}, hex, slot, Vertex::TEXT});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+h-ry,      rotation), {1.0f,0.5f}, hex, slot, Vertex::TEXT});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+h-rx,rotation), {0.5f,1.0f}, hex, slot, Vertex::TEXT});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+h,   rotation), {1.0f,1.0f}, hex, slot, Vertex::TEXT});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w-rx,   cos_r, sin_r), {0.5f,0.0f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w,      cos_r, sin_r), {1.0f,0.0f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w-rx+ry,cos_r, sin_r), {0.5f,0.5f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+ry,   cos_r, sin_r), {1.0f,0.5f}, hex, typeAndTex});
 
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+h-ry,       rotation), {0.0f,0.5f}, hex, slot, Vertex::TEXT});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+h+rx-ry,    rotation), {0.5f,0.5f}, hex, slot, Vertex::TEXT});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+h,    rotation), {0.0f,1.0f}, hex, slot, Vertex::TEXT});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+h+rx, rotation), {0.5f,1.0f}, hex, slot, Vertex::TEXT});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+h-rx-ry, cos_r, sin_r), {0.5f,0.5f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+h-ry,    cos_r, sin_r), {1.0f,0.5f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+h-rx,    cos_r, sin_r), {0.5f,1.0f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+w+h,       cos_r, sin_r), {1.0f,1.0f}, hex, typeAndTex});
 
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+h-ry,    cos_r, sin_r), {0.0f,0.5f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+h+rx-ry, cos_r, sin_r), {0.5f,0.5f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+h,       cos_r, sin_r), {0.0f,1.0f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+h+rx,    cos_r, sin_r), {0.5f,1.0f}, hex, typeAndTex});
+
+
+            typeAndTex = slot | Vertex::COLOR;
             // top rect
             auto pos2 = pos + rx;
             auto size = w+ry-rx-rx;
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2,                     rotation), {0.0f,0.5f}, hex, slot, Vertex::COLOR});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2+Vector2f(size.x, 0), rotation), {0.5f,0.5f}, hex, slot, Vertex::COLOR});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2+size,                rotation), {0.5f,1.0f}, hex, slot, Vertex::COLOR});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2+Vector2f(0, size.y), rotation), {0.0f,1.0f}, hex, slot, Vertex::COLOR});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2,                     cos_r, sin_r), {0.0f,0.5f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2+Vector2f(size.x, 0), cos_r, sin_r), {0.5f,0.5f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2+size,                cos_r, sin_r), {0.5f,1.0f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2+Vector2f(0, size.y), cos_r, sin_r), {0.0f,1.0f}, hex, typeAndTex});
 
             // bottom rect
             auto pos3 = pos + Vector2f(0,dimensions.y) + rx - ry;
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3,                     rotation), {0.0f,0.5f}, hex, slot, Vertex::COLOR});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3+Vector2f(size.x, 0), rotation), {0.5f,0.5f}, hex, slot, Vertex::COLOR});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3+size,                rotation), {0.5f,1.0f}, hex, slot, Vertex::COLOR});
-            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3+Vector2f(0, size.y), rotation), {0.0f,1.0f}, hex, slot, Vertex::COLOR});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3,                     cos_r, sin_r), {0.0f,0.5f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3+Vector2f(size.x, 0), cos_r, sin_r), {0.5f,0.5f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3+size,                cos_r, sin_r), {0.5f,1.0f}, hex, typeAndTex});
+            cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3+Vector2f(0, size.y), cos_r, sin_r), {0.0f,1.0f}, hex, typeAndTex});
 
             PushQuad(pos+ry, dimensions-ry-ry, color, m_circleTexture, Vertex::COLOR, rotation);
             PushVertexData(cornerVertices, cornerIndices);
@@ -357,20 +362,25 @@ namespace tml
 
         currentElements = m_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the m_vertexData.size() again
 
+        const ui32 typeAndTex = tex | type;
         if(rotation != 0)
         {
             const Vector2f origin = (pos + pos + size) * 0.5f;
-            m_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos, rotation), tl, hex, tex, type});
-            m_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos + Vector2f{size.x, 0.f}, rotation), {br.x, tl.y}, hex, tex, type});
-            m_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos + Vector2f{0.f, size.y}, rotation), {tl.x, br.y}, hex, tex, type});
-            m_vertexData.emplace_back(Vertex{Math::Rotate(origin, pos + size, rotation), br, hex, tex, type});
+
+            const float cos_r = std::cos(Math::DegToRad(rotation));
+            const float sin_r = std::sin(Math::DegToRad(rotation));
+
+            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos, cos_r), tl, hex, typeAndTex});
+            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos + Vector2f{size.x, 0.f}, cos_r), {br.x, tl.y}, hex, typeAndTex});
+            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos + Vector2f{0.f, size.y}, cos_r), {tl.x, br.y}, hex, typeAndTex});
+            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos + size, cos_r), br, hex, typeAndTex});
         }
         else
         {
-            m_vertexData.emplace_back(Vertex{pos, tl, hex, tex, type});
-            m_vertexData.emplace_back(Vertex{pos + Vector2f{size.x, 0.f}, {br.x, tl.y}, hex, tex, type});
-            m_vertexData.emplace_back(Vertex{pos + Vector2f{0.f, size.y}, {tl.x, br.y}, hex, tex, type});
-            m_vertexData.emplace_back(Vertex{pos + size, br, hex, tex, type});
+            m_vertexData.push_back(Vertex{pos, tl, hex, typeAndTex});
+            m_vertexData.push_back(Vertex{pos + Vector2f{size.x, 0.f}, {br.x, tl.y}, hex, typeAndTex});
+            m_vertexData.push_back(Vertex{pos + Vector2f{0.f, size.y}, {tl.x, br.y}, hex, typeAndTex});
+            m_vertexData.push_back(Vertex{pos + size, br, hex, typeAndTex});
         }
 
         m_indexData.push_back(currentElements + 0);
@@ -437,7 +447,7 @@ namespace tml
     {
         const ui32 slot = PushTexture(tex);
         for(Vertex& i : vertices)
-            i.tex = slot;
+            i.texAndType = slot | i.texAndType;
         PushVertexData(vertices, indices);
     }
 

@@ -1,4 +1,3 @@
-#pragma once
 #include <TML/Graphics/Drawable/Shape.h>
 #include <TML/System/Math.h>
 
@@ -94,7 +93,7 @@ namespace tml
         {
             for(auto& i : m_points)
             {
-                m_vertexData.push_back(Vertex{i.pos+m_pos, {0, 0}, i.color.Hex(), 0, Vertex::COLOR});
+                m_vertexData.push_back(Vertex{i.pos+m_pos, {0, 0}, i.color.Hex(), Vertex::COLOR});
             }
         }
         else
@@ -106,9 +105,12 @@ namespace tml
             }
             const Vector2f origin = sum / m_points.size();
 
+            const float cos_r = std::cos(Math::DegToRad(m_rotation));
+            const float sin_r = std::sin(Math::DegToRad(m_rotation));
+
             for(auto& i : m_points)
             {
-                m_vertexData.push_back(Vertex{Math::Rotate(origin, i.pos+m_pos, m_rotation), {0, 0}, i.color.Hex(), 0, Vertex::COLOR});
+                m_vertexData.push_back(Vertex{Math::Rotate(origin, i.pos+m_pos, cos_r, sin_r), {0, 0}, i.color.Hex(), Vertex::COLOR});
             }
         }
 

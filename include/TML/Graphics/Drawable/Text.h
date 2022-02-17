@@ -16,9 +16,7 @@ namespace tml
         void SetSpacing(float spacing);
         void SetKerning(float kerning);
 
-        std::string GetString() const noexcept { return m_string.cpp_str(); }
-        tiny_utf8::utf8_string GetUtf8String() { return m_string; }
-
+        inline constexpr const String& GetString() const noexcept { return m_string; }
         inline constexpr Vector2f GetDimensions() const noexcept { return m_dimensions; }
         friend class Renderer;
 

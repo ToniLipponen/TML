@@ -15,6 +15,9 @@ namespace tml
             m_text.SetPosition(m_pos);
             m_text.SetColor(Color::Black);
             m_text.SetString(m_valueStr);
+            m_text.SetSize(h);
+            const Vector2i textSize = m_text.GetDimensions();
+            m_text.SetPosition(m_pos + Vector2i(0, m_size.y / 2.f - textSize.y / 2));
             m_hSizePolicy = Expand;
 
             AddListener("MouseDown", [&](BaseComponent* c, Event& e)
@@ -105,6 +108,12 @@ namespace tml
             {
                 m_text.SetPosition(e.move.x, e.move.y);
             });
+            AddListener("Resized", [&](BaseComponent* c, Event& e)
+            {
+                m_text.SetSize(e.size.y);
+                const Vector2i textSize = m_text.GetDimensions();
+                m_text.SetPosition(m_pos + Vector2i(0, m_size.y / 2.f - textSize.y / 2));
+            });
         }
 
         template<typename T>
@@ -142,12 +151,12 @@ namespace tml
         template<typename T>
         void NumericInput<T>::Draw(RenderWindow& window)
         {
-            float cursorX = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x);
+            const auto cursorX = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x);
             const Vector2i pos = m_pos + Vector2i(1,1);
-            const Vector2i size = m_size - Vector2i(2,2);
+            const Vector2i size = m_size - Vector2i(1,1);
 
-            window.DrawRect(m_pos, m_size, m_pColor);
-            window.SetBounds(m_pos, m_size);
+            window.DrawRect(pos, size, m_pColor);
+            window.SetBounds(pos, size);
             window.Draw(m_text);
 
             if(m_state.Focused)

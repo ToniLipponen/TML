@@ -241,10 +241,6 @@ namespace tml
                     CallUIFunc("TextEntered", event);
                     break;
 
-                case Event::EventType::WindowResized:
-                    CallUIFunc("WindowResized", event);
-                    break;
-
                 case Event::EventType::Null:
                     break;
             }
@@ -265,6 +261,18 @@ namespace tml
 
             if(!m_processStack.empty())
             {
+                /// This needs to be done here & not in item->ProcessEvents(event, delta);
+                /// Because this event should not be missed even if the component is disabled.
+                if(event.type == Event::EventType::WindowResized)
+                {
+                    CallUIFunc("WindowResized", event);
+                    for(i64 i = m_processStack.size() - 1; i >= 0; --i)
+                    {
+                        auto* item = m_processStack.at(i);
+                        item->CallUIFunc("WindowResized", event);
+                    }
+                }
+
                 for(i64 i = m_processStack.size() - 1; i >= 0; --i)
                 {
                     auto* item = m_processStack.at(i);

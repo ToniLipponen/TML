@@ -31,10 +31,12 @@ namespace tml
         m_vertexData.clear();
         m_indexData.clear();
 
-        m_vertexData.emplace_back(Vertex{Math::Rotate(origin, m_pos, m_rotation),                          {0.f, 0.f}, col, 0, Vertex::COLOR});
-        m_vertexData.emplace_back(Vertex{Math::Rotate(origin, m_pos + Vector2f(m_size.x, 0.f), m_rotation),{1.f, 0.f}, col, 0, Vertex::COLOR});
-        m_vertexData.emplace_back(Vertex{Math::Rotate(origin, m_pos + Vector2f(0.f, m_size.y), m_rotation),{0.f, 1.f}, col, 0, Vertex::COLOR});
-        m_vertexData.emplace_back(Vertex{Math::Rotate(origin, m_pos + m_size, m_rotation),                 {1.f, 1.f}, col, 0, Vertex::COLOR});
+        const float cos_r = std::cos(Math::DegToRad(m_rotation));
+        const float sin_r = std::sin(Math::DegToRad(m_rotation));
+        m_vertexData.emplace_back(Vertex{Math::Rotate(origin, m_pos, cos_r, sin_r),                          {0.f, 0.f}, col, Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{Math::Rotate(origin, m_pos + Vector2f(m_size.x, 0.f), cos_r, sin_r),{1.f, 0.f}, col, Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{Math::Rotate(origin, m_pos + Vector2f(0.f, m_size.y), cos_r, sin_r),{0.f, 1.f}, col, Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{Math::Rotate(origin, m_pos + m_size, cos_r, sin_r),                 {1.f, 1.f}, col, Vertex::COLOR});
 
         m_indexData.push_back(0);
         m_indexData.push_back(1);

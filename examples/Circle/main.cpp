@@ -13,7 +13,6 @@ int main()
 
         window.Clear();
         window.DrawCircle(window.GetSize() / 2, 100, Color::Red);
-        window.DrawLine(100, Mouse::GetPosition(), 10, Color::Red, false);
         window.Display();
     }
     return 0;

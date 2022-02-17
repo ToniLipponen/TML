@@ -1,4 +1,5 @@
-#include "TML/Window/Window.h"
+#include <TML/Window/Window.h>
+#include <TML/System/Image.h>
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -7,7 +8,6 @@
 #include "_Assert.h"
 
 #include "Logo.h" /// Logo data
-#include "TML/System/Image.h"
 #include <cstring>
 
 void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);
@@ -35,7 +35,6 @@ namespace tml
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         #endif
 
-        m_useVSync = (settings & Settings::VSync) != 0;
         glfwWindowHint(GLFW_DECORATED,      (settings & Settings::NoTopBar)     == 0);
         glfwWindowHint(GLFW_RESIZABLE,      (settings & Settings::Resizeable)   != 0);
         glfwWindowHint(GLFW_MAXIMIZED,      (settings & Settings::Maximized)    != 0);
@@ -59,6 +58,7 @@ namespace tml
         img.height = image.GetHeight();
         img.pixels = image.GetData();
         glfwSetWindowIcon(handle, 1, &img);
+        SetSizeLimits(100,100,9000,9000);
     }
 
     Window::~Window()

@@ -7,8 +7,7 @@ R"END(
 layout (location = 0) in vec2 Pos;
 layout (location = 1) in vec2 UV;
 layout (location = 2) in uint Color;
-layout (location = 3) in uint Tex;
-layout (location = 4) in uint Type;
+layout (location = 3) in uint TypeAndTex;
 
 out vec4 vColor;
 out vec2 vUV;
@@ -31,8 +30,9 @@ void main()
         ((Color & 0x0000ff00) >> 8),
         ((Color & 0x000000ff))) * 0.003921568;
     vUV = UV;
-    vTexID = Tex;
-    vType = Type;
+
+    vTexID = TypeAndTex & 0x0000ffff;
+    vType = (TypeAndTex & 0xffff0000) >> 16;
 }
 )END";
 
@@ -170,8 +170,7 @@ R"END(
 layout (location = 0) in vec2 Pos;
 layout (location = 1) in vec2 UV;
 layout (location = 2) in uint Color;
-layout (location = 3) in uint Tex;
-layout (location = 4) in uint Type;
+layout (location = 3) in uint TypeAndTex;
 
 out vec4  vColor;
 out vec2  vUV;
@@ -195,8 +194,8 @@ void main()
         ((Color & uint(0x0000ff00)) >> 8),
         ((Color & uint(0x000000ff)))) * 0.003921568;
     vUV = UV;
-    vTexID = Tex;
-    vType = Type;
+    vTexID = TypeAndTex & 0x0000ffff;
+    vType = (TypeAndTex & 0xffff0000) >> 16;
     vViewSize = uViewSize;
 }
 )END";
