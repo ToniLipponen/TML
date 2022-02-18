@@ -122,6 +122,7 @@ namespace tml
         return {x * static_cast<T>(rhs.x), y * static_cast<T>(rhs.y)};
     }
 
+
     template<typename T>
     template<typename R>
     inline constexpr Vector2<T> Vector2<T>::operator+(const R rhs) const noexcept

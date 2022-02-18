@@ -1,5 +1,5 @@
 #pragma once
-#include "TML/Types.h"
+#include <TML/Types.h>
 #include <TML/Graphics/Core/Texture.h>
 
 namespace tml

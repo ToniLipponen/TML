@@ -8,7 +8,7 @@ namespace tml
     class ComputeShader : public Shader
     {
     public:
-        ComputeShader() = default;
+        ComputeShader();
         bool LoadFromFile(const String& filename) noexcept;
         bool LoadFromString(const String& source) noexcept;
         void ConnectBuffer(const String& name, ui32 index, StorageBuffer& buffer);

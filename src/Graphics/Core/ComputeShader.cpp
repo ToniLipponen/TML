@@ -5,6 +5,15 @@
 
 namespace tml
 {
+    ComputeShader::ComputeShader()
+    {
+        #ifdef TML_USE_GLES
+            Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+            Logger::InfoMessage("Exiting now.");
+            exit(80085);
+        #endif
+    }
+
     bool ComputeShader::LoadFromFile(const String &filename) noexcept
     {
         InFile file;
@@ -64,7 +73,9 @@ namespace tml
     void ComputeShader::ConnectBuffer(const String &name, ui32 index, StorageBuffer& buffer)
     {
         const ui32 block_index = GL_CALL(glGetProgramResourceIndex(m_id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
-        GL_CALL(glShaderStorageBlockBinding(m_id, block_index, index));
+        #ifndef TML_USE_GLES
+            GL_CALL(glShaderStorageBlockBinding(m_id, block_index, index));
+        #endif
         buffer.BindBufferBase(index);
     }
 

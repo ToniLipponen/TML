@@ -190,8 +190,8 @@ void main()
         ((Color & uint(0x0000ff00)) >> 8),
         ((Color & uint(0x000000ff)))) * 0.003921568;
     vUV = UV;
-    vTexID = TypeAndTex & 0x0000ffff;
-    vType = (TypeAndTex & 0xffff0000) >> 16;
+    vTexID = (TypeAndTex & uint(0x0000ffff));
+    vType = (TypeAndTex & uint(0xffff0000)) >> 16;
     vViewSize = uViewSize;
 }
 )END";

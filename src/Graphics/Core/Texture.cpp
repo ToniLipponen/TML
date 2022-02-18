@@ -1,4 +1,5 @@
 #include <TML/Graphics/Core/Texture.h>
+#include <TML/Graphics/Core/RenderTarget.h>
 #include "GLHeader.h"
 #include "GlDebug.h"
 
@@ -64,13 +65,21 @@ namespace tml
         Generate();
     }
 
-    void Texture::GetData(Image& image) const noexcept
+    void Texture::GetData(Image& image) noexcept
     {
         // Doing it like this to avoid one malloc and one copy.
         image.LoadFromMemory(m_width, m_height, 4, nullptr);
         auto* imgData = image.GetData();
         Bind();
-        GL_CALL(glad_glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData));
+
+        #ifndef TML_USE_GLES
+            GL_CALL(glad_glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData));
+        #else
+            RenderTarget target;
+            target.AttachTexture((*this));
+            target.Bind();
+            GL_CALL(glad_glReadPixels(0, 0, m_width, m_height, GL_RGBA, GL_UNSIGNED_BYTE, imgData));
+        #endif
     }
 
     inline void Texture::Generate() const noexcept

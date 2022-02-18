@@ -24,14 +24,14 @@ namespace tml
     void StorageBuffer::BufferData(const void* data, ui32 size) noexcept
     {
         Bind();
-        GL_CALL(glad_glBufferData(GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_COPY));
+        GL_CALL(glad_glBufferData(GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_READ));
     }
 
     void StorageBuffer::UpdateData(const void *data, ui32 bytes) noexcept
     {
         Bind();
-        void* p = GL_CALL(glad_glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY));
-        if(p)
+        void* p = GL_CALL(glad_glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, bytes, GL_MAP_WRITE_BIT));
+        if(p && data)
             std::memcpy(p, data, bytes);
         GL_CALL(glad_glUnmapBuffer(GL_SHADER_STORAGE_BUFFER));
     }
@@ -39,7 +39,7 @@ namespace tml
     void StorageBuffer::RetrieveData(void *data, ui32 bytes) noexcept
     {
         Bind();
-        void* p = GL_CALL(glad_glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY));
+        void* p = GL_CALL(glad_glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, bytes, GL_MAP_READ_BIT));
         if(data && p)
             std::memcpy(data, p, bytes);
         GL_CALL(glad_glUnmapBuffer(GL_SHADER_STORAGE_BUFFER));
