@@ -1,5 +1,7 @@
 #include <TML/Window/Event.h>
 #include <TML/Window/Input.h>
+
+#define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 #include <thread>
 #include <chrono>
