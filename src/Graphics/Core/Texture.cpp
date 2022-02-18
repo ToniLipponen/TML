@@ -73,7 +73,7 @@ namespace tml
         GL_CALL(glad_glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData));
     }
 
-    inline void Texture::Generate() const
+    inline void Texture::Generate() const noexcept
     {
         if(m_id == 0)
             return;

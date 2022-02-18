@@ -20,5 +20,5 @@ namespace tml
     typedef double          f64;
 }
 
-#include "TML/Graphics/Vector2.h"
+#include "TML/System/Math/Vector2.h"
 #include "TML/Graphics/Color.h"

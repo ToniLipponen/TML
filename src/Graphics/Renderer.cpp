@@ -1,4 +1,6 @@
 #include <TML/Graphics/Renderer.h>
+#include <TML/Graphics/Core/Buffers.h>
+#include <TML/Graphics/Core/Shader.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -15,13 +17,29 @@
 
 #include "GlDebug.h"
 #include "_Assert.h"
-#include "TML/Graphics/Core/Buffers.h"
-#include "TML/Graphics/Core/Shader.h"
+
 #include "Shaders.h"
-#include <Circle.h> // Circle texture data
 
 namespace tml
 {
+    void MakeCircle(Image& image, ui32 resolution)
+    {
+        auto* buffer = image.GetData();
+        const auto radius = resolution / 2.0f;
+        const auto center = Vector2f(radius);
+
+        for(auto i = 0; i < resolution; ++i)
+            for(auto j = 0; j < resolution; ++j)
+            {
+                const double dist = Math::Distance(Vector2f(j, i), center);
+
+                if(dist < radius)
+                    buffer[i * resolution + j] = 255;
+                else
+                    buffer[i * resolution + j] = 0;
+            }
+    }
+
     Renderer::Renderer()
     {
         Init();
@@ -76,7 +94,8 @@ namespace tml
         m_shader->Bind();
 
         Image circleImage;
-        circleImage.LoadFromData(CIRCLE.data(), CIRCLE.size());
+        circleImage.LoadFromMemory(4096, 4096, 1, nullptr);
+        MakeCircle(circleImage, 4096);
         m_circleTexture.LoadFromImage(circleImage);
 
         GL_CALL(glEnable(GL_BLEND));

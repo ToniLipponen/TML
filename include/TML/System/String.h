@@ -7,7 +7,7 @@
 
 namespace tml
 {
-    using String = tiny_utf8::utf8_string;
+    using String = utf8_string;
     
     template<typename T>
     inline constexpr T StringToType(const std::string& str)

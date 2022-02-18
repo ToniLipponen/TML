@@ -9,5 +9,5 @@
 #include <TML/Graphics/RenderTexture.h>
 #include <TML/Graphics/RenderWindow.h>
 #include <TML/Graphics/Transformable.h>
-#include <TML/Graphics/Vector2.h>
+#include "TML/System/Math/Vector2.h"
 #include <TML/Window/Window.h>

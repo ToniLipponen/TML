@@ -5,6 +5,7 @@
 
 namespace tml
 {
+    Font* Text::s_defaultFont = nullptr;
     Text::Text()
     {
         m_color = {255,255,255};
@@ -25,7 +26,12 @@ namespace tml
         {
             if(font == "")
             {
-                m_font.LoadFromMemory(DEFAULT_FONT.data(), DEFAULT_FONT.size());
+                if(!s_defaultFont)
+                {
+                    s_defaultFont = new Font;
+                    s_defaultFont->LoadFromMemory(TML_DEFAULT_FONT_DATA, TML_DEFAULT_FONT_LENGTH);
+                }
+                m_font = *s_defaultFont;
             }
             else
                 m_font.LoadFromFile(font.cpp_str());

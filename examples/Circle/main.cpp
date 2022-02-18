@@ -12,7 +12,7 @@ int main()
             window.Close();
 
         window.Clear();
-        window.DrawCircle(window.GetSize() / 2, 100, Color::Red);
+        window.DrawCircle(window.GetSize() / 2, 200, Color::Red);
         window.Display();
     }
     return 0;

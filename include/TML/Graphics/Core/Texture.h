@@ -1,6 +1,6 @@
 #pragma once
 #include "TML/Types.h"
-#include "TML/Graphics/Vector2.h"
+#include "TML/System/Math/Vector2.h"
 #include "TML/System/Image.h"
 #include <string>
 
@@ -44,7 +44,7 @@ namespace tml
         void GetData(Image& image)                 const noexcept;
 
     protected:
-        virtual inline void Generate() const;
+        virtual inline void Generate() const noexcept;
         ClampMode m_clampMode = ClampToEdge;
         Filter m_minFilter = LinearMipmapLinear;
         Filter m_magFilter = LinearMipmapLinear;

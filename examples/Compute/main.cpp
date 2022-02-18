@@ -8,9 +8,8 @@ struct PhysicsData
     std::vector<Vector2f> velocities;
     std::vector<float> radii;
 };
-std::vector<Color> circleColors;
 
-const String shaderSrc = R"END(
+const char* shaderSrc = R"END(
 #version 430 core
 
 layout( local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
@@ -67,13 +66,14 @@ int main()
 {
     RenderWindow window(800, 600, "Compute", Window::Resizeable);
 
+    std::vector<Color> circleColors;
     PhysicsData circles;
     for(auto i = 0; i < 5000; i++)
     {
-        circles.positions.push_back(Vector2f{rand() % 800, rand() % 600});
-        circles.velocities.push_back(Vector2f{(rand() % 500) - 250});
+        circles.positions.emplace_back(rand() % 800, rand() % 600);
+        circles.velocities.emplace_back((rand() % 500) - 250);
         circles.radii.push_back(float(rand() % 20));
-        circleColors.push_back(Color(rand() % 255, rand() % 255, rand() % 255));
+        circleColors.emplace_back(rand() % 255, rand() % 255, rand() % 255);
         circleColors.at(circleColors.size()-1).a = 255;
     }
     StorageBuffer posData, momentData, radData;
@@ -129,7 +129,7 @@ int main()
             auto r = circles.radii.at(i);
             window.DrawCircle(p, r, circleColors.at(i));
         }
-        window.DrawText("FPS: " + std::to_string(int(1.0 / delta)), {10,10}, 40);
+        window.DrawText("FPS: " + std::to_string(int(1.0 / delta)), {0,0}, 30);
         window.Display();
     }
 }

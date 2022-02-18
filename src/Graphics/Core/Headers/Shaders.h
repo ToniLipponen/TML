@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef TML_USE_GLES
-std::string VERTEX_STRING =
+const char* VERTEX_STRING =
 R"END(
 #version 450 core
 layout (location = 0) in vec2 Pos;
@@ -25,18 +25,18 @@ void main()
     gl_Position = uProj * (uScale * vec4(r.xy + (uViewSize*0.5), 0, 1));
 
     vColor = vec4(
-        ((Color & 0xff000000) >> 24),
-        ((Color & 0x00ff0000) >> 16),
-        ((Color & 0x0000ff00) >> 8),
-        ((Color & 0x000000ff))) * 0.003921568;
+        float((Color & 0xff000000) >> 24),
+        float((Color & 0x00ff0000) >> 16),
+        float((Color & 0x0000ff00) >> 8),
+        float((Color & 0x000000ff))) * 0.003921568;
     vUV = UV;
 
-    vTexID = TypeAndTex & 0x0000ffff;
-    vType = (TypeAndTex & 0xffff0000) >> 16;
+    vTexID = uint(TypeAndTex & 0x0000ffff);
+    vType = uint((TypeAndTex & 0xffff0000) >> 16);
 }
 )END";
 
-std::string FRAGMENT_STRING =
+const char* FRAGMENT_STRING =
 R"END(
 #version 450 core
 in vec4 vColor;
@@ -44,10 +44,6 @@ in vec2 vUV;
 flat in uint vTexID;
 flat in uint vType;
 layout (location = 0) out vec4 outColor;
-
-// uniform sampler2D uTextures[32];
-// Ditching sampler array for separate samplers.
-// There are some issues with sampler arrays.
 
 uniform sampler2D uTexture0;
 uniform sampler2D uTexture1;
@@ -164,7 +160,7 @@ void main()
 }
 )END";
 #else
-std::string VERTEX_STRING =
+const char* VERTEX_STRING =
 R"END(
 #version 310 es
 layout (location = 0) in vec2 Pos;
@@ -200,7 +196,7 @@ void main()
 }
 )END";
 
-std::string FRAGMENT_STRING =
+const char* FRAGMENT_STRING =
 R"END(
 #version 310 es
 in mediump vec4 vColor;

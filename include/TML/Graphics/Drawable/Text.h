@@ -35,5 +35,6 @@ namespace tml
         float m_lineSpacing = 0;
         float m_kerning = 0;
         Vector2f m_dimensions;
+        static Font* s_defaultFont;
     };
 }

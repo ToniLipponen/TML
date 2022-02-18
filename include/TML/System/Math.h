@@ -1,5 +1,5 @@
 #pragma once
-#include "TML/Graphics/Vector2.h"
+#include "TML/System/Math/Vector2.h"
 #include <cmath>
 
 namespace tml
