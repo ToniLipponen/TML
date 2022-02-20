@@ -25,7 +25,7 @@ namespace tml
         const auto result = glfwInit();
         TML_ASSERT(result, "Failed to initialize window.");
 
-        #if defined(TML_USE_GLES) && !defined(PLATFORM_WINDOWS)
+        #if defined(TML_USE_GLES)
             glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
@@ -291,10 +291,11 @@ void DragAndDropCallback(GLFWwindow* window, int count, const char** files)
     event.dragAndDrop.paths = new char*[count];
     for(int i = 0; i < count; i++)
     {
-        const auto str = std::string(files[i]);
+        const auto str = tml::String(files[i]);
         const auto len = str.size();
 
-        event.dragAndDrop.paths[i] = new char[len]; /// Using new here
+        event.dragAndDrop.paths[i] = new char[len+1]; /// Using new here
+        event.dragAndDrop.paths[i][len] = 0;
         std::memcpy(event.dragAndDrop.paths[i], str.data(), len);
     }
     event.sender = window;

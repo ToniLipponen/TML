@@ -62,6 +62,7 @@ if(TML_BUILD_EXAMPLES)
     add_subdirectory(examples/Music/)
     add_subdirectory(examples/Raycasting/)
     add_subdirectory(examples/Compute)
+    add_subdirectory(examples/ImageViewer)
 endif()
 
 # Removing TML library file, because it doesn't actually contain anything.

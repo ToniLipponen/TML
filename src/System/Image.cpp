@@ -250,11 +250,13 @@ namespace tml
         String point(".");
 
         ui64 pos = 0;
-        for(pos = filename.length()-1; pos >= 0; --pos)
+        for(pos = filename.length()-1; pos > 0; --pos)
         {
             if(filename.at(pos) == '.')
                 break;
         }
+        if(pos == 0)
+            return Image::None;
 
         const auto len = filename.length() - pos;
         const auto str = filename.substr(pos, len);

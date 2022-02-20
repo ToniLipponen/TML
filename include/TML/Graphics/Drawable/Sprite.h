@@ -17,7 +17,7 @@ namespace tml
     public:
         Sprite();
         void SetRect(const TexRect &r);
-        void LoadFromFile(const std::string& filename);
+        void LoadFromFile(const String& filename);
         void LoadFromImage(const Image& image);
         void SetInterpolation(bool interpolate);
         friend class Renderer;

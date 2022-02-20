@@ -17,7 +17,7 @@ namespace tml
         Generate();
     }
 
-    void Sprite::LoadFromFile(const std::string& filename)
+    void Sprite::LoadFromFile(const String& filename)
     {
         m_img.LoadFromFile(filename);
         m_size = Vector2f(m_img.GetWidth(), m_img.GetHeight());
