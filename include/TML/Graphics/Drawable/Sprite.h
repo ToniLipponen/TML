@@ -1,6 +1,7 @@
 #pragma once
+#include <TML/System/Image.h>
+#include <TML/Graphics/Core/Texture.h>
 #include <TML/Graphics/Drawable/Drawable.h>
-#include "TML/System/Image.h"
 
 namespace tml
 {
@@ -27,6 +28,7 @@ namespace tml
     private:
         Image m_img;
         TexRect m_rect;
+        Texture m_tex;
         Vector2f m_texSize;
     };
 };

@@ -3,8 +3,9 @@
 namespace tml
 {
     Circle::Circle()
+    : Circle({0,0}, 0)
     {
-        Circle({0}, 0);
+
     }
 
     Circle::Circle(const Vector2f &pos, float radius)
@@ -13,14 +14,14 @@ namespace tml
         m_pos = pos;
         m_size = Vector2f{radius, radius};
         m_color = Color(255, 255, 255);
-        Generate();
+        Circle::Generate();
     }
 
     void Circle::SetRadius(float r)
     {
         r = Math::Max(r, 0.1f);
         m_size = Vector2f{r, r};
-        Generate();
+        Circle::Generate();
     }
 
     float Circle::GetRadius() const noexcept
@@ -36,10 +37,22 @@ namespace tml
         m_vertexData.clear();
         m_indexData.clear();
 
-        m_vertexData.push_back(Vertex{topLeft,                    {0.f, 0.f}, hex, Vertex::TEXT});
-        m_vertexData.push_back(Vertex{topLeft + Vector2f(x2, 0.f),{1.f, 0.f}, hex, Vertex::TEXT});
-        m_vertexData.push_back(Vertex{topLeft + Vector2f(0.f, x2),{0.f, 1.f}, hex, Vertex::TEXT});
-        m_vertexData.push_back(Vertex{topLeft + x2,               {1.f, 1.f}, hex, Vertex::TEXT});
+        if(m_rotation != 0)
+        {
+            const float cos_r = std::cos(Math::DegToRad(m_rotation));
+            const float sin_r = std::sin(Math::DegToRad(m_rotation));
+            m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, topLeft, cos_r, sin_r),                    {0.f, 0.f}, hex, Vertex::TEXT});
+            m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, topLeft + Vector2f(x2, 0.f), cos_r, sin_r),{1.f, 0.f}, hex, Vertex::TEXT});
+            m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, topLeft + Vector2f(0.f, x2), cos_r, sin_r),{0.f, 1.f}, hex, Vertex::TEXT});
+            m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, topLeft + x2, cos_r, sin_r),               {1.f, 1.f}, hex, Vertex::TEXT});
+        }
+        else
+        {
+            m_vertexData.push_back(Vertex{topLeft,                    {0.f, 0.f}, hex, Vertex::TEXT});
+            m_vertexData.push_back(Vertex{topLeft + Vector2f(x2, 0.f),{1.f, 0.f}, hex, Vertex::TEXT});
+            m_vertexData.push_back(Vertex{topLeft + Vector2f(0.f, x2),{0.f, 1.f}, hex, Vertex::TEXT});
+            m_vertexData.push_back(Vertex{topLeft + x2,               {1.f, 1.f}, hex, Vertex::TEXT});
+        }
 
         m_indexData.push_back(0);
         m_indexData.push_back(1);
@@ -49,4 +62,5 @@ namespace tml
         m_indexData.push_back(3);
         m_indexData.push_back(2);
     }
+
 }

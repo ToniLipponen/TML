@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8...3.20)
 project(TML-System)
-set(CMAKE_CXX_STANDARD 14)
 
 add_subdirectory(Clip)
 add_subdirectory(lunasvg)

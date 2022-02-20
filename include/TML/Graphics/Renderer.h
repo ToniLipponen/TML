@@ -6,6 +6,7 @@
 #include <TML/Graphics/Drawable/Text.h>
 #include <TML/Graphics/Drawable/Video.h>
 #include <TML/Graphics/Drawable/Shape.h>
+#include <TML/Graphics/Drawable/Line.h>
 
 namespace tml
 {
@@ -25,14 +26,15 @@ namespace tml
         void ResetBounds() noexcept;
 
         virtual void Clear() noexcept;
-        void Draw(const Rectangle& rectangle) noexcept;
         void Draw(Circle& circle) noexcept;
         void Draw(Sprite& sprite) noexcept;
         void Draw(Text& text) noexcept;
-        void Draw(const Video& video) noexcept; /// @warning You need to call video.Advance() before drawing
+        void Draw(const Rectangle& rectangle) noexcept;
+        void Draw(const Video& video) noexcept; /// @warning You need to call video.Advance() to update the video frame before drawing.
         void Draw(const Shape& shape) noexcept;
+        void Draw(const Line& drawable) noexcept;
 
-        void DrawLine(const Vector2f& a, const Vector2f& b, float thickness, Color color, bool rounded = true) noexcept;
+        void DrawLine(const Vector2f& a, const Vector2f& b, ui32 thickness, Color color, bool rounded = true) noexcept;
         void DrawRect(const Vector2f& pos, const Vector2f& dimensions, const Color& color, float roundness = 0.0f,
                              float rotation = 0.0f) noexcept;
 
@@ -54,7 +56,19 @@ namespace tml
         void DrawGrid(const Vector2f& top_left, const Vector2f& size, ui32 rows, ui32 columns,
                              const Color& color, float thickness = 1.f, bool rounded = false) noexcept;
 
+        /// @brief Does exactly what it says. Just draws a texture on pos with given size.
         void DrawTexture(const Texture& tex, const Vector2f& pos, const Vector2f& size) noexcept;
+
+        /** @brief Draws texture with a given position and size. Rotation happens around the center of the texture. tl and rb are UV coordinates.
+         *
+         * @param tex Texture of your choosing
+         * @param pos Position on the screen.
+         * @param size Size on the screen.
+         * @param rotation Rotation in degrees around the middle point.
+         * @param tl Top left UV coordinate of the texture.
+         * @param br Bottom right UV coordinate of the texture.
+         */
+
         void DrawTextureRect(const Texture& tex, const Vector2f& pos, const Vector2f& size, float rotation, const Vector2f& tl, const Vector2f& br) noexcept;
 
         /** @Brief Draws string of text on pos with a given size.

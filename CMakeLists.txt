@@ -13,13 +13,14 @@ set(GLFW_LIBRARY_TYPE OBJECT)
 set(GLFW_INSTALL no)
 set(GLFW_BUILD_DOCS no)
 set(GLFW_BUILD_TESTS no)
+
+# Set C++ standard
 set(CMAKE_CXX_STANDARD 14)
 
+# SSE3
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
     if(UNIX)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse3")
-    else()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch:SSE3")
+        add_compile_options(-msse3)
     endif()
 endif()
 
@@ -49,7 +50,7 @@ add_subdirectory(src/System)
 add_subdirectory(src/Window)
 
 add_library(TML ${CMAKE_SOURCE_DIR}/src/TOKEN_SOURCE_FILE.cpp ${HEADER_FILES})
-target_link_libraries(TML TML-Audio TML-Graphics TML-Interface TML-System TML-Window)
+target_link_libraries(TML TML-Audio TML-Interface TML-Graphics TML-Window TML-System)
 
 set(CMAKE_INSTALL_PREFIX /usr/)
 install(TARGETS TML-System TML-Graphics TML-Interface TML-Audio DESTINATION /usr/lib)

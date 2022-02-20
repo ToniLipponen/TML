@@ -33,18 +33,6 @@ namespace tml
             return m_pos = {x, y};
         }
 
-        virtual Vector2f Scale(const Vector2f& scale) noexcept
-        {
-            return m_size += scale;
-        }
-
-        virtual Vector2f Scale(float x, float y) noexcept
-        {
-            m_size.x += x;
-            m_size.y += y;
-            return m_size;
-        }
-
         virtual Vector2f SetSize(const Vector2f& size) noexcept
         {
             return this->m_size = size;
@@ -71,9 +59,15 @@ namespace tml
             return m_rotation;
         }
 
+        virtual void SetOrigin(const Vector2f& origin) noexcept
+        {
+            m_origin = origin;
+        }
+
     protected:
         Vector2f m_pos = 0;
         Vector2f m_size = 0;
+        Vector2f m_origin = {0, 0};
         float m_rotation = 0;
     };
 }

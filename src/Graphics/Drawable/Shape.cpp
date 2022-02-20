@@ -98,19 +98,12 @@ namespace tml
         }
         else
         {
-            Vector2f sum = m_pos * m_points.size();
-            for(auto& i : m_points)
-            {
-                sum = sum + i.pos;
-            }
-            const Vector2f origin = sum / m_points.size();
-
             const float cos_r = std::cos(Math::DegToRad(m_rotation));
             const float sin_r = std::sin(Math::DegToRad(m_rotation));
 
             for(auto& i : m_points)
             {
-                m_vertexData.push_back(Vertex{Math::Rotate(origin, i.pos+m_pos, cos_r, sin_r), {0, 0}, i.color.Hex(), Vertex::COLOR});
+                m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, i.pos+m_pos, cos_r, sin_r), {0, 0}, i.color.Hex(), Vertex::COLOR});
             }
         }
 

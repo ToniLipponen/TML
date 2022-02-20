@@ -1,7 +1,6 @@
 #include <TML/Graphics/RenderWindow.h>
-#include "Core/Headers/GLHeader.h"
-#include "TML/Graphics/Core/Buffers.h"
-#include "TML/Graphics/Core/Shader.h"
+#include <TML/Graphics/Core/Buffers.h>
+#include <TML/Graphics/Core/Shader.h>
 #include <GLFW/glfw3.h>
 
 namespace tml
@@ -12,14 +11,12 @@ namespace tml
 
     }
 
-    RenderWindow::~RenderWindow() = default;
-
     void RenderWindow::Clear() noexcept
     {
         auto* handle = static_cast<GLFWwindow*>(m_handle);
         if(handle == glfwGetCurrentContext())
             glfwMakeContextCurrent(handle);
-        Renderer::SetViewport({0,0}, {GetWidth(),GetHeight()});
+        Renderer::SetViewport({0,0}, GetSize());
         Renderer::Clear();
     }
 

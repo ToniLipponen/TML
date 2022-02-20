@@ -207,7 +207,12 @@ namespace tml
         PushVertexData(shape.m_vertexData, shape.m_indexData);
     }
 
-    void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, float thickness, Color color, bool rounded) noexcept
+    void Renderer::Draw(const Line& drawable) noexcept
+    {
+        PushVertexData(drawable.m_vertexData, drawable.m_indexData);
+    }
+
+    void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, ui32 thickness, Color color, bool rounded) noexcept
     {
         ui32 currentElements = m_vertexData.size();
         if(currentElements >= MAX_VERTEX_COUNT - 4)
@@ -218,11 +223,13 @@ namespace tml
         // dx and dy for normals
         const float dx = b.x - a.x;
         const float dy = b.y - a.y;
+        const auto dirA = (Vector2f(-dy, dx).Normalized() * thickness * 0.5);
+        const auto dirB = (Vector2f(dy, -dx).Normalized() * thickness * 0.5);
 
-        m_vertexData.emplace_back(Vertex{((Vector2f(-dy, dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), Vertex::COLOR});
-        m_vertexData.emplace_back(Vertex{((Vector2f(dy, -dx).Normalized() * thickness * 0.5) + a), {0, 0}, color.Hex(), Vertex::COLOR});
-        m_vertexData.emplace_back(Vertex{((Vector2f(-dy, dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), Vertex::COLOR});
-        m_vertexData.emplace_back(Vertex{((Vector2f(dy, -dx).Normalized() * thickness * 0.5) + b), {0, 0}, color.Hex(), Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{(dirA + a), {0, 0}, color.Hex(), Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{(dirB + a), {0, 0}, color.Hex(), Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{(dirA + b), {0, 0}, color.Hex(), Vertex::COLOR});
+        m_vertexData.emplace_back(Vertex{(dirB + b), {0, 0}, color.Hex(), Vertex::COLOR});
 
         m_indexData.push_back(currentElements + 0);
         m_indexData.push_back(currentElements + 1);
@@ -232,7 +239,7 @@ namespace tml
         m_indexData.push_back(currentElements + 3);
         m_indexData.push_back(currentElements + 2);
 
-        if(rounded) // Doesn't work well with translucent colors. Might do something to fix this in some point. TODO
+        if(rounded) /// Doesn't work well with translucent colors. Might do something to fix this in some point. TODO
         {
             Renderer::DrawCircle(a, thickness * 0.5f, color);
             Renderer::DrawCircle(b, thickness * 0.5f, color);
@@ -246,6 +253,8 @@ namespace tml
         else
         {
             roundness = Math::Clamp<float>(roundness, 0, Math::Min(dimensions.y, dimensions.x) / 2);
+
+            /// Todo: Take origin as an argument.
             const Vector2f origin = (pos + pos + dimensions) * 0.5f;
 
             auto w = Vector2f{dimensions.x, 0.f};
@@ -332,11 +341,13 @@ namespace tml
                               const Color& color, bool rounded, float step) noexcept
     {
         Vector2f begin = a;
-        for(float i = 0; i < 1.f; i += step)
+        float i = 0;
+        while(i < 1)
         {
             const Vector2f end = Math::Quadratic(a,cp,b,i);
             DrawLine(begin, end, thickness, color, rounded);
             begin = end;
+            i += step;
         }
     }
 
@@ -439,7 +450,7 @@ namespace tml
 
         return index;
     }
-
+/// Windows annoyingly #defines DrawText
 #ifdef PLATFORM_WINDOWS
     #undef DrawText
 #endif
@@ -477,7 +488,7 @@ namespace tml
         for(i32 i = 0; i < m_textures.size(); i++)
             m_shader->Uniform1i("uTexture" + std::to_string(i), i);
 
-        if(flip)
+        if(flip) /// Flip the view vertically. This is for RenderTexture.
             m_view[5] = -m_view[5];
 
         m_shader->Uniform2f("uViewSize", m_viewport.size.x, m_viewport.size.y);
@@ -496,7 +507,7 @@ namespace tml
         GL_CALL(glad_glDrawElements(GL_TRIANGLES, m_indexBuffer->Elements(), GL_UNSIGNED_INT, nullptr));
         Renderer::BeginBatch();
 
-        if(flip)
+        if(flip) /// Flip the view vertically. This is for RenderTexture.
             m_view[5] = -m_view[5];
     }
 
