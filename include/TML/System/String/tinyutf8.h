@@ -109,7 +109,7 @@
 inline
 #endif
 
-namespace tiny_utf8
+namespace tml //tiny_utf8
 {
 	// Forward Declaration
 	template<
@@ -713,14 +713,14 @@ namespace tiny_utf8
 		typedef raw_codepoint_reference<basic_string, true> 				raw_checked_reference;
 		typedef const value_type&											const_reference;
 		typedef std::uint_fast8_t											width_type; // Data type capable of holding the number of code units in a codepoint
-		typedef tiny_utf8::iterator<basic_string, false>					iterator;
-		typedef tiny_utf8::const_iterator<basic_string, false>				const_iterator;
-		typedef tiny_utf8::reverse_iterator<basic_string, false>			reverse_iterator;
-		typedef tiny_utf8::const_reverse_iterator<basic_string, false>		const_reverse_iterator;
-		typedef tiny_utf8::iterator<basic_string, true>						raw_iterator;
-		typedef tiny_utf8::const_iterator<basic_string, true>				raw_const_iterator;
-		typedef tiny_utf8::reverse_iterator<basic_string, true>				raw_reverse_iterator;
-		typedef tiny_utf8::const_reverse_iterator<basic_string, true>		raw_const_reverse_iterator;
+		typedef tml::iterator<basic_string, false>					iterator;
+		typedef tml::const_iterator<basic_string, false>				const_iterator;
+		typedef tml::reverse_iterator<basic_string, false>			reverse_iterator;
+		typedef tml::const_reverse_iterator<basic_string, false>		const_reverse_iterator;
+		typedef tml::iterator<basic_string, true>						raw_iterator;
+		typedef tml::const_iterator<basic_string, true>				raw_const_iterator;
+		typedef tml::reverse_iterator<basic_string, true>				raw_reverse_iterator;
+		typedef tml::const_reverse_iterator<basic_string, true>		raw_const_reverse_iterator;
 		typedef Allocator													allocator_type;
 		typedef size_type													indicator_type; // Typedef for the lut indicator. Note: Don't change this, because else the buffer will not be a multiple of sizeof(size_type)
 		enum : size_type{													npos = (size_type)-1 };
@@ -2700,10 +2700,10 @@ namespace tiny_utf8
 namespace std
 {
 	template<typename V, typename D, typename A>
-	struct hash<tiny_utf8::basic_string<V, D, A> >
+	struct hash<tml::basic_string<V, D, A> >
 	{
-		std::size_t operator()( const tiny_utf8::basic_string<V, D, A>& string ) const noexcept {
-			using data_type = typename tiny_utf8::basic_string<V, D, A>::data_type;
+		std::size_t operator()( const tml::basic_string<V, D, A>& string ) const noexcept {
+			using data_type = typename tml::basic_string<V, D, A>::data_type;
 			std::hash<data_type>	hasher;
 			std::size_t				size = string.size();
 			std::size_t				result = 0;
@@ -2717,11 +2717,11 @@ namespace std
 
 //! Stream Operations
 template<typename V, typename D, typename A>
-std::ostream& operator<<( std::ostream& stream , const tiny_utf8::basic_string<V, D, A>& str ) noexcept(TINY_UTF8_NOEXCEPT) {
+std::ostream& operator<<( std::ostream& stream , const tml::basic_string<V, D, A>& str ) noexcept(TINY_UTF8_NOEXCEPT) {
 	return stream << str.cpp_str();
 }
 template<typename V, typename D, typename A>
-std::istream& operator>>( std::istream& stream , tiny_utf8::basic_string<V, D, A>& str ) noexcept(TINY_UTF8_NOEXCEPT) {
+std::istream& operator>>( std::istream& stream , tml::basic_string<V, D, A>& str ) noexcept(TINY_UTF8_NOEXCEPT) {
 	std::string tmp;
 	stream >> tmp;
 	str = move(tmp);
@@ -2730,7 +2730,7 @@ std::istream& operator>>( std::istream& stream , tiny_utf8::basic_string<V, D, A
 
 
 // Implementation
-namespace tiny_utf8
+namespace tml
 {
 	template<typename V, typename D, typename A>
 	basic_string<V, D, A>::basic_string( basic_string<V, D, A>::size_type count , basic_string<V, D, A>::value_type cp , const typename basic_string<V, D, A>::allocator_type& alloc )
@@ -3603,7 +3603,7 @@ namespace tiny_utf8
 		// Bound checks...
 		size_type data_len = size();
 		if( index > data_len ){
-			TINY_UTF8_THROW( "tiny_utf8::basic_string::(raw_)substr" , index > data_len );
+			TINY_UTF8_THROW( "tml::basic_string::(raw_)substr" , index > data_len );
 			return {};
 		}
 		size_type		end_index = index + byte_count;
@@ -4006,7 +4006,7 @@ namespace tiny_utf8
 		// Bound checks...
 		size_type old_data_len = size();
 		if( index > old_data_len ){
-			TINY_UTF8_THROW( "tiny_utf8::basic_string::(raw_)insert" , index > old_data_len );
+			TINY_UTF8_THROW( "tml::basic_string::(raw_)insert" , index > old_data_len );
 			return *this;
 		}
 		
@@ -4366,7 +4366,7 @@ namespace tiny_utf8
 		// Bound checks...
 		size_type old_data_len = size();
 		if( index > old_data_len ){
-			TINY_UTF8_THROW( "tiny_utf8::basic_string::(raw_)replace" , index > old_data_len );
+			TINY_UTF8_THROW( "tml::basic_string::(raw_)replace" , index > old_data_len );
 			return *this;
 		}
 		size_type end_index = index + replaced_len;
@@ -4781,7 +4781,7 @@ namespace tiny_utf8
 		// Bound checks...
 		size_type old_data_len = size();
 		if( index > old_data_len ){
-			TINY_UTF8_THROW( "tiny_utf8::basic_string::(raw_)erase" , index > old_data_len );
+			TINY_UTF8_THROW( "tml::basic_string::(raw_)erase" , index > old_data_len );
 			return *this;
 		}
 		if( !len )
@@ -5094,7 +5094,7 @@ namespace tiny_utf8
 		return basic_string::npos;
 	}
 
-} // Namespace 'tiny_utf8'
+} // Namespace 'tml'
 
 #if defined (__clang__)
 #pragma clang diagnostic pop

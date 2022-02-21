@@ -21,13 +21,13 @@ namespace tml
         LoadFromMemory(image.GetWidth(), image.GetHeight(), image.GetBpp(), image.GetData());
     }
 
-    void Texture::LoadFromFile(const std::string& filename)
+    void Texture::LoadFromFile(const String& filename)
     {
         Image img(filename);
         LoadFromImage(img);
     }
 
-    void Texture::LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data)
+    void Texture::LoadFromMemory(i32 w, i32 h, ui8 bpp, const ui8* data)
     {
         GL_CALL(glDeleteTextures(1, &m_id));
         #ifdef TML_USE_GLES
@@ -35,7 +35,7 @@ namespace tml
         #else
             GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
         #endif
-        m_pixelData = data;
+        m_pixelData = const_cast<ui8*>(data);
         m_width 	= w;
         m_height 	= h;
         m_bpp 		= bpp;
@@ -65,9 +65,8 @@ namespace tml
         Generate();
     }
 
-    void Texture::GetData(Image& image) noexcept
+    void Texture::GetData(Image& image) const noexcept
     {
-        // Doing it like this to avoid one malloc and one copy.
         image.LoadFromMemory(m_width, m_height, 4, nullptr);
         auto* imgData = image.GetData();
         Bind();

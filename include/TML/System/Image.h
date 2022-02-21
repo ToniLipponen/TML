@@ -36,9 +36,9 @@ namespace tml
         /// @brief Creates image from raw file data in memory.
         bool LoadFromData(const ui8* data, ui32 dataSize) noexcept;
 
-        /// @brief Saves image to file. Uses postfix to deduce image file type. eg. .jpg .png ..
+        /// @brief Saves image to file. Uses postfix to deduce image file type. eg. .jpg .png .webp ...
         /// @returns true if successful, or false if unsuccessful.
-        bool WriteToFile(const String& fileName, i32 quality = 90) noexcept;
+        bool WriteToFile(const String& fileName, i32 quality = 90) const noexcept;
         bool Resize(ui32 requestedWidth = 0, ui32 requestedHeight = 0) noexcept;
     private:
         enum ImageType { None, Jpg, Png, Bmp, Tga, Pic, Pnm, Webp, Svg };
@@ -46,7 +46,7 @@ namespace tml
         bool LoadSvg(const ui8* data, ui32 dataSize, ui32 requestedWidth = 0, ui32 requestedHeight = 0);
         bool LoadWebp(const String& filename) noexcept;
         bool LoadWebp(const ui8* data, ui32 size) noexcept;
-        bool SaveWebp(const String& filename, i32 quality = 90) noexcept;
+        bool SaveWebp(const String& filename, i32 quality = 90) const noexcept;
         static ImageType GetTypeFromFilename(const String& filename) noexcept;
         i32 m_width = 0, m_height = 0, m_Bpp = 0;
         ui8* m_data = nullptr;

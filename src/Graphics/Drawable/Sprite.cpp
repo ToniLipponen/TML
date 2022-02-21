@@ -17,31 +17,36 @@ namespace tml
         Generate();
     }
 
-    void Sprite::LoadFromFile(const String& filename)
+    bool Sprite::LoadFromFile(const String& filename)
     {
-        m_img.LoadFromFile(filename);
+        if(!m_img.LoadFromFile(filename))
+            return false;
         m_size = Vector2f(m_img.GetWidth(), m_img.GetHeight());
         m_texSize = m_size;
         m_rect = {{0,0}, m_size};
         m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
         Generate();
+        return true;
     }
 
-    void Sprite::LoadFromImage(const Image& image)
+    bool Sprite::LoadFromImage(const Image& image)
     {
+        if(image.GetData() == nullptr)
+            return false;
         m_img = image;
         m_size = Vector2f(m_img.GetWidth(), m_img.GetHeight());
         m_texSize = m_size;
         m_rect = {{0,0}, m_size};
         m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
         Generate();
+        return true;
     }
 
     void Sprite::SetInterpolation(bool interpolate)
     {
         m_tex.SetMinMagFilter(
-                interpolate ? Texture::Linear : Texture::Nearest,
-                interpolate ? Texture::Linear : Texture::Nearest
+                interpolate ? Texture::LinearMipmapLinear : Texture::Nearest,
+                interpolate ? Texture::LinearMipmapLinear : Texture::Nearest
         );
     }
 
