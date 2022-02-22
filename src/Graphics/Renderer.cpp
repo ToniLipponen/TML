@@ -22,7 +22,7 @@
 
 namespace tml
 {
-    void MakeCircle(Image& image, ui32 resolution)
+    static void MakeCircle(Image& image, ui32 resolution) noexcept
     {
         auto* buffer = image.GetData();
         const auto radius = resolution / 2.0f;
@@ -42,36 +42,18 @@ namespace tml
 
     Renderer::Renderer()
     {
-        Init();
-    }
-    Renderer::~Renderer()
-    {
-        delete m_vao;
-        delete m_vertexBuffer;
-        delete m_indexBuffer;
-        delete m_layout;
-        delete m_shader;
-    }
-    bool Renderer::Init() noexcept
-    {
         m_vertexData.reserve(MAX_VERTEX_COUNT);
         m_indexData.reserve(MAX_VERTEX_COUNT * 1.5);
 
-        int result = 0;
 #ifdef TML_USE_GLES
     #ifdef PLATFORM_WINDOWS
-        result = gladLoadGL((GLADloadfunc)glfwGetProcAddress);
+        TML_ASSERT(gladLoadGL((GLADloadfunc)glfwGetProcAddress), "Failed to initialize renderer");
     #else
-        result = gladLoadGLES2((GLADloadfunc)glfwGetProcAddress);
+        TML_ASSERT(gladLoadGLES2((GLADloadfunc)glfwGetProcAddress), "Failed to initialize renderer");
     #endif
 #else
-        result = gladLoadGL((GLADloadfunc)glfwGetProcAddress);
+        TML_ASSERT(gladLoadGL((GLADloadfunc)glfwGetProcAddress), "Failed to initialize renderer");
 #endif
-
-        TML_ASSERT(result, "Failed to initialize OpenGL.");
-        if(result == 0)
-            return false;
-
         GL_CALL(glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MAX_TEXTURE_COUNT));
 
 #ifdef TML_USE_GLES
@@ -104,11 +86,18 @@ namespace tml
 
 #ifndef TML_USE_GLES
     #ifndef TML_NO_GL_DEBUGGING
-//        glEnable(GL_DEBUG_OUTPUT);
-//        glDebugMessageCallback(GLMessageCallback, nullptr);
+//            glEnable(GL_DEBUG_OUTPUT);
+//            glDebugMessageCallback(GLMessageCallback, nullptr);
     #endif
 #endif
-        return true;
+    }
+    Renderer::~Renderer()
+    {
+        delete m_vao;
+        delete m_vertexBuffer;
+        delete m_indexBuffer;
+        delete m_layout;
+        delete m_shader;
     }
 
     void Renderer::SetClearColor(const Color &color) noexcept
@@ -173,43 +162,9 @@ namespace tml
         ResetBounds();
     }
 
-    void Renderer::Draw(const Rectangle& r) noexcept
+    void Renderer::Draw(Drawable& d) noexcept
     {
-        PushVertexData(r.m_vertexData, r.m_indexData);
-    }
-
-    void Renderer::Draw(Circle& r) noexcept
-    {
-        PushVertexData(r.m_vertexData, r.m_indexData, m_circleTexture);
-    }
-
-    void Renderer::Draw(Sprite& r) noexcept
-    {
-        PushVertexData(r.m_vertexData, r.m_indexData, r.m_tex);
-    }
-
-    void Renderer::Draw(Text& r) noexcept
-    {
-        PushVertexData(r.m_vertexData, r.m_indexData, r.m_font.m_texture);
-    }
-
-    void Renderer::Draw(const Video& r) noexcept
-    {
-        if(m_textures.size() >= MAX_TEXTURE_COUNT - 3)
-            EndBatch();
-        PushQuad(r.m_pos, r.m_size, r.m_color, r.m_y, Vertex::VIDEO);
-        PushTexture(r.m_cb);
-        PushTexture(r.m_cr);
-    }
-
-    void Renderer::Draw(const Shape& shape) noexcept
-    {
-        PushVertexData(shape.m_vertexData, shape.m_indexData);
-    }
-
-    void Renderer::Draw(const Line& drawable) noexcept
-    {
-        PushVertexData(drawable.m_vertexData, drawable.m_indexData);
+        d.OnDraw(this, &m_circleTexture);
     }
 
     void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, ui32 thickness, Color color, bool rounded) noexcept
@@ -374,7 +329,36 @@ namespace tml
         PushQuad(pos, size, Color::Transparent, tex, Vertex::TEXTURE, rotation, tl, br);
     }
 
-    inline void Renderer::PushQuad(const Vector2f& pos,
+    /// Finds a parking spot for the texture.
+    ui32 Renderer::PushTexture(const Texture &texture) noexcept
+    {
+        if(m_textures.size() >= MAX_TEXTURE_COUNT)
+            EndBatch();
+
+        bool alreadyInMTextures = false;
+        const auto id = texture.GetID();
+        ui32 index = 0;
+
+        for(const auto i : m_textures)
+        {
+            if(i == id)
+            {
+                alreadyInMTextures = true;
+                break;
+            }
+            ++index;
+        }
+
+        if(!alreadyInMTextures)
+        {
+            texture.Bind(index);
+            m_textures.push_back(id);
+        }
+
+        return index;
+    }
+
+    void Renderer::PushQuad(const Vector2f& pos,
                             const Vector2f& size,
                             const Color& col,
                             const Texture& texture,
@@ -422,34 +406,6 @@ namespace tml
         m_indexData.push_back(currentElements + 2);
     }
 
-    /// Finds a parking spot for the texture.
-    inline ui32 Renderer::PushTexture(const Texture &texture) noexcept
-    {
-        if(m_textures.size() >= MAX_TEXTURE_COUNT)
-            EndBatch();
-
-        bool alreadyInMTextures = false;
-        const auto id = texture.GetID();
-        ui32 index = 0;
-
-        for(const auto i : m_textures)
-        {
-            if(i == id)
-            {
-                alreadyInMTextures = true;
-                break;
-            }
-            ++index;
-        }
-
-        if(!alreadyInMTextures)
-        {
-            texture.Bind(index);
-            m_textures.push_back(id);
-        }
-
-        return index;
-    }
 /// Windows annoyingly #defines DrawText
 #ifdef PLATFORM_WINDOWS
     #undef DrawText
