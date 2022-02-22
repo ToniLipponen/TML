@@ -49,7 +49,7 @@ add_subdirectory(src/Interface)
 add_subdirectory(src/System)
 add_subdirectory(src/Window)
 
-add_library(TML ${CMAKE_SOURCE_DIR}/src/TOKEN_SOURCE_FILE.cpp ${HEADER_FILES})
+add_library(TML src/TOKEN_SOURCE_FILE.cpp ${HEADER_FILES})
 target_link_libraries(TML TML-Audio TML-Interface TML-Graphics TML-Window TML-System)
 
 set(CMAKE_INSTALL_PREFIX /usr/)
