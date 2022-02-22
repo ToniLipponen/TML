@@ -23,7 +23,7 @@ namespace tml
         bool Advance(double step) noexcept; ///@brief Returns false when no frames are available.
         friend class Renderer;
     private:
-        void Generate() noexcept override {}
+        void OnDraw(class Renderer*, Texture*) noexcept override;
         void* m_stream = nullptr;
         double m_frameRate = 30;
         double m_timer = 1;

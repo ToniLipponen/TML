@@ -14,10 +14,8 @@ namespace tml
         float GetRadius() const noexcept;
 
     private:
-        void Generate() noexcept override;
-
-        // -------------------------------- //
-        Vector2f SetSize(const Vector2f &)  noexcept override { return 0; }
-        Vector2f SetSize(float,float)       noexcept override { return 0; }
+        void OnDraw(class Renderer* renderer, class Texture*) noexcept override;
+        Vector2f SetSize(const Vector2f &)  noexcept{ return 0; }
+        Vector2f SetSize(float,float)       noexcept{ return 0; }
     };
 }

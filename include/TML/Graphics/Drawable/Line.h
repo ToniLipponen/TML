@@ -13,7 +13,7 @@ namespace tml
         void SetPointA(const Vector2f& point) noexcept;
         void SetPointB(const Vector2f& point) noexcept;
     private:
-        void Generate() noexcept override;
+        void OnDraw(class Renderer*, Texture*) noexcept override;
     private:
         Vector2f a, b;
     };

@@ -3,7 +3,6 @@
 
 namespace tml
 {
-    /* TODO: Clean this up. Put all function implementations in AudioType.cpp. */
     class AudioType
     {
     public:

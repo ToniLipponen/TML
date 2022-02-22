@@ -1,4 +1,5 @@
 #include <TML/Graphics/Drawable/Video.h>
+#include <TML/Graphics/Renderer.h>
 #include "_Assert.h"
 #define PL_MPEG_IMPLEMENTATION 1
 #include <PL_MPEG/pl_mpeg.h>
@@ -71,5 +72,12 @@ namespace tml
             m_timer = 0;
         }
         return !m_ended;
+    }
+
+    void Video::OnDraw(Renderer* renderer, Texture *) noexcept
+    {
+        renderer->PushQuad(m_pos, m_size, m_color, m_y, Vertex::VIDEO);
+        renderer->PushTexture(m_cb);
+        renderer->PushTexture(m_cr);
     }
 }

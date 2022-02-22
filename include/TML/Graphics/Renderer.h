@@ -15,7 +15,6 @@ namespace tml
     public:
         Renderer();
         virtual ~Renderer();
-        bool Init() noexcept;
 
         void SetClearColor(const Color& color) noexcept;
         void SetCamera(const Camera& cam) noexcept;
@@ -26,13 +25,7 @@ namespace tml
         void ResetBounds() noexcept;
 
         virtual void Clear() noexcept;
-        void Draw(Circle& circle) noexcept;
-        void Draw(Sprite& sprite) noexcept;
-        void Draw(Text& text) noexcept;
-        void Draw(const Rectangle& rectangle) noexcept;
-        void Draw(const Video& video) noexcept; /// @warning You need to call video.Advance() to update the video frame before drawing.
-        void Draw(const Shape& shape) noexcept;
-        void Draw(const Line& drawable) noexcept;
+        void Draw(Drawable& drawable) noexcept;
 
         void DrawLine(const Vector2f& a, const Vector2f& b, ui32 thickness, Color color, bool rounded = true) noexcept;
         void DrawRect(const Vector2f& pos, const Vector2f& dimensions, const Color& color, float roundness = 0.0f,
@@ -79,10 +72,8 @@ namespace tml
         void DrawText(const String& text, const Vector2f& pos, float size, const Color& color = Color::White) noexcept;
         void PushVertexData(const std::vector<Vertex>& vertices, const std::vector<ui32>& indices) noexcept;
         void PushVertexData(std::vector<Vertex>& vertices, const std::vector<ui32>& indices, const Texture& texture) noexcept;
-    protected:
-        void EndBatch(bool flip = false) noexcept;
-        void BeginBatch() noexcept;
-        inline void PushQuad(
+        ui32 PushTexture(const Texture&) noexcept;
+        void PushQuad(
                 const Vector2f& pos,
                 const Vector2f& size,
                 const Color& color,
@@ -92,7 +83,9 @@ namespace tml
                 const Vector2f& uvTopLeft = {0.0f, 0.0f},
                 const Vector2f& uvBottomRight = {1.0f, 1.0f}
                 ) noexcept;
-        inline ui32 PushTexture(const Texture&) noexcept;
+    protected:
+        void EndBatch(bool flip = false) noexcept;
+        void BeginBatch() noexcept;
 
     protected:
         class VertexArray*  m_vao          = nullptr;
