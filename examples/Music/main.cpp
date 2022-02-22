@@ -1,7 +1,5 @@
 #include <TML/TML.h>
-#include "TML/Interface.h"
 using namespace tml;
-using namespace Interface;
 
 int main()
 {
