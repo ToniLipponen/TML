@@ -106,9 +106,11 @@ int main(int argc, char** argv)
             case Event::FileDragAndDropped:
             {
                 String fileName(windowEvent.dragAndDrop.paths[0]);
-                image.LoadFromFile(fileName);
-                window.SetTitle(fileName.cpp_str() + " - " + std::to_string(int(image.GetSize().x)) + "x" + std::to_string(int(image.GetSize().y)));
-                imageSize = image.GetSize();
+                if(image.LoadFromFile(fileName))
+                {
+                    window.SetTitle(fileName.cpp_str() + " - " + std::to_string(int(image.GetSize().x)) + "x" + std::to_string(int(image.GetSize().y)));
+                    imageSize = image.GetSize();
+                }
                 for(int i = 0; i < windowEvent.dragAndDrop.count; i++)
                 {
                     delete[] windowEvent.dragAndDrop.paths[i];
