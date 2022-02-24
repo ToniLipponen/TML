@@ -1,13 +1,11 @@
 #include <TML/System/Clipboard.h>
-#define GLFW_INCLUDE_NONE
 #include <clip.h>
-#include <iostream>
 
 namespace tml
 {
     bool Clipboard::IsEmpty()
     {
-        return clip::has(clip::image_format()) || clip::has(clip::image_format());
+        return (!clip::has(clip::text_format()) && !clip::has(clip::image_format()));
     }
 
     bool Clipboard::HasImage()
@@ -17,7 +15,7 @@ namespace tml
 
     bool Clipboard::HasText()
     {
-        return clip::has(clip::image_format());
+        return clip::has(clip::text_format());
     }
 
     bool Clipboard::GetString(String& string)

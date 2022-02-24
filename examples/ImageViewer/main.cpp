@@ -1,6 +1,6 @@
 /**
  * @brief Very simple image viewer application. You can either drag and drop images into the window, or copy and paste them with CTRL + V.
- * You can zoom in and out with mouse wheel. Press R to reset view.
+ * You can zoom in and out with mouse wheel. Press R to reset view. Press F to toggle filtering.
  * This demo might be a bit messy. If you want, you can copy this and make something a bit more polished out of it.
  */
 
@@ -37,7 +37,6 @@ int main(int argc, char** argv)
     Sprite image;
     Vector2f imageSize = 0;
     Camera cam;
-    image.SetInterpolation(false);
 
     auto scaleImage = [&]()
     {
@@ -58,6 +57,7 @@ int main(int argc, char** argv)
             s.x = s.y / aspect;
             image.SetPosition({(window.GetWidth() - s.x) / 2, 0});
         }
+
         image.SetSize(s);
         Draw(cam, image, window);
     };
@@ -68,11 +68,13 @@ int main(int argc, char** argv)
         window.SetTitle(std::string(argv[1]) + " - " + std::to_string(int(image.GetSize().x)) + "x" + std::to_string(int(image.GetSize().y)));
         imageSize = image.GetSize();
     }
+
     window.SetClearColor(0x444444ff);
     scaleImage();
     Vector2f beginPos = 0;
     Vector2f oldCamPos;
     bool click = false;
+    bool filter = true;
 
     Clock clock;
     while(!window.ShouldClose())
@@ -127,14 +129,27 @@ int main(int argc, char** argv)
                 {
                     if(!Clipboard::IsEmpty())
                     {
-                        if(Clipboard::HasImage())
+                        if(Clipboard::HasText())
+                        {
+                            String str;
+                            Clipboard::GetString(str);
+                            Image img;
+                            if(img.LoadFromFile(str))
+                            {
+                                image.LoadFromImage(img);
+                                imageSize = image.GetSize();
+                                window.SetTitle(str.cpp_str() + " - " + std::to_string(img.GetWidth()) + " x " + std::to_string(img.GetHeight()));
+                                scaleImage();
+                            }
+                        }
+                        else if(Clipboard::HasImage())
                         {
                             Image img;
                             Clipboard::GetImage(img);
                             image.LoadFromImage(img);
 
                             imageSize = image.GetSize();
-                            window.SetTitle(std::to_string(img.GetWidth()) + " - " + std::to_string(img.GetHeight()));
+                            window.SetTitle(std::to_string(img.GetWidth()) + " x " + std::to_string(img.GetHeight()));
                             scaleImage();
                         }
                     }
@@ -144,6 +159,11 @@ int main(int argc, char** argv)
                     cam.SetPosition({0, 0});
                     cam.SetZoom(1);
                     scaleImage();
+                }
+                else if(windowEvent.key.code == Keyboard::KEY_F)
+                {
+                    image.SetInterpolation(filter = !filter);
+                    Draw(cam, image, window);
                 }
                 break;
 
