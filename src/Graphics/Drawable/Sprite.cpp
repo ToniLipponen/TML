@@ -49,7 +49,7 @@ namespace tml
                 interpolate ? Texture::LinearMipmapLinear : Texture::Nearest,
                 interpolate ? Texture::LinearMipmapLinear : Texture::Nearest
         );
-        m_updated = true;
+        m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
     }
 
     void Sprite::OnDraw(class Renderer* renderer, Texture *) noexcept
