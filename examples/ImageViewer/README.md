@@ -1,15 +1,19 @@
 # TML - Image Viewer
 
-Very simple image viewer demo application. You can either drag and drop images into the window, or copy and paste them with CTRL + V.
-You can zoom in and out with mouse wheel, move the image with left click and drag. Press R to reset view.
-Since this is just a demo and not a real application, it might be a bit rough around the edges. You can copy the code in its entirety and make your own improved version out of it.
-
-
+Very simple image viewer demo application. Since this is just a demo and not a real application, it might be a bit rough around the edges. You can copy the code in its entirety and make your own improved version out of it.
 
 https://user-images.githubusercontent.com/86045205/154943359-aea8c605-587c-428c-8dda-cd42a70be7b4.mp4
 
+# Controls
 
+| Button | Action                    |
+|--------|---------------------------|
+| CTRL+V | Open image from clipboard |
+| R      | Reset view                |
+| F      | Toggle filtering          |
+| Mouse left| Move image|
 
+# License
 Copyright (C) 2022 Toni Lipponen
 
 This software is provided 'as-is', without any express or implied

@@ -330,12 +330,15 @@ namespace tml
             if(component && component->GetRoot())
             {
                 auto& processStack = component->GetRoot()->m_processStack;
-                for(auto i = 0; i < processStack.size() - 1; ++i)
+                if(!processStack.empty())
                 {
-                    if(processStack.at(i) == component)
+                    for(i64 i = 0; i < processStack.size() - 1; ++i)
                     {
-                        processStack.erase(processStack.begin() + i);
-                        break;
+                        if(processStack.at(i) == component)
+                        {
+                            processStack.erase(processStack.begin() + i);
+                            break;
+                        }
                     }
                 }
             }
