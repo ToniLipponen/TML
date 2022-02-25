@@ -263,6 +263,6 @@ namespace tml
     template<typename T>
     constexpr bool Vector2<T>::operator!=(const Vector2 &rhs) const noexcept
     {
-        return !(x == rhs.x && y == rhs.y);
+        return x != rhs.x || y != rhs.y;
     }
 }
