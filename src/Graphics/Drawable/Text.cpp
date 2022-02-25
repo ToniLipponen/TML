@@ -1,7 +1,8 @@
 #include <TML/Graphics/Drawable/Text.h>
+#include <TML/Graphics/Renderer.h>
 #include <stb/stb_truetype.h>
-#include <Font.h>
 #include <TML/System/Math.h>
+#include <Font.h>
 
 namespace tml
 {
@@ -16,6 +17,7 @@ namespace tml
     void Text::SetSize(float s)
     {
         m_size = Vector2f{s,s};
+        m_updated = true;
         Generate();
     }
 
@@ -24,7 +26,7 @@ namespace tml
         m_string = string;
         if(!m_hasFont)
         {
-            if(font == "")
+            if(font.empty())
             {
                 if(!s_defaultFont)
                 {
@@ -37,6 +39,7 @@ namespace tml
                 m_font.LoadFromFile(font.cpp_str());
             m_hasFont = true;
         }
+        m_updated = true;
         Generate();
     }
 
@@ -44,18 +47,21 @@ namespace tml
     {
         m_font = font;
         m_hasFont = true;
+        m_updated = true;
         Generate();
     }
 
     void Text::SetSpacing(float s)
     {
         m_lineSpacing = s;
+        m_updated = true;
         Generate();
     }
 
     void Text::SetKerning(float s)
     {
         m_kerning = s;
+        m_updated = true;
         Generate();
     }
 
@@ -67,7 +73,7 @@ namespace tml
         q.y1 = float((q.y1 * (s / 64.0)) + y);
     }
 
-    void Text::Generate() noexcept
+    void Text::Generate()
     {
         m_dimensions = Vector2f{0, m_size.y};
         float x = 0, y = 48; //64.0 - (64.0 / 3.0);
@@ -132,5 +138,15 @@ namespace tml
         }
         m_dimensions.x = Math::Max(width, m_dimensions.x);
         m_dimensions.y = Math::Max(height, m_dimensions.y);
+    }
+
+    void Text::OnDraw(class Renderer* renderer, Texture*) noexcept
+    {
+        if(m_updated)
+        {
+            Generate();
+            m_updated = false;
+        }
+        renderer->PushVertexData(m_vertexData, m_indexData, m_font.m_texture);
     }
 }

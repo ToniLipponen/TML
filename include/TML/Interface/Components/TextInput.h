@@ -16,7 +16,7 @@ namespace tml
             void InitListeners();
             void Draw(RenderWindow& renderWindow) override;
             Text m_text;
-            tiny_utf8::string m_value;
+            String m_value;
             i32 m_cursorIndex = 0;
             double m_blinkTimer = 0;
             bool m_showLine = true;

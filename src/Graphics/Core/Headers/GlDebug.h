@@ -9,4 +9,4 @@
 #endif
 
 int CheckGLError();
-void GLMessageCallback(int source, int type, unsigned int id, int severity, long length, const char* message, void const* user_param);
+void GLMessageCallback(unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* message, void const* user_param);

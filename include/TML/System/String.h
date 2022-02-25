@@ -2,12 +2,11 @@
 #include <string>
 #include <TML/Types.h>
 
-#define TINY_UTF8_GLOBAL_NAMESPACE
 #include "String/tinyutf8.h"
 
 namespace tml
 {
-    using String = tiny_utf8::string;
+    using String = tml::string;
 
     template<typename T>
     inline constexpr T StringToType(const std::string& str)

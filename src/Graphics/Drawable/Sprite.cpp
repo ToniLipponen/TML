@@ -1,4 +1,5 @@
 #include <TML/Graphics/Drawable/Sprite.h>
+#include <TML/Graphics/Renderer.h>
 #include "TML/System/Math.h"
 
 namespace tml
@@ -8,76 +9,75 @@ namespace tml
     {
         m_pos = Vector2f{0,0};
         m_size = Vector2f{0,0};
-        Generate();
+        m_indexData = {0,1,2, 1,3,2};
     }
 
     void Sprite::SetRect(const TexRect& r)
     {
         m_rect = r;
-        Generate();
+        m_updated = true;
     }
 
-    void Sprite::LoadFromFile(const std::string& filename)
+    bool Sprite::LoadFromFile(const String& filename)
     {
-        m_img.LoadFromFile(filename);
+        if(!m_img.LoadFromFile(filename))
+            return false;
         m_size = Vector2f(m_img.GetWidth(), m_img.GetHeight());
         m_texSize = m_size;
         m_rect = {{0,0}, m_size};
         m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
-        Generate();
+        m_updated = true;
+        return true;
     }
 
-    void Sprite::LoadFromImage(const Image& image)
+    bool Sprite::LoadFromImage(const Image& image)
     {
+        if(image.GetData() == nullptr)
+            return false;
         m_img = image;
         m_size = Vector2f(m_img.GetWidth(), m_img.GetHeight());
         m_texSize = m_size;
         m_rect = {{0,0}, m_size};
         m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
-        Generate();
+        m_updated = true;
+        return true;
     }
 
     void Sprite::SetInterpolation(bool interpolate)
     {
         m_tex.SetMinMagFilter(
-                interpolate ? Texture::Linear : Texture::Nearest,
-                interpolate ? Texture::Linear : Texture::Nearest
+                interpolate ? Texture::LinearMipmapLinear : Texture::Nearest,
+                interpolate ? Texture::LinearMipmapLinear : Texture::Nearest
         );
+        m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
     }
 
-    void Sprite::Generate() noexcept
+    void Sprite::OnDraw(class Renderer* renderer, Texture *) noexcept
     {
-        m_vertexData.clear();
-        m_indexData.clear();
-
-        const Vector2f tl = m_rect.pos / m_texSize;
-        const Vector2f br = (m_rect.pos + m_rect.size) / m_texSize;
-
-        if(m_rotation != 0)
+        if(m_updated)
         {
-            const float cos_r = std::cos(Math::DegToRad(m_rotation));
-            const float sin_r = std::sin(Math::DegToRad(m_rotation));
+            m_vertexData.clear();
 
-            m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos, cos_r, sin_r),                           tl,           0x0, Vertex::TEXTURE});
-            m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos + Vector2f(m_size.x, 0.f), cos_r, sin_r), {br.x, tl.y}, 0x0, Vertex::TEXTURE});
-            m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos + Vector2f(0.f, m_size.y), cos_r, sin_r), {tl.x, br.y}, 0x0, Vertex::TEXTURE});
-            m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos + m_size, cos_r, sin_r),                  br,           0x0, Vertex::TEXTURE});
+            const Vector2f tl = m_rect.pos / m_texSize;
+            const Vector2f br = (m_rect.pos + m_rect.size) / m_texSize;
+
+            if(m_rotation != 0)
+            {
+                m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos, cos_r, sin_r),                           tl,           0x0, Vertex::TEXTURE});
+                m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos + Vector2f(m_size.x, 0.f), cos_r, sin_r), {br.x, tl.y}, 0x0, Vertex::TEXTURE});
+                m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos + Vector2f(0.f, m_size.y), cos_r, sin_r), {tl.x, br.y}, 0x0, Vertex::TEXTURE});
+                m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos + m_size, cos_r, sin_r),                  br,           0x0, Vertex::TEXTURE});
+            }
+            else
+            {
+                m_vertexData.push_back(Vertex{m_pos,                           tl,           0x0, Vertex::TEXTURE});
+                m_vertexData.push_back(Vertex{m_pos + Vector2f(m_size.x, 0.f), {br.x, tl.y}, 0x0, Vertex::TEXTURE});
+                m_vertexData.push_back(Vertex{m_pos + Vector2f(0.f, m_size.y), {tl.x, br.y}, 0x0, Vertex::TEXTURE});
+                m_vertexData.push_back(Vertex{m_pos + m_size,                  br,           0x0, Vertex::TEXTURE});
+            }
+            m_updated = false;
         }
-        else
-        {
-            m_vertexData.push_back(Vertex{m_pos,                           tl,           0x0, Vertex::TEXTURE});
-            m_vertexData.push_back(Vertex{m_pos + Vector2f(m_size.x, 0.f), {br.x, tl.y}, 0x0, Vertex::TEXTURE});
-            m_vertexData.push_back(Vertex{m_pos + Vector2f(0.f, m_size.y), {tl.x, br.y}, 0x0, Vertex::TEXTURE});
-            m_vertexData.push_back(Vertex{m_pos + m_size,                  br,           0x0, Vertex::TEXTURE});
-        }
-
-        m_indexData.push_back(0);
-        m_indexData.push_back(1);
-        m_indexData.push_back(2);
-
-        m_indexData.push_back(1);
-        m_indexData.push_back(3);
-        m_indexData.push_back(2);
+        renderer->PushVertexData(m_vertexData, m_indexData, m_tex);
     }
 
 }

@@ -11,7 +11,7 @@ namespace tml
         ~RenderTarget();
         void Bind() const noexcept;
         void Unbind() const noexcept;
-        bool AttachTexture(Texture& texture);
+        bool AttachTexture(const Texture& texture) const;
 
     private:
         ui32 m_id;

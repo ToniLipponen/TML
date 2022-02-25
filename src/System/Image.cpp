@@ -1,12 +1,12 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
-#include "stb/stb_image.h"
-#include "stb/stb_image_write.h"
-#include "stb/stb_image_resize.h"
+#include <stb/stb_image.h>
+#include <stb/stb_image_write.h>
+#include <stb/stb_image_resize.h>
 
-#include "libwebp/src/webp/decode.h"
-#include "libwebp/src/webp/encode.h"
+#include <libwebp/src/webp/decode.h>
+#include <libwebp/src/webp/encode.h>
 #include <lunasvg.h>
 #include <TML/System/Image.h>
 #include <TML/System/File.h>
@@ -97,14 +97,16 @@ namespace tml
         switch(imageType)
         {
             case Image::Webp:
-                return LoadWebp(fileName) && Resize(w,h);
+                Resize(w,h);
+                return LoadWebp(fileName);
 
             case Image::Svg:
                 return LoadSvg(fileName, w, h);
 
             default:
                 m_data = stbi_load(fileName.c_str(), &m_width, &m_height, &m_Bpp, 0);
-                return (m_data != nullptr) && Resize(w,h);
+                Resize(w,h);
+                return (m_data != nullptr);
         }
     }
 
@@ -129,7 +131,7 @@ namespace tml
             return true;
     }
 
-    bool Image::WriteToFile(const String& fileName, int quality) noexcept
+    bool Image::WriteToFile(const String& fileName, int quality) const noexcept
     {
         const auto type = GetTypeFromFilename(fileName);
 
@@ -225,7 +227,7 @@ namespace tml
         return false;
     }
 
-    bool Image::SaveWebp(const String& filename, int quality) noexcept
+    bool Image::SaveWebp(const String& filename, int quality) const noexcept
     {
         ui8* output = nullptr;
         ui64 size = 0;
@@ -250,11 +252,13 @@ namespace tml
         String point(".");
 
         ui64 pos = 0;
-        for(pos = filename.length()-1; pos >= 0; --pos)
+        for(pos = filename.length()-1; pos > 0; --pos)
         {
             if(filename.at(pos) == '.')
                 break;
         }
+        if(pos == 0)
+            return Image::None;
 
         const auto len = filename.length() - pos;
         const auto str = filename.substr(pos, len);

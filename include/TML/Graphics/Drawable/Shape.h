@@ -24,7 +24,7 @@ namespace tml
         ui32 GetPointCount() const noexcept;
 
     private:
-        void Generate() noexcept override;
+        void OnDraw(class Renderer*, class Texture*) noexcept override;
 
     protected:
         std::vector<ShapePoint> m_points;

@@ -24,7 +24,7 @@ int CheckGLError()
 }
 
 #ifndef TML_USE_GLES
-void GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
+void GLMessageCallback(GLenum source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* message, void const* user_param)
 {
     auto const src_str = [source]() {
         switch (source)

@@ -28,7 +28,8 @@ namespace tml
         constexpr float GetRotation()   = delete;
 
     private:
-        void Generate() noexcept override;
+        void Generate();
+        void OnDraw(class Renderer*, Texture*) noexcept override;
         Font m_font;
         bool m_hasFont = false;
         String m_string;

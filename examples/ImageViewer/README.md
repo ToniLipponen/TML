@@ -1,4 +1,20 @@
-Copyright (C) 2021-2022 Toni Lipponen
+# TML - Image Viewer
+
+Very simple image viewer demo application. Since this is just a demo and not a real application, it might be a bit rough around the edges. You can copy the code in its entirety and make your own improved version out of it.
+
+https://user-images.githubusercontent.com/86045205/154943359-aea8c605-587c-428c-8dda-cd42a70be7b4.mp4
+
+# Controls
+
+| Button | Action                    |
+|--------|---------------------------|
+| CTRL+V | Open image from clipboard |
+| R      | Reset view                |
+| F      | Toggle filtering          |
+| Mouse left| Move image|
+
+# License
+Copyright (C) 2022 Toni Lipponen
 
 This software is provided 'as-is', without any express or implied
 warranty.  In no event will the authors be held liable for any damages

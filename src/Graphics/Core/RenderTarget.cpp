@@ -5,6 +5,7 @@
 namespace tml
 {
     RenderTarget::RenderTarget()
+    : m_id(0)
     {
         GL_CALL(glad_glGenFramebuffers(1, &m_id));
     }
@@ -24,7 +25,7 @@ namespace tml
         GL_CALL(glad_glBindFramebuffer(GL_FRAMEBUFFER, 0));
     }
 
-    bool RenderTarget::AttachTexture(Texture &texture)
+    bool RenderTarget::AttachTexture(const Texture &texture) const
     {
         Bind();
         GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};

@@ -1,26 +1,28 @@
 #include <TML/Graphics/Drawable/Shape.h>
+#include <TML/Graphics/Renderer.h>
 #include <TML/System/Math.h>
+
 
 namespace tml
 {
     ui32 Shape::AddPoint(const Vector2f& position) noexcept
     {
         m_points.push_back({position, m_color});
-        Generate();
+        m_updated = true;
         return m_points.size();
     }
 
     ui32 Shape::AddPoint(const Vector2f& position, const Color& color) noexcept
     {
         m_points.push_back({position, color});
-        Generate();
+        m_updated = true;
         return m_points.size();
     }
 
     ui32 Shape::AddPoint(const ShapePoint& point) noexcept
     {
         m_points.push_back(point);
-        Generate();
+        m_updated = true;
         return m_points.size();
     }
 
@@ -29,7 +31,7 @@ namespace tml
         if(index < GetPointCount())
         {
             m_points[index] = {position, m_color};
-            Generate();
+            m_updated = true;
             return true;
         }
         return false;
@@ -40,7 +42,7 @@ namespace tml
         if(index < GetPointCount())
         {
             m_points[index] = {position, color};
-            Generate();
+            m_updated = true;
             return true;
         }
         return false;
@@ -51,7 +53,7 @@ namespace tml
         if(index < GetPointCount())
         {
             m_points[index] = point;
-            Generate();
+            m_updated = true;
             return true;
         }
         return false;
@@ -62,7 +64,7 @@ namespace tml
         if(index < GetPointCount())
         {
             m_points.erase(m_points.begin() + index);
-            Generate();
+            m_updated = true;
             return true;
         }
         return false;
@@ -73,7 +75,7 @@ namespace tml
         if(GetPointCount())
         {
             m_points.clear();
-            Generate();
+            m_updated = true;
             return true;
         }
         return false;
@@ -84,37 +86,42 @@ namespace tml
         return m_points.size();
     }
 
-    void Shape::Generate() noexcept
+    void Shape::OnDraw(class Renderer* renderer, class Texture *) noexcept
     {
-        m_vertexData.clear();
-        m_indexData.clear();
-
-        if(m_rotation == 0)
+        if(m_updated)
         {
-            for(auto& i : m_points)
+            m_vertexData.clear();
+            m_indexData.clear();
+
+            if(m_rotation == 0)
             {
-                m_vertexData.push_back(Vertex{i.pos+m_pos, {0, 0}, i.color.Hex(), Vertex::COLOR});
+                for(auto& i : m_points)
+                {
+                    m_vertexData.push_back(Vertex{i.pos+m_pos, {0, 0}, i.color.Hex(), Vertex::COLOR});
+                }
             }
-        }
-        else
-        {
-            const float cos_r = std::cos(Math::DegToRad(m_rotation));
-            const float sin_r = std::sin(Math::DegToRad(m_rotation));
-
-            for(auto& i : m_points)
+            else
             {
-                m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, i.pos+m_pos, cos_r, sin_r), {0, 0}, i.color.Hex(), Vertex::COLOR});
+                const float cos_r = std::cos(Math::DegToRad(m_rotation));
+                const float sin_r = std::sin(Math::DegToRad(m_rotation));
+
+                for(auto& i : m_points)
+                {
+                    m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, i.pos+m_pos, cos_r, sin_r), {0, 0}, i.color.Hex(), Vertex::COLOR});
+                }
             }
-        }
 
-        i64 elements = static_cast<i64>(m_points.size());
-        elements = Math::Max<i64>(elements-2, 0);
+            i64 elements = static_cast<i64>(m_points.size());
+            elements = Math::Max<i64>(elements-2, 0);
 
-        for(i64 i = 0; i < elements; ++i)
-        {
-            m_indexData.push_back(0);
-            m_indexData.push_back(i+1);
-            m_indexData.push_back(i+2);
+            for(i64 i = 0; i < elements; ++i)
+            {
+                m_indexData.push_back(0);
+                m_indexData.push_back(i+1);
+                m_indexData.push_back(i+2);
+            }
+            m_updated = false;
         }
+        renderer->PushVertexData(m_vertexData, m_indexData);
     }
 }

@@ -40,7 +40,7 @@ namespace tml
                 event = PollEvents();
             }while(event.type == Event::EventType::Null);
         }
-        return PopEvent();
+        return event;
     }
 
     void EventSystem::PushEvent(Event &event)

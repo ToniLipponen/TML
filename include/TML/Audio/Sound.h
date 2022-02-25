@@ -9,6 +9,8 @@ namespace tml
         Sound() = default;
         Sound(const std::string& filename);                                     /// @brief Loads sound from file.
         Sound(const float* data, ui8 channels, ui64 sampleCount);               /// @brief Loads sound from raw file data.
+        Sound(const Sound& sound);
+        Sound(Sound&& sound);
         ~Sound();
 
         Sound& operator=(const Sound& sound) noexcept;

@@ -15,9 +15,21 @@ namespace tml
     }
 
     Sound::Sound(const float *data, ui8 channels, ui64 sampleCount)
-    :m_samples(nullptr)
+    : m_samples(nullptr)
     {
         LoadFromMemory(data, channels, sampleCount);
+    }
+
+    Sound::Sound(const Sound& sound)
+    : m_samples(nullptr)
+    {
+        *this = sound;
+    }
+
+    Sound::Sound(Sound&& sound)
+    : m_samples(nullptr)
+    {
+        *this = sound;
     }
 
     Sound::~Sound()

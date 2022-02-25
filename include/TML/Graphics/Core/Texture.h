@@ -1,8 +1,7 @@
 #pragma once
-#include "TML/Types.h"
-#include "TML/System/Math/Vector2.h"
-#include "TML/System/Image.h"
-#include <string>
+#include <TML/Types.h>
+#include <TML/System/Math/Vector2.h>
+#include <TML/System/Image.h>
 
 namespace tml
 {
@@ -30,18 +29,18 @@ namespace tml
         Texture();
         ~Texture();
         void LoadFromImage(Image& image);
-        void LoadFromFile(const std::string& filename);
-        void LoadFromMemory(i32 w, i32 h, ui8 bpp, ui8* data);
+        void LoadFromFile(const String& filename);
+        void LoadFromMemory(i32 w, i32 h, ui8 bpp, const ui8* data);
 
         void Bind(ui32 slot = 0) const;
         void SetMinMagFilter(Filter min, Filter mag);
         void SetClampMode(ClampMode mode);
 
-        inline constexpr Filter     GetMinFilter() const noexcept { return m_minFilter; }
-        inline constexpr Filter     GetMagFilter() const noexcept { return m_magFilter; }
-        inline constexpr ClampMode  GetClampMode() const noexcept { return m_clampMode; }
-        inline constexpr ui32       GetID()        const noexcept { return m_id;        }
-        void GetData(Image& image)                       noexcept;
+        inline constexpr Filter     GetMinFilter()          const noexcept { return m_minFilter; }
+        inline constexpr Filter     GetMagFilter()          const noexcept { return m_magFilter; }
+        inline constexpr ClampMode  GetClampMode()          const noexcept { return m_clampMode; }
+        inline constexpr ui32       GetID()                 const noexcept { return m_id;        }
+        void                        GetData(Image& image)   const noexcept;
 
     protected:
         virtual inline void Generate() const noexcept;

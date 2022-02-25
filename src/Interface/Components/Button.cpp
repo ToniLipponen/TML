@@ -1,5 +1,4 @@
 #include <TML/Interface/Components/Button.h>
-#include <utility>
 
 using namespace tml::Interface;
 
@@ -10,7 +9,7 @@ Button::Button(const std::string& text, i32 x, i32 y, ui32 w, ui32 h, const UIFu
     m_vSizePolicy = SizePolicy::Clamp;
     m_text.SetString(text);
     m_text.SetColor(Color::Black);
-    if(w == 0)
+    if(h == 0)
     {
         m_text.SetSize(20);
         m_size = m_text.GetDimensions() + Vector2f(10, 0);
@@ -31,7 +30,7 @@ Button::Button(const std::string& text, i32 x, i32 y, ui32 w, ui32 h, const UIFu
     });
 
     if(onClick)
-        AddListener("Click", std::move(onClick));
+        AddListener("Click", onClick);
 
     AddListener("MouseUp", [&](BaseComponent* c, Event& e)
     {
@@ -73,16 +72,16 @@ void Button::SetText(const std::string &str)
 
 void Button::Draw(RenderWindow& window)
 {
-    if(m_state.Focused)
-        window.DrawRect(m_pos, m_size, m_activeColor);
-    else
+    if(m_state.MouseDown == -1)
         window.DrawRect(m_pos, m_size, m_pColor);
+    else
+        window.DrawRect(m_pos, m_size, m_activeColor);
 
     window.SetBounds(m_pos, m_size);
     window.Draw(m_text);
     window.ResetBounds();
 
-    if(m_state.Focused)
+    if(m_state.MouseOver)
         window.DrawGrid(m_pos, m_size, 1, 1, m_activeColor,1);
     else
         window.DrawGrid(m_pos, m_size, 1, 1, m_sColor,1);

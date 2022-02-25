@@ -17,13 +17,13 @@ namespace tml
     public:
         Sprite();
         void SetRect(const TexRect &r);
-        void LoadFromFile(const std::string& filename);
-        void LoadFromImage(const Image& image);
+        bool LoadFromFile(const String& filename);
+        bool LoadFromImage(const Image& image);
         void SetInterpolation(bool interpolate);
         friend class Renderer;
 
     protected:
-        void Generate() noexcept override;
+        void OnDraw(class Renderer*, Texture*) noexcept override;
 
     private:
         Image m_img;
