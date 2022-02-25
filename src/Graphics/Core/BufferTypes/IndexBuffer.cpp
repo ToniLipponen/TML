@@ -5,6 +5,10 @@
 
 using namespace tml;
 
+
+#define MAP_RANGE_FLAGS (GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT)
+#define BUFFER_STORAGE_FLAGS GL_DYNAMIC_STORAGE_BIT | MAP_RANGE_FLAGS
+
 #ifndef TML_USE_GLES
 IndexBuffer::IndexBuffer() noexcept
 : m_id(0), m_elements(0), m_capacity(0)
@@ -19,8 +23,8 @@ IndexBuffer::IndexBuffer(const ui32* data, ui32 elements) noexcept
         m_elements = elements;
 
     GL_CALL(glCreateBuffers(1, &m_id));
-    GL_CALL(glNamedBufferStorage(m_id, m_capacity * 4, data, GL_DYNAMIC_STORAGE_BIT));
-    m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, GL_MAP_WRITE_BIT));
+    GL_CALL(glNamedBufferStorage(m_id, m_capacity * 4, data, BUFFER_STORAGE_FLAGS));
+    m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, MAP_RANGE_FLAGS));
 }
 
 IndexBuffer::~IndexBuffer() noexcept
@@ -44,16 +48,16 @@ void IndexBuffer::BufferData(const ui32* data, ui32 elements) noexcept
     if(data)
         m_elements = elements;
 
-    GL_CALL(glNamedBufferStorage(m_id, m_capacity * 4, data, GL_DYNAMIC_STORAGE_BIT));
-    m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, GL_MAP_WRITE_BIT));
+    GL_CALL(glNamedBufferStorage(m_id, m_capacity * 4, data, BUFFER_STORAGE_FLAGS));
+    if(m_mappedPtr)
+    {
+        GL_CALL(glad_glUnmapNamedBuffer(m_id));
+    }
+    m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, MAP_RANGE_FLAGS));
 }
 
 void IndexBuffer::PushData(const ui32* data, ui32 elements) noexcept
 {
-//    GL_CALL(glNamedBufferSubData(m_id, m_elements * sizeof(ui32), elements * sizeof(ui32), data));
-//	m_elements += elements;
-
-
     if(m_mappedPtr)
     {
         const ui32 size = elements * sizeof(ui32);

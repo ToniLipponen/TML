@@ -5,6 +5,10 @@
 
 using namespace tml;
 
+
+#define MAP_RANGE_FLAGS (GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT)
+#define BUFFER_STORAGE_FLAGS GL_DYNAMIC_STORAGE_BIT | MAP_RANGE_FLAGS
+
 #ifndef TML_USE_GLES
 VertexBuffer::VertexBuffer() noexcept
 : m_id(0), m_dataSize(0), m_vertexCount(0), m_capacity(0)
@@ -21,8 +25,8 @@ VertexBuffer::VertexBuffer(const void* data, ui32 vertexSize, ui32 vertexCount) 
         m_dataSize = m_capacity;
     }
     GL_CALL(glad_glCreateBuffers(1, &m_id));
-    GL_CALL(glad_glNamedBufferStorage(m_id, m_capacity, data, GL_DYNAMIC_STORAGE_BIT));
-    m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, GL_MAP_WRITE_BIT));
+    GL_CALL(glad_glNamedBufferStorage(m_id, m_capacity, data, BUFFER_STORAGE_FLAGS));
+    m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, MAP_RANGE_FLAGS));
 }
 
 VertexBuffer::~VertexBuffer() noexcept
@@ -49,9 +53,19 @@ void VertexBuffer::BufferData(void* data, ui32 vertexSize, ui32 vertexCount) noe
         m_vertexCount = vertexCount;
         m_dataSize = m_capacity;
     }
+    else
+    {
+        m_vertexCount = 0;
+        m_dataSize = 0;
+    }
 
-	GL_CALL(glad_glNamedBufferStorage(m_id, m_capacity, data, GL_DYNAMIC_STORAGE_BIT));
-    m_mappedPtr = GL_CALL(glad_glMapBufferRange(GL_ARRAY_BUFFER, 0, m_capacity, GL_MAP_WRITE_BIT));
+	GL_CALL(glad_glNamedBufferStorage(m_id, m_capacity, data, BUFFER_STORAGE_FLAGS));
+
+    if(m_mappedPtr)
+    {
+        GL_CALL(glad_glUnmapNamedBuffer(m_id));
+    }
+    m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, MAP_RANGE_FLAGS));
 }
 
 void VertexBuffer::SetData(void *data, ui32 s, ui32 n) noexcept

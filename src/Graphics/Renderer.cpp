@@ -86,8 +86,8 @@ namespace tml
 
 #ifndef TML_USE_GLES
     #ifndef TML_NO_GL_DEBUGGING
-//            glEnable(GL_DEBUG_OUTPUT);
-//            glDebugMessageCallback(GLMessageCallback, nullptr);
+            glEnable(GL_DEBUG_OUTPUT);
+            glDebugMessageCallback(GLMessageCallback, nullptr);
     #endif
 #endif
     }
@@ -424,8 +424,6 @@ namespace tml
         if(MAX_VERTEX_COUNT <= m_vertexVector->size() + vertices.size())
             EndBatch();
         const auto size = m_vertexVector->size();
-//        std::copy(vertices.begin(), vertices.end(), std::back_inserter(m_vertexData));
-//        m_vertexBuffer->PushData(vertices.data(), sizeof(Vertex), vertices.size());
         m_vertexVector->PushData(vertices.data(), sizeof(Vertex), vertices.size());
         for(const auto i : indices)
             m_indexVector->push_back(size + i);
@@ -441,7 +439,6 @@ namespace tml
 
     void Renderer::EndBatch(bool flip) noexcept
     {
-//        m_vertexBuffer->Unbind();
         m_shader->Bind();
 
         for(i32 i = 0; i < m_textures.size(); i++)

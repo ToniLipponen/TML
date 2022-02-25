@@ -86,18 +86,18 @@ namespace tml
         if(m_id == 0)
             return;
         #ifdef TML_USE_GLES
-            GL_CALL(glBindTexture(GL_TEXTURE_2D, m_id));
-            GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-            GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-            GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_minFilter));
-            GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_magFilter));
-            GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8));
+            GL_CALL(glad_glBindTexture(GL_TEXTURE_2D, m_id));
+            GL_CALL(glad_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+            GL_CALL(glad_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+            GL_CALL(glad_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_minFilter));
+            GL_CALL(glad_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_magFilter));
+            GL_CALL(glad_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8));
         #else
-            GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_S,     m_clampMode));
-            GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_WRAP_T,     m_clampMode));
-            GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, m_minFilter));
-            GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, m_magFilter));
-            GL_CALL(glTextureParameteri(m_id, GL_TEXTURE_MAX_LEVEL, 8));
+            GL_CALL(glad_glTextureParameteri(m_id, GL_TEXTURE_WRAP_S,     m_clampMode));
+            GL_CALL(glad_glTextureParameteri(m_id, GL_TEXTURE_WRAP_T,     m_clampMode));
+            GL_CALL(glad_glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, m_minFilter));
+            GL_CALL(glad_glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, m_magFilter));
+            GL_CALL(glad_glTextureParameteri(m_id, GL_TEXTURE_MAX_LEVEL, 8));
         #endif
 
         if(m_width > 0 && m_height > 0)
@@ -112,14 +112,14 @@ namespace tml
                 default:                                break;
             }
             #ifdef TML_USE_GLES
-                GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, m_pixelData));
-                GL_CALL(glBindImageTexture(0, m_id, 0, GL_FALSE, 0, GL_READ_WRITE, ch));
-                GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
+                GL_CALL(glad_glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, m_pixelData));
+                GL_CALL(glad_glBindImageTexture(0, m_id, 0, GL_FALSE, 0, GL_READ_WRITE, ch));
+                GL_CALL(glad_glGenerateMipmap(GL_TEXTURE_2D));
             #else
-                GL_CALL(glTextureStorage2D(m_id, 8, ch, m_width, m_height));
-                GL_CALL(glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, m_pixelData));
-                GL_CALL(glBindImageTexture(0, m_id, 0, GL_FALSE, 0, GL_READ_WRITE, ch));
-                GL_CALL(glGenerateTextureMipmap(m_id));
+                GL_CALL(glad_glTextureStorage2D(m_id, 8, ch, m_width, m_height));
+                GL_CALL(glad_glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, m_pixelData));
+                GL_CALL(glad_glBindImageTexture(0, m_id, 0, GL_FALSE, 0, GL_READ_WRITE, ch));
+                GL_CALL(glad_glGenerateTextureMipmap(m_id));
             #endif
         }
     }
