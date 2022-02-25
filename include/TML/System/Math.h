@@ -111,12 +111,13 @@ namespace tml
             return std::sqrt(std::pow(b.x - a.x, 2) + std::pow(b.y - a.y, 2));
         }
 
+        /// @brief Turns an angle in degrees to a direction vector.
         inline Vector2f AngleToHeading(double degrees) noexcept
         {
             return Vector2f(std::cos(DegToRad(degrees)), std::sin(DegToRad(degrees))).Normalized();
         }
 
-        /// Checks whether a value is withing given range
+        /// @brief Checks whether a value is withing given range
         template<typename T>
         inline constexpr bool InRange(const T& value, const T& min, const T& max) noexcept
         {

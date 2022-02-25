@@ -14,8 +14,9 @@ namespace tml
         void Bind() const noexcept; // Doesn't do anything on GL 4.5
         void Unbind() const noexcept;
         void BufferData(void *data, ui32 vertexSize, ui32 numOfVertices) noexcept;
-        void PushData(void *data, ui32 vertexSize, ui32 numOfVertices) noexcept;
         void SetData(void *data, ui32 vertexSize, ui32 numOfVertices) noexcept;
+
+        void PushData(const void *data, ui32 vertexSize, ui32 numOfVertices) noexcept;
         void Flush() noexcept;
 
         constexpr ui32 DataSize() const noexcept { return m_dataSize; }
@@ -25,7 +26,8 @@ namespace tml
         friend class VertexArray;
 
     protected:
-        ui32 m_id, m_dataSize, m_vertexCount;
+        ui32 m_id, m_dataSize, m_vertexCount, m_capacity;
+        void* m_mappedPtr = nullptr;
     };
 
     class IndexBuffer {
@@ -46,7 +48,10 @@ namespace tml
 
     private:
         ui32 m_id;
+    protected:
         mutable ui32 m_elements;
+        ui32 m_capacity;
+        void* m_mappedPtr = nullptr;
     };
 
     class BufferLayout

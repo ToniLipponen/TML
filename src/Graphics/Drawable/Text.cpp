@@ -26,7 +26,7 @@ namespace tml
         m_string = string;
         if(!m_hasFont)
         {
-            if(font == "")
+            if(font.empty())
             {
                 if(!s_defaultFont)
                 {

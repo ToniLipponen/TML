@@ -19,6 +19,7 @@
 #include "_Assert.h"
 
 #include "Shaders.h"
+#include "MappedVector.h"
 
 namespace tml
 {
@@ -29,18 +30,20 @@ namespace tml
         const auto center = Vector2f(radius);
 
         for(auto i = 0; i < resolution; ++i)
+        {
             for(auto j = 0; j < resolution; ++j)
             {
                 const double dist = Math::Distance(Vector2f(j, i), center);
                 const double d = dist / radius;
                 buffer[i * resolution + j] = static_cast<unsigned char>(Math::SmoothStep<double>(0.0, 0.002, 1.0 - d) * 255.0);
             }
+        }
     }
 
     Renderer::Renderer()
     {
-        m_vertexData.reserve(MAX_VERTEX_COUNT);
-        m_indexData.reserve(MAX_VERTEX_COUNT * 1.5);
+//        m_vertexVector->reserve(MAX_VERTEX_COUNT);
+//        m_indexVector->reserve(MAX_VERTEX_COUNT * 1.5);
 
 #ifdef TML_USE_GLES
     #ifdef PLATFORM_WINDOWS
@@ -58,8 +61,8 @@ namespace tml
 #endif
 
         m_vao           = new VertexArray();
-        m_vertexBuffer  = new VertexBuffer(nullptr, sizeof(Vertex), MAX_VERTEX_COUNT);
-        m_indexBuffer   = new IndexBuffer(nullptr, MAX_VERTEX_COUNT * 1.5);
+        m_vertexVector  = new VertexVector(MAX_VERTEX_COUNT);
+        m_indexVector   = new IndexVector(MAX_VERTEX_COUNT * 1.5);
         m_layout        = new BufferLayout();
         m_shader        = new Shader();
 
@@ -73,8 +76,8 @@ namespace tml
         m_shader->Bind();
 
         Image circleImage;
-        circleImage.LoadFromMemory(4096, 4096, 1, nullptr);
-        MakeCircle(circleImage, 4096);
+        circleImage.LoadFromMemory(2048, 2048, 1, nullptr);
+        MakeCircle(circleImage, 2048);
         m_circleTexture.LoadFromImage(circleImage);
 
         GL_CALL(glEnable(GL_BLEND));
@@ -91,8 +94,8 @@ namespace tml
     Renderer::~Renderer()
     {
         delete m_vao;
-        delete m_vertexBuffer;
-        delete m_indexBuffer;
+        delete m_vertexVector;
+        delete m_indexVector;
         delete m_layout;
         delete m_shader;
     }
@@ -166,7 +169,7 @@ namespace tml
 
     void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, ui32 thickness, Color color, bool rounded) noexcept
     {
-        ui32 currentElements = m_vertexData.size();
+        ui32 currentElements = m_vertexVector->size();
         if(currentElements >= MAX_VERTEX_COUNT - 4)
         {
             EndBatch();
@@ -178,18 +181,18 @@ namespace tml
         const auto dirA = (Vector2f(-dy, dx).Normalized() * thickness * 0.5);
         const auto dirB = (Vector2f(dy, -dx).Normalized() * thickness * 0.5);
 
-        m_vertexData.emplace_back(Vertex{(dirA + a), {0, 0}, color.Hex(), Vertex::COLOR});
-        m_vertexData.emplace_back(Vertex{(dirB + a), {0, 0}, color.Hex(), Vertex::COLOR});
-        m_vertexData.emplace_back(Vertex{(dirA + b), {0, 0}, color.Hex(), Vertex::COLOR});
-        m_vertexData.emplace_back(Vertex{(dirB + b), {0, 0}, color.Hex(), Vertex::COLOR});
+        m_vertexVector->push_back(Vertex{(dirA + a), {0, 0}, color.Hex(), Vertex::COLOR});
+        m_vertexVector->push_back(Vertex{(dirB + a), {0, 0}, color.Hex(), Vertex::COLOR});
+        m_vertexVector->push_back(Vertex{(dirA + b), {0, 0}, color.Hex(), Vertex::COLOR});
+        m_vertexVector->push_back(Vertex{(dirB + b), {0, 0}, color.Hex(), Vertex::COLOR});
 
-        m_indexData.push_back(currentElements + 0);
-        m_indexData.push_back(currentElements + 1);
-        m_indexData.push_back(currentElements + 2);
+        m_indexVector->push_back(currentElements + 0);
+        m_indexVector->push_back(currentElements + 1);
+        m_indexVector->push_back(currentElements + 2);
 
-        m_indexData.push_back(currentElements + 1);
-        m_indexData.push_back(currentElements + 3);
-        m_indexData.push_back(currentElements + 2);
+        m_indexVector->push_back(currentElements + 1);
+        m_indexVector->push_back(currentElements + 3);
+        m_indexVector->push_back(currentElements + 2);
 
         if(rounded) /// Doesn't work well with translucent colors. Might do something to fix this in some point. TODO
         {
@@ -364,14 +367,14 @@ namespace tml
                             const Vector2f& tl,
                             const Vector2f& br) noexcept
     {
-        ui32 currentElements = m_vertexData.size();
+        ui32 currentElements = m_vertexVector->size();
         if(currentElements >= MAX_VERTEX_COUNT - 4)
             EndBatch();
 
         const ui32 tex = PushTexture(texture);
         const ui32 hex = col.Hex();
 
-        currentElements = m_vertexData.size(); // PushTexture() might have ended the last batch, so we need to get the m_vertexData.size() again
+        currentElements = m_vertexVector->size(); // PushTexture() might have ended the last batch, so we need to get the m_vertexVector->size() again
 
         const ui32 typeAndTex = tex | type;
         if(rotation != 0)
@@ -381,26 +384,26 @@ namespace tml
             const float cos_r = std::cos(Math::DegToRad(rotation));
             const float sin_r = std::sin(Math::DegToRad(rotation));
 
-            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos, cos_r, sin_r), tl, hex, typeAndTex});
-            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos + Vector2f{size.x, 0.f}, cos_r, sin_r), {br.x, tl.y}, hex, typeAndTex});
-            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos + Vector2f{0.f, size.y}, cos_r, sin_r), {tl.x, br.y}, hex, typeAndTex});
-            m_vertexData.push_back(Vertex{Math::Rotate(origin, pos + size, cos_r, sin_r), br, hex, typeAndTex});
+            m_vertexVector->push_back(Vertex{Math::Rotate(origin, pos, cos_r, sin_r), tl, hex, typeAndTex});
+            m_vertexVector->push_back(Vertex{Math::Rotate(origin, pos + Vector2f{size.x, 0.f}, cos_r, sin_r), {br.x, tl.y}, hex, typeAndTex});
+            m_vertexVector->push_back(Vertex{Math::Rotate(origin, pos + Vector2f{0.f, size.y}, cos_r, sin_r), {tl.x, br.y}, hex, typeAndTex});
+            m_vertexVector->push_back(Vertex{Math::Rotate(origin, pos + size, cos_r, sin_r), br, hex, typeAndTex});
         }
         else
         {
-            m_vertexData.push_back(Vertex{pos, tl, hex, typeAndTex});
-            m_vertexData.push_back(Vertex{pos + Vector2f{size.x, 0.f}, {br.x, tl.y}, hex, typeAndTex});
-            m_vertexData.push_back(Vertex{pos + Vector2f{0.f, size.y}, {tl.x, br.y}, hex, typeAndTex});
-            m_vertexData.push_back(Vertex{pos + size, br, hex, typeAndTex});
+            m_vertexVector->push_back(Vertex{pos, tl, hex, typeAndTex});
+            m_vertexVector->push_back(Vertex{pos + Vector2f{size.x, 0.f}, {br.x, tl.y}, hex, typeAndTex});
+            m_vertexVector->push_back(Vertex{pos + Vector2f{0.f, size.y}, {tl.x, br.y}, hex, typeAndTex});
+            m_vertexVector->push_back(Vertex{pos + size, br, hex, typeAndTex});
         }
 
-        m_indexData.push_back(currentElements + 0);
-        m_indexData.push_back(currentElements + 1);
-        m_indexData.push_back(currentElements + 2);
+        m_indexVector->push_back(currentElements + 0);
+        m_indexVector->push_back(currentElements + 1);
+        m_indexVector->push_back(currentElements + 2);
 
-        m_indexData.push_back(currentElements + 1);
-        m_indexData.push_back(currentElements + 3);
-        m_indexData.push_back(currentElements + 2);
+        m_indexVector->push_back(currentElements + 1);
+        m_indexVector->push_back(currentElements + 3);
+        m_indexVector->push_back(currentElements + 2);
     }
 
 /// Windows annoyingly #defines DrawText
@@ -418,12 +421,14 @@ namespace tml
     
     void Renderer::PushVertexData(const std::vector<Vertex>& vertices, const std::vector<ui32>& indices) noexcept
     {
-        if(MAX_VERTEX_COUNT <= m_vertexData.size() + vertices.size())
+        if(MAX_VERTEX_COUNT <= m_vertexVector->size() + vertices.size())
             EndBatch();
-        const auto size = m_vertexData.size();
-        std::copy(vertices.begin(), vertices.end(), std::back_inserter(m_vertexData));
+        const auto size = m_vertexVector->size();
+//        std::copy(vertices.begin(), vertices.end(), std::back_inserter(m_vertexData));
+//        m_vertexBuffer->PushData(vertices.data(), sizeof(Vertex), vertices.size());
+        m_vertexVector->PushData(vertices.data(), sizeof(Vertex), vertices.size());
         for(const auto i : indices)
-            m_indexData.push_back(size + i);
+            m_indexVector->push_back(size + i);
     }
 
     void Renderer::PushVertexData(std::vector<Vertex>& vertices, const std::vector<ui32>& indices, const Texture& tex) noexcept
@@ -436,6 +441,7 @@ namespace tml
 
     void Renderer::EndBatch(bool flip) noexcept
     {
+//        m_vertexBuffer->Unbind();
         m_shader->Bind();
 
         for(i32 i = 0; i < m_textures.size(); i++)
@@ -449,15 +455,12 @@ namespace tml
         m_shader->UniformMat4fv("uProj",  1, false, m_proj);
         m_shader->UniformMat4fv("uScale", 1, false, m_scale);
 
-        m_vertexBuffer->PushData(m_vertexData.data(), sizeof(Vertex), m_vertexData.size());
-        m_indexBuffer->PushData(m_indexData.data(), m_indexData.size());
-        m_vao->BufferData(*m_vertexBuffer, *m_indexBuffer, *m_layout);
-
+        m_vao->BufferData(*m_vertexVector, *m_indexVector, *m_layout);
         m_vao->Bind();
-        m_vertexBuffer->Bind();
-        m_indexBuffer->Bind();
+        m_vertexVector->Bind();
+        m_indexVector->Bind();
 
-        GL_CALL(glad_glDrawElements(GL_TRIANGLES, m_indexBuffer->Elements(), GL_UNSIGNED_INT, nullptr));
+        GL_CALL(glad_glDrawElements(GL_TRIANGLES, m_indexVector->Elements(), GL_UNSIGNED_INT, nullptr));
         Renderer::BeginBatch();
 
         if(flip) /// Flip the view vertically. This is for RenderTexture.
@@ -466,12 +469,12 @@ namespace tml
 
     void Renderer::BeginBatch() noexcept
     {
-        m_vertexData.clear();
-        m_indexData.clear();
+        m_vertexVector->clear();
+        m_indexVector->clear();
         for(auto& i : m_textures)
             i = -1;
         m_textures.clear();
-        m_vertexBuffer->Flush();
-        m_indexBuffer->Flush();
+        m_vertexVector->clear();
+        m_indexVector->clear();
     }
 }

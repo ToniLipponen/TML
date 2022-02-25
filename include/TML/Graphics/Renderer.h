@@ -89,8 +89,8 @@ namespace tml
 
     protected:
         class VertexArray*  m_vao          = nullptr;
-        class VertexBuffer* m_vertexBuffer = nullptr;
-        class IndexBuffer*  m_indexBuffer  = nullptr;
+        class VertexVector* m_vertexVector = nullptr;
+        class IndexVector*  m_indexVector  = nullptr;
         class Shader*       m_shader       = nullptr;
         class BufferLayout* m_layout       = nullptr;
 
@@ -103,9 +103,6 @@ namespace tml
 
         constexpr static ui32 MAX_VERTEX_COUNT = 1000000;
         i32 MAX_TEXTURE_COUNT = 8;
-
-        std::vector<Vertex>  m_vertexData;
-        std::vector<ui32>    m_indexData;
         std::vector<ui32>    m_textures;
     };
 }
