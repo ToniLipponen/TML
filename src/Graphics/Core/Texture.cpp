@@ -109,7 +109,7 @@ namespace tml
                 case 2: ch = GL_RG8;    chi = GL_RG;    break;
                 case 3: ch = GL_RGB8;   chi = GL_RGB;   break;
                 case 4: ch = GL_RGBA8;  chi = GL_RGBA;  break;
-                default:                                break;
+                default:ch = GL_RGB8;   chi = GL_RGB;   break;
             }
             #ifdef TML_USE_GLES
                 GL_CALL(glad_glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, m_pixelData));
