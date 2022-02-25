@@ -76,7 +76,7 @@ namespace tml
         template<typename T>
         inline constexpr T SmoothStep(T edge0, T edge1, T x) noexcept
         {
-            constexpr const T t = Clamp<T>((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+            const T t = Clamp<T>((x - edge0) / (edge1 - edge0), 0.0, 1.0);
             return t * t * (3.0 - 2.0 * t);
         }
 

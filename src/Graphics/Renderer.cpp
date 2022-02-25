@@ -22,21 +22,18 @@
 
 namespace tml
 {
-    static void MakeCircle(Image& image, ui32 resolution) noexcept
+    static constexpr void MakeCircle(Image& image, ui32 resolution) noexcept
     {
         auto* buffer = image.GetData();
-        const auto radius = resolution / 2.0f;
+        const auto radius = resolution / 2.0;
         const auto center = Vector2f(radius);
 
         for(auto i = 0; i < resolution; ++i)
             for(auto j = 0; j < resolution; ++j)
             {
                 const double dist = Math::Distance(Vector2f(j, i), center);
-
-                if(dist < radius)
-                    buffer[i * resolution + j] = 255;
-                else
-                    buffer[i * resolution + j] = 0;
+                const double d = dist / radius;
+                buffer[i * resolution + j] = static_cast<unsigned char>(Math::SmoothStep<double>(0.0, 0.002, 1.0 - d) * 255.0);
             }
     }
 
