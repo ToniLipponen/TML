@@ -3,7 +3,7 @@ using namespace tml;
 
 int main()
 {
-    RenderWindow window(800, 600, "Circle", Window::Maximized);
+    RenderWindow window(800, 600, "Circle");
 
     while(!window.ShouldClose())
     {
@@ -12,7 +12,7 @@ int main()
             window.Close();
 
         window.Clear();
-        window.DrawCircle(window.GetSize() / 2, 400, Color::Red);
+        window.DrawCircle(window.GetSize() / 2, 200, Color::Red);
         window.Display();
     }
     return 0;
