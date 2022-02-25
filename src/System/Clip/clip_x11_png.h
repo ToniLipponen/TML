@@ -48,28 +48,17 @@ bool read_png(const uint8_t* buf,
   spec.width = width;
   spec.height = height;
   spec.bits_per_pixel = 32;
-
-  // Don't use png_get_rowbytes(png, info) here because this is the
-  // bytes_per_row of the output clip::image (the png file could
-  // contain 24bpp but we want to return a 32bpp anyway with alpha=255
-  // in that case).
   spec.bytes_per_row = 4*width;
 
   spec.red_mask    = 0x000000ff;
   spec.green_mask  = 0x0000ff00;
   spec.blue_mask   = 0x00ff0000;
+  spec.alpha_mask  = 0xff000000;
+
   spec.red_shift   = 0;
   spec.green_shift = 8;
   spec.blue_shift  = 16;
-
-  if (bit_depth == 4) {
-    spec.alpha_mask = 0xff000000;
-    spec.alpha_shift = 24;
-  }
-  else {
-    spec.alpha_mask = 0;
-    spec.alpha_shift = 0;
-  }
+  spec.alpha_shift = 24;
 
   if (output_spec)
     *output_spec = spec;
