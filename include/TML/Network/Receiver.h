@@ -9,7 +9,8 @@ namespace tml
         {
         public:
             Receiver();
-            bool GetClient(Socket& socket);
+            bool Listen(uint32_t port);
+            bool Accept(Socket& socket);
         };
     }
 }

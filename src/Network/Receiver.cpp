@@ -17,14 +17,22 @@ namespace tml
 #if defined(PLATFORM_UNIX) || defined(PLATFORM_LINUX)
         Receiver::Receiver() = default;
 
-        bool Receiver::GetClient(Socket &socket)
+        bool Receiver::Listen(uint32_t port)
+        {
+            struct sockaddr_in addr{};
+            addr.sin_family = AF_INET;
+            addr.sin_port = htons(port);
+            addr.sin_addr.s_addr = htonl(INADDR_ANY);
+            bind(m_fd, reinterpret_cast<struct sockaddr*>(&addr), sizeof(addr));
+            return listen(m_fd, 1) != -1;
+        }
+
+        bool Receiver::Accept(Socket& socket)
         {
             struct sockaddr_in cliaddr;
             socklen_t cliaddrlen = sizeof(cliaddr);
-            socket.m_fd = accept(m_fd, reinterpret_cast<sockaddr *>(&cliaddr), &cliaddrlen);
-            if(socket.m_fd == -1)
-                return false;
-            return true;
+            socket.m_fd = accept(socket.m_fd, reinterpret_cast<sockaddr *>(&cliaddr), &cliaddrlen);
+            return (socket.m_fd != -1);
         }
 #else
 

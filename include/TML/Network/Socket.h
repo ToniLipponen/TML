@@ -10,6 +10,7 @@ namespace tml
         {
         public:
             Socket();
+            virtual ~Socket();
             bool Connect(const std::string& address, uint32_t port) noexcept;
             bool Disconnect();
             bool IsConnected();

@@ -18,12 +18,17 @@ namespace tml
 #if defined(PLATFORM_UNIX) || defined(PLATFORM_LINUX)
         Socket::Socket()
         {
-            m_fd = socket(AF_INET, SOCK_STREAM, 0);
+            m_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
             if(m_fd == -1)
             {
                 Logger::ErrorMessage("Could not create a socket");
                 return;
             }
+        }
+
+        Socket::~Socket()
+        {
+            close(m_fd);
         }
 
         bool Socket::Connect(const std::string &address, uint32_t port) noexcept
@@ -32,8 +37,8 @@ namespace tml
             inet_pton(AF_INET, address.c_str(), &addr.sin_addr);
             addr.sin_family = AF_INET;
             addr.sin_port = htons(port);
-            auto result = connect(m_fd, (struct sockaddr*)&addr, sizeof(struct sockaddr));
-            return result != -1;
+            auto result = connect(m_fd, reinterpret_cast<struct sockaddr*>(&addr), sizeof(struct sockaddr_in));
+            return result == 0;
         }
 
         bool Socket::Disconnect()
@@ -48,9 +53,7 @@ namespace tml
 
         bool Socket::Send(const void *data, uint64_t size)
         {
-            if(write(m_fd, data, size) == -1)
-                return false;
-            return true;
+            return write(m_fd, data, size) != -1;
         }
 
         bool Socket::Receive(void *data, uint64_t size, uint64_t &received)
