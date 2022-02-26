@@ -1,56 +1,72 @@
 #include <TML/Network/Socket.h>
+#include <TML/System/Logger.h>
 
-#define ASIO_STANDALONE
-#include <asio/include/asio/ip/tcp.hpp>
+#if defined(PLATFORM_UNIX) || defined(PLATFORM_LINUX)
+    #include <sys/types.h>
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+    #include <arpa/inet.h>
+    #include <unistd.h>
+#else
 
-using namespace asio;
-using namespace ip;
+#endif
 
 namespace tml
 {
     namespace Net
     {
-        Socket::Socket(Context& context)
+#if defined(PLATFORM_UNIX) || defined(PLATFORM_LINUX)
+        Socket::Socket()
         {
-            m_socket = new tcp::socket(*reinterpret_cast<io_context*>(context.m_context));
+            m_fd = socket(AF_INET, SOCK_STREAM, 0);
+            if(m_fd == -1)
+            {
+                Logger::ErrorMessage("Could not create a socket");
+                return;
+            }
         }
 
-        bool Socket::Connect(const std::string &address, ui16 port) noexcept
+        bool Socket::Connect(const std::string &address, uint32_t port) noexcept
         {
-            error_code errorCode;
-            tcp::endpoint endpoint(make_address(address, errorCode), port);
-            auto asioSocket = reinterpret_cast<tcp::socket*>(m_socket);
-            asioSocket->connect(endpoint);
-            return errorCode.value() == 0 && asioSocket->is_open();
+            struct sockaddr_in addr{};
+            inet_pton(AF_INET, address.c_str(), &addr.sin_addr);
+            addr.sin_family = AF_INET;
+            addr.sin_port = htons(port);
+            auto result = connect(m_fd, (struct sockaddr*)&addr, sizeof(struct sockaddr));
+            return result != -1;
         }
 
         bool Socket::Disconnect()
         {
-            error_code errorCode;
-            auto asioSocket = reinterpret_cast<tcp::socket*>(m_socket);
-            asioSocket->close(errorCode);
-            return errorCode.value() == 0;
+            return close(m_fd) == 0;
         }
 
         bool Socket::IsConnected()
         {
-            auto asioSocket = reinterpret_cast<tcp::socket*>(m_socket);
-            return asioSocket->is_open();
-        }
-
-        bool Socket::Send(const void *data, ui64 size)
-        {
-            auto asioSocket = reinterpret_cast<tcp::socket*>(m_socket);
-            return asioSocket->write_some(asio::buffer(data, size));
-        }
-
-        bool Socket::Receive(void *data, ui64 size, ui64& received)
-        {
-            auto asioSocket = reinterpret_cast<tcp::socket*>(m_socket);
-            asio::mutable_buffer buffer(data, size);
-            received = asioSocket->read_some(buffer);
-            std::memcpy(const_cast<void *>(data), buffer.data(), buffer.size());
             return true;
         }
+
+        bool Socket::Send(const void *data, uint64_t size)
+        {
+            if(write(m_fd, data, size) == -1)
+                return false;
+            return true;
+        }
+
+        bool Socket::Receive(void *data, uint64_t size, uint64_t &received)
+        {
+            int64_t bytes = read(m_fd, data, size);
+            if(bytes == -1)
+            {
+                received = 0;
+                return false;
+            }
+            received = bytes;
+            return true;
+        }
+
+#else
+        /// Windows sockets implementation
+#endif
     }
 }

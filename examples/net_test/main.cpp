@@ -1,13 +1,13 @@
 #include <TML/Graphics.h>
 #include <TML/Network/Socket.h>
+#include <TML/Network/Receiver.h>
 #include <iostream>
 
 int main()
 {
     tml::RenderWindow window(800, 600, "Net test");
 
-    tml::Net::Context ctx;
-    tml::Net::Socket socket(ctx);
+    tml::Net::Socket socket;
     socket.Connect("93.184.216.34", 80);
 
     const char request[] = "GET /index.html HTTP/1.1\r\nHost: example.com\r\nConnection: close\r\n\r\n";
