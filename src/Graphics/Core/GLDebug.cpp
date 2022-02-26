@@ -5,7 +5,7 @@
 #ifndef TML_NO_GL_DEBUGGING
 int CheckGLError()
 {
-    const auto e = glGetError();
+    const auto e = glad_glGetError();
     if(e == GL_NO_ERROR)
         return 0;
 

@@ -70,12 +70,10 @@ namespace tml
         return true;
     }
 
-    void ComputeShader::ConnectBuffer(const String &name, ui32 index, StorageBuffer& buffer)
+    void ComputeShader::ConnectBuffer(const std::string &name, ui32 index, StorageBuffer& buffer)
     {
-        const ui32 block_index = GL_CALL(glGetProgramResourceIndex(m_id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
-        #ifndef TML_USE_GLES
-            GL_CALL(glShaderStorageBlockBinding(m_id, block_index, index));
-        #endif
+        const ui32 block_index = GL_CALL(glad_glGetProgramResourceIndex(m_id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
+        GL_CALL(glad_glShaderStorageBlockBinding(m_id, block_index, index));
         buffer.BindBufferBase(index);
     }
 

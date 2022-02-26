@@ -118,9 +118,9 @@ int main()
         shader.Wait();
 
         /// Load data from the storage buffers back to circles data buffers.
-        posData.RetrieveData(circles.positions.data(), circles.positions.size() * sizeof(Vector2f));
-        momentData.RetrieveData(circles.velocities.data(), circles.velocities.size() * sizeof(Vector2f));
-        radData.RetrieveData(circles.radii.data(), circles.radii.size() * sizeof(float));
+        posData.RetrieveData(&circles.positions[0], circles.positions.size() * sizeof(Vector2f));
+        momentData.RetrieveData(&circles.velocities[0], circles.velocities.size() * sizeof(Vector2f));
+        radData.RetrieveData(&circles.radii[0], circles.radii.size() * sizeof(float));
 
         window.Clear();
         for(auto i = 0; i < circles.positions.size(); ++i)

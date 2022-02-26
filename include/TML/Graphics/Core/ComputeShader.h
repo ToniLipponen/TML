@@ -11,7 +11,7 @@ namespace tml
         ComputeShader();
         bool LoadFromFile(const String& filename) noexcept;
         bool LoadFromString(const String& source) noexcept;
-        void ConnectBuffer(const String& name, ui32 index, StorageBuffer& buffer);
+        void ConnectBuffer(const std::string& name, ui32 index, StorageBuffer& buffer);
         void Dispatch(i16 x, i16 y);
         void Wait();
     };
