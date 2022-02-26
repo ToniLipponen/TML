@@ -8,7 +8,7 @@ namespace tml
     StorageBuffer::StorageBuffer() noexcept
     : m_id(0)
     {
-        GL_CALL(glad_glGenBuffers(1, &m_id));
+        GL_CALL(glad_glCreateBuffers(1, &m_id));
     }
 
     void StorageBuffer::Bind() const noexcept

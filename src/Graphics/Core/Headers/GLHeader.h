@@ -1,7 +1,6 @@
 #pragma once
 #include <TML/System/Platform.h>
 
-//#define TML_USE_GLES
 #ifdef PLATFORM_WINDOWS
     #include <glad/gl.h>
 #else
