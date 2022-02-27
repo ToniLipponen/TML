@@ -1,6 +1,5 @@
 #include <TML/Graphics.h>
-#include <TML/Network/Socket.h>
-#include <TML/Network/Receiver.h>
+#include <TML/Network.h>
 #include <iostream>
 
 int main()
@@ -19,6 +18,10 @@ int main()
     socket.Receive(buffer, 8000, read);
     std::cout << buffer << "\n\nReceived bytes: " << read << std::endl;
 
+    tml::Text text;
+    text.SetString(std::string(buffer));
+    text.SetSize(14);
+
     while(!window.ShouldClose())
     {
         auto event = window.PollEvents();
@@ -26,7 +29,7 @@ int main()
             window.Close();
 
         window.Clear();
-        window.DrawCircle(window.GetSize() / 2, 100, tml::Color::Green);
+        window.Draw(text);
         window.Display();
     }
 }

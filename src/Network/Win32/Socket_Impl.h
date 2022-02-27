@@ -3,14 +3,7 @@
 #include <TML/Network/Socket.h>
 #include <TML/System/Logger.h>
 
-#ifndef WIN32_LEAN_AND_MEAN
-    #define WIN32_LEAN_AND_MEAN
-#endif
-
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <iphlpapi.h>
+#include "NetworkContext.h"
 
 namespace tml
 {
@@ -19,14 +12,7 @@ namespace tml
         Socket::Socket()
         {
             m_fd = INVALID_SOCKET;
-            WSADATA wsaData;
-
-            auto result = WSAStartup(MAKEWORD(2, 2), &wsaData);
-
-            if (result != 0)
-            {
-                Logger::ErrorMessage("WSAStartup failed");
-            }
+            WinNetContext::Create();
         }
 
         Socket::~Socket()
@@ -45,14 +31,14 @@ namespace tml
 
             auto iResult = getaddrinfo(address.c_str(), std::to_string(port).c_str(), &hints, &result);
 
-            if (iResult)
+            if(iResult != 0)
             {
-                Logger::ErrorMessage("sFailed to connect to host");
+                Logger::ErrorMessage("Failed to get host address info");
                 WSACleanup();
                 return false;
             }
 
-            for (ptr = result; ptr != nullptr; ptr = ptr->ai_next)
+            for(ptr = result; ptr != nullptr; ptr = ptr->ai_next)
             {
                 m_fd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
                 if (m_fd == INVALID_SOCKET)
@@ -75,9 +61,9 @@ namespace tml
 
             freeaddrinfo(result);
 
-            if (m_fd == INVALID_SOCKET)
+            if(m_fd == INVALID_SOCKET)
             {
-                Logger::ErrorMessage("fdFailed to connect to host");
+                Logger::ErrorMessage("Failed to connect to host");
                 WSACleanup();
                 return false;
             }
@@ -97,14 +83,26 @@ namespace tml
 
         bool Socket::Send(const void *data, uint64_t size)
         {
-            auto result = send(m_fd, reinterpret_cast<const char *>(data), size, 0);
-            return result != SOCKET_ERROR;
+            auto result = send(m_fd, reinterpret_cast<const char*>(data), static_cast<int>(size), 0);
+            if(result == SOCKET_ERROR)
+            {
+                Logger::ErrorMessage("Failed to send data");
+                closesocket(m_fd);
+                return false;
+            }
+            return true;
         }
 
         bool Socket::Receive(void *data, uint64_t size, uint64_t &received)
         {
-            int64_t bytes = recv(m_fd, reinterpret_cast<char *>(data), size, 0);
-            if (bytes == -1)
+            int64_t bytes = recv(m_fd, reinterpret_cast<char *>(data), static_cast<int>(size), 0);
+            if(bytes < 0)
+            {
+                Logger::ErrorMessage("Failed to receive data");
+                received = 0;
+                return false;
+            }
+            else if(bytes == 0)
             {
                 received = 0;
                 return false;

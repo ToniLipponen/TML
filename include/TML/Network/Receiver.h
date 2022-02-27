@@ -16,7 +16,7 @@ namespace tml
             bool Bind();
 
         protected:
-            uint32_t m_port = 8080;
+            uint32_t m_port = 0;
         };
     }
 }

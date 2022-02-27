@@ -1,5 +1,5 @@
 #if defined(PLATFORM_UNIX) || defined(PLATFORM_LINUX)
-    #include "UnixSockets.h"
+    #include "Unix/Socket_Impl.h"
 #else
-    #include "WindowsSocket.h"
+    #include "Win32/Socket_Impl.h"
 #endif
