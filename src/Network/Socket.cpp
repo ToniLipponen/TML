@@ -37,8 +37,14 @@ namespace tml
             inet_pton(AF_INET, address.c_str(), &addr.sin_addr);
             addr.sin_family = AF_INET;
             addr.sin_port = htons(port);
-            auto result = connect(m_fd, reinterpret_cast<struct sockaddr*>(&addr), sizeof(struct sockaddr_in));
-            return result == 0;
+            auto result = connect(m_fd, reinterpret_cast<struct sockaddr*>(&addr), sizeof(struct sockaddr_in)) == 0;
+
+            if(result == -1)
+            {
+                Logger::ErrorMessage("Failed to connect to host");
+                return false;
+            }
+            return true;
         }
 
         bool Socket::Disconnect()
@@ -58,6 +64,7 @@ namespace tml
 
         bool Socket::Receive(void *data, uint64_t size, uint64_t &received)
         {
+//            int64_t bytes = recv(m_fd, data, size, 0);
             int64_t bytes = read(m_fd, data, size);
             if(bytes == -1)
             {

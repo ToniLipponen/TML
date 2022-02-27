@@ -11,6 +11,12 @@ namespace tml
             Receiver();
             bool Listen(uint32_t port);
             bool Accept(Socket& socket);
+
+        private:
+            bool Bind();
+
+        protected:
+            uint32_t m_port = 8080;
         };
     }
 }
