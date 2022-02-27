@@ -20,12 +20,7 @@ namespace tml
             friend class Receiver;
         protected:
             uint32_t m_port = 0;
-
-//#if defined(PLATFORM_UNIX) || defined(PLATFORM_LINUX)
             int64_t m_fd;
-//#else
-//
-//#endif
         };
     }
 }
