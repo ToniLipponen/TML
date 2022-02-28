@@ -51,10 +51,10 @@ add_subdirectory(src/Window)
 add_subdirectory(src/Network)
 
 add_library(TML src/TOKEN_SOURCE_FILE.cpp ${HEADER_FILES})
-target_link_libraries(TML TML-Audio TML-Interface TML-Graphics TML-Window TML-System)
+target_link_libraries(TML TML-Audio TML-Interface TML-Graphics TML-Window TML-System TML-Network)
 
 set(CMAKE_INSTALL_PREFIX /usr/)
-install(TARGETS TML-System TML-Graphics TML-Interface TML-Audio DESTINATION /usr/lib)
+install(TARGETS TML-System TML-Graphics TML-Interface TML-Audio TML-Network DESTINATION /usr/lib)
 install(DIRECTORY include/TML DESTINATION /usr/include)
 
 if(TML_BUILD_EXAMPLES)
