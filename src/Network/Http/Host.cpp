@@ -5,11 +5,6 @@ namespace tml
 {
     namespace Net
     {
-        HttpHost::HttpHost()
-        {
-
-        }
-
         HttpHost::HttpHost(std::string address, uint32_t port)
         : m_address(std::move(address))
         {
@@ -20,7 +15,7 @@ namespace tml
             }
         }
 
-        bool HttpHost::Send(HttpRequest &request) noexcept
+        bool HttpHost::Send(HttpRequest& request) noexcept
         {
             request.SetProperty("Host", m_address);
             const auto message = std::move(request.GetRequestString());
@@ -39,13 +34,12 @@ namespace tml
             uint64_t received = 1;
 
             std::string response;
-            std::string buffer;
-            buffer.reserve(512);
+            char buffer[512];
 
             while(received != 0)
             {
                 m_socket.Receive(&buffer[0], 512, received);
-                response += buffer;
+                response.append(buffer, received);
             }
             return std::move(response);
         }

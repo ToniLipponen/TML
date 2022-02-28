@@ -69,7 +69,7 @@ namespace tml
             }
 
             request += m_body;
-            request += "\r\n";
+            request += "\r\n\r\n";
             return std::move(request);
         }
     }

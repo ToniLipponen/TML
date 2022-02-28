@@ -38,15 +38,17 @@ namespace tml
             {
                 auto ipAddress = IpFromHostname(address);
                 result = inet_pton(AF_INET, ipAddress.c_str(), &addr.sin_addr);
+
                 if(result == 0)
                 {
                     Logger::ErrorMessage("Address is invalid");
                 }
                 else if(result == -1)
                 {
-                    // Print some error.
+                    Logger::ErrorMessage("Address is invalid");
                 }
             }
+
             addr.sin_family = AF_INET;
             addr.sin_port = htons(port);
 
@@ -79,7 +81,7 @@ namespace tml
 
         bool Socket::Receive(void *data, uint64_t size, uint64_t &received) const
         {
-            int64_t bytes = recv(m_fd, data, size, MSG_DONTWAIT);
+            int64_t bytes = read(m_fd, data, size);
 
             if(bytes < 0)
             {

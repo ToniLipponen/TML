@@ -1,6 +1,5 @@
 #pragma once
 #include "Socket.h"
-
 #include <string>
 #include <map>
 
@@ -23,8 +22,8 @@ namespace tml
             void SetBody(std::string body);
 
             friend class HttpHost;
-        private:
             std::string GetRequestString() const noexcept;
+        private:
             enum Method m_method;
             uint32_t m_versionMajor = 1;
             uint32_t m_versionMinor = 1;
@@ -136,7 +135,6 @@ namespace tml
         class HttpHost
         {
         public:
-            HttpHost();
             HttpHost(std::string address, uint32_t port);
 
             bool Send(HttpRequest& request) noexcept;
