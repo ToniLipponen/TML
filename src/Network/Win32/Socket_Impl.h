@@ -23,18 +23,18 @@ namespace tml
 
         bool Socket::Connect(const std::string &address, uint32_t port) noexcept
         {
-            struct addrinfo *result = NULL, *ptr = NULL, hints;
+            m_port = port;
+            struct addrinfo *result = NULL, *ptr = NULL, hints{};
 
             hints.ai_family = AF_UNSPEC;
             hints.ai_socktype = SOCK_STREAM;
             hints.ai_protocol = IPPROTO_TCP;
 
-            auto iResult = getaddrinfo(address.c_str(), std::to_string(port).c_str(), &hints, &result);
+            int iResult = getaddrinfo(address.c_str(), std::to_string(port).c_str(), &hints, &result);
 
             if(iResult != 0)
             {
                 Logger::ErrorMessage("Failed to get host address info");
-                WSACleanup();
                 return false;
             }
 
@@ -44,11 +44,11 @@ namespace tml
                 if (m_fd == INVALID_SOCKET)
                 {
                     Logger::ErrorMessage("Invalid socket");
-                    WSACleanup();
                     return false;
                 }
 
                 iResult = connect(m_fd, ptr->ai_addr, ptr->ai_addrlen);
+                
                 if (iResult == SOCKET_ERROR)
                 {
                     closesocket(m_fd);
@@ -64,24 +64,23 @@ namespace tml
             if(m_fd == INVALID_SOCKET)
             {
                 Logger::ErrorMessage("Failed to connect to host");
-                WSACleanup();
                 return false;
             }
 
             return true;
         }
 
-        bool Socket::Disconnect()
+        bool Socket::Disconnect() const
         {
             return closesocket(m_fd);
         }
 
-        bool Socket::IsConnected()
+        bool Socket::IsConnected() const
         {
             return m_fd != INVALID_SOCKET;
         }
 
-        bool Socket::Send(const void *data, uint64_t size)
+        bool Socket::Send(const void *data, uint64_t size) const
         {
             auto result = send(m_fd, reinterpret_cast<const char*>(data), static_cast<int>(size), 0);
             if(result == SOCKET_ERROR)
@@ -93,7 +92,7 @@ namespace tml
             return true;
         }
 
-        bool Socket::Receive(void *data, uint64_t size, uint64_t &received)
+        bool Socket::Receive(void *data, uint64_t size, uint64_t &received) const
         {
             int64_t bytes = recv(m_fd, reinterpret_cast<char *>(data), static_cast<int>(size), 0);
             if(bytes < 0)
@@ -109,6 +108,11 @@ namespace tml
             }
             received = bytes;
             return true;
+        }
+
+        std::string Socket::IpFromHostname(const std::string &hostname)
+        {
+            return "";
         }
     }
 }
