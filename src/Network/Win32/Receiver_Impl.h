@@ -40,9 +40,7 @@ namespace tml
 
         bool Receiver::Bind()
         {
-            struct addrinfo *result = NULL, *ptr = NULL, hints;
-
-            ZeroMemory(&hints, sizeof (hints));
+            struct addrinfo *result = NULL, *ptr = NULL, hints{};
             hints.ai_family = AF_INET;
             hints.ai_socktype = SOCK_STREAM;
             hints.ai_protocol = IPPROTO_TCP;
