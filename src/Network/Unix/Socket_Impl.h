@@ -32,27 +32,21 @@ namespace tml
 
         bool Socket::Connect(const std::string& address, uint32_t port) noexcept
         {
-            struct sockaddr_in addr{};
-            auto result = inet_pton(AF_INET, address.c_str(), &addr.sin_addr);
+            struct sockaddr_in sockAddress{};
+            auto result = inet_pton(AF_INET, address.c_str(), &sockAddress.sin_addr);
             if(result == 0)
             {
                 auto ipAddress = IpFromHostname(address);
-                result = inet_pton(AF_INET, ipAddress.c_str(), &addr.sin_addr);
+                result = inet_pton(AF_INET, ipAddress.c_str(), &sockAddress.sin_addr);
 
-                if(result == 0)
-                {
+                if(result != 1)
                     Logger::ErrorMessage("Address is invalid");
-                }
-                else if(result == -1)
-                {
-                    Logger::ErrorMessage("Address is invalid");
-                }
             }
 
-            addr.sin_family = AF_INET;
-            addr.sin_port = htons(port);
+            sockAddress.sin_family = AF_INET;
+            sockAddress.sin_port = htons(port);
 
-            result = connect(m_fd, reinterpret_cast<struct sockaddr*>(&addr), sizeof(struct sockaddr_in));
+            result = connect(m_fd, reinterpret_cast<struct sockaddr*>(&sockAddress), sizeof(struct sockaddr_in));
 
             if(result == -1)
             {
@@ -69,7 +63,7 @@ namespace tml
             return close(m_fd) == 0;
         }
 
-        bool Socket::IsConnected()
+        [[maybe_unused]] bool Socket::IsConnected() const
         {
             return m_fd != 0;
         }
@@ -99,16 +93,12 @@ namespace tml
             struct in_addr **addr_list;
 
             if((he = gethostbyname(hostname.c_str())) == nullptr)
-            {
                 return "";
-            }
 
             addr_list = (struct in_addr **) he->h_addr_list;
 
             for(int i = 0; addr_list[i] != nullptr; i++)
-            {
                 return inet_ntoa(*addr_list[i]);
-            }
 
             return "";
         }
