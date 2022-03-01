@@ -10,9 +10,13 @@ int main()
 
     while(!window.ShouldClose())
     {
-        auto event = window.PollEvents();
-        if(event.type == Event::Closed)
-            window.Close();
+        Event event{};
+
+        while(window.PollEvents(event))
+        {
+            if(event.type == tml::Event::Closed)
+                window.Close();
+        }
 
         /// Toggle music playback with space bar.
         if(event.type == Event::KeyPressed && event.key.code == Keyboard::KEY_SPACE)

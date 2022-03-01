@@ -51,12 +51,16 @@ int main()
 
     while(!window.ShouldClose())
     {
-        delta = clock.Reset();
-        auto event = window.PollEvents();
-        if(event.type == Event::Closed)
-            window.Close();
-        else if(event.type == Event::MouseMoved)
-            mousePos = {event.mouseMove.x, event.mouseMove.y};
+        Event event{};
+
+        while(window.PollEvents(event))
+        {
+            if(event.type == tml::Event::Closed)
+                window.Close();
+            else if(event.type == tml::Event::MouseMoved)
+                mousePos = Vector2f(event.mouseMove.x, event.mouseMove.y);
+        }
+
         scene.rects.at(1).Rotate(delta * 100.0);
 
         window.Clear();

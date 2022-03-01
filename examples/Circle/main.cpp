@@ -7,9 +7,15 @@ int main()
 
     while(!window.ShouldClose())
     {
-        auto event = window.PollEvents();
-        if(event.type == Event::Closed)
-            window.Close();
+        Event event{};
+
+        /// Polling events in a while loop.
+        /// This is because multiple events might be pushed to the event queue each frame.
+        while(window.PollEvents(event))
+        {
+            if(event.type == Event::Closed)
+                window.Close();
+        }
 
         window.Clear();
         window.DrawCircle(window.GetSize() / 2, 200, Color::Red);

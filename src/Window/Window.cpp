@@ -114,14 +114,15 @@ namespace tml
         return y;
     }
 
-    Event Window::PollEvents() noexcept
+
+    bool Window::PollEvents(Event& e)
     {
-        return EventSystem::GetInstance().PollEvents();
+        return EventSystem::GetInstance().PollEvents(e);
     }
 
-    Event Window::WaitEvents() noexcept
+    bool Window::WaitEvents(Event& e)
     {
-        return EventSystem::GetInstance().WaitEvents();
+        return EventSystem::GetInstance().WaitEvents(e);
     }
 
     Vector2i Window::GetPosition() const noexcept

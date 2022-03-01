@@ -40,8 +40,8 @@ namespace tml
         Vector2i GetSize() const noexcept;
         Vector2i GetPosition() const noexcept;
 
-        Event PollEvents() noexcept;
-        Event WaitEvents() noexcept;
+        bool PollEvents(Event& e);
+        bool WaitEvents(Event& e);
 
         void SetSize(ui32 width, ui32 height) noexcept;
         void SetTitle(const std::string& title) noexcept;

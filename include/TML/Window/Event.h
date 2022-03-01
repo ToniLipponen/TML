@@ -114,10 +114,10 @@ namespace tml
         void operator=(const EventSystem&)  = delete;
         static EventSystem& GetInstance();
 
-        Event PollEvents() noexcept;
-        Event WaitEvents() noexcept;
-        void PushEvent(Event& event);   /// Pushed new event to the event queue.
-        Event PopEvent() noexcept;      /// Get event from event queue. Might return Null event. Event::EventType::Null
+        bool PollEvents(Event& e) noexcept;     /// Checks if there is events in the event queue.
+        bool WaitEvents(Event& e) noexcept;     /// Blocks until there is an event in the event queue.
+        void PushEvent(Event& event);           /// Pushed new event to the event queue.
+        bool PopEvent(Event& e) noexcept;       /// Get event from event queue. Returns true if popped new event.
     protected:
         void PollMouse();
     private:

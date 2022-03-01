@@ -85,14 +85,21 @@ int main()
     shader.LoadFromString(shaderSrc);
 
     Clock clock;
+
+    Vector2f mousePos;
+
     while(!window.ShouldClose())
     {
         const auto delta = clock.Reset();
-        auto event = window.PollEvents();
-        auto mousePos = Mouse::GetPosition();
+        Event event{};
 
-        if(event.type == tml::Event::Closed)
-            window.Close();
+        while(window.PollEvents(event))
+        {
+            if(event.type == tml::Event::Closed)
+                window.Close();
+            else if(event.type == tml::Event::MouseMoved)
+                mousePos = Vector2f(event.mouseMove.x, event.mouseMove.y);
+        }
 
         /// Bind the compute shader.
         shader.Bind();

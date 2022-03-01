@@ -79,7 +79,9 @@ int main(int argc, char** argv)
     Clock clock;
     while(!window.ShouldClose())
     {
-        auto windowEvent = window.WaitEvents();
+        Event windowEvent{};
+        window.WaitEvents(windowEvent);
+
         switch(windowEvent.type)
         {
             case Event::MouseButtonPressed:

@@ -10,10 +10,7 @@ namespace tml
 {
     EventSystem* EventSystem::m_instance = nullptr;
 
-    EventSystem::EventSystem()
-    {
-
-    }
+    EventSystem::EventSystem() = default;
 
     EventSystem& EventSystem::GetInstance()
     {
@@ -22,25 +19,20 @@ namespace tml
         return *m_instance;
     }
 
-    Event EventSystem::PollEvents() noexcept
+    bool EventSystem::PollEvents(Event& event) noexcept
     {
         glfwPollEvents();
         PollMouse();
-        return PopEvent();
+        return PopEvent(event);
     }
 
-    Event EventSystem::WaitEvents() noexcept
+    bool EventSystem::WaitEvents(Event& e) noexcept
     {
-        Event event = PollEvents();
-        if(event.type == Event::Null)
-        {
-            do
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
-                event = PollEvents();
-            }while(event.type == Event::EventType::Null);
-        }
-        return event;
+        /// Poll events until there is an event.
+        while(!PollEvents(e))
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+        return true;
     }
 
     void EventSystem::PushEvent(Event &event)
@@ -48,16 +40,14 @@ namespace tml
         m_eventQueue.push(event);
     }
 
-    Event EventSystem::PopEvent() noexcept
+    bool EventSystem::PopEvent(Event& e) noexcept
     {
-        Event event{};
         if(m_eventQueue.empty())
-        {
-            return event;
-        }
-        event = m_eventQueue.front();
+            return false;
+
+        e = m_eventQueue.front();
         m_eventQueue.pop();
-        return event;
+        return true;
     }
 
     void EventSystem::PollMouse()
