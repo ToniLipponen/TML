@@ -36,7 +36,7 @@ endif()
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp external/incbin/incbin.c)
 file(GLOB_RECURSE HEADERS_FILES include/TML/*.h)
-include_directories(external/glm external/glfw/include include external res external/libwebp/src/ src/Graphics/Core/ src/Graphics/Core/Headers)
+include_directories(external/glm external/glfw/include include external res external/libwebp/src/ src/Graphics/Core/ src/Graphics/Core/Headers external/asio/include)
 
 # Add external libraries
 add_subdirectory(external/glfw/)
@@ -48,12 +48,13 @@ add_subdirectory(src/Graphics)
 add_subdirectory(src/Interface)
 add_subdirectory(src/System)
 add_subdirectory(src/Window)
+add_subdirectory(src/Network)
 
 add_library(TML src/TOKEN_SOURCE_FILE.cpp ${HEADER_FILES})
-target_link_libraries(TML TML-Audio TML-Interface TML-Graphics TML-Window TML-System)
+target_link_libraries(TML TML-Audio TML-Interface TML-Graphics TML-Window TML-System TML-Network)
 
 set(CMAKE_INSTALL_PREFIX /usr/)
-install(TARGETS TML-System TML-Graphics TML-Interface TML-Audio DESTINATION /usr/lib)
+install(TARGETS TML-System TML-Graphics TML-Interface TML-Audio TML-Network DESTINATION /usr/lib)
 install(DIRECTORY include/TML DESTINATION /usr/include)
 
 if(TML_BUILD_EXAMPLES)
@@ -63,6 +64,7 @@ if(TML_BUILD_EXAMPLES)
     add_subdirectory(examples/Raycasting/)
     add_subdirectory(examples/Compute)
     add_subdirectory(examples/ImageViewer)
+    add_subdirectory(examples/net_test)
 endif()
 
 # Removing TML library file, because it doesn't actually contain anything.

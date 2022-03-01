@@ -3,4 +3,3 @@ project(TML-Graphics)
 
 file(GLOB_RECURSE SRC_FILES ./*.cpp)
 add_library(TML-Graphics ${SRC_FILES})
-target_link_libraries(TML-Graphics)
