@@ -45,7 +45,7 @@ namespace tml
         }
 
         template<ComponentAxis axis>
-        void Scrollbar<axis>::Draw(RenderWindow& window)
+        void Scrollbar<axis>::pDraw(Renderer &window)
         {
             if(axis == Vertical)
             {

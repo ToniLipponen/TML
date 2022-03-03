@@ -11,10 +11,10 @@ namespace tml
             m_padding.x = 0;
         }
 
-        void Menubar::Draw(RenderWindow &renderWindow)
+        void Menubar::pDraw(Renderer &renderer)
         {
-            renderWindow.DrawRect(m_pos, m_size, m_pColor);
-            renderWindow.DrawLine(m_pos + Vector2f(0,m_size.y), m_pos + m_size, 1, m_sColor, false);
+            renderer.DrawRect(m_pos, m_size, m_pColor);
+            renderer.DrawLine(m_pos + Vector2f(0, m_size.y), m_pos + m_size, 1, m_sColor, false);
         }
     }
 }

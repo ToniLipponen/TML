@@ -88,7 +88,6 @@ namespace tml
         };
 
         EventType type = EventType::Null;
-        void* sender = nullptr;
 
         union
         {

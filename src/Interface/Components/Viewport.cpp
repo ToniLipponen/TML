@@ -19,7 +19,7 @@ namespace tml
             SetCallbacks();
         }
 
-        void Viewport::Draw(RenderWindow &window)
+        void Viewport::pDraw(Renderer &window)
         {
             window.DrawTexture(m_surface.GetTexture(), m_pos, m_size);
             window.DrawGrid(m_pos, m_size, 1,1, m_pColor);

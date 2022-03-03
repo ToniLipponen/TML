@@ -24,7 +24,7 @@ namespace tml
         private:
             i32 GetOverFlow() const noexcept; // Get count of items that do not fit int the visible area.
         protected:
-            void Draw(RenderWindow& renderWindow) override;
+            void pDraw(Renderer &renderer) override;
             std::vector<String> m_values;
             Scrollbar<Vertical>* m_scrollbar = nullptr;
 

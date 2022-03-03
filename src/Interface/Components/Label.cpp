@@ -29,7 +29,7 @@ namespace tml
             return Math::PointInRect(p, m_pos, m_size, 0);
         }
 
-        void Label::Draw(RenderWindow& window)
+        void Label::pDraw(Renderer &window)
         {
             window.Draw(m_text);
         }

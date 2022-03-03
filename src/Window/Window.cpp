@@ -16,6 +16,8 @@ void CharCallback(GLFWwindow* window, unsigned int code);
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void WindowResizeCallback(GLFWwindow* window, int x, int y);
+void WindowFocusCallback(GLFWwindow* window, int focus);
+void WindowCloseCallback(GLFWwindow* window);
 
 namespace tml
 {
@@ -113,7 +115,6 @@ namespace tml
         glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &x, &y);
         return y;
     }
-
 
     bool Window::PollEvents(Event& e)
     {
@@ -225,12 +226,8 @@ namespace tml
         glfwSetKeyCallback(handle, KeyCallback);
         glfwSetMouseButtonCallback(handle, MouseButtonCallback);
         glfwSetScrollCallback(handle, MouseScrollCallback);
-        glfwSetWindowCloseCallback(handle, [](GLFWwindow* handle){
-            Event event;
-            event.type = Event::Closed;
-            event.sender = handle;
-            EventSystem::GetInstance().PushEvent(event);
-        });
+        glfwSetWindowFocusCallback(handle, WindowFocusCallback);
+        glfwSetWindowCloseCallback(handle, WindowCloseCallback);
     }
 }
 
@@ -241,32 +238,30 @@ using tml::Event;
 
 void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
+    auto mousePos = tml::Mouse::GetPosition();
     Event event{};
     event.type = Event::MouseWheelScrolled;
-    event.mouseWheelScroll.x = 0;
-    event.mouseWheelScroll.y = 0;
+    event.mouseWheelScroll.x = mousePos.x;
+    event.mouseWheelScroll.y = mousePos.y;
     event.mouseWheelScroll.delta = yoffset;
-    event.sender = window;
     tml::EventSystem::GetInstance().PushEvent(event);
 }
 
 void CharCallback(GLFWwindow* window, unsigned int code)
 {
-    Event event;
+    Event event{};
     event.type = Event::TextEntered;
     event.text.unicode = code;
-    event.sender = window;
     tml::EventSystem::GetInstance().PushEvent(event);
 }
 
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    Event event;
+    Event event{};
     event.type = (action == GLFW_PRESS || action == GLFW_REPEAT) ? Event::KeyPressed : Event::KeyReleased;
     event.key.code = key;
     event.key.control = (mods == GLFW_MOD_CONTROL);
     event.key.shift = (mods == GLFW_MOD_SHIFT);
-    event.sender = window;
     tml::EventSystem::GetInstance().PushEvent(event);
 }
 
@@ -275,18 +270,17 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
     double x, y;
     glfwGetCursorPos(window, &x, &y);
 
-    Event event;
+    Event event{};
     event.type = (action == GLFW_PRESS) ? Event::EventType::MouseButtonPressed : Event::EventType::MouseButtonReleased;
     event.mouseButton.button = button;
     event.mouseButton.x = x;
     event.mouseButton.y = y;
-    event.sender = window;
     tml::EventSystem::GetInstance().PushEvent(event);
 }
 
 void DragAndDropCallback(GLFWwindow* window, int count, const char** files)
 {
-    Event event;
+    Event event{};
     event.type = Event::FileDragAndDropped;
     event.dragAndDrop.count = count;
     event.dragAndDrop.paths = new char*[count];
@@ -299,16 +293,28 @@ void DragAndDropCallback(GLFWwindow* window, int count, const char** files)
         event.dragAndDrop.paths[i][len] = 0;
         std::memcpy(event.dragAndDrop.paths[i], str.data(), len);
     }
-    event.sender = window;
     tml::EventSystem::GetInstance().PushEvent(event);
 }
 
 void WindowResizeCallback(GLFWwindow* window, int x, int y)
 {
-    tml::Event event;
+    tml::Event event{};
     event.type = tml::Event::WindowResized;
     event.size.x = x;
     event.size.y = y;
-    event.sender = window;
+    tml::EventSystem::GetInstance().PushEvent(event);
+}
+
+void WindowFocusCallback(GLFWwindow* window, int focus)
+{
+    Event event{};
+    event.type = focus ? Event::GainedFocus : Event::LostFocus;
+    tml::EventSystem::GetInstance().PushEvent(event);
+}
+
+void WindowCloseCallback(GLFWwindow* window)
+{
+    Event event{};
+    event.type = Event::Closed;
     tml::EventSystem::GetInstance().PushEvent(event);
 }

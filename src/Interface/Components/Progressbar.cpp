@@ -27,7 +27,7 @@ namespace tml
             m_text.SetColor(color);
         }
 
-        void Progressbar::Draw(RenderWindow& window)
+        void Progressbar::pDraw(Renderer &window)
         {
             m_text.SetString(std::to_string(ui32(m_value * 100)) + "%");
             m_text.SetSize(m_size.y / 2);

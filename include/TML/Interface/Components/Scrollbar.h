@@ -15,7 +15,7 @@ namespace tml
             i32 GetValue() const noexcept { return i32(m_value); }
             void SetValue(ui32 value);
         private:
-            void Draw(RenderWindow& renderWindow) override;
+            void pDraw(Renderer &renderer) override;
 
             i32 m_value = 0;
             ui32 m_max = 1;

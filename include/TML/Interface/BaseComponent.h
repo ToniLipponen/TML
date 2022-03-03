@@ -52,7 +52,6 @@ namespace tml
              * @KeyPressed When keyboard key is pressed down.
              * @KeyReleased When keyboard key is released.
              * @TextEntered When text is entered.
-             * @Update Called when the component is updated.
              * @GainedFocus When the component gains focus.
              * @LostFocus When the component loses focus.
              * @Resized When the size of the component is changed.
@@ -73,7 +72,8 @@ namespace tml
             constexpr inline ui64 GetHash() const noexcept { return m_hash; }
             constexpr inline const std::string& GetID() const noexcept { return m_id; }
             virtual bool ContainsPoint(const Vector2i& p);
-            virtual void Update(Event& event, RenderWindow& renderWindow);
+            void Update(Event& event);
+            void Draw(Renderer& renderer);
 
             inline SizePolicy GetHorizontalSizePolicy() const { return m_hSizePolicy; }
             inline SizePolicy GetVerticalSizePolicy() const { return m_vSizePolicy; }
@@ -108,7 +108,7 @@ namespace tml
             void RemoveFromProcessStack(BaseComponent* component);
             bool CallUIFunc(const std::string& name, Event& event);
             void ProcessEvents(Event& event, double dt);
-            virtual void Draw(RenderWindow& renderWindow) = 0;;
+            virtual void pDraw(Renderer &renderer) = 0;
 
             Vector2i m_pos;
             Vector2i m_size;

@@ -24,19 +24,9 @@ namespace tml
     void Text::SetString(const String& string, const String& font)
     {
         m_string = string;
-        if(!m_hasFont)
+        if(!font.empty())
         {
-            if(font.empty())
-            {
-                if(!s_defaultFont)
-                {
-                    s_defaultFont = new Font;
-                    s_defaultFont->LoadFromMemory(TML_DEFAULT_FONT_DATA, TML_DEFAULT_FONT_LENGTH);
-                }
-                m_font = *s_defaultFont;
-            }
-            else
-                m_font.LoadFromFile(font.cpp_str());
+            m_font.LoadFromFile(font.cpp_str());
             m_hasFont = true;
         }
         m_updated = true;
@@ -75,13 +65,19 @@ namespace tml
 
     void Text::Generate()
     {
+        if(!s_defaultFont)
+        {
+            s_defaultFont = new Font;
+            s_defaultFont->LoadFromMemory(TML_DEFAULT_FONT_DATA, TML_DEFAULT_FONT_LENGTH);
+        }
         m_dimensions = Vector2f{0, m_size.y};
-        float x = 0, y = 48; //64.0 - (64.0 / 3.0);
+        float x = 0, y = 48;
         float width = 0, height = 0;
         ui32 count = 0;
         m_vertexData.clear();
         m_indexData.clear();
         const ui32 hex = m_color.Hex();
+        Font& font = m_hasFont ? m_font : *s_defaultFont;
 
         for(auto c : m_string)
         {
@@ -108,7 +104,7 @@ namespace tml
 
                 default:
                     stbtt_aligned_quad q;
-                    stbtt_GetPackedQuad(((const stbtt_packedchar *)m_font.m_cdata), 4096, 4096, int(c-32), &x, &y, &q, 0);
+                    stbtt_GetPackedQuad(((const stbtt_packedchar *)font.m_cdata), 4096, 4096, int(c-32), &x, &y, &q, 0);
                     NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
 
                     q.x0 = ceilf(q.x0);
@@ -147,6 +143,6 @@ namespace tml
             Generate();
             m_updated = false;
         }
-        renderer->PushVertexData(m_vertexData, m_indexData, m_font.m_texture);
+        renderer->PushVertexData(m_vertexData, m_indexData, m_hasFont ? m_font.m_texture : s_defaultFont->m_texture);
     }
 }

@@ -13,7 +13,7 @@ namespace tml
             Viewport(i32 x, i32 y, ui32 w, ui32 h);
             RenderTexture& GetSurface() { return m_surface; }
         protected:
-            void Draw(RenderWindow& window) override;
+            void pDraw(Renderer &window) override;
             RenderTexture m_surface;
         private:
             void SetCallbacks();

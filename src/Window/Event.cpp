@@ -58,7 +58,7 @@ namespace tml
 
         if(x != oldX || y != oldY)
         {
-            Event event;
+            Event event{};
             event.type = Event::EventType::MouseMoved;
             event.mouseMove.x = x;
             event.mouseMove.y = y;
@@ -73,7 +73,7 @@ namespace tml
             buttonState[i] = glfwGetMouseButton(glfwGetCurrentContext(), i);
             if(oldButtonState != buttonState[i])
             {
-                Event event;
+                Event event{};
                 event.type = (buttonState[i] == GLFW_PRESS) ? Event::EventType::MouseButtonPressed : Event::EventType::MouseButtonReleased;
                 event.mouseButton.button = i;
                 event.mouseButton.x = x;

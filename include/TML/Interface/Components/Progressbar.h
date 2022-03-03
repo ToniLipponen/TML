@@ -13,7 +13,7 @@ namespace tml
             void SetValue(float value) noexcept;
             void SetTextColor(const Color& color) noexcept;
         private:
-            void Draw(RenderWindow& renderWindow) override;
+            void pDraw(Renderer &renderer) override;
             float m_value = 0;
             Text m_text;
         };

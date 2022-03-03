@@ -18,7 +18,7 @@ namespace tml
             String GetSelectedValue() const;
             void Clear();
         private:
-            void Draw(RenderWindow& renderWindow) override;
+            void pDraw(Renderer &renderer) override;
             Listbox* m_listComponent;
         };
     }

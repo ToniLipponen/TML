@@ -58,7 +58,7 @@ namespace tml
         }
 
         template<ComponentAxis axis>
-        void Slider<axis>::Draw(RenderWindow& window)
+        void Slider<axis>::pDraw(Renderer &window)
         {
             window.DrawRect(m_pos, m_size, m_pColor);
             if(m_state.Focused)

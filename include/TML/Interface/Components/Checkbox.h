@@ -11,7 +11,7 @@ namespace tml
             Checkbox(i32 x, i32 y, ui32 size, bool checked = false);
             bool GetValue() const { return m_value; }
         private:
-            void Draw(RenderWindow& renderWindow) override;
+            void pDraw(Renderer &renderer) override;
             bool m_value = false;
         };
     }

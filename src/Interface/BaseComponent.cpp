@@ -199,7 +199,7 @@ namespace tml
             switch(event.type)
             {
                 default:
-                    CallUIFunc("Any", event);
+//                    CallUIFunc("Any", event);
 
                 case Event::EventType::MouseButtonPressed:
                     CallUIFunc("MouseDown", event);
@@ -244,20 +244,18 @@ namespace tml
                 case Event::EventType::Null:
                     break;
             }
-
-            Event updateEvent;
-            updateEvent.type = Event::EventType::InterfaceUpdate;
-            updateEvent.update.delta = dt;
-            CallUIFunc("Update", updateEvent);
         }
 
-        void BaseComponent::Update(Event& event, RenderWindow& window)
+        void BaseComponent::Update(Event& event)
         {
             static Clock clock;
             const double delta = clock.Reset();
+
+            if(event.type == Event::EventType::WindowResized)
+                CallUIFunc("WindowResized", event);
+
             if(!m_state.Enabled)
                 return;
-            window.ResetCamera();
 
             if(!m_processStack.empty())
             {
@@ -281,11 +279,15 @@ namespace tml
                 }
             }
             ProcessEvents(event, delta);
-            Draw(window);
+        }
+
+        void BaseComponent::Draw(Renderer& renderer)
+        {
+            pDraw(renderer);
             for(auto* i : m_processStack)
             {
                 if(i->Enabled())
-                    i->Draw(window);
+                    i->pDraw(renderer);
             }
         }
 

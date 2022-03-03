@@ -16,7 +16,7 @@ namespace tml
         private:
             void Increment();
             void Decrement();
-            virtual void Draw(RenderWindow& renderWindow) override;
+            virtual void pDraw(Renderer &renderer) override;
             T m_value = 0;
             T m_increment = 1;
             std::string m_valueStr;

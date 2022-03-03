@@ -30,14 +30,14 @@ void TextInput::SetValue(const std::string &string)
 void TextInput::InitListeners()
 {
     static auto search_forwards = [&](){
-        ui32 index = m_cursorIndex;
+        i32 index = m_cursorIndex;
         for(;index < m_value.size()-1; index++)
             if(m_value.at(index) == ' ')
                 break;
         return index;
     };
     static auto search_backwards = [&](){
-        ui32 index = m_cursorIndex-1;
+        i32 index = m_cursorIndex-1;
         for(;index > 0; index--)
             if(m_value.at(index) == ' ')
                 break;
@@ -102,7 +102,7 @@ void TextInput::InitListeners()
                     {
                         if(e.key.control)
                         {
-                            const ui32 index = search_backwards();
+                            const i32 index = Math::Max(search_backwards(), 0);
                             m_value.erase(m_value.begin() + index, m_value.begin() + m_cursorIndex);
                             m_cursorIndex -= (m_cursorIndex - index);
                         }
@@ -175,10 +175,10 @@ void TextInput::InitListeners()
     });
 }
 
-void TextInput::Draw(RenderWindow& window)
+void TextInput::pDraw(Renderer& window)
 {
     window.DrawRect(m_pos, m_size, m_pColor);
-    window.SetBounds(m_pos, m_size);
+//    window.SetBounds(m_pos, m_size);
     window.Draw(m_text);
 
     if(m_state.Focused)
@@ -186,12 +186,12 @@ void TextInput::Draw(RenderWindow& window)
         if(m_showLine)
             window.DrawLine({m_cursorPos, m_pos.y + (m_size.y / 10.0f)}, {m_cursorPos, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, Color::Black, 0);
 
-        window.ResetBounds();
+//        window.ResetBounds();
         window.DrawGrid(m_pos+Vector2i(1,1), m_size-Vector2i(1,1), 1, 1, m_activeColor, 1);
     }
     else
     {
-        window.ResetBounds();
+//        window.ResetBounds();
         window.DrawGrid(m_pos+Vector2i(1,1), m_size-Vector2i(1,1), 1, 1, m_sColor, 1);
     }
 }

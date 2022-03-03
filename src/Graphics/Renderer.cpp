@@ -42,9 +42,6 @@ namespace tml
 
     Renderer::Renderer()
     {
-//        m_vertexVector->reserve(MAX_VERTEX_COUNT);
-//        m_indexVector->reserve(MAX_VERTEX_COUNT * 1.5);
-
 #ifdef TML_USE_GLES
     #ifdef PLATFORM_WINDOWS
         TML_ASSERT(gladLoadGL((GLADloadfunc)glfwGetProcAddress), "Failed to initialize renderer");
@@ -156,7 +153,6 @@ namespace tml
     void Renderer::Clear() noexcept
     {
         GL_CALL(glad_glClear(GL_COLOR_BUFFER_BIT));
-        GL_CALL(BeginBatch());
 
         ResetCamera();
         ResetBounds();
@@ -333,7 +329,10 @@ namespace tml
     ui32 Renderer::PushTexture(const Texture &texture) noexcept
     {
         if(m_textures.size() >= MAX_TEXTURE_COUNT)
+        {
+            Logger::InfoMessage("Max textures reached");
             EndBatch();
+        }
 
         bool alreadyInMTextures = false;
         const auto id = texture.GetID();
@@ -369,7 +368,10 @@ namespace tml
     {
         ui32 currentElements = m_vertexVector->size();
         if(currentElements >= MAX_VERTEX_COUNT - 4)
+        {
+            Logger::InfoMessage("Max vertices reached");
             EndBatch();
+        }
 
         const ui32 tex = PushTexture(texture);
         const ui32 hex = col.Hex();
@@ -422,7 +424,9 @@ namespace tml
     void Renderer::PushVertexData(const std::vector<Vertex>& vertices, const std::vector<ui32>& indices) noexcept
     {
         if(MAX_VERTEX_COUNT <= m_vertexVector->size() + vertices.size())
+        {
             EndBatch();
+        }
         const auto size = m_vertexVector->size();
         m_vertexVector->PushData(vertices.data(), sizeof(Vertex), vertices.size());
         for(const auto i : indices)

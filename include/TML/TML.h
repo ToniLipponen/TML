@@ -24,4 +24,5 @@
 #include <TML/Audio.h>
 #include <TML/Graphics.h>
 #include <TML/Interface.h>
+#include <TML/Network.h>
 #include <TML/System.h>

@@ -20,7 +20,7 @@ namespace tml
             });
         }
 
-        void Checkbox::Draw(RenderWindow& window)
+        void Checkbox::pDraw(Renderer &window)
         {
             window.DrawRect(m_pos, m_size, m_pColor);
             window.DrawGrid(m_pos, m_size, 1, 1, m_sColor);

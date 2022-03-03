@@ -54,7 +54,7 @@ add_library(TML src/TOKEN_SOURCE_FILE.cpp ${HEADER_FILES})
 target_link_libraries(TML TML-Audio TML-Interface TML-Graphics TML-Window TML-System TML-Network)
 
 set(CMAKE_INSTALL_PREFIX /usr/)
-install(TARGETS TML-System TML-Graphics TML-Interface TML-Audio TML-Network DESTINATION /usr/lib)
+install(TARGETS TML-System TML-Graphics TML-Interface TML-Audio TML-Network TML-Window DESTINATION /usr/lib)
 install(DIRECTORY include/TML DESTINATION /usr/include)
 
 if(TML_BUILD_EXAMPLES)
@@ -64,7 +64,8 @@ if(TML_BUILD_EXAMPLES)
     add_subdirectory(examples/Raycasting/)
     add_subdirectory(examples/Compute)
     add_subdirectory(examples/ImageViewer)
-    add_subdirectory(examples/net_test)
+    add_subdirectory(examples/Http)
+    add_subdirectory(examples/testing_area)
 endif()
 
 # Removing TML library file, because it doesn't actually contain anything.

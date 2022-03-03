@@ -71,7 +71,7 @@ namespace tml
             m_listComponent->Clear();
         }
 
-        void Dropmenu::Draw(RenderWindow& window)
+        void Dropmenu::pDraw(Renderer &window)
         {
             String selected_value;
             if(m_listComponent)

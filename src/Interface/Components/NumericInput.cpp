@@ -149,7 +149,7 @@ namespace tml
         }
 
         template<typename T>
-        void NumericInput<T>::Draw(RenderWindow& window)
+        void NumericInput<T>::pDraw(Renderer &window)
         {
             const auto cursorX = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x);
             const Vector2i pos = m_pos + Vector2i(1,1);

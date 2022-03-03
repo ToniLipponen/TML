@@ -162,7 +162,7 @@ namespace tml
             return Math::Max<i32>((valuesSize - m_size.y) / 20, 0);
         }
 
-        void Listbox::Draw(RenderWindow& window)
+        void Listbox::pDraw(Renderer &window)
         {
             window.DrawRect(m_pos, m_size, m_pColor);
             window.SetBounds(m_pos, m_size);

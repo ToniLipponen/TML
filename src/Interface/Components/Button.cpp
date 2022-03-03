@@ -70,16 +70,16 @@ void Button::SetText(const std::string &str)
     m_text.SetString(str);
 }
 
-void Button::Draw(RenderWindow& window)
+void Button::pDraw(Renderer &window)
 {
     if(m_state.MouseDown == -1)
         window.DrawRect(m_pos, m_size, m_pColor);
     else
         window.DrawRect(m_pos, m_size, m_activeColor);
 
-    window.SetBounds(m_pos, m_size);
+//    window.SetBounds(m_pos, m_size);
     window.Draw(m_text);
-    window.ResetBounds();
+//    window.ResetBounds();
 
     if(m_state.MouseOver)
         window.DrawGrid(m_pos, m_size, 1, 1, m_activeColor,1);
