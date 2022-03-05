@@ -21,6 +21,10 @@
 #include "Shaders.h"
 #include "MappedVector.h"
 
+#ifdef PLATFORM_WINDOWS
+    #undef DrawText
+#endif
+
 namespace tml
 {
     static constexpr void MakeCircle(Image& image, ui32 resolution) noexcept
@@ -124,11 +128,19 @@ namespace tml
         *scale = glm::mat4(1.0f);
     }
 
+    /// TODO: Find out why setting bounds doesn't work
     void Renderer::SetBounds(const Vector2i& pos, const Vector2i& size) noexcept
     {
         EndBatch();
         GL_CALL(glad_glScissor(pos.x, m_viewport.size.y - pos.y - size.y, size.x, size.y));
         GL_CALL(glad_glEnable(GL_SCISSOR_TEST));
+    }
+
+    /// TODO: Find out why resetting bounds doesn't work
+    void Renderer::ResetBounds() noexcept
+    {
+        EndBatch();
+        GL_CALL(glad_glDisable(GL_SCISSOR_TEST));
     }
 
     void Renderer::SetViewport(const Vector2i &pos, const Vector2i &size) noexcept
@@ -137,17 +149,11 @@ namespace tml
         GL_CALL(glad_glViewport(pos.x, pos.y, size.x, size.y));
 
         *reinterpret_cast<glm::mat4*>(m_proj) = glm::ortho(
-                static_cast<float>(pos.x),
-                static_cast<float>(pos.x+size.x),
-                static_cast<float>(pos.y+size.y),
-                static_cast<float>(pos.y)
+            static_cast<float>(pos.x),
+            static_cast<float>(pos.x+size.x),
+            static_cast<float>(pos.y+size.y),
+            static_cast<float>(pos.y)
         );
-    }
-
-    void Renderer::ResetBounds() noexcept
-    {
-        EndBatch();
-        GL_CALL(glad_glDisable(GL_SCISSOR_TEST));
     }
 
     void Renderer::Clear() noexcept
@@ -311,8 +317,10 @@ namespace tml
                      top_left + Vector2f{size.x, (size.y / rows) * i}, thickness, color, ((i == 0) || (i == rows)));
         }
         for(int i = 0; i <= columns; ++i)
-            DrawLine(top_left + Vector2f{(size.x / columns) * i,0.f},
+        {
+            DrawLine(top_left + Vector2f{(size.x / columns) * i, 0.f},
                      top_left + Vector2f{(size.x / columns) * i, size.y}, thickness, color, false);
+        }
     }
 
     void Renderer::DrawTexture(const Texture& tex, const Vector2f& pos, const Vector2f& size) noexcept
@@ -408,10 +416,6 @@ namespace tml
         m_indexVector->push_back(currentElements + 2);
     }
 
-/// Windows annoyingly #defines DrawText
-#ifdef PLATFORM_WINDOWS
-    #undef DrawText
-#endif
     void Renderer::DrawText(const String& text, const Vector2f& pos, float size, const Color& color) noexcept
     {
         m_text.SetString(text);
@@ -443,13 +447,16 @@ namespace tml
 
     void Renderer::EndBatch(bool flip) noexcept
     {
+        if(m_vertexVector->size() == 0)
+            return;
+
         m_shader->Bind();
 
         for(i32 i = 0; i < m_textures.size(); i++)
             m_shader->Uniform1i("uTexture" + std::to_string(i), i);
 
-        if(flip) /// Flip the view vertically. This is for RenderTexture.
-            m_view[5] = -m_view[5];
+        if(flip)
+            m_view[5] = -m_view[5]; /// Flip the view vertically. This is for RenderTexture.
 
         m_shader->Uniform2f("uViewSize", m_viewport.size.x, m_viewport.size.y);
         m_shader->UniformMat4fv("uView",  1, false, m_view);
@@ -458,22 +465,15 @@ namespace tml
 
         m_vao->BufferData(*m_vertexVector, *m_indexVector, *m_layout);
         m_vao->Bind();
+
         m_vertexVector->Bind();
         m_indexVector->Bind();
 
         GL_CALL(glad_glDrawElements(GL_TRIANGLES, m_indexVector->Elements(), GL_UNSIGNED_INT, nullptr));
-        Renderer::BeginBatch();
 
-        if(flip) /// Flip the view vertically. This is for RenderTexture.
-            m_view[5] = -m_view[5];
-    }
+        if(flip)
+            m_view[5] = -m_view[5]; /// Flip the view vertically. This is for RenderTexture.
 
-    void Renderer::BeginBatch() noexcept
-    {
-        m_vertexVector->clear();
-        m_indexVector->clear();
-        for(auto& i : m_textures)
-            i = -1;
         m_textures.clear();
         m_vertexVector->clear();
         m_indexVector->clear();

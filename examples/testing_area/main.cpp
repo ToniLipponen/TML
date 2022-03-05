@@ -5,12 +5,12 @@ using namespace Interface;
 
 int main()
 {
-
     RenderWindow window(800, 600, "Window", Window::Resizeable);
 
-    VerticalLayout layout(10,10, 400, 500);
+    VerticalLayout layout(10,10, 300, 500);
     layout.AddChild(new TextInput(10,10,400));
     layout.AddChild(new TextInput(10,10,400));
+    layout.AddChild(new Button("Button", 10, 90,300, 30));
     layout.AddChild(new Button("Button", 10, 90,300, 30));
     layout.AddChild(new Button("Button", 10, 90,300, 30));
 

@@ -21,8 +21,8 @@ namespace tml
         void ResetCamera() noexcept;
 
         void SetBounds(const Vector2i& pos, const Vector2i& size) noexcept;
-        void SetViewport(const Vector2i& pos, const Vector2i& size) noexcept;
         void ResetBounds() noexcept;
+        void SetViewport(const Vector2i& pos, const Vector2i& size) noexcept;
 
         virtual void Clear() noexcept;
         void Draw(Drawable& drawable) noexcept;
@@ -34,14 +34,12 @@ namespace tml
         void DrawCircle(const Vector2f& pos, float radius, const Color& color) noexcept;
 
         /** @brief Draws a cubic bezier-curve, where a and b are the end points and cp1 and cp2 are the control points.
-         * @param step Defines the smoothness of the curve, where a lower value means smoother curve.
-         */
+         * @param step Defines the smoothness of the curve, where a lower value means smoother curve. */
         void DrawBezier(const Vector2f& a, const Vector2f& cp1, const Vector2f& cp2, const Vector2f& b,
                                float thickness,  const Color& color, bool rounded = true, float step = 0.01f) noexcept;
 
         /** @brief Draws a quadratic bezier-curve, where a and b are the end points, while cp is the control point.
-         * @param step Defines the smoothness of the curve, where a lower value means smoother curve.
-         */
+         * @param step Defines the smoothness of the curve, where a lower value means smoother curve. */
         void DrawBezier(const Vector2f& a, const Vector2f& cp, const Vector2f& b, float thickness,
                                const Color& color, bool rounded = true, float step = 0.01f) noexcept;
 
@@ -59,16 +57,13 @@ namespace tml
          * @param size Size on the screen.
          * @param rotation Rotation in degrees around the middle point.
          * @param tl Top left UV coordinate of the texture.
-         * @param br Bottom right UV coordinate of the texture.
-         */
-
+         * @param br Bottom right UV coordinate of the texture. */
         void DrawTextureRect(const Texture& tex, const Vector2f& pos, const Vector2f& size, float rotation, const Vector2f& tl, const Vector2f& br) noexcept;
 
         /** @Brief Draws string of text on pos with a given size.
          * @warning This is going to be very slow,
          * because the vertex data is going to have to be constructed on each draw.
-         * If you are going to be drawing text that doesn't change each frame, you should use Renderer::Draw(Text& text) instead
-        */
+         * If you are going to be drawing text that doesn't change each frame, you should use Renderer::Draw(Text& text) instead. */
         void DrawText(const String& text, const Vector2f& pos, float size, const Color& color = Color::White) noexcept;
         void PushVertexData(const std::vector<Vertex>& vertices, const std::vector<ui32>& indices) noexcept;
         void PushVertexData(std::vector<Vertex>& vertices, const std::vector<ui32>& indices, const Texture& texture) noexcept;
@@ -85,7 +80,6 @@ namespace tml
                 ) noexcept;
     protected:
         void EndBatch(bool flip = false) noexcept;
-        void BeginBatch() noexcept;
 
     protected:
         class VertexArray*  m_vao          = nullptr;
@@ -103,6 +97,6 @@ namespace tml
 
         constexpr static ui32 MAX_VERTEX_COUNT = 1000000;
         i32 MAX_TEXTURE_COUNT = 8;
-        std::vector<ui32>    m_textures;
+        std::vector<ui32> m_textures;
     };
 }
