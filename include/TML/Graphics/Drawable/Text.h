@@ -17,7 +17,7 @@ namespace tml
         void SetKerning(float kerning);
 
         inline constexpr const String& GetString() const noexcept { return m_string; }
-        inline constexpr Vector2f GetDimensions() const noexcept { return m_dimensions; }
+        Vector2f GetDimensions() noexcept;
         friend class Renderer;
 
     private:

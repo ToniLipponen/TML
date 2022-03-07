@@ -16,9 +16,8 @@ namespace tml
 
     void Text::SetSize(float s)
     {
+        m_updated = (m_size.x != s) || m_updated;
         m_size = Vector2f{s,s};
-        m_updated = true;
-        Generate();
     }
 
     void Text::SetString(const String& string, const String& font)
@@ -30,7 +29,6 @@ namespace tml
             m_hasFont = true;
         }
         m_updated = true;
-        Generate();
     }
 
     void Text::SetFont(const Font &font)
@@ -38,21 +36,24 @@ namespace tml
         m_font = font;
         m_hasFont = true;
         m_updated = true;
-        Generate();
     }
 
     void Text::SetSpacing(float s)
     {
+        m_updated = (m_lineSpacing != s) || m_updated;
         m_lineSpacing = s;
-        m_updated = true;
-        Generate();
     }
 
     void Text::SetKerning(float s)
     {
+        m_updated = (m_kerning != s) || m_updated;
         m_kerning = s;
-        m_updated = true;
+    }
+
+    Vector2f Text::GetDimensions() noexcept
+    {
         Generate();
+        return m_dimensions;
     }
 
     inline constexpr void NormalizeQuad(stbtt_aligned_quad& q, double s, double x, double y) noexcept

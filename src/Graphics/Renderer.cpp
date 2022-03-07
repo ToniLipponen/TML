@@ -87,8 +87,8 @@ namespace tml
 
 #ifndef TML_USE_GLES
     #ifndef TML_NO_GL_DEBUGGING
-            glEnable(GL_DEBUG_OUTPUT);
-            glDebugMessageCallback(GLMessageCallback, nullptr);
+        glEnable(GL_DEBUG_OUTPUT);
+        glDebugMessageCallback(GLMessageCallback, nullptr);
     #endif
 #endif
     }
@@ -337,10 +337,7 @@ namespace tml
     ui32 Renderer::PushTexture(const Texture &texture) noexcept
     {
         if(m_textures.size() >= MAX_TEXTURE_COUNT)
-        {
-            Logger::InfoMessage("Max textures reached");
             EndBatch();
-        }
 
         bool alreadyInMTextures = false;
         const auto id = texture.GetID();
@@ -376,10 +373,7 @@ namespace tml
     {
         ui32 currentElements = m_vertexVector->size();
         if(currentElements >= MAX_VERTEX_COUNT - 4)
-        {
-            Logger::InfoMessage("Max vertices reached");
             EndBatch();
-        }
 
         const ui32 tex = PushTexture(texture);
         const ui32 hex = col.Hex();

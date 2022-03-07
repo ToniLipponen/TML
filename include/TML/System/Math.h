@@ -1,5 +1,5 @@
 #pragma once
-#include "TML/System/Math/Vector2.h"
+#include <TML/System/Math/Vector2.h>
 #include <cmath>
 
 namespace tml
@@ -18,6 +18,10 @@ namespace tml
             return x * 57.295779513;
         }
 
+        /** @brief rotate point around origin using cosine and sine of rotation angle.
+         *  @param origin The point around which the rotation occurs.
+         *  @param p The point you wish to rotate.
+         *  @param r Angle of rotation in degrees. */
         template<typename T>
         inline Vector2<T> Rotate(const Vector2<T> &origin, Vector2<T> p, double r) noexcept
         {
@@ -29,6 +33,11 @@ namespace tml
                     origin.y + p.x * sin_r + p.y * cos_r};
         }
 
+        /** @brief rotate point around origin using cosine and sine of rotation angle.
+         *  @param origin The point around which the rotation occurs.
+         *  @param p The point you wish to rotate.
+         *  @param cos_r Cosine of rotation angle.
+         *  @param sin_r Sine of rotation angle. */
         template<typename T>
         inline constexpr Vector2<T> Rotate(const Vector2<T>& origin, Vector2<T> p, float cos_r, float sin_r) noexcept
         {
@@ -37,6 +46,7 @@ namespace tml
                     origin.y + p.x * sin_r + p.y * cos_r};
         }
 
+        /// @brief Returns value clamped between min and max.
         template<typename T>
         inline constexpr T Clamp(T value, T min, T max) noexcept
         {
@@ -47,7 +57,7 @@ namespace tml
             return value;
         }
 
-        /// Returns the bigger of the two values
+        /// @brief Returns the bigger of the two values
         template<typename T>
         inline constexpr T Max(T a, T b) noexcept
         {
@@ -56,7 +66,7 @@ namespace tml
             return b;
         }
 
-        /// Returns the smaller of the two values
+        /// @brief Returns the smaller of the two values
         template<typename T>
         inline constexpr T Min(T a, T b) noexcept
         {
@@ -80,7 +90,7 @@ namespace tml
             return t * t * (3.0 - 2.0 * t);
         }
 
-        /// Linear interpolation
+        /// @brief Linear interpolation
         template<typename T>
         inline constexpr T Lerp(const T &a, const T &b, double m) noexcept
         {
@@ -105,6 +115,7 @@ namespace tml
                     t);
         }
 
+        /// @brief Returns the distance between two points.
         template<typename T>
         inline double Distance(const Vector2<T>& a, const Vector2<T>& b) noexcept
         {
@@ -124,15 +135,36 @@ namespace tml
             return (value >= min && value <= max);
         }
 
-        inline bool PointInRect(const Vector2f& point, const Vector2f& p, const Vector2f& s, float rotation) noexcept
+        /** @brief Checks whether a point is withing a rectangle.
+         *  @param point The point. Duh.
+         *  @param pos The position of the rectangle.
+         *  @param size The size of the rectangle.
+         *  @param rotation The rotation of the rectangle. */
+        inline bool PointInRect(const Vector2f& point, const Vector2f& pos, const Vector2f& size, float rotation) noexcept
         {
-            const auto rp = Rotate(p + (s * 0.5), point, -rotation);
-            return (InRange(rp.x, p.x, p.x + s.x) && InRange(rp.y, p.y, p.y + s.y));
+            const auto rp = Rotate(pos + (size * 0.5), point, -rotation);
+            return (InRange(rp.x, pos.x, pos.x + size.x) && InRange(rp.y, pos.y, pos.y + size.y));
         }
 
-        inline bool PointInCircle(const Vector2f& point, const Vector2f& p, float r) noexcept
+        /** @brief Checks whether a point is withing a rectangle.
+         *  @param point The point. Duh.
+         *  @param pos The position of the rectangle.
+         *  @param size The size of the rectangle.
+         *  @param rotation The rotation of the rectangle.
+         *  @param origin The origin point for the rotation. (relative to the position of the rectangle) */
+        inline bool PointInRect(const Vector2f& point, const Vector2f& pos, const Vector2f& size, float rotation, const Vector2f& origin) noexcept
         {
-            return (Distance(point, p) <= r);
+            const auto rp = Rotate(pos + origin, point, -rotation);
+            return (InRange(rp.x, pos.x, pos.x + size.x) && InRange(rp.y, pos.y, pos.y + size.y));
+        }
+
+        /** @brief Checks whether a point is within a circle.
+         *  @param point The point.
+         *  @param pos The center of the circle.
+         *  @param radius The radius of the circle. */
+        inline bool PointInCircle(const Vector2f& point, const Vector2f& pos, float radius) noexcept
+        {
+            return (Distance(point, pos) <= radius);
         }
     }
 }

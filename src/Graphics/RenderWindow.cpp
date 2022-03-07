@@ -24,6 +24,7 @@ namespace tml
         /// and if not then make it the active one.
         if(handle != glfwGetCurrentContext())
             glfwMakeContextCurrent(handle);
+
         Renderer::SetViewport({0,0}, GetSize());
         Renderer::Clear();
     }
