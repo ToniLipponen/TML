@@ -1,6 +1,6 @@
 #include <TML/Interface/BaseComponent.h>
 #include <TML/Graphics/Renderer.h>
-#include "TML/System/Clock.h"
+#include <TML/System/Clock.h>
 #include <string>
 #include <algorithm>
 
@@ -199,7 +199,7 @@ namespace tml
             switch(event.type)
             {
                 default:
-//                    CallUIFunc("Any", event);
+                    CallUIFunc("Any", event);
 
                 case Event::EventType::MouseButtonPressed:
                     CallUIFunc("MouseDown", event);
@@ -239,9 +239,6 @@ namespace tml
 
                 case Event::EventType::TextEntered:
                     CallUIFunc("TextEntered", event);
-                    break;
-
-                case Event::EventType::Null:
                     break;
             }
         }

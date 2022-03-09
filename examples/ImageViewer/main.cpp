@@ -107,7 +107,7 @@ int main(int argc, char** argv)
                 }
                 break;
 
-            case Event::FileDragAndDropped:
+            case Event::DragAndDrop:
             {
                 String fileName(windowEvent.dragAndDrop.paths[0]);
                 if(image.LoadFromFile(fileName))

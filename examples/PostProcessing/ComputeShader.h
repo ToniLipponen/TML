@@ -6,7 +6,7 @@
 
 const char* shaderSource = R"END(
 #version 450 core
-layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+layout (local_size_x = 32, local_size_y = 8, local_size_z = 1) in;
 layout (rgba8, binding = 0) uniform image2D image;
 
 float vignette(vec2 uv, float radius, float smoothness)

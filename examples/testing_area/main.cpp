@@ -13,8 +13,9 @@ int main()
     layout.AddChild(new Button("Button", 10, 90,300, 30));
     layout.AddChild(new Button("Button", 10, 90,300, 30));
     layout.AddChild(new Button("Button", 10, 90,300, 30));
-
+    layout.AddChild(new Slider<tml::Interface::Horizontal>(10, 90,300, 15));
     window.SetClearColor(Color::White);
+
     while(!window.ShouldClose())
     {
         Event event{};

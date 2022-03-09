@@ -18,6 +18,9 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void WindowResizeCallback(GLFWwindow* window, int x, int y);
 void WindowFocusCallback(GLFWwindow* window, int focus);
 void WindowCloseCallback(GLFWwindow* window);
+void CursorEnterCallback(GLFWwindow* window, int entered);
+void WindowMaximizeCallback(GLFWwindow* window, int maximized);
+void WindowMinimizeCallback(GLFWwindow* window, int minimized);
 
 namespace tml
 {
@@ -228,12 +231,13 @@ namespace tml
         glfwSetScrollCallback(handle, MouseScrollCallback);
         glfwSetWindowFocusCallback(handle, WindowFocusCallback);
         glfwSetWindowCloseCallback(handle, WindowCloseCallback);
+        glfwSetCursorEnterCallback(handle, CursorEnterCallback);
+        glfwSetWindowMaximizeCallback(handle, WindowMaximizeCallback);
+        glfwSetWindowIconifyCallback(handle, WindowMinimizeCallback);
     }
 }
 
-
 /// GLFW callbacks
-
 using tml::Event;
 
 void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
@@ -281,7 +285,7 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 void DragAndDropCallback(GLFWwindow* window, int count, const char** files)
 {
     Event event{};
-    event.type = Event::FileDragAndDropped;
+    event.type = Event::DragAndDrop;
     event.dragAndDrop.count = count;
     event.dragAndDrop.paths = new char*[count];
     for(int i = 0; i < count; i++)
@@ -317,4 +321,31 @@ void WindowCloseCallback(GLFWwindow* window)
     Event event{};
     event.type = Event::Closed;
     tml::EventSystem::GetInstance().PushEvent(event);
+}
+
+void CursorEnterCallback(GLFWwindow* window, int entered)
+{
+    Event event{};
+    event.type = entered ? Event::MouseEntered : Event::MouseLeft;
+    tml::EventSystem::GetInstance().PushEvent(event);
+}
+
+void WindowMaximizeCallback(GLFWwindow* window, int maximized)
+{
+    if(maximized)
+    {
+        Event event{};
+        event.type = Event::WindowMaximized;
+        tml::EventSystem::GetInstance().PushEvent(event);
+    }
+}
+
+void WindowMinimizeCallback(GLFWwindow* window, int minimized)
+{
+    if(minimized)
+    {
+        Event event{};
+        event.type = Event::WindowMinimized;
+        tml::EventSystem::GetInstance().PushEvent(event);
+    }
 }

@@ -65,17 +65,17 @@ void TextInput::InitListeners()
         else
             UnFocus();
     });
-    AddListener("Update", [&](BaseComponent* c, Event& e)
-    {
-        if(m_state.Focused)
-        {
-            if((m_blinkTimer += e.update.delta) > 1.0)
-            {
-                m_showLine = !m_showLine;
-                m_blinkTimer = 0;
-            }
-        }
-    });
+//    AddListener("Update", [&](BaseComponent* c, Event& e)
+//    {
+//        if(m_state.Focused)
+//        {
+//            if((m_blinkTimer += e.update.delta) > 1.0)
+//            {
+//                m_showLine = !m_showLine;
+//                m_blinkTimer = 0;
+//            }
+//        }
+//    });
 
     AddListener("KeyPressed", [&](BaseComponent* c, Event& e)
     {

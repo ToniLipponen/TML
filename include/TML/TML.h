@@ -26,3 +26,4 @@
 #include <TML/Interface.h>
 #include <TML/Network.h>
 #include <TML/System.h>
+#include <TML/Window.h>

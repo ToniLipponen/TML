@@ -1,3 +1,29 @@
+/** This file is partially based on Laurent Gomilas sf::Event. Specifically the Event class. */
+
+////////////////////////////////////////////////////////////
+//
+// SFML - Simple and Fast Multimedia Library
+// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+////////////////////////////////////////////////////////////
+
 #pragma once
 #include "TML/Types.h"
 #include <queue>
@@ -49,13 +75,8 @@ namespace tml
         struct MouseWheelScrollEvent
         {
             float delta; //!< Wheel offset (positive is up/left, negative is down/right). High-precision mice may use non-integral offsets.
-            i32 x;     //!< X position of the mouse pointer, relative to the left of the owner window
-            i32 y;     //!< Y position of the mouse pointer, relative to the top of the owner window
-        };
-
-        struct UpdateEvent
-        {
-            double delta;
+            i32 x;       //!< X position of the mouse pointer, relative to the left of the owner window
+            i32 y;       //!< Y position of the mouse pointer, relative to the top of the owner window
         };
 
         struct DragAndDropEvent
@@ -66,9 +87,10 @@ namespace tml
 
         enum EventType
         {
-            Null,
             Closed,                 //!< The window requested to be closed (no data)
             WindowResized,          //!< The window was resized (data in event.size)
+            WindowMinimized,        //!< The window was minimized (no data)
+            WindowMaximized,        //!< The window was maximized (no data)
             InterfaceResized,       //!< tml::Interface component is resized (data in event.size)
             InterfaceMoved,         //!< tml::Interface component is moved (data in event.move)
             LostFocus,              //!< The window lost the focus (no data)
@@ -82,19 +104,16 @@ namespace tml
             MouseMoved,             //!< The mouse cursor moved (data in event.mouseMove)
             MouseEntered,           //!< The mouse cursor entered the area of the window (no data)
             MouseLeft,              //!< The mouse cursor left the area of the window (no data)
-            InterfaceUpdate,        //!< tml::Interface component update event. (data in event.update)
-            FileDragAndDropped,     //!< File or files dragged onto a window. (data in event.dragAndDrop)
-
+            DragAndDrop,            //!< File or files dragged onto a window. (data in event.dragAndDrop)
         };
 
-        EventType type = EventType::Null;
+        EventType type;
 
         union
         {
             MoveEvent             move;
             ResizeEvent           size;
             KeyEvent              key;
-            UpdateEvent           update;
             TextEvent             text;
             MouseMoveEvent        mouseMove;
             MouseButtonEvent      mouseButton;
