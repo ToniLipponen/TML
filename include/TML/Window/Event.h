@@ -136,8 +136,7 @@ namespace tml
         bool WaitEvents(Event& e) noexcept;     /// Blocks until there is an event in the event queue.
         void PushEvent(Event& event);           /// Pushed new event to the event queue.
         bool PopEvent(Event& e) noexcept;       /// Get event from event queue. Returns true if popped new event.
-    protected:
-        void PollMouse();
+
     private:
         std::queue<Event> m_eventQueue;
         static EventSystem* m_instance;

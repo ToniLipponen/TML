@@ -21,6 +21,7 @@ void WindowCloseCallback(GLFWwindow* window);
 void CursorEnterCallback(GLFWwindow* window, int entered);
 void WindowMaximizeCallback(GLFWwindow* window, int maximized);
 void WindowMinimizeCallback(GLFWwindow* window, int minimized);
+void CursorPosCallback(GLFWwindow* window, double x, double y);
 
 namespace tml
 {
@@ -234,6 +235,7 @@ namespace tml
         glfwSetCursorEnterCallback(handle, CursorEnterCallback);
         glfwSetWindowMaximizeCallback(handle, WindowMaximizeCallback);
         glfwSetWindowIconifyCallback(handle, WindowMinimizeCallback);
+        glfwSetCursorPosCallback(handle, CursorPosCallback);
     }
 }
 
@@ -348,4 +350,13 @@ void WindowMinimizeCallback(GLFWwindow* window, int minimized)
         event.type = Event::WindowMinimized;
         tml::EventSystem::GetInstance().PushEvent(event);
     }
+}
+
+void CursorPosCallback(GLFWwindow* window, double x, double y)
+{
+    Event event{};
+    event.type = Event::MouseMoved;
+    event.mouseMove.x = static_cast<int>(x);
+    event.mouseMove.y = static_cast<int>(y);
+    tml::EventSystem::GetInstance().PushEvent(event);
 }
