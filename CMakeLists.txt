@@ -41,6 +41,8 @@ include_directories(external/glm external/glfw/include include external res exte
 # Add external libraries
 add_subdirectory(external/glfw/)
 add_subdirectory(external/libwebp)
+add_subdirectory(external/Clip)
+add_subdirectory(external/lunasvg)
 
 # Add modules
 add_subdirectory(src/Audio)

@@ -46,10 +46,11 @@ Currently, there are no API documentation or tutorials on how to use this librar
 If you're interested in this project, you can help in a couple of different ways:
 
 1. Contribute code to the library.
-2. Report bugs and other issues.
-3. Create feature requests.
-4. Create example applications.
-5. Testing.
+2. Review code.
+3. Report bugs and other issues.
+4. Create feature requests.
+5. Create example applications.
+6. Testing.
 
 # Credits
 |Author|Repo|Library|License|
