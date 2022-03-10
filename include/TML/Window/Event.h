@@ -91,6 +91,7 @@ namespace tml
             WindowResized,          //!< The window was resized (data in event.size)
             WindowMinimized,        //!< The window was minimized (no data)
             WindowMaximized,        //!< The window was maximized (no data)
+            WindowRestored,         //!< The window was restored (no data)
             InterfaceResized,       //!< tml::Interface component is resized (data in event.size)
             InterfaceMoved,         //!< tml::Interface component is moved (data in event.move)
             LostFocus,              //!< The window lost the focus (no data)

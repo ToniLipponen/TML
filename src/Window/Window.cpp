@@ -1,10 +1,8 @@
 #include <TML/Window/Window.h>
-#include <TML/System/Image.h>
+#include <TML/System/Math.h>
 
 #define GLFW_INCLUDE_NONE
-#include "GLFW/glfw3.h"
-#include "stb/stb_image_write.h"
-#include "stb/stb_image.h"
+#include <GLFW/glfw3.h>
 #include "_Assert.h"
 
 #include "Logo.h" /// Logo data
@@ -41,11 +39,14 @@ namespace tml
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         #endif
 
-        glfwWindowHint(GLFW_DECORATED,      (settings & Settings::NoTopBar)     == 0);
-        glfwWindowHint(GLFW_RESIZABLE,      (settings & Settings::Resizeable)   != 0);
-        glfwWindowHint(GLFW_MAXIMIZED,      (settings & Settings::Maximized)    != 0);
-        glfwWindowHint(GLFW_DOUBLEBUFFER,   (settings & Settings::VSync)        != 0);
-        glfwWindowHint(GLFW_VISIBLE,        (settings & Settings::Hidden)       == 0);
+        glfwWindowHint(GLFW_DECORATED,               (settings & Settings::NoTopBar)     == 0);
+        glfwWindowHint(GLFW_RESIZABLE,               (settings & Settings::Resizeable)   != 0);
+        glfwWindowHint(GLFW_MAXIMIZED,               (settings & Settings::Maximized)    != 0);
+        glfwWindowHint(GLFW_DOUBLEBUFFER,            (settings & Settings::VSync)        != 0);
+        glfwWindowHint(GLFW_VISIBLE,                 (settings & Settings::Hidden)       == 0);
+        glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, (settings & Settings::Transparent)  != 0);
+        glfwWindowHint(GLFW_FLOATING,                (settings & Settings::AlwaysOnTop)  != 0);
+
         glfwWindowHint(GLFW_SAMPLES, static_cast<int>(((settings & Settings::Antialias) >> 4) * 8));
         glfwSetErrorCallback([](int, const char* m){ Logger::ErrorMessage("GLFW ERROR: %s", m);});
 
@@ -120,12 +121,12 @@ namespace tml
         return y;
     }
 
-    bool Window::PollEvents(Event& e)
+    bool Window::PollEvents(Event& e) const noexcept
     {
         return EventSystem::GetInstance().PollEvents(e);
     }
 
-    bool Window::WaitEvents(Event& e)
+    bool Window::WaitEvents(Event& e) const noexcept
     {
         return EventSystem::GetInstance().WaitEvents(e);
     }
@@ -155,6 +156,28 @@ namespace tml
         glfwSetWindowTitle(static_cast<GLFWwindow *>(m_handle), title.c_str());
     }
 
+    void Window::SetCursor(const Image& image) noexcept
+    {
+        glfwDestroyCursor(static_cast<GLFWcursor*>(m_cursor));
+        GLFWimage img;
+        img.width = image.GetWidth();
+        img.height = image.GetHeight();
+        img.pixels = image.GetData();
+
+        m_cursor = glfwCreateCursor(&img, 0, 0);
+        glfwSetCursor(static_cast<GLFWwindow*>(m_handle), static_cast<GLFWcursor*>(m_cursor));
+    }
+
+    void Window::SetIcon(const Image& image) const noexcept
+    {
+        GLFWimage img;
+        img.width = image.GetWidth();
+        img.height = image.GetHeight();
+        img.pixels = image.GetData();
+
+        glfwSetWindowIcon(static_cast<GLFWwindow*>(m_handle), 1, &img);
+    }
+
     void Window::SetAspectRatio(i32 x, i32 y) noexcept
     {
         glfwSetWindowAspectRatio(static_cast<GLFWwindow*>(m_handle), x, y);
@@ -175,33 +198,34 @@ namespace tml
         glfwSetWindowSizeLimits(static_cast<GLFWwindow*>(m_handle), min.x, min.y, max.x, max.y);
     }
 
-    void Window::Maximize() noexcept
+    void Window::Minimize() const noexcept
     {
-        glfwMaximizeWindow(static_cast<GLFWwindow *>(m_handle));
+        glfwIconifyWindow(static_cast<GLFWwindow*>(m_handle));
+    }
+
+    void Window::Maximize() const noexcept
+    {
+        glfwMaximizeWindow(static_cast<GLFWwindow*>(m_handle));
+    }
+
+    void Window::Restore() const noexcept
+    {
+        glfwRestoreWindow(static_cast<GLFWwindow*>(m_handle));
     }
 
     void Window::SetFullscreen(bool full, i32 user_w, i32 user_h) noexcept
     {
         int w = 0, h = 0, x = 0, y = 0;
         auto monitor = glfwGetPrimaryMonitor();
-        // Destroy old handle
-        glfwDestroyWindow(static_cast<GLFWwindow *>(m_handle));
-        m_handle = nullptr;
         glfwGetMonitorWorkarea(monitor, &x, &y, &w, &h);
-        m_handle = glfwCreateWindow(
-                (user_w == -1) ? w : user_w,
-                (user_h == -1) ? h : user_h,
-                m_title.c_str(),
-                monitor,
-                nullptr);
-        GLFWwindow* handle = static_cast<GLFWwindow*>(m_handle);
-        TML_ASSERT(m_handle != nullptr, "Failed to create a window handle.");
-        glfwMakeContextCurrent(handle);
-        glfwShowWindow(handle);
-        SetCallbacks();
+
+        w = (user_w > 0) ? Math::Min<i32>(user_w, w) : w;
+        h = (user_h > 0) ? Math::Min<i32>(user_h, h) : h;
+
+        glfwSetWindowMonitor(static_cast<GLFWwindow*>(m_handle), monitor, x, y, w, h, 0);
     }
 
-    void Window::SetActive() noexcept
+    void Window::SetActive() const noexcept
     {
         glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_handle));
     }
@@ -334,22 +358,16 @@ void CursorEnterCallback(GLFWwindow* window, int entered)
 
 void WindowMaximizeCallback(GLFWwindow* window, int maximized)
 {
-    if(maximized)
-    {
-        Event event{};
-        event.type = Event::WindowMaximized;
-        tml::EventSystem::GetInstance().PushEvent(event);
-    }
+    Event event{};
+    event.type = maximized ? Event::WindowMaximized : Event::WindowRestored;
+    tml::EventSystem::GetInstance().PushEvent(event);
 }
 
 void WindowMinimizeCallback(GLFWwindow* window, int minimized)
 {
-    if(minimized)
-    {
-        Event event{};
-        event.type = Event::WindowMinimized;
-        tml::EventSystem::GetInstance().PushEvent(event);
-    }
+    Event event{};
+    event.type = minimized ? Event::WindowMinimized : Event::WindowRestored;
+    tml::EventSystem::GetInstance().PushEvent(event);
 }
 
 void CursorPosCallback(GLFWwindow* window, double x, double y)
