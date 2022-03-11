@@ -1,4 +1,4 @@
-#include "Mixer.h"
+#include <TML/Audio/Mixer.h>
 #include <_Assert.h>
 
 #define STB_VORBIS_HEADER_ONLY
@@ -19,19 +19,20 @@
 #undef STB_VORBIS_HEADER_ONLY
 #include <miniaudio/decoders/stb_vorbis.c>
 
-static float s_gain = 1.f;
-static std::map<tml::ui32, tml::AudioType*> s_sounds;
-static ma_device s_outputDevice;
-
 namespace tml
 {
-    ma_decoder_config s_DecoderConfig;
-    void data_callback(ma_device*, void* pOutput, const void*, ma_uint32 frameCount)
+    Mixer* Mixer::s_instance = nullptr;
+
+    void MixerOnAudioCallback(void* device, void* pOutput, const void* pInput, ma_uint32 frameCount)
     {
-        auto* pOutputF32 = (float*)pOutput;
-        if(!s_sounds.empty())
+        auto* maDevice = reinterpret_cast<ma_device*>(device);
+        auto* mixer = reinterpret_cast<Mixer*>(maDevice->pUserData);
+        auto& sounds = mixer->m_sounds;
+
+        auto* pOutputF32 = static_cast<float*>(pOutput);
+        if(!sounds.empty())
         {
-            for(auto sound : s_sounds)
+            for(auto sound : sounds)
             {
                 if(sound.second->IsPlaying())
                 {
@@ -44,50 +45,57 @@ namespace tml
                     }
                 }
             }
-            for(tml::ui32 i = 0; i < frameCount; i++)
-                pOutputF32[i] *= s_gain;
+            for(ui32 i = 0; i < frameCount*2; ++i)
+                pOutputF32[i] *= maDevice->masterVolumeFactor;
         }
     }
 
-    namespace Mixer
+    Mixer::Mixer()
     {
-        bool Init()
-        {
-            ma_device_config config     = ma_device_config_init(ma_device_type_playback);
-            config.playback.format      = ma_format_f32;
-            config.playback.channels    = 2;
-            config.sampleRate           = 48000;
-            config.dataCallback         = (ma_device_callback_proc)data_callback;
-            config.stopCallback         = nullptr;
-            config.pUserData            = nullptr;
+        ma_device_config config     = ma_device_config_init(ma_device_type_playback);
+        config.playback.format      = ma_format_f32;
+        config.playback.channels    = 2;
+        config.sampleRate           = 48000;
+        config.dataCallback         = (ma_device_callback_proc)MixerOnAudioCallback;
+        config.stopCallback         = nullptr;
+        config.pUserData            = this;
 
-            s_DecoderConfig.format = ma_format_unknown;
-            s_DecoderConfig.channels = 2;
-            s_DecoderConfig.sampleRate = 48000;
-
-            auto result = ma_device_init(nullptr, &config, &s_outputDevice);
-            if(result == MA_SUCCESS)
-            {
-                ma_device_start(&s_outputDevice);
-                return true;
-            }
+        m_outputDevice = new ::ma_device;
+        auto* outputDevice = static_cast<::ma_device*>(m_outputDevice);
+        auto result = ma_device_init(nullptr, &config, outputDevice);
+        outputDevice->masterVolumeFactor = 1;
+        if(result == MA_SUCCESS)
+            ma_device_start(outputDevice);
+        else
             Logger::ErrorMessage("Failed to initialize audio output device");
-            return false;
-        }
+    }
 
-        void SetGain(float gain)
-        {
-            s_gain = gain;
-        }
+    Mixer& Mixer::GetInstance() noexcept
+    {
+        if(s_instance == nullptr)
+            s_instance = new Mixer;
 
-        void AddSound(ui32 id, AudioType* snd)
-        {
-            s_sounds[id] = snd;
-        }
+        return *s_instance;
+    }
 
-        void RemoveSound(ui32 id)
-        {
-            s_sounds.erase(id);
-        }
+    void Mixer::SetGain(float gain) noexcept
+    {
+        reinterpret_cast<ma_device*>(m_outputDevice)->masterVolumeFactor = gain;
+    }
+
+    void Mixer::AddSound(ui64 id, AudioType* sound) noexcept
+    {
+        m_sounds.insert(std::pair<ui32, AudioType*>(id, sound));
+    }
+
+    void Mixer::RemoveSound(ui64 id) noexcept
+    {
+        if(m_sounds.find(id) != m_sounds.end())
+            m_sounds.erase(id);
+    }
+
+    ui64 Mixer::GetAudioID() noexcept
+    {
+        return m_soundCount++;
     }
 }

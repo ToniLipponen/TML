@@ -20,11 +20,10 @@ namespace tml
         bool IsPlaying() const { return m_state == Playing; }
         bool IsLooping() const { return m_looping; }
         virtual ui32 ReadFrames(float* output, ui32 frameCount) = 0;
-        friend void data_callback(struct ma_device*, void*, const void*, ui32);
-
-        inline constexpr ui64 GetLength() const noexcept { return m_frameCount; } // @brief Returns length in PCM frames.
+        inline constexpr ui64 GetLength() const noexcept { return m_frameCount; } //!< @brief Returns length in PCM frames.
         ui64 GetLengthInSeconds() const noexcept;
         double GetProgress() const noexcept;
+
     protected:
         ui64 m_framesRead;
         ui64 m_frameCount;
@@ -34,7 +33,6 @@ namespace tml
         bool m_looping = false;
         bool m_valid = false;
         State m_state = Stopped;
-        static ui32 s_soundCount;
-        ui32 m_id;
+        ui64 m_id;
     };
 }

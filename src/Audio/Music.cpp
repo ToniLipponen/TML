@@ -1,11 +1,10 @@
 #include <TML/Audio/Music.h>
 #include <miniaudio/miniaudio.h>
 #include <TML/System/File.h>
-#include "Mixer.h"
+#include "TML/Audio/Mixer.h"
 
 namespace tml
 {
-    extern ma_decoder_config s_DecoderConfig;
     Music::Music(const std::string &filename)
     {
         LoadFromFile(filename);
@@ -18,20 +17,23 @@ namespace tml
 
     Music::~Music()
     {
-        Mixer::RemoveSound(m_id);
-        ma_decoder_uninit((ma_decoder*)m_decoder);
-        delete (ma_decoder*)m_decoder;
+        auto* decoder = static_cast<ma_decoder*>(m_decoder);
+        Mixer::GetInstance().RemoveSound(m_id);
+        ma_decoder_uninit(decoder);
+        delete decoder;
     }
 
     bool Music::LoadFromFile(const std::string &filename)
     {
         m_state = Stopped;
-        Mixer::RemoveSound(m_id);
+        Mixer::GetInstance().RemoveSound(m_id);
         if(!m_decoder)
             m_decoder = new ma_decoder;
 
+        static ma_decoder_config config{.format = ma_format_unknown, .channels =  2, .sampleRate =  48000};
+
         auto* decoder = reinterpret_cast<ma_decoder*>(m_decoder);
-        ma_result result = ma_decoder_init_file(filename.c_str(), &s_DecoderConfig, decoder);
+        ma_result result = ma_decoder_init_file(filename.c_str(), &config, decoder);
         m_valid = (result == MA_SUCCESS);
 
         if(!m_valid)
@@ -48,12 +50,13 @@ namespace tml
     bool Music::LoadFromData(const char* data, ui32 bytes)
     {
         m_state = Stopped;
-        Mixer::RemoveSound(m_id);
+        Mixer::GetInstance().RemoveSound(m_id);
         if(!m_decoder)
             m_decoder = new ma_decoder;
 
+        static ma_decoder_config config{.format = ma_format_unknown, .channels =  2, .sampleRate =  48000};
         auto* decoder = reinterpret_cast<ma_decoder*>(m_decoder);
-        ma_result result = ma_decoder_init_memory(data, bytes, &s_DecoderConfig, decoder);
+        ma_result result = ma_decoder_init_memory(data, bytes, &config, decoder);
         m_valid = (result == MA_SUCCESS);
 
         if(!m_valid)
