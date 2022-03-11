@@ -222,7 +222,7 @@ namespace tml
         w = (user_w > 0) ? Math::Min<i32>(user_w, w) : w;
         h = (user_h > 0) ? Math::Min<i32>(user_h, h) : h;
 
-        glfwSetWindowMonitor(static_cast<GLFWwindow*>(m_handle), monitor, x, y, w, h, 0);
+        glfwSetWindowMonitor(static_cast<GLFWwindow*>(m_handle), monitor, x, y, w, h, GLFW_DONT_CARE);
     }
 
     void Window::SetActive() const noexcept

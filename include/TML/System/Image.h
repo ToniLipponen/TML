@@ -18,27 +18,32 @@ namespace tml
         Image& operator=(const Image& rhs) noexcept;
         Image& operator=(Image&& rhs) noexcept;
 
-        inline constexpr i32  GetWidth()  const noexcept { return m_width;  }
-        inline constexpr i32  GetHeight() const noexcept { return m_height; }
-        inline constexpr i32  GetBpp()    const noexcept { return m_Bpp;    }     /// @returns Bytes per pixel.
-        inline constexpr ui8* GetData()   const noexcept { return m_data;   }     /// @returns Pointer to pixel data.
+        inline constexpr i32  GetWidth()  const noexcept { return m_width;  } //!< @returns Width of the image.
+        inline constexpr i32  GetHeight() const noexcept { return m_height; } //!< @returns Height of the image.
+        inline constexpr i32  GetBpp()    const noexcept { return m_Bpp;    } //!< @returns Bytes per pixel.
+        inline constexpr ui8* GetData()   const noexcept { return m_data;   } //!< @returns Pointer to pixel data.
 
-        /// @brief Loads image from file.
+        /** @brief Loads image from file.
+         *  @returns true if successful, or false if unsuccessful. */
         bool LoadFromFile(const String& fileName, ui32 requestedWidth = 0, ui32 requestedHeight = 0) noexcept;
 
-        /// @brief Creates image from pixel data in memory.
-        /// @param w Width in pixels.
-        /// @param h Height in pixels.
-        /// @param Bpp Bytes per pixel.
-        /// @param data Pointer to pixel data.
+        /** @brief Creates image from pixel data in memory.
+         *  @param w Width in pixels.
+         *  @param h Height in pixels.
+         *  @param Bpp Bytes per pixel.
+         *  @param data Pointer to pixel data. */
         void LoadFromMemory(i32 w, i32 h, i32 Bpp, const ui8* data) noexcept;
 
-        /// @brief Creates image from raw file data in memory.
+        /** @brief Creates image from raw file data in memory.
+         *  @returns true if successful, or false if unsuccessful. */
         bool LoadFromData(const ui8* data, ui32 dataSize) noexcept;
 
-        /// @brief Saves image to file. Uses postfix to deduce image file type. eg. .jpg .png .webp ...
-        /// @returns true if successful, or false if unsuccessful.
+        /** @brief Saves image to file. Uses postfix to deduce image file type. eg. .jpg .png .webp ...
+         *  @returns true if successful, or false if unsuccessful. */
         bool WriteToFile(const String& fileName, i32 quality = 90) const noexcept;
+
+        /** @brief Resize the image to requested size.
+         *  @returns true if successful, or false if unsuccessful. */
         bool Resize(ui32 requestedWidth = 0, ui32 requestedHeight = 0) noexcept;
     private:
         enum ImageType { None, Jpg, Png, Bmp, Tga, Pic, Pnm, Webp, Svg };

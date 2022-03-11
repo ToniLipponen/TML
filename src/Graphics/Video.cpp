@@ -26,18 +26,18 @@ namespace tml
     bool Video::LoadFromFile(const std::string& filename) noexcept
     {
         if(m_stream != nullptr)
-            plm_destroy((plm_t*)m_stream);
+            plm_destroy(static_cast<plm_t*>(m_stream));
 
-        m_stream = (plm_t*)plm_create_with_filename(filename.c_str());
+        m_stream = plm_create_with_filename(filename.c_str());
 
         if(m_stream != nullptr)
         {
             m_pos = Vector2f{0};
-            m_streamWidth  = plm_get_width((plm_t*)m_stream);
-            m_streamHeight = plm_get_height((plm_t*)m_stream);
+            m_streamWidth  = plm_get_width(static_cast<plm_t*>(m_stream));
+            m_streamHeight = plm_get_height(static_cast<plm_t*>(m_stream));
             m_size = Vector2f(static_cast<float>(m_streamWidth), static_cast<float>(m_streamHeight));
 
-            SetFrameRate(plm_get_framerate((plm_t*)m_stream));
+            SetFrameRate(plm_get_framerate(static_cast<plm_t*>(m_stream)));
             plm_set_audio_enabled(reinterpret_cast<plm_t*>(m_stream), false);
             return true;
         }
@@ -65,7 +65,7 @@ namespace tml
             const plm_frame_t* frame = plm_decode_video(reinterpret_cast<plm_t*>(m_stream));
             if(frame)
             {
-                m_y.LoadFromMemory(frame->y.width,   frame->y.height,  1, frame->y.data);
+                m_y.LoadFromMemory( frame->y.width,  frame->y.height,  1, frame->y.data);
                 m_cb.LoadFromMemory(frame->cb.width, frame->cb.height, 1, frame->cb.data);
                 m_cr.LoadFromMemory(frame->cr.width, frame->cr.height, 1, frame->cr.data);
             }
