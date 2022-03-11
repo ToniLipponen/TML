@@ -30,7 +30,7 @@ namespace tml
         if(!m_decoder)
             m_decoder = new ma_decoder;
 
-        static ma_decoder_config config{.format = ma_format_unknown, .channels =  2, .sampleRate =  48000};
+        static ma_decoder_config config = ma_decoder_config_init(ma_format_f32, 2, 48000);
 
         auto* decoder = reinterpret_cast<ma_decoder*>(m_decoder);
         ma_result result = ma_decoder_init_file(filename.c_str(), &config, decoder);
@@ -54,7 +54,7 @@ namespace tml
         if(!m_decoder)
             m_decoder = new ma_decoder;
 
-        static ma_decoder_config config{.format = ma_format_unknown, .channels =  2, .sampleRate =  48000};
+        static ma_decoder_config config = ma_decoder_config_init(ma_format_f32, 2, 48000);
         auto* decoder = reinterpret_cast<ma_decoder*>(m_decoder);
         ma_result result = ma_decoder_init_memory(data, bytes, &config, decoder);
         m_valid = (result == MA_SUCCESS);

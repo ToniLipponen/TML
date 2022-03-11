@@ -79,7 +79,7 @@ namespace tml
         m_state = Stopped;
         Mixer::GetInstance().RemoveSound(m_id);
 
-        static ma_decoder_config config{.format = ma_format_unknown, .channels =  2, .sampleRate =  48000};
+        static ma_decoder_config config = ma_decoder_config_init(ma_format_f32, 2, 48000);
         ma_decoder decoder;
         ma_result result = ma_decoder_init_file(filename.c_str(), &config, &decoder);
         m_valid = (result == MA_SUCCESS);
@@ -105,7 +105,7 @@ namespace tml
     {
         m_state = Stopped;
         Mixer::GetInstance().RemoveSound(m_id);
-        static ma_decoder_config config{.format = ma_format_unknown, .channels =  2, .sampleRate =  48000};
+        static ma_decoder_config config = ma_decoder_config_init(ma_format_f32, 2, 48000);
         ma_decoder decoder;
         ma_result result = ma_decoder_init_memory(data, bytes, &config, &decoder);
         m_valid = (result == MA_SUCCESS);
