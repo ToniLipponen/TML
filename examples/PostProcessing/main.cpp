@@ -37,7 +37,7 @@ int main()
 
         shader.Bind();
         shader.Uniform1i("image", 0);
-        shader.Dispatch(window.GetWidth()/32, window.GetHeight()/8);
+        shader.Dispatch(window.GetWidth()/32, window.GetHeight()/8, 1);
         shader.Wait();
 
         window.Clear();
