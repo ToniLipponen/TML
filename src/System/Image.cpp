@@ -53,7 +53,7 @@ namespace tml
         *this = image;
     }
 
-    Image::~Image()
+    Image::~Image() noexcept
     {
         delete[] m_data;
     }
@@ -113,8 +113,11 @@ namespace tml
 
     void Image::LoadFromMemory(i32 w, i32 h, i32 Bpp, const ui8* data) noexcept
     {
-        delete[] m_data;
-        m_data = new ui8[w*h*Bpp];
+        if((m_width * m_height) != (w * h) || m_Bpp != Bpp)
+        {
+            delete[] m_data;
+            m_data = new ui8[w*h*Bpp];
+        }
         if(data)
             memcpy(m_data, data, w*h*Bpp);
         m_width = w;

@@ -12,5 +12,6 @@ namespace tml
         RenderWindow(ui32 w, ui32 h, const std::string& title, ui32 settings = Window::Settings::None);
         void Clear() noexcept override;
         void Display() override;
+        void Screenshot(const String& filename);
     };
 }

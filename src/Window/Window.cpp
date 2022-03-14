@@ -46,18 +46,26 @@ namespace tml
         glfwWindowHint(GLFW_VISIBLE,                 (settings & Settings::Hidden)       == 0);
         glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, (settings & Settings::Transparent)  != 0);
         glfwWindowHint(GLFW_FLOATING,                (settings & Settings::AlwaysOnTop)  != 0);
-
         glfwWindowHint(GLFW_SAMPLES, static_cast<int>(((settings & Settings::Antialias) >> 4) * 8));
         glfwSetErrorCallback([](int, const char* m){ Logger::ErrorMessage("GLFW ERROR: %s", m);});
 
-        m_handle = glfwCreateWindow(w, h, title.c_str(),(settings & Settings::Fullscreen) ? glfwGetPrimaryMonitor() : nullptr, nullptr);
+        auto* primaryMonitor = glfwGetPrimaryMonitor();
+        auto* monitor = (settings & Settings::Fullscreen) ? primaryMonitor : nullptr;
+
+        if(settings & Settings::UseMonitorResolution)
+            glfwGetMonitorWorkarea(primaryMonitor, nullptr, nullptr, &w, &h);
+
+        /// Create the actual window
+        m_handle = glfwCreateWindow(w, h, title.c_str(), monitor, nullptr);
         TML_ASSERT(m_handle != nullptr, "Failed to create a window handle.");
-        auto handle = static_cast<GLFWwindow *>(m_handle);
+
+        auto handle = static_cast<GLFWwindow*>(m_handle);
         glfwMakeContextCurrent(handle);
-        SetCallbacks();
         if((settings & Settings::LimitAspect) != 0)
             SetAspectRatio(w,h);
 
+
+        /// Set window logo to TML-logo
         Image image(LOGO_DATA.data(), static_cast<int>(LOGO_DATA.size()));
         GLFWimage img;
 
@@ -65,7 +73,13 @@ namespace tml
         img.height = image.GetHeight();
         img.pixels = image.GetData();
         glfwSetWindowIcon(handle, 1, &img);
-        SetSizeLimits(100,100,9000,9000);
+
+        if(settings & LimitSize)
+            SetSizeLimits(w, h, 9000, 9000);
+        else
+            SetSizeLimits(100, 100, 9000, 9000);
+
+        SetCallbacks();
     }
 
     Window::~Window()

@@ -2,11 +2,10 @@
 #include <TML/System.h>
 using namespace tml;
 
-struct PhysicsData
+struct PhysicsCircle
 {
-    std::vector<Vector2f> positions;
-    std::vector<Vector2f> velocities;
-    std::vector<float> radii;
+    Vector2f pos, velocity;
+    double radius{};
 };
 
 const char* shaderSrc = R"END(
@@ -14,9 +13,14 @@ const char* shaderSrc = R"END(
 
 layout( local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
-layout( std430, binding=1 ) buffer pBuff { vec2 Position[]; };
-layout( std430, binding=2 ) buffer vBuff { vec2 Momentum[]; };
-layout( std430, binding=3 ) buffer rBuff { float Radius[];  };
+struct Ball
+{
+    vec2 pos;
+    vec2 momentum;
+    float radius;
+};
+
+layout(std430, binding=0) buffer myBuffer{ Ball balls[]; };
 
 uniform float delta;
 uniform vec2 screenSize;
@@ -27,38 +31,37 @@ void main (void)
 {
     uint i = gl_GlobalInvocationID.x;
 
-    vec2 momentum = Momentum[i];
-    float r = Radius[i];
-    float dist = distance(Position[i], mousePos);
+    float r = balls[i].radius;
+    float dist = distance(balls[i].pos, mousePos);
+    vec2 momentum = balls[i].momentum;
 
     if(mouseDown)
-        Momentum[i] -= ((Position[i] - mousePos) / (dist*dist)) * 50;
+        balls[i].momentum -= ((balls[i].pos - mousePos) / (dist*dist)) * 50;
     else
-        Momentum[i] += ((Position[i] - mousePos) / (dist*dist)) * 50;
+        balls[i].momentum += ((balls[i].pos - mousePos) / (dist*dist)) * 50;
 
-    if(Position[i].x - r < 0)
+    if(balls[i].pos.x - r < 0)
     {
-        Momentum[i].x = -momentum.x * 0.9;
-        Position[i].x = r;
+        balls[i].momentum.x = -momentum.x * 0.9;
+        balls[i].pos.x = r;
     }
-    else if(Position[i].x + r > screenSize.x)
+    else if(balls[i].pos.x + r > screenSize.x)
     {
-        Momentum[i].x = -momentum.x * 0.9;
-        Position[i].x = screenSize.x - r;
+        balls[i].momentum.x = -momentum.x * 0.9;
+        balls[i].pos.x = screenSize.x - r;
     }
-
-    if(Position[i].y - r < 0)
+    if(balls[i].pos.y - r < 0)
     {
-        Momentum[i].y = -momentum.y * 0.9;
-        Position[i].y = r;
+        balls[i].momentum.y = -momentum.y * 0.9;
+        balls[i].pos.y = r;
     }
-    else if(Position[i].y + r > screenSize.y)
+    else if(balls[i].pos.y + r > screenSize.y)
     {
-        Momentum[i].y = -momentum.y * 0.9;
-        Position[i].y = screenSize.y - r;
+        balls[i].momentum.y = -momentum.y * 0.9;
+        balls[i].pos.y = screenSize.y - r;
     }
-    Momentum[i] *= 1.0 - (delta / 2);
-    Position[i] += Momentum[i] * delta;
+    balls[i].momentum *= 0.999;
+    balls[i].pos += balls[i].momentum * delta;
 }
 )END";
 
@@ -67,25 +70,29 @@ int main()
     RenderWindow window(800, 600, "Compute", Window::Resizeable);
 
     std::vector<Color> circleColors;
-    PhysicsData circles;
-    for(auto i = 0; i < 5000; i++)
+    std::vector<PhysicsCircle> circles;
+
+    constexpr static uint32_t CIRCLE_COUNT = 5000;
+
+    for(auto i = 0; i < CIRCLE_COUNT; i++)
     {
-        circles.positions.emplace_back(rand() % 800, rand() % 600);
-        circles.velocities.emplace_back((rand() % 500) - 250);
-        circles.radii.push_back(float(rand() % 20));
+        PhysicsCircle pc;
+        pc.pos = Vector2f(rand() % window.GetWidth(), rand() % window.GetHeight());
+        pc.velocity = Vector2f((rand() % 500) - 250);
+        pc.radius = (rand() % 20);
+
+        circles.push_back(pc);
         circleColors.emplace_back(rand() % 255, rand() % 255, rand() % 255);
         circleColors.at(circleColors.size()-1).a = 255;
     }
-    StorageBuffer posData, momentData, radData;
-    posData.BufferData(circles.positions.data(), circles.positions.size() * sizeof(Vector2f));
-    momentData.BufferData(circles.velocities.data(), circles.velocities.size() * sizeof(Vector2f));
-    radData.BufferData(circles.radii.data(), circles.radii.size() * sizeof(float));
+
+    StorageBuffer shaderData;
+    shaderData.BufferData(circles.data(), circles.size() * sizeof(PhysicsCircle));
 
     ComputeShader shader;
     shader.LoadFromString(shaderSrc);
 
     Clock clock;
-
     Vector2f mousePos;
 
     while(!window.ShouldClose())
@@ -104,15 +111,9 @@ int main()
         /// Bind the compute shader.
         shader.Bind();
 
-        /// Update storage buffers & connect them to the compute shader.
-        posData.UpdateData(circles.positions.data(), circles.positions.size() * sizeof(Vector2f));
-        shader.ConnectBuffer("pBuff", 1, posData);
-
-        momentData.UpdateData(circles.velocities.data(), circles.velocities.size() * sizeof(Vector2f));
-        shader.ConnectBuffer("vBuff", 2, momentData);
-
-        radData.UpdateData(circles.radii.data(), circles.radii.size() * sizeof(float));
-        shader.ConnectBuffer("rBuff", 3, radData);
+        /// Update storage buffer & connect it to the compute shader.
+        shaderData.UpdateData(circles.data(), circles.size() * sizeof(PhysicsCircle));
+        shader.ConnectBuffer("myBuffer", 1, shaderData);
 
         /// Set uniforms.
         shader.Uniform1f("delta", delta);
@@ -121,22 +122,30 @@ int main()
         shader.Uniform1i("mouseDown", Mouse::ButtonDown(Mouse::Left));
 
         /// Execute.
-        shader.Dispatch(circles.positions.size(), 1);
+        shader.Dispatch(circles.size(), 1, 1);
         shader.Wait();
 
-        /// Load data from the storage buffers back to circles data buffers.
-        posData.RetrieveData(&circles.positions[0], circles.positions.size() * sizeof(Vector2f));
-        momentData.RetrieveData(&circles.velocities[0], circles.velocities.size() * sizeof(Vector2f));
-        radData.RetrieveData(&circles.radii[0], circles.radii.size() * sizeof(float));
+        /// Load data from the storage buffer back to circles data buffer.
+        shaderData.RetrieveData(&circles[0], circles.size() * sizeof(PhysicsCircle));
 
+        /// Draw
         window.Clear();
-        for(auto i = 0; i < circles.positions.size(); ++i)
+
+        uint32_t colorIndex = 0;
+        for(auto i : circles)
         {
-            auto p = circles.positions.at(i);
-            auto r = circles.radii.at(i);
-            window.DrawCircle(p, r, circleColors.at(i));
+            window.DrawCircle(i.pos, i.radius, circleColors.at(colorIndex));
+            colorIndex++;
         }
+
         window.DrawText("FPS: " + std::to_string(int(1.0 / delta)), {0,0}, 30);
+        window.DrawText("Circles: " + std::to_string(CIRCLE_COUNT), {0,30}, 30);
+
+        if(Mouse::ButtonDown(Mouse::Left))
+            window.DrawText("Attracting", {0, 60}, 30, Color::Green);
+        else
+            window.DrawText("Repulsing", {0, 60}, 30, Color::Red);
+
         window.Display();
     }
 }

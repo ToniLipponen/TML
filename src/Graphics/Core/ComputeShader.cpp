@@ -72,14 +72,15 @@ namespace tml
 
     void ComputeShader::ConnectBuffer(const std::string &name, ui32 index, StorageBuffer& buffer)
     {
+        /// Maybe cache this at some point?
         const ui32 block_index = GL_CALL(glad_glGetProgramResourceIndex(m_id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
         GL_CALL(glad_glShaderStorageBlockBinding(m_id, block_index, index));
         buffer.BindBufferBase(index);
     }
 
-    void ComputeShader::Dispatch(i16 x, i16 y)
+    void ComputeShader::Dispatch(uint32_t x, uint32_t y, uint32_t z)
     {
-        GL_CALL(glad_glDispatchCompute(x,y,1));
+        GL_CALL(glad_glDispatchCompute(x,y,z));
     }
 
     void ComputeShader::Wait()

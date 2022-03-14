@@ -38,4 +38,19 @@ namespace tml
         GL_CALL(glad_glFlush());
         Window::Display();
     }
+
+    void RenderWindow::Screenshot(const String& filename)
+    {
+        auto w = GetWidth();
+        auto h = GetHeight();
+        ui32* buffer = new ui32[w*h];
+        Image image(w, h, 4, nullptr);
+        glad_glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+        for(auto i = 0; i < h; ++i)
+            for(auto j = 0; j < w; ++j)
+            {
+                ((ui32*)image.GetData())[i * w + j] = buffer[((h - i) * w) + j];
+            }
+        image.WriteToFile(filename);
+    }
 }

@@ -12,7 +12,7 @@ namespace tml
         bool LoadFromFile(const String& filename) noexcept;
         bool LoadFromString(const String& source) noexcept;
         void ConnectBuffer(const std::string& name, ui32 index, StorageBuffer& buffer);
-        void Dispatch(i16 x, i16 y);
+        void Dispatch(uint32_t x, uint32_t y, uint32_t z);
         void Wait();
     };
 }

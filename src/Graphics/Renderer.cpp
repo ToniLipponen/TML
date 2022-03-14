@@ -333,6 +333,35 @@ namespace tml
         PushQuad(pos, size, Color::Transparent, tex, Vertex::TEXTURE, rotation, tl, br);
     }
 
+    void Renderer::DrawText(const String& text, const Vector2f& pos, float size, const Color& color) noexcept
+    {
+        m_text.SetString(text);
+        m_text.SetSize(size);
+        m_text.SetColor(color);
+        m_text.SetPosition(pos);
+        Draw(m_text);
+    }
+
+    void Renderer::PushVertexData(const std::vector<Vertex>& vertices, const std::vector<ui32>& indices) noexcept
+    {
+        if(MAX_VERTEX_COUNT <= m_vertexVector->size() + vertices.size())
+        {
+            EndBatch();
+        }
+        const auto size = m_vertexVector->size();
+        m_vertexVector->PushData(vertices.data(), sizeof(Vertex), vertices.size());
+        for(const auto i : indices)
+            m_indexVector->push_back(size + i);
+    }
+
+    void Renderer::PushVertexData(std::vector<Vertex>& vertices, const std::vector<ui32>& indices, const Texture& tex) noexcept
+    {
+        const ui32 slot = PushTexture(tex);
+        for(Vertex& i : vertices)
+            i.texAndType = slot | i.texAndType;
+        PushVertexData(vertices, indices);
+    }
+
     /// Finds a parking spot for the texture.
     ui32 Renderer::PushTexture(const Texture &texture) noexcept
     {
@@ -408,35 +437,6 @@ namespace tml
         m_indexVector->push_back(currentElements + 1);
         m_indexVector->push_back(currentElements + 3);
         m_indexVector->push_back(currentElements + 2);
-    }
-
-    void Renderer::DrawText(const String& text, const Vector2f& pos, float size, const Color& color) noexcept
-    {
-        m_text.SetString(text);
-        m_text.SetSize(size);
-        m_text.SetColor(color);
-        m_text.SetPosition(pos);
-        Draw(m_text);
-    }
-    
-    void Renderer::PushVertexData(const std::vector<Vertex>& vertices, const std::vector<ui32>& indices) noexcept
-    {
-        if(MAX_VERTEX_COUNT <= m_vertexVector->size() + vertices.size())
-        {
-            EndBatch();
-        }
-        const auto size = m_vertexVector->size();
-        m_vertexVector->PushData(vertices.data(), sizeof(Vertex), vertices.size());
-        for(const auto i : indices)
-            m_indexVector->push_back(size + i);
-    }
-
-    void Renderer::PushVertexData(std::vector<Vertex>& vertices, const std::vector<ui32>& indices, const Texture& tex) noexcept
-    {
-        const ui32 slot = PushTexture(tex);
-        for(Vertex& i : vertices)
-            i.texAndType = slot | i.texAndType;
-        PushVertexData(vertices, indices);
     }
 
     void Renderer::EndBatch(bool flip) noexcept

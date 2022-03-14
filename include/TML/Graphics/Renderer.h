@@ -29,14 +29,14 @@ namespace tml
 
         void DrawLine(const Vector2f& a, const Vector2f& b, ui32 thickness, Color color, bool rounded = true) noexcept;
         void DrawRect(const Vector2f& pos, const Vector2f& dimensions, const Color& color, float roundness = 0.0f,
-                             float rotation = 0.0f) noexcept;
+                     float rotation = 0.0f) noexcept;
 
         void DrawCircle(const Vector2f& pos, float radius, const Color& color) noexcept;
 
         /** @brief Draws a cubic bezier-curve, where a and b are the end points and cp1 and cp2 are the control points.
          * @param step Defines the smoothness of the curve, where a lower value means smoother curve. */
         void DrawBezier(const Vector2f& a, const Vector2f& cp1, const Vector2f& cp2, const Vector2f& b,
-                               float thickness,  const Color& color, bool rounded = true, float step = 0.01f) noexcept;
+                       float thickness,  const Color& color, bool rounded = true, float step = 0.01f) noexcept;
 
         /** @brief Draws a quadratic bezier-curve, where a and b are the end points, while cp is the control point.
          * @param step Defines the smoothness of the curve, where a lower value means smoother curve. */
@@ -45,7 +45,7 @@ namespace tml
 
         /// @brief Draws a grid. The rows and columns mean how many cells the grid should contain horizontally and vertically.
         void DrawGrid(const Vector2f& top_left, const Vector2f& size, ui32 rows, ui32 columns,
-                             const Color& color, float thickness = 1.f, bool rounded = false) noexcept;
+                     const Color& color, float thickness = 1.f, bool rounded = false) noexcept;
 
         /// @brief Does exactly what it says. Just draws a texture on pos with given size.
         void DrawTexture(const Texture& tex, const Vector2f& pos, const Vector2f& size) noexcept;
@@ -78,6 +78,7 @@ namespace tml
                 const Vector2f& uvTopLeft = {0.0f, 0.0f},
                 const Vector2f& uvBottomRight = {1.0f, 1.0f}
                 ) noexcept;
+
     protected:
         void EndBatch(bool flip = false) noexcept;
 
@@ -95,8 +96,9 @@ namespace tml
         Text    m_text;
         Texture m_circleTexture;
 
-        constexpr static ui32 MAX_VERTEX_COUNT = 1000000;
+        constexpr static ui32 MAX_VERTEX_COUNT = 100000;
         i32 MAX_TEXTURE_COUNT = 8;
+//        std::map<ui32, ui32> m_textures;
         std::vector<ui32> m_textures;
     };
 }
