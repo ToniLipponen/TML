@@ -21,7 +21,7 @@ namespace tml
         void SetFrameRate(double fps) noexcept;
         void SetLooping(bool loop) const noexcept;
         bool Advance(double step) noexcept; ///@brief Returns false when no frames are available.
-        friend class Renderer;
+
     private:
         void OnDraw(class Renderer*, Texture*) noexcept override;
         void* m_stream = nullptr;

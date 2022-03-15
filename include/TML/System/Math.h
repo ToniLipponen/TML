@@ -6,13 +6,13 @@ namespace tml
 {
     namespace Math
     {
-        /// @brief Converts from degrees to radians.
+        /** @brief Converts from degrees to radians. */
         inline constexpr double DegToRad(double x) noexcept
         {
             return x * 0.01745329252;
         }
 
-        /// @brief Converts from radians to degrees.
+        /** @brief Converts from radians to degrees. */
         inline constexpr double RadToDeg(double x) noexcept
         {
             return x * 57.295779513;
@@ -46,7 +46,7 @@ namespace tml
                     origin.y + p.x * sin_r + p.y * cos_r};
         }
 
-        /// @brief Returns value clamped between min and max.
+        /** @brief Returns value clamped between min and max. */
         template<typename T>
         inline constexpr T Clamp(T value, T min, T max) noexcept
         {
@@ -57,7 +57,7 @@ namespace tml
             return value;
         }
 
-        /// @brief Returns the bigger of the two values
+        /** @brief Returns the bigger of the two values. */
         template<typename T>
         inline constexpr T Max(T a, T b) noexcept
         {
@@ -66,7 +66,7 @@ namespace tml
             return b;
         }
 
-        /// @brief Returns the smaller of the two values
+        /** @brief Returns the smaller of the two values. */
         template<typename T>
         inline constexpr T Min(T a, T b) noexcept
         {
@@ -90,7 +90,7 @@ namespace tml
             return t * t * (3.0 - 2.0 * t);
         }
 
-        /// @brief Linear interpolation
+        /** @brief Linear interpolation. */
         template<typename T>
         inline constexpr T Lerp(const T &a, const T &b, double m) noexcept
         {
@@ -115,17 +115,26 @@ namespace tml
                     t);
         }
 
-        /// @brief Returns the distance between two points.
+        /** @brief Returns the distance between two points. */
         template<typename T>
         inline double Distance(const Vector2<T>& a, const Vector2<T>& b) noexcept
         {
             return std::sqrt(std::pow(b.x - a.x, 2) + std::pow(b.y - a.y, 2));
         }
 
-        /// @brief Turns an angle in degrees to a direction vector.
+        /** @brief Turns an angle in degrees to a direction vector. */
         inline Vector2f AngleToHeading(double degrees) noexcept
         {
             return Vector2f(std::cos(DegToRad(degrees)), std::sin(DegToRad(degrees))).Normalized();
+        }
+
+        /** @brief Converts a direction vector into an angle.
+         *  @param v Direction vector.
+         *  @return Angle in radians. */
+        template<typename T>
+        inline double HeadingToAngle(const Vector2<T>& v) noexcept
+        {
+            return -M_PI_2 - atan2(static_cast<double>(v.x), static_cast<double>(v.y));
         }
 
         /// @brief Checks whether a value is withing given range
@@ -165,6 +174,13 @@ namespace tml
         inline bool PointInCircle(const Vector2f& point, const Vector2f& pos, float radius) noexcept
         {
             return (Distance(point, pos) <= radius);
+        }
+
+        /** @brief Normalizes a vector. */
+        template<typename T>
+        inline constexpr Vector2<T> Normalize(const Vector2<T>& v) noexcept
+        {
+            return v.Normalized();
         }
     }
 }

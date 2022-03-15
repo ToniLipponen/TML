@@ -1,6 +1,6 @@
 #include <TML/Graphics/Drawable/Sprite.h>
 #include <TML/Graphics/Renderer.h>
-#include "TML/System/Math.h"
+#include <TML/System/Math.h>
 
 namespace tml
 {
@@ -10,6 +10,7 @@ namespace tml
         m_pos = Vector2f{0,0};
         m_size = Vector2f{0,0};
         m_indexData = {0,1,2, 1,3,2};
+        m_updated = true;
     }
 
     void Sprite::SetRect(const TexRect& r)
@@ -22,6 +23,7 @@ namespace tml
     {
         if(!m_img.LoadFromFile(filename))
             return false;
+
         m_size = Vector2f(m_img.GetWidth(), m_img.GetHeight());
         m_texSize = m_size;
         m_rect = {{0,0}, m_size};
@@ -34,6 +36,7 @@ namespace tml
     {
         if(image.GetData() == nullptr)
             return false;
+
         m_img = image;
         m_size = Vector2f(m_img.GetWidth(), m_img.GetHeight());
         m_texSize = m_size;
@@ -52,7 +55,16 @@ namespace tml
         m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
     }
 
-    void Sprite::OnDraw(class Renderer* renderer, Texture *) noexcept
+    void Sprite::SetSharedTexture(const std::shared_ptr<Texture>& texture)
+    {
+        m_sharedResource = texture;
+        m_size = Vector2f(texture->GetWidth(), texture->GetHeight());
+        m_texSize = m_size;
+        m_rect = {{0,0}, m_size};
+        m_updated = true;
+    }
+
+    void Sprite::OnDraw(class Renderer* renderer, Texture*) noexcept
     {
         if(m_updated)
         {
@@ -77,7 +89,6 @@ namespace tml
             }
             m_updated = false;
         }
-        renderer->PushVertexData(m_vertexData, m_indexData, m_tex);
+        renderer->PushVertexData(m_vertexData, m_indexData, m_sharedResource ? *m_sharedResource : m_tex);
     }
-
 }

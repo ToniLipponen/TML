@@ -20,7 +20,7 @@ namespace tml
         bool LoadFromFile(const String& filename);
         bool LoadFromImage(const Image& image);
         void SetInterpolation(bool interpolate);
-        friend class Renderer;
+        void SetSharedTexture(const std::shared_ptr<Texture>& texture);
 
     protected:
         void OnDraw(class Renderer*, Texture*) noexcept override;
@@ -30,5 +30,6 @@ namespace tml
         TexRect m_rect;
         Texture m_tex;
         Vector2f m_texSize;
+        std::shared_ptr<Texture> m_sharedResource = nullptr;
     };
 };

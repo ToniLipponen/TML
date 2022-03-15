@@ -35,6 +35,10 @@ namespace tml
         template<typename R> inline constexpr Vector2& operator*=(R rhs) noexcept;
         template<typename R> inline constexpr Vector2& operator/=(R rhs) noexcept;
 
+
+        inline constexpr static float Length(const Vector2<T>& v) noexcept { return v.Length(); }
+        inline constexpr static Vector2 Normalize(const Vector2<T>& v) noexcept { return v.Normalized(); };
+
         inline constexpr float Length() const noexcept;
         inline constexpr Vector2& Normalize() noexcept;
         inline constexpr Vector2 Normalized() const noexcept;

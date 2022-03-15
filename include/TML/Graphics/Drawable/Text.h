@@ -18,7 +18,6 @@ namespace tml
 
         inline constexpr const String& GetString() const noexcept { return m_string; }
         Vector2f GetDimensions() noexcept;
-        friend class Renderer;
 
     private:
         void SetTexture()               = delete;
