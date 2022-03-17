@@ -1,8 +1,6 @@
-#include "GlDebug.h"
 #include "_Assert.h"
 #include <GLHeader.h>
 
-#ifndef TML_NO_GL_DEBUGGING
 int CheckGLError()
 {
     const auto e = glad_glGetError();
@@ -23,10 +21,10 @@ int CheckGLError()
     return 1;
 }
 
-#ifndef TML_USE_GLES
-void GLMessageCallback(GLenum source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* message, void const* user_param)
+void GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* user_param)
 {
-    auto const src_str = [source]() {
+    auto const src_str = [source]()
+    {
         switch (source)
         {
             case GL_DEBUG_SOURCE_API: return "API";
@@ -39,7 +37,8 @@ void GLMessageCallback(GLenum source, unsigned int type, unsigned int id, unsign
         return "UNKNOWN";
     }();
 
-    auto const type_str = [type]() {
+    auto const type_str = [type]()
+    {
         switch (type)
         {
             case GL_DEBUG_TYPE_ERROR: return "ERROR";
@@ -53,8 +52,10 @@ void GLMessageCallback(GLenum source, unsigned int type, unsigned int id, unsign
         return "UNKNOWN";
     }();
 
-    auto const severity_str = [severity]() {
-        switch (severity) {
+    auto const severity_str = [severity]()
+    {
+        switch(severity)
+        {
             case GL_DEBUG_SEVERITY_NOTIFICATION: return "NOTIFICATION";
             case GL_DEBUG_SEVERITY_LOW: return "LOW";
             case GL_DEBUG_SEVERITY_MEDIUM: return "MEDIUM";
@@ -65,5 +66,3 @@ void GLMessageCallback(GLenum source, unsigned int type, unsigned int id, unsign
 
     std::cout << src_str << ", " << type_str << ", " << severity_str << ", " << id << ": " << message << '\n';
 }
-#endif
-#endif

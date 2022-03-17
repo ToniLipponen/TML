@@ -1,7 +1,6 @@
 #include <TML/Graphics/Core/Texture.h>
 #include <TML/Graphics/Core/RenderTarget.h>
 #include "GLHeader.h"
-#include "GlDebug.h"
 
 namespace tml
 {

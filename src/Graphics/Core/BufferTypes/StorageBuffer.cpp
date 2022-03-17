@@ -1,5 +1,4 @@
 #include <TML/Graphics/Core/Buffers.h>
-#include <GlDebug.h>
 #include <GLHeader.h>
 #include <cstring>
 

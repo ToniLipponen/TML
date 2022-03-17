@@ -15,7 +15,6 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include "GlDebug.h"
 #include "_Assert.h"
 
 #include "Shaders.h"

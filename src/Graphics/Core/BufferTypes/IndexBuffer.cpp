@@ -1,10 +1,8 @@
 #include <GLHeader.h>
-#include "TML/Graphics/Core/Buffers.h"
-#include <GlDebug.h>
+#include <TML/Graphics/Core/Buffers.h>
 #include <cstring>
 
 using namespace tml;
-
 
 #define MAP_RANGE_FLAGS (GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT)
 #define BUFFER_STORAGE_FLAGS GL_DYNAMIC_STORAGE_BIT | MAP_RANGE_FLAGS

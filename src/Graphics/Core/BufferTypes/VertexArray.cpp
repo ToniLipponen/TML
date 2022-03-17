@@ -1,6 +1,5 @@
 #include <GLHeader.h>
-#include "TML/Graphics/Core/Buffers.h"
-#include <GlDebug.h>
+#include <TML/Graphics/Core/Buffers.h>
 using namespace tml;
 
 #ifndef TML_USE_GLES

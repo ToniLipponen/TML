@@ -1,17 +1,16 @@
-#include "TML/Graphics/Core/ComputeShader.h"
-#include "TML/System/File.h"
-#include "Headers/GlDebug.h"
-#include "Headers/GLHeader.h"
+#include <TML/Graphics/Core/ComputeShader.h>
+#include <TML/System/File.h>
+#include <Headers/GLHeader.h>
 
 namespace tml
 {
     ComputeShader::ComputeShader()
     {
-        #ifdef TML_USE_GLES
-            Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
-            Logger::InfoMessage("Exiting now.");
-            exit(80085);
-        #endif
+//        #ifdef TML_USE_GLES
+//            Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+//            Logger::InfoMessage("Exiting now.");
+//            exit(80085);
+//        #endif
     }
 
     bool ComputeShader::LoadFromFile(const String &filename) noexcept

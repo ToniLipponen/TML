@@ -3,7 +3,6 @@
 #include <TML/Graphics/Core/Shader.h>
 
 #include "Core/Headers/GLHeader.h" /// Needed for glad_glFlush()
-#include "Core/Headers/GlDebug.h"  /// Needed for GL_CALL()
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>

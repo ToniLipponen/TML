@@ -1,6 +1,5 @@
 #include <TML/Graphics/Core/Shader.h>
 #include "_Assert.h"
-#include "GlDebug.h"
 #include <GLHeader.h>
 #include <fstream>
 #include <iostream>
