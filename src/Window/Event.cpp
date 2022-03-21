@@ -18,33 +18,48 @@ namespace tml
         return *m_instance;
     }
 
-    bool EventSystem::PollEvents(Event& event) noexcept
+    bool EventSystem::Register(const void *handle) noexcept
     {
-        glfwPollEvents();
-        return PopEvent(event);
+        auto preSize = m_handles.size();
+        m_handles[handle] = std::queue<Event>();
+        return preSize < m_handles.size();
     }
 
-    bool EventSystem::WaitEvents(Event& e) noexcept
+    bool EventSystem::PollEvents(const void* handle, Event& event) noexcept
     {
+        if(m_handles.find(handle) == m_handles.end())
+            return false;
+
+        glfwPollEvents();
+        return PopEvent(handle, event);
+    }
+
+    bool EventSystem::WaitEvents(const void* handle, Event& e) noexcept
+    {
+        if(m_handles.find(handle) == m_handles.end())
+            return false;
+
         /// Poll events until there is an event.
-        while(!PollEvents(e))
+        while(!PollEvents(handle, e))
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
         return true;
     }
 
-    void EventSystem::PushEvent(Event &event)
+    void EventSystem::PushEvent(const void* handle, Event &event) noexcept
     {
-        m_eventQueue.push(event);
+        if(m_handles.find(handle) != m_handles.end())
+            m_handles.at(handle).push(event);
     }
 
-    bool EventSystem::PopEvent(Event& e) noexcept
+    bool EventSystem::PopEvent(const void* handle, Event& e) noexcept
     {
-        if(m_eventQueue.empty())
+        auto& queue = m_handles.at(handle);
+        if(queue.empty())
             return false;
 
-        e = m_eventQueue.front();
-        m_eventQueue.pop();
+        e = queue.front();
+        queue.pop();
         return true;
     }
 }

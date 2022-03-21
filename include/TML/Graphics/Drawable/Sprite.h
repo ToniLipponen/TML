@@ -16,11 +16,13 @@ namespace tml
     {
     public:
         Sprite();
-        void SetRect(const TexRect &r);
-        bool LoadFromFile(const String& filename);
-        bool LoadFromImage(const Image& image);
-        void SetInterpolation(bool interpolate);
-        void SetSharedTexture(const std::shared_ptr<Texture>& texture);
+        bool LoadFromFile(const String& filename) noexcept;
+        bool LoadFromImage(const Image& image) noexcept;
+        void SetInterpolation(bool interpolate) noexcept;
+        void SetSharedTexture(const std::shared_ptr<Texture>& texture) noexcept;
+        void SetRect(const TexRect& r) noexcept;
+        TexRect GetRect() const noexcept;
+        Vector2f GetTextureSize() const noexcept;
 
     protected:
         void OnDraw(class Renderer*, Texture*) noexcept override;

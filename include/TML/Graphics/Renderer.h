@@ -27,7 +27,7 @@ namespace tml
         virtual void Clear() noexcept;
         void Draw(Drawable& drawable) noexcept;
 
-        void DrawLine(const Vector2f& a, const Vector2f& b, ui32 thickness, Color color, bool rounded = true) noexcept;
+        void DrawLine(const Vector2f& a, const Vector2f& b, float thickness, Color color, bool rounded = true) noexcept;
         void DrawRect(const Vector2f& pos, const Vector2f& dimensions, const Color& color, float roundness = 0.0f,
                      float rotation = 0.0f) noexcept;
 

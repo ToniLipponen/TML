@@ -13,7 +13,7 @@ int main()
     ComputeShader shader;
     shader.LoadFromString(shaderSource);
 
-    while(!window.ShouldClose())
+    while(window.IsOpen())
     {
         Event e{};
         while(window.PollEvents(e))

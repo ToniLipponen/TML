@@ -49,7 +49,7 @@ int main()
     double delta = 0;
     Vector2f mousePos;
 
-    while(!window.ShouldClose())
+    while(window.IsOpen())
     {
         Event event{};
 

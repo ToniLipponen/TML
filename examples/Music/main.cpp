@@ -8,7 +8,7 @@ int main()
     Music music("Kevin MacLeod - Study and Relax.mp3");
     music.Play();
 
-    while(!window.ShouldClose())
+    while(window.IsOpen())
     {
         Event event{};
 

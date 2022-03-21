@@ -168,7 +168,7 @@ namespace tml
         d.OnDraw(this, &m_circleTexture);
     }
 
-    void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, ui32 thickness, Color color, bool rounded) noexcept
+    void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, float thickness, Color color, bool rounded) noexcept
     {
         ui32 currentElements = m_vertexVector->size();
         if(currentElements >= MAX_VERTEX_COUNT - 4)
@@ -441,7 +441,12 @@ namespace tml
     void Renderer::EndBatch(bool flip) noexcept
     {
         if(m_vertexVector->size() == 0)
+        {
+            m_textures.clear();
+            m_vertexVector->clear();
+            m_indexVector->clear();
             return;
+        }
 
         m_shader->Bind();
 

@@ -5,7 +5,7 @@ int main()
 {
     RenderWindow window(800, 600, "Circle");
 
-    while(!window.ShouldClose())
+    while(window.IsOpen())
     {
         Event event{};
 

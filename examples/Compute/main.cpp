@@ -95,7 +95,7 @@ int main()
     Clock clock;
     Vector2f mousePos;
 
-    while(!window.ShouldClose())
+    while(window.IsOpen())
     {
         const auto delta = clock.Reset();
         Event event{};

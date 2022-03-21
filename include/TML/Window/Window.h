@@ -23,21 +23,25 @@ namespace tml
             Hidden               = (1 <<  8), //!< Make the window hidden.
             Transparent          = (1 <<  9), //!< Make the window transparent. (Note: Might not be supported on all platforms).
             AlwaysOnTop          = (1 << 10), //!< Keep the window above other windows.
-            UseMonitorResolution = (1 << 11)  //!< Use the primary monitors size instead of user supplied width and height.
+            UseMonitorResolution = (1 << 11), //!< Use the primary monitors size instead of user supplied width and height.
+            NoClient             = (1 << 12), //!< Dont create an OpenGL context.
         };
     public:
-        Window(i32 width, i32 height, const std::string& title, ui32 settings = None);
+        Window();
+        Window(i32 width, i32 height, const std::string& title, ui32 settings = None, const Window* shared = nullptr);
         Window(const Window &) = delete;
         Window(const Window&&) = delete;
-        Window &operator=(const Window&) = delete;
-        Window &operator=(Window&&) = delete;
+        Window& operator=(const Window&) = delete;
+        Window& operator=(Window&&) = delete;
 
         virtual ~Window();
         virtual void Display();
-        void Close() noexcept;
-        bool ShouldClose() const noexcept;
+
+        bool Create(i32 w, i32 h, const std::string& title, ui32 settings = None, const Window* shared = nullptr) noexcept;
+        void Close() noexcept; /// Destroys the window.
+        bool IsOpen() const noexcept;
         
-        void *GetHandle() noexcept;
+        const void* GetHandle() const noexcept;
         i32 GetWidth() const noexcept;
         i32 GetHeight() const noexcept;
         i32 GetX() const noexcept;
@@ -48,6 +52,7 @@ namespace tml
         bool PollEvents(Event& e) const noexcept;
         bool WaitEvents(Event& e) const noexcept;
 
+        void SetPosition(i32 x, i32 y) noexcept;
         void SetSize(ui32 width, ui32 height) noexcept;
         void SetTitle(const std::string& title) noexcept;
         void SetCursor(const Image& image) noexcept;
@@ -69,9 +74,8 @@ namespace tml
 
     protected:
         void SetCallbacks();
-        std::string m_title;
-        bool m_shouldClose = false;
-        void *m_handle = nullptr;
+        void* m_handle = nullptr;
         void* m_cursor = nullptr;
+        static bool s_glfwInitialized;
     };
 }

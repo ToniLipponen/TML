@@ -13,13 +13,7 @@ namespace tml
         m_updated = true;
     }
 
-    void Sprite::SetRect(const TexRect& r)
-    {
-        m_rect = r;
-        m_updated = true;
-    }
-
-    bool Sprite::LoadFromFile(const String& filename)
+    bool Sprite::LoadFromFile(const String& filename) noexcept
     {
         if(!m_img.LoadFromFile(filename))
             return false;
@@ -32,7 +26,7 @@ namespace tml
         return true;
     }
 
-    bool Sprite::LoadFromImage(const Image& image)
+    bool Sprite::LoadFromImage(const Image& image) noexcept
     {
         if(image.GetData() == nullptr)
             return false;
@@ -46,7 +40,7 @@ namespace tml
         return true;
     }
 
-    void Sprite::SetInterpolation(bool interpolate)
+    void Sprite::SetInterpolation(bool interpolate) noexcept
     {
         m_tex.SetMinMagFilter(
                 interpolate ? Texture::LinearMipmapLinear : Texture::Nearest,
@@ -55,13 +49,33 @@ namespace tml
         m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
     }
 
-    void Sprite::SetSharedTexture(const std::shared_ptr<Texture>& texture)
+    void Sprite::SetSharedTexture(const std::shared_ptr<Texture>& texture) noexcept
     {
         m_sharedResource = texture;
         m_size = Vector2f(texture->GetWidth(), texture->GetHeight());
         m_texSize = m_size;
         m_rect = {{0,0}, m_size};
         m_updated = true;
+    }
+
+    void Sprite::SetRect(const TexRect& r) noexcept
+    {
+        m_rect = r;
+        m_updated = true;
+    }
+
+    TexRect Sprite::GetRect() const noexcept
+    {
+        return m_rect;
+    }
+
+    Vector2f Sprite::GetTextureSize() const noexcept
+    {
+        if(m_sharedResource)
+        {
+            return {m_sharedResource->GetWidth(), m_sharedResource->GetHeight()};
+        }
+        return m_texSize;
     }
 
     void Sprite::OnDraw(class Renderer* renderer, Texture*) noexcept

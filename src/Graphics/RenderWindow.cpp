@@ -9,8 +9,8 @@
 
 namespace tml
 {
-    RenderWindow::RenderWindow(ui32 w, ui32 h, const std::string& title, ui32 settings)
-    : Window(w , h, title, settings)
+    RenderWindow::RenderWindow(ui32 w, ui32 h, const std::string& title, ui32 settings, const Window* shared)
+    : Window(w , h, title, settings, shared)
     {
 
     }

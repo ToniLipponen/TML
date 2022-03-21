@@ -8,7 +8,7 @@ int main()
     Sprite sprite;
     sprite.LoadFromFile("Logo.png");
 
-    while(!window.ShouldClose())
+    while(window.IsOpen())
     {
         Event event{};
 

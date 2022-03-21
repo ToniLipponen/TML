@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     bool filter = true;
 
     Clock clock;
-    while(!window.ShouldClose())
+    while(window.IsOpen())
     {
         Event windowEvent{};
         window.WaitEvents(windowEvent);

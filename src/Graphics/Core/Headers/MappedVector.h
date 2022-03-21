@@ -3,7 +3,6 @@
 #include <TML/Graphics/Core/Buffers.h>
 
 /// \brief These are just vectors that map to GPU memory.
-/// This is to reduce the number of copies required.
 
 namespace tml
 {
@@ -18,7 +17,7 @@ namespace tml
 
         void push_back(const Vertex& vertex) noexcept
         {
-            if(m_vertexCount*sizeof(Vertex) < m_capacity)
+            if(m_vertexCount * sizeof(Vertex) < m_capacity)
             {
                 auto dest = ((Vertex*) m_mappedPtr);
                 dest[m_vertexCount] = vertex;

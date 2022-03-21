@@ -16,7 +16,7 @@ int main()
     layout.AddChild(new Slider<tml::Interface::Horizontal>(10, 90,300, 15));
     window.SetClearColor(Color::White);
 
-    while(!window.ShouldClose())
+    while(window.IsOpen())
     {
         Event event{};
         while(window.PollEvents(event))

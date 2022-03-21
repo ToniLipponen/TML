@@ -27,6 +27,7 @@
 #pragma once
 #include "TML/Types.h"
 #include <queue>
+#include <map>
 
 namespace tml
 {
@@ -87,6 +88,7 @@ namespace tml
 
         enum EventType
         {
+            NullEvent,
             Closed,                 //!< The window requested to be closed (no data)
             WindowResized,          //!< The window was resized (data in event.size)
             WindowMinimized,        //!< The window was minimized (no data)
@@ -108,7 +110,7 @@ namespace tml
             DragAndDrop,            //!< File or files dragged onto a window. (data in event.dragAndDrop)
         };
 
-        EventType type;
+        EventType type = NullEvent;
 
         union
         {
@@ -133,13 +135,14 @@ namespace tml
         void operator=(const EventSystem&)  = delete;
         static EventSystem& GetInstance();
 
-        bool PollEvents(Event& e) noexcept;     /// Checks if there is events in the event queue.
-        bool WaitEvents(Event& e) noexcept;     /// Blocks until there is an event in the event queue.
-        void PushEvent(Event& event);           /// Pushed new event to the event queue.
-        bool PopEvent(Event& e) noexcept;       /// Get event from event queue. Returns true if popped new event.
+        bool Register(const void* handle) noexcept;
+        bool PollEvents(const void*, Event& e) noexcept;     /// Checks if there is events in the event queue.
+        bool WaitEvents(const void*, Event& e) noexcept;     /// Blocks until there is an event in the event queue.
+        void PushEvent(const void*, Event& event) noexcept;  /// Pushed new event to the event queue.
+        bool PopEvent(const void*, Event& e) noexcept;       /// Get event from event queue. Returns true if popped new event.
 
     private:
-        std::queue<Event> m_eventQueue;
+        std::map<const void*, std::queue<Event>> m_handles;
         static EventSystem* m_instance;
     };
 }
