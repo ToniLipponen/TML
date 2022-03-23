@@ -25,8 +25,11 @@ namespace tml
     public:
         friend class VertexArray;
 
+    private:
+        ui32 m_id;
+
     protected:
-        ui32 m_id, m_dataSize, m_vertexCount, m_capacity;
+        ui32 m_dataSize, m_vertexCount, m_capacity;
         void* m_mappedPtr = nullptr;
     };
 
@@ -48,6 +51,7 @@ namespace tml
 
     private:
         ui32 m_id;
+        
     protected:
         mutable ui32 m_elements;
         ui32 m_capacity;
@@ -75,9 +79,6 @@ namespace tml
     public:
         BufferLayout() : m_stride(0) {}
 
-        explicit BufferLayout(std::vector<Attribute> layout) noexcept
-        : m_layout(std::move(layout)), m_stride(0) {}
-
         void Push(ui32 elements, ui32 size, DataType type) noexcept {
             m_layout.push_back(Attribute{elements, size, type});
             m_stride += elements * size;
@@ -88,11 +89,11 @@ namespace tml
             m_stride = 0;
         }
 
-        constexpr std::vector<Attribute> const &GetData() const noexcept {
+        inline constexpr std::vector<Attribute> const & GetData() const noexcept {
             return m_layout;
         }
 
-        constexpr ui32 GetStride() const noexcept {
+        inline constexpr ui32 GetStride() const noexcept {
             return m_stride;
         }
 

@@ -120,6 +120,7 @@ namespace tml
     void Renderer::ResetCamera() noexcept
     {
         EndBatch();
+        BeginBatch();
         auto* view = reinterpret_cast<glm::mat4*>(m_view);
         auto* scale = reinterpret_cast<glm::mat4*>(m_scale);
 
@@ -131,6 +132,7 @@ namespace tml
     void Renderer::SetBounds(const Vector2i& pos, const Vector2i& size) noexcept
     {
         EndBatch();
+        BeginBatch();
         GL_CALL(glad_glScissor(pos.x, m_viewport.size.y - pos.y - size.y, size.x, size.y));
         GL_CALL(glad_glEnable(GL_SCISSOR_TEST));
     }
@@ -139,11 +141,13 @@ namespace tml
     void Renderer::ResetBounds() noexcept
     {
         EndBatch();
+        BeginBatch();
         GL_CALL(glad_glDisable(GL_SCISSOR_TEST));
     }
 
     void Renderer::SetViewport(const Vector2i &pos, const Vector2i &size) noexcept
     {
+        EndBatch();
         m_viewport = {pos, size};
         GL_CALL(glad_glViewport(pos.x, pos.y, size.x, size.y));
 
@@ -438,15 +442,22 @@ namespace tml
         m_indexVector->push_back(currentElements + 2);
     }
 
+    void Renderer::BeginBatch() noexcept
+    {
+        for(auto& i : m_textures)
+            i = 0;
+        m_textures.clear();
+        m_vertexVector->clear();
+        m_indexVector->clear();
+
+        m_vertexVector->BufferData(nullptr, sizeof(Vertex), MAX_VERTEX_COUNT);
+        m_indexVector->BufferData(nullptr, MAX_VERTEX_COUNT * 1.5);
+    }
+
     void Renderer::EndBatch(bool flip) noexcept
     {
         if(m_vertexVector->size() == 0)
-        {
-            m_textures.clear();
-            m_vertexVector->clear();
-            m_indexVector->clear();
             return;
-        }
 
         m_shader->Bind();
 
@@ -467,13 +478,11 @@ namespace tml
         m_vertexVector->Bind();
         m_indexVector->Bind();
 
-        GL_CALL(glad_glDrawElements(GL_TRIANGLES, m_indexVector->Elements(), GL_UNSIGNED_INT, nullptr));
+        GL_CALL(glad_glDrawElements(GL_TRIANGLES, m_indexVector->size(), GL_UNSIGNED_INT, nullptr));
 
         if(flip)
             m_view[5] = -m_view[5]; /// Flip the view vertically. This is for RenderTexture.
 
-        m_textures.clear();
-        m_vertexVector->clear();
-        m_indexVector->clear();
+        BeginBatch();
     }
 }

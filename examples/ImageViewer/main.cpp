@@ -80,110 +80,112 @@ int main(int argc, char** argv)
     while(window.IsOpen())
     {
         Event windowEvent{};
-        window.WaitEvents(windowEvent);
 
-        switch(windowEvent.type)
+        while(window.WaitEvents(windowEvent))
         {
-            case Event::MouseButtonPressed:
-                if(windowEvent.mouseButton.button == Mouse::Left && !click)
-                {
-                    click = true;
-                    beginPos = Mouse::GetPosition();
-                    oldCamPos = cam.GetPosition();
-                }
-                break;
-            case Event::MouseButtonReleased:
-                if(windowEvent.mouseButton.button == Mouse::Left)
-                {
-                    click = false;
-                }
-                break;
-
-            case Event::MouseMoved:
-                if(click)
-                {
-                    cam.SetPosition((oldCamPos - (Vector2f(windowEvent.mouseMove.x, windowEvent.mouseMove.y) - beginPos) / cam.GetZoom()));
-                    scaleImage();
-                }
-                break;
-
-            case Event::DragAndDrop:
+            switch(windowEvent.type)
             {
-                String fileName(windowEvent.dragAndDrop.paths[0]);
-                if(image.LoadFromFile(fileName))
-                {
-                    window.SetTitle(fileName.cpp_str() + " - " + std::to_string(int(image.GetSize().x)) + "x" + std::to_string(int(image.GetSize().y)));
-                    imageSize = image.GetSize();
-                }
-                for(int i = 0; i < windowEvent.dragAndDrop.count; i++)
-                {
-                    delete[] windowEvent.dragAndDrop.paths[i];
-                }
-                delete[] windowEvent.dragAndDrop.paths;
-
-                cam.SetPosition({0, 0});
-                cam.SetZoom(1);
-                scaleImage();
-            } break;
-
-            case Event::KeyPressed:
-                if(windowEvent.key.code == Keyboard::KEY_V && windowEvent.key.control)
-                {
-                    if(!Clipboard::IsEmpty())
+                case Event::MouseButtonPressed:
+                    if(windowEvent.mouseButton.button == Mouse::Left && !click)
                     {
-                        if(Clipboard::HasText())
-                        {
-                            String str;
-                            Clipboard::GetString(str);
-                            Image img;
-                            if(img.LoadFromFile(str))
-                            {
-                                image.LoadFromImage(img);
-                                imageSize = image.GetSize();
-                                window.SetTitle(str.cpp_str() + " - " + std::to_string(img.GetWidth()) + " x " + std::to_string(img.GetHeight()));
-                                scaleImage();
-                            }
-                        }
-                        else if(Clipboard::HasImage())
-                        {
-                            Image img;
-                            Clipboard::GetImage(img);
-                            image.LoadFromImage(img);
-
-                            imageSize = image.GetSize();
-                            window.SetTitle(std::to_string(img.GetWidth()) + " x " + std::to_string(img.GetHeight()));
-                            scaleImage();
-                        }
+                        click = true;
+                        beginPos = Mouse::GetPosition();
+                        oldCamPos = cam.GetPosition();
                     }
-                }
-                else if(windowEvent.key.code == Keyboard::KEY_R)
+                    break;
+                case Event::MouseButtonReleased:
+                    if(windowEvent.mouseButton.button == Mouse::Left)
+                    {
+                        click = false;
+                    }
+                    break;
+
+                case Event::MouseMoved:
+                    if(click)
+                    {
+                        cam.SetPosition((oldCamPos - (Vector2f(windowEvent.mouseMove.x, windowEvent.mouseMove.y) - beginPos) / cam.GetZoom()));
+                        scaleImage();
+                    }
+                    break;
+
+                case Event::DragAndDrop:
                 {
+                    String fileName(windowEvent.dragAndDrop.paths[0]);
+                    if(image.LoadFromFile(fileName))
+                    {
+                        window.SetTitle(fileName.cpp_str() + " - " + std::to_string(int(image.GetSize().x)) + "x" + std::to_string(int(image.GetSize().y)));
+                        imageSize = image.GetSize();
+                    }
+                    for(int i = 0; i < windowEvent.dragAndDrop.count; i++)
+                    {
+                        delete[] windowEvent.dragAndDrop.paths[i];
+                    }
+                    delete[] windowEvent.dragAndDrop.paths;
+
                     cam.SetPosition({0, 0});
                     cam.SetZoom(1);
                     scaleImage();
-                }
-                else if(windowEvent.key.code == Keyboard::KEY_F)
-                {
-                    image.SetInterpolation(filter = !filter);
-                    Draw(cam, image, window);
-                }
-                break;
+                } break;
 
-            case Event::MouseWheelScrolled:
-                cam.Zoom(windowEvent.mouseWheelScroll.delta * cam.GetZoom() / 5);
-                if(cam.GetZoom() < 0.1)
-                    cam.SetZoom(0.1);
-                scaleImage();
-                break;
+                case Event::KeyPressed:
+                    if(windowEvent.key.code == Keyboard::KEY_V && windowEvent.key.control)
+                    {
+                        if(!Clipboard::IsEmpty())
+                        {
+                            if(Clipboard::HasText())
+                            {
+                                String str;
+                                Clipboard::GetString(str);
+                                Image img;
+                                if(img.LoadFromFile(str))
+                                {
+                                    image.LoadFromImage(img);
+                                    imageSize = image.GetSize();
+                                    window.SetTitle(str.cpp_str() + " - " + std::to_string(img.GetWidth()) + " x " + std::to_string(img.GetHeight()));
+                                    scaleImage();
+                                }
+                            }
+                            else if(Clipboard::HasImage())
+                            {
+                                Image img;
+                                Clipboard::GetImage(img);
+                                image.LoadFromImage(img);
 
-            case Event::WindowResized:
-                cam.SetPosition({0, 0});
-                scaleImage();
-                break;
-            case Event::Closed:
-                window.Close();
-                break;
-            default:break;
+                                imageSize = image.GetSize();
+                                window.SetTitle(std::to_string(img.GetWidth()) + " x " + std::to_string(img.GetHeight()));
+                                scaleImage();
+                            }
+                        }
+                    }
+                    else if(windowEvent.key.code == Keyboard::KEY_R)
+                    {
+                        cam.SetPosition({0, 0});
+                        cam.SetZoom(1);
+                        scaleImage();
+                    }
+                    else if(windowEvent.key.code == Keyboard::KEY_F)
+                    {
+                        image.SetInterpolation(filter = !filter);
+                        Draw(cam, image, window);
+                    }
+                    break;
+
+                case Event::MouseWheelScrolled:
+                    cam.Zoom(windowEvent.mouseWheelScroll.delta * cam.GetZoom() / 5);
+                    if(cam.GetZoom() < 0.1)
+                        cam.SetZoom(0.1);
+                    scaleImage();
+                    break;
+
+                case Event::WindowResized:
+                    cam.SetPosition({0, 0});
+                    scaleImage();
+                    break;
+                case Event::Closed:
+                    window.Close();
+                    break;
+                default:break;
+            }
         }
     }
     return 0;

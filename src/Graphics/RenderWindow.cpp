@@ -24,7 +24,7 @@ namespace tml
         if(handle != glfwGetCurrentContext())
             glfwMakeContextCurrent(handle);
 
-        Renderer::SetViewport({0,0}, GetSize());
+        SetViewport({0,0}, GetSize());
         Renderer::Clear();
     }
 

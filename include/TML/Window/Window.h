@@ -55,8 +55,11 @@ namespace tml
         void SetPosition(i32 x, i32 y) noexcept;
         void SetSize(ui32 width, ui32 height) noexcept;
         void SetTitle(const std::string& title) noexcept;
-        void SetCursor(const Image& image) noexcept;
         void SetIcon(const Image& image) const noexcept;
+        void SetCursor(const Image& image) noexcept;
+        void ResetCursor() noexcept;
+        void HideCursor() noexcept;
+        void ShowCursor() noexcept;
 
         void SetAspectRatio(i32 x, i32 y) noexcept;
         void SetAspectRatio(const Vector2i& ratio) noexcept;

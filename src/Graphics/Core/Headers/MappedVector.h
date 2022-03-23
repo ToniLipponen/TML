@@ -17,7 +17,7 @@ namespace tml
 
         void push_back(const Vertex& vertex) noexcept
         {
-            if(m_vertexCount * sizeof(Vertex) < m_capacity)
+            if(m_mappedPtr && m_vertexCount * sizeof(Vertex) < m_capacity * sizeof(Vertex))
             {
                 auto dest = ((Vertex*) m_mappedPtr);
                 dest[m_vertexCount] = vertex;
@@ -48,7 +48,7 @@ namespace tml
 
         void push_back(ui32 index) noexcept
         {
-            if(m_elements < m_capacity)
+            if(m_mappedPtr && m_elements < m_capacity)
             {
                 auto dest = ((ui32*) m_mappedPtr);
                 dest[m_elements] = index;

@@ -143,6 +143,8 @@ namespace tml
 
     i32 Window::GetWidth() const noexcept
     {
+        if(!m_handle)
+            return 0;
         i32 w, h;
         glfwGetWindowSize(static_cast<GLFWwindow*>(m_handle), &w, &h);
         return w;
@@ -150,6 +152,8 @@ namespace tml
 
     i32 Window::GetHeight() const noexcept
     {
+        if(!m_handle)
+            return 0;
         i32 w, h;
         glfwGetWindowSize(static_cast<GLFWwindow*>(m_handle), &w, &h);
         return h;
@@ -157,6 +161,8 @@ namespace tml
 
     i32 Window::GetX() const noexcept
     {
+        if(!m_handle)
+            return 0;
         i32 x, y;
         glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &x, &y);
         return x;
@@ -164,6 +170,8 @@ namespace tml
 
     i32 Window::GetY() const noexcept
     {
+        if(!m_handle)
+            return 0;
         i32 x, y;
         glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &x, &y);
         return y;
@@ -181,6 +189,8 @@ namespace tml
 
     Vector2i Window::GetPosition() const noexcept
     {
+        if(!m_handle)
+            return {0,0};
         i32 x, y;
         glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &x, &y);
         return {x,y};
@@ -212,9 +222,23 @@ namespace tml
         glfwSetWindowTitle(static_cast<GLFWwindow *>(m_handle), title.c_str());
     }
 
+    void Window::SetIcon(const Image& image) const noexcept
+    {
+        GLFWimage img;
+        img.width = image.GetWidth();
+        img.height = image.GetHeight();
+        img.pixels = image.GetData();
+
+        glfwSetWindowIcon(static_cast<GLFWwindow*>(m_handle), 1, &img);
+    }
+
     void Window::SetCursor(const Image& image) noexcept
     {
-        glfwDestroyCursor(static_cast<GLFWcursor*>(m_cursor));
+        if(m_cursor)
+        {
+            glfwDestroyCursor(static_cast<GLFWcursor*>(m_cursor));
+            m_cursor = nullptr;
+        }
         GLFWimage img;
         img.width = image.GetWidth();
         img.height = image.GetHeight();
@@ -224,14 +248,20 @@ namespace tml
         glfwSetCursor(static_cast<GLFWwindow*>(m_handle), static_cast<GLFWcursor*>(m_cursor));
     }
 
-    void Window::SetIcon(const Image& image) const noexcept
+    void Window::ResetCursor() noexcept
     {
-        GLFWimage img;
-        img.width = image.GetWidth();
-        img.height = image.GetHeight();
-        img.pixels = image.GetData();
+        glfwDestroyCursor(static_cast<GLFWcursor*>(m_cursor));
+        glfwSetCursor(static_cast<GLFWwindow*>(m_handle), nullptr);
+    }
 
-        glfwSetWindowIcon(static_cast<GLFWwindow*>(m_handle), 1, &img);
+    void Window::HideCursor() noexcept
+    {
+        glfwSetInputMode(static_cast<GLFWwindow*>(m_handle), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    }
+
+    void Window::ShowCursor() noexcept
+    {
+        glfwSetInputMode(static_cast<GLFWwindow*>(m_handle), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
 
     void Window::SetAspectRatio(i32 x, i32 y) noexcept

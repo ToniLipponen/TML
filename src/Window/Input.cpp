@@ -10,25 +10,39 @@ namespace tml
 {
     bool Keyboard::IsKeyPressed(Key key)
     {
-        return glfwGetKey(glfwGetCurrentContext(), key) == GLFW_PRESS;
+        auto context = glfwGetCurrentContext();
+        if(!context)
+            return false;
+
+        return glfwGetKey(context, key) == GLFW_PRESS;
     }
 
     bool Keyboard::IsKeyDown(Key key)
     {
-        auto state = glfwGetKey(glfwGetCurrentContext(), key);
+        auto context = glfwGetCurrentContext();
+        if(!context)
+            return false;
+
+        auto state = glfwGetKey(context, key);
         return state == GLFW_REPEAT || state == GLFW_PRESS;
     }
 
     Vector2d Mouse::GetPosition()
     {
+        auto context = glfwGetCurrentContext();
+        if(!context)
+            return {0,0};
+
         Vector2d mousePos;
-        glfwGetCursorPos(glfwGetCurrentContext(), &mousePos.x, &mousePos.y);
+        glfwGetCursorPos(context, &mousePos.x, &mousePos.y);
         return mousePos;
     }
 
     bool Mouse::ButtonDown(Button button)
     {
-        return glfwGetMouseButton(glfwGetCurrentContext(), button) == GLFW_PRESS;
+        auto context = glfwGetCurrentContext();
+        if(!context)
+            return false;
+        return glfwGetMouseButton(context, button) == GLFW_PRESS;
     }
-
 }

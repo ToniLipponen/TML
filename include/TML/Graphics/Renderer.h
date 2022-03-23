@@ -80,6 +80,7 @@ namespace tml
                 ) noexcept;
 
     protected:
+        void BeginBatch() noexcept;
         void EndBatch(bool flip = false) noexcept;
 
     protected:
