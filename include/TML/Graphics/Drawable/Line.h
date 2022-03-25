@@ -1,5 +1,4 @@
 #pragma once
-
 #include <TML/Graphics/Drawable/Drawable.h>
 
 namespace tml

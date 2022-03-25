@@ -10,27 +10,27 @@ namespace tml
     {
     public:
         Text();
-        void SetSize(float s);
-        void SetString(const String& string, const String& font = "");
-        void SetFont(const Font &font);
-        void SetSpacing(float spacing);
-        void SetKerning(float kerning);
+        void SetSize(float s) noexcept;
+        void SetString(const String& string) noexcept;
+        void SetFont(const Font& font) noexcept;
+        void SetFont(const std::shared_ptr<Font>& font) noexcept;
+        void SetSpacing(float spacing) noexcept;
+        void SetKerning(float kerning) noexcept;
 
         inline constexpr const String& GetString() const noexcept { return m_string; }
         Vector2f GetDimensions() noexcept;
-
-    private:
-        void SetTexture()               = delete;
-        void Rotate()                   = delete;
-        void SetRotation()              = delete;
-        const Vector2f& GetSize()       = delete;
-        constexpr float GetRotation()   = delete;
+        
+        void Rotate(float)                       = delete;
+        void SetRotation(float)                  = delete;
+        const Vector2f& GetSize(const Vector2f&) = delete;
+        constexpr float GetRotation()            = delete;
 
     private:
         void Generate();
         void OnDraw(class Renderer*, Texture*) noexcept override;
-        Font m_font;
-        bool m_hasFont = false;
+
+    private:
+        std::shared_ptr<Font> m_font = nullptr;
         String m_string;
         float m_lineSpacing = 0;
         float m_kerning = 0;

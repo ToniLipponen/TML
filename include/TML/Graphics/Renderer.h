@@ -99,7 +99,6 @@ namespace tml
 
         constexpr static ui32 MAX_VERTEX_COUNT = 100000;
         i32 MAX_TEXTURE_COUNT = 8;
-//        std::map<ui32, ui32> m_textures;
         std::vector<ui32> m_textures;
     };
 }

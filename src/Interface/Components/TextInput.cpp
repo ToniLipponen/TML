@@ -178,17 +178,19 @@ void TextInput::InitListeners()
 void TextInput::pDraw(Renderer& window)
 {
     window.DrawRect(m_pos, m_size, m_pColor);
+    window.SetBounds(m_pos, m_size);
     window.Draw(m_text);
+    window.ResetBounds();
 
     if(m_state.Focused)
     {
         if(m_showLine)
             window.DrawLine({m_cursorPos, m_pos.y + (m_size.y / 10.0f)}, {m_cursorPos, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, Color::Black, 0);
 
-        window.DrawGrid(m_pos+Vector2i(1,1), m_size-Vector2i(1,1), 1, 1, m_activeColor, 1);
+        window.DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
     }
     else
     {
-        window.DrawGrid(m_pos+Vector2i(1,1), m_size-Vector2i(1,1), 1, 1, m_sColor, 1);
+        window.DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
     }
 }

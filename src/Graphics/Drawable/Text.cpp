@@ -1,50 +1,51 @@
 #include <TML/Graphics/Drawable/Text.h>
 #include <TML/Graphics/Renderer.h>
-#include <stb/stb_truetype.h>
 #include <TML/System/Math.h>
+#include <stb/stb_truetype.h>
 #include <Font.h>
 
 namespace tml
 {
     Font* Text::s_defaultFont = nullptr;
+
     Text::Text()
     {
-        m_color = {255,255,255};
-        m_pos = Vector2f{0,0};
-        m_size = Vector2f{32,32};
+        m_color = Color{255,255,255,255};
+        m_pos   = Vector2f{0,0};
+        m_size  = Vector2f{32,32};
+        m_font  = nullptr;
     }
 
-    void Text::SetSize(float s)
+    void Text::SetSize(float s) noexcept
     {
         m_updated = (m_size.x != s) || m_updated;
         m_size = Vector2f{s,s};
     }
 
-    void Text::SetString(const String& string, const String& font)
+    void Text::SetString(const String& string) noexcept
     {
         m_string = string;
-        if(!font.empty())
-        {
-            m_font.LoadFromFile(font.cpp_str());
-            m_hasFont = true;
-        }
         m_updated = true;
     }
 
-    void Text::SetFont(const Font &font)
+    void Text::SetFont(const Font& font) noexcept
+    {
+        m_font = std::make_shared<Font>(font);
+        m_updated = true;
+    }
+
+    void Text::SetFont(const std::shared_ptr<Font>& font) noexcept
     {
         m_font = font;
-        m_hasFont = true;
-        m_updated = true;
     }
 
-    void Text::SetSpacing(float s)
+    void Text::SetSpacing(float s) noexcept
     {
         m_updated = (m_lineSpacing != s) || m_updated;
         m_lineSpacing = s;
     }
 
-    void Text::SetKerning(float s)
+    void Text::SetKerning(float s) noexcept
     {
         m_updated = (m_kerning != s) || m_updated;
         m_kerning = s;
@@ -78,7 +79,7 @@ namespace tml
         m_vertexData.clear();
         m_indexData.clear();
         const ui32 hex = m_color.Hex();
-        Font& font = m_hasFont ? m_font : *s_defaultFont;
+        Font& font = m_font ? *m_font : *s_defaultFont;
 
         for(auto c : m_string)
         {
@@ -108,10 +109,10 @@ namespace tml
                     stbtt_GetPackedQuad(((const stbtt_packedchar *)font.m_cdata), 4096, 4096, int(c-32), &x, &y, &q, 0);
                     NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
 
-                    q.x0 = ceilf(q.x0);
-                    q.x1 = ceilf(q.x1);
-                    q.y0 = ceilf(q.y0);
-                    q.y1 = ceilf(q.y1);
+                    q.x0 = roundf(q.x0);
+                    q.x1 = roundf(q.x1);
+                    q.y0 = roundf(q.y0);
+                    q.y1 = roundf(q.y1);
 
                     m_vertexData.push_back({{q.x0, q.y0}, {q.s0, q.t0}, hex, Vertex::TEXT});
                     m_vertexData.push_back({{q.x1, q.y0}, {q.s1, q.t0}, hex, Vertex::TEXT});
@@ -144,6 +145,6 @@ namespace tml
             Generate();
             m_updated = false;
         }
-        renderer->PushVertexData(m_vertexData, m_indexData, m_hasFont ? m_font.m_texture : s_defaultFont->m_texture);
+        renderer->PushVertexData(m_vertexData, m_indexData, m_font ? m_font->m_texture : s_defaultFont->m_texture);
     }
 }

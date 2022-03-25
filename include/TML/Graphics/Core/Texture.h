@@ -27,8 +27,13 @@ namespace tml
         };
     public:
         Texture();
+        Texture(const Texture&) = delete;
+        Texture(Texture&& rhs) noexcept;
         ~Texture();
-        void LoadFromImage(Image& image);
+
+        Texture& operator=(const Texture& rhs) noexcept;
+        Texture& operator=(Texture&& rhs) noexcept;
+        void LoadFromImage(const Image& image);
         void LoadFromFile(const String& filename);
         void LoadFromMemory(i32 w, i32 h, ui8 bpp, const ui8* data);
 
@@ -45,12 +50,12 @@ namespace tml
         inline constexpr ui32       GetBpp()                const noexcept { return m_bpp;       }
         void                        GetData(Image& image)   const noexcept;
     protected:
-        virtual inline void Generate() const noexcept;
+        inline void Update() const noexcept;
+        virtual inline void Upload(const void* data) const noexcept;
         ClampMode m_clampMode = ClampToEdge;
         Filter m_minFilter = LinearMipmapLinear;
         Filter m_magFilter = LinearMipmapLinear;
         ui32 m_id;
         i32 m_width, m_height, m_bpp;
-        ui8 *m_pixelData = nullptr;
     };
 }

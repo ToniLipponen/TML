@@ -317,7 +317,7 @@ namespace tml
         for(int i = 0; i <= rows; ++i)
         {
             DrawLine(top_left + Vector2f{0.f,    (size.y / rows) * i},
-                     top_left + Vector2f{size.x, (size.y / rows) * i}, thickness, color, ((i == 0) || (i == rows)));
+                     top_left + Vector2f{size.x, (size.y / rows) * i}, thickness, color, ((i == 0) || (i == rows)) && rounded);
         }
         for(int i = 0; i <= columns; ++i)
         {

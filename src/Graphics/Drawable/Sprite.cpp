@@ -5,7 +5,7 @@
 namespace tml
 {
     Sprite::Sprite()
-    : m_rect({{0, 0}, {0, 0}}), m_texSize(0)
+    : m_rect({{0, 0}, {0, 0}}), m_texSize(0), m_texture(nullptr)
     {
         m_pos = Vector2f{0,0};
         m_size = Vector2f{0,0};
@@ -15,13 +15,15 @@ namespace tml
 
     bool Sprite::LoadFromFile(const String& filename) noexcept
     {
-        if(!m_img.LoadFromFile(filename))
+        Image image;
+        if(!image.LoadFromFile(filename))
             return false;
 
-        m_size = Vector2f(m_img.GetWidth(), m_img.GetHeight());
+        m_size = Vector2f(image.GetWidth(), image.GetHeight());
         m_texSize = m_size;
         m_rect = {{0,0}, m_size};
-        m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
+        m_texture = std::make_shared<Texture>();
+        m_texture->LoadFromMemory(image.GetWidth(), image.GetHeight(), image.GetBpp(), image.GetData());
         m_updated = true;
         return true;
     }
@@ -31,31 +33,40 @@ namespace tml
         if(image.GetData() == nullptr)
             return false;
 
-        m_img = image;
-        m_size = Vector2f(m_img.GetWidth(), m_img.GetHeight());
+        auto newTexture = std::make_shared<Texture>();
+        newTexture->LoadFromImage(image);
+        return LoadFromTexture(newTexture);
+    }
+
+    bool Sprite::LoadFromTexture(const Texture& texture) noexcept
+    {
+        auto newTexture = std::make_shared<Texture>();
+        *newTexture = texture;
+        return LoadFromTexture(newTexture);
+    }
+
+    bool Sprite::LoadFromTexture(const std::shared_ptr<Texture>& texture) noexcept
+    {
+        m_texture = texture;
+        if(m_texture == nullptr)
+            return false;
+
+        m_size = Vector2f(m_texture->GetWidth(), m_texture->GetHeight());
         m_texSize = m_size;
         m_rect = {{0,0}, m_size};
-        m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
         m_updated = true;
-        return true;
+        return (m_texture != nullptr) && (m_texture->GetID() != 0);
     }
 
     void Sprite::SetInterpolation(bool interpolate) noexcept
     {
-        m_tex.SetMinMagFilter(
-                interpolate ? Texture::LinearMipmapLinear : Texture::Nearest,
-                interpolate ? Texture::LinearMipmapLinear : Texture::Nearest
-        );
-        m_tex.LoadFromMemory(m_img.GetWidth(), m_img.GetHeight(), m_img.GetBpp(), m_img.GetData());
-    }
-
-    void Sprite::SetSharedTexture(const std::shared_ptr<Texture>& texture) noexcept
-    {
-        m_sharedResource = texture;
-        m_size = Vector2f(texture->GetWidth(), texture->GetHeight());
-        m_texSize = m_size;
-        m_rect = {{0,0}, m_size};
-        m_updated = true;
+        if(m_texture)
+        {
+            m_texture->SetMinMagFilter(
+                    interpolate ? Texture::LinearMipmapLinear : Texture::Nearest,
+                    interpolate ? Texture::LinearMipmapLinear : Texture::Nearest
+            );
+        }
     }
 
     void Sprite::SetRect(const TexRect& r) noexcept
@@ -71,11 +82,12 @@ namespace tml
 
     Vector2f Sprite::GetTextureSize() const noexcept
     {
-        if(m_sharedResource)
-        {
-            return {m_sharedResource->GetWidth(), m_sharedResource->GetHeight()};
-        }
         return m_texSize;
+    }
+
+    const std::shared_ptr<Texture>& Sprite::GetTexture() const noexcept
+    {
+        return m_texture;
     }
 
     void Sprite::OnDraw(class Renderer* renderer, Texture*) noexcept
@@ -103,6 +115,7 @@ namespace tml
             }
             m_updated = false;
         }
-        renderer->PushVertexData(m_vertexData, m_indexData, m_sharedResource ? *m_sharedResource : m_tex);
+        if(m_texture)
+            renderer->PushVertexData(m_vertexData, m_indexData, *m_texture);
     }
 }
