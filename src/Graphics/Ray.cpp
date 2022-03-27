@@ -95,7 +95,7 @@ namespace tml
     Ray::Intersection Ray::IntersectsShape(const std::vector<Vector2f>& points) const noexcept
     {
         Ray::Intersection intersection, rayIntersection;
-        for(int i = 0; i < points.size(); i++)
+        for(size_t i = 0; i < points.size(); i++)
         {
             intersection = IntersectsLine(points.at(i), points.at((i+1) % (points.size())));
             if(intersection == true)

@@ -32,9 +32,9 @@ namespace tml
         const auto radius = resolution / 2.0;
         const auto center = Vector2f(radius);
 
-        for(auto i = 0; i < resolution; ++i)
+        for(ui32 i = 0; i < resolution; ++i)
         {
-            for(auto j = 0; j < resolution; ++j)
+            for(ui32 j = 0; j < resolution; ++j)
             {
                 const double dist = Math::Distance(Vector2f(j, i), center);
                 const double d = dist / radius;
@@ -117,6 +117,33 @@ namespace tml
         *view = glm::translate(*view, glm::vec3(-pos.x, -pos.y, 0));
     }
 
+    /// TODO: Find out why setting bounds doesn't work
+    void Renderer::SetBounds(const Vector2i& pos, const Vector2i& size) noexcept
+    {
+        EndBatch();
+        BeginBatch();
+        GL_CALL(glad_glScissor(pos.x, m_viewport.size.y - pos.y - size.y, size.x, size.y));
+        GL_CALL(glad_glEnable(GL_SCISSOR_TEST));
+    }
+
+    void Renderer::SetViewport(const Vector2i &pos, const Vector2i &size) noexcept
+    {
+        EndBatch();
+        BeginBatch();
+        m_viewport = {pos, size};
+        GL_CALL(glad_glViewport(pos.x, pos.y, size.x, size.y));
+    }
+
+    void Renderer::SetView(const Vector2i &pos, const Vector2i &size) noexcept
+    {
+        *reinterpret_cast<glm::mat4*>(m_proj) = glm::ortho(
+                static_cast<float>(pos.x),
+                static_cast<float>(pos.x+size.x),
+                static_cast<float>(pos.y+size.y),
+                static_cast<float>(pos.y)
+        );
+    }
+
     void Renderer::ResetCamera() noexcept
     {
         EndBatch();
@@ -128,35 +155,12 @@ namespace tml
         *scale = glm::mat4(1.0f);
     }
 
-    /// TODO: Find out why setting bounds doesn't work
-    void Renderer::SetBounds(const Vector2i& pos, const Vector2i& size) noexcept
-    {
-        EndBatch();
-        BeginBatch();
-        GL_CALL(glad_glScissor(pos.x, m_viewport.size.y - pos.y - size.y, size.x, size.y));
-        GL_CALL(glad_glEnable(GL_SCISSOR_TEST));
-    }
-
     /// TODO: Find out why resetting bounds doesn't work
     void Renderer::ResetBounds() noexcept
     {
         EndBatch();
         BeginBatch();
         GL_CALL(glad_glDisable(GL_SCISSOR_TEST));
-    }
-
-    void Renderer::SetViewport(const Vector2i &pos, const Vector2i &size) noexcept
-    {
-        EndBatch();
-        m_viewport = {pos, size};
-        GL_CALL(glad_glViewport(pos.x, pos.y, size.x, size.y));
-
-        *reinterpret_cast<glm::mat4*>(m_proj) = glm::ortho(
-            static_cast<float>(pos.x),
-            static_cast<float>(pos.x+size.x),
-            static_cast<float>(pos.y+size.y),
-            static_cast<float>(pos.y)
-        );
     }
 
     void Renderer::Clear() noexcept
@@ -314,12 +318,12 @@ namespace tml
     void Renderer::DrawGrid(const Vector2f& top_left, const Vector2f& size, ui32 rows, ui32 columns, const Color& color,
                             float thickness, bool rounded) noexcept
     {
-        for(int i = 0; i <= rows; ++i)
+        for(ui32 i = 0; i <= rows; ++i)
         {
             DrawLine(top_left + Vector2f{0.f,    (size.y / rows) * i},
                      top_left + Vector2f{size.x, (size.y / rows) * i}, thickness, color, ((i == 0) || (i == rows)) && rounded);
         }
-        for(int i = 0; i <= columns; ++i)
+        for(ui32 i = 0; i <= columns; ++i)
         {
             DrawLine(top_left + Vector2f{(size.x / columns) * i, 0.f},
                      top_left + Vector2f{(size.x / columns) * i, size.y}, thickness, color, false);
@@ -368,7 +372,7 @@ namespace tml
     /// Finds a parking spot for the texture.
     ui32 Renderer::PushTexture(const Texture &texture) noexcept
     {
-        if(m_textures.size() >= MAX_TEXTURE_COUNT)
+        if(m_textures.size() >= (size_t)MAX_TEXTURE_COUNT)
             EndBatch();
 
         bool alreadyInMTextures = false;
@@ -461,7 +465,7 @@ namespace tml
 
         m_shader->Bind();
 
-        for(i32 i = 0; i < m_textures.size(); i++)
+        for(size_t i = 0; i < m_textures.size(); i++)
             m_shader->Uniform1i("uTexture" + std::to_string(i), i);
 
         if(flip)

@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 2.8...3.20)
-project(TML-System)
+cmake_minimum_required(VERSION 3.0)
+project(tml-system)
 
-add_library(TML-System Clipboard.cpp Image.cpp)
-target_link_libraries(TML-System clip webp lunasvg)
+add_library(tml-system Clipboard.cpp Image.cpp)
+target_link_libraries(tml-system clip webp lunasvg)
+set_target_properties(tml-system PROPERTIES VERSION ${TML_VERSION} SOVERSION ${TML_VERSION})

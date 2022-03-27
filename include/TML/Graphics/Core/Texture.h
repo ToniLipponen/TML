@@ -49,6 +49,7 @@ namespace tml
         inline constexpr ui32       GetHeight()             const noexcept { return m_height;    }
         inline constexpr ui32       GetBpp()                const noexcept { return m_bpp;       }
         void                        GetData(Image& image)   const noexcept;
+        
     protected:
         inline void Update() const noexcept;
         virtual inline void Upload(const void* data) const noexcept;

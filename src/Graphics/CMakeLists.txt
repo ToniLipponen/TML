@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 2.8...3.20)
-project(TML-Graphics)
+cmake_minimum_required(VERSION 3.0)
+project(tml-graphics)
 
 file(GLOB_RECURSE SRC_FILES ./*.cpp)
-add_library(TML-Graphics ${SRC_FILES})
+add_library(tml-graphics ${SRC_FILES})
+set_target_properties(tml-graphics PROPERTIES VERSION ${TML_VERSION} SOVERSION ${TML_VERSION})

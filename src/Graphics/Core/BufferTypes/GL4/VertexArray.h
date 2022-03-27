@@ -5,19 +5,19 @@
 namespace tml
 {
     VertexArray::VertexArray() noexcept
-            : m_id(0), m_vertexCount(0)
+    : m_id(0), m_vertexCount(0)
     {
         GL_CALL(glad_glCreateVertexArrays(1, &m_id));
     }
 
     VertexArray::VertexArray(VertexBuffer& vb, BufferLayout& layout) noexcept
-            : m_id(0), m_vertexCount(vb.VertexCount())
+    : m_id(0), m_vertexCount(vb.VertexCount())
     {
         GL_CALL(glad_glCreateVertexArrays(1, &m_id));
         auto& lo = layout.GetData();
         ui32 offset = 0;
         GL_CALL(glad_glVertexArrayVertexBuffer(m_id, 0, vb.m_id, 0, layout.GetStride()));
-        for(int i = 0; i < lo.size(); i++)
+        for(size_t i = 0; i < lo.size(); i++)
         {
             GL_CALL(glad_glEnableVertexArrayAttrib(m_id, i));
             if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
@@ -51,7 +51,7 @@ namespace tml
         auto& lo = layout.GetData();
         ui32 offset = 0;
         GL_CALL(glad_glVertexArrayVertexBuffer(m_id, 0, vb.m_id, 0, layout.GetStride()));
-        for(int i = 0; i < lo.size(); i++)
+        for(size_t i = 0; i < lo.size(); i++)
         {
             GL_CALL(glad_glEnableVertexArrayAttrib(m_id, i));
             if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
@@ -71,7 +71,7 @@ namespace tml
         auto& lo = layout.GetData();
         ui32 offset = 0;
         GL_CALL(glad_glVertexArrayVertexBuffer(m_id, 0, vb.m_id, 0, layout.GetStride()));
-        for(int i = 0; i < lo.size(); i++)
+        for(size_t i = 0; i < lo.size(); i++)
         {
             GL_CALL(glad_glEnableVertexArrayAttrib(m_id, i));
             if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)

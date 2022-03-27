@@ -18,7 +18,7 @@ int main()
         }
 
         window.Clear();
-        window.DrawCircle(window.GetSize() / 2, 200, Color::Red);
+        window.DrawCircle(window.GetSize() / 2, 200, Color::Green);
         window.Display();
     }
     return 0;

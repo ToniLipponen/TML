@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 2.8...3.20)
-project(TML-Audio)
+cmake_minimum_required(VERSION 3.0)
+project(tml-audio)
 
 file(GLOB_RECURSE SRC_FILES ./*.cpp)
-add_library(TML-Audio ${SRC_FILES})
+add_library(tml-audio ${SRC_FILES})
+set_target_properties(tml-audio PROPERTIES VERSION ${TML_VERSION} SOVERSION ${TML_VERSION})

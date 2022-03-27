@@ -160,7 +160,8 @@ namespace tml
 
     bool Image::Resize(ui32 requestedWidth, ui32 requestedHeight) noexcept
     {
-        if(m_data == nullptr || m_width == 0 || m_height == 0 || (requestedWidth == m_width && requestedHeight == m_height) || (requestedWidth == 0 && requestedHeight == 0))
+        if(m_data == nullptr || m_width == 0 || m_height == 0 ||
+        (requestedWidth == (unsigned)m_width && requestedHeight == (unsigned)m_height) || (requestedWidth == 0 && requestedHeight == 0))
             return false;
 
         if(requestedWidth == 0)

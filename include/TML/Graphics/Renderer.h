@@ -17,12 +17,14 @@ namespace tml
         virtual ~Renderer();
 
         void SetClearColor(const Color& color) noexcept;
-        void SetCamera(const Camera& cam) noexcept;
-        void ResetCamera() noexcept;
 
+        void SetCamera(const Camera& cam) noexcept;
         void SetBounds(const Vector2i& pos, const Vector2i& size) noexcept;
-        void ResetBounds() noexcept;
         void SetViewport(const Vector2i& pos, const Vector2i& size) noexcept;
+        void SetView(const Vector2i& pos, const Vector2i& size) noexcept;
+
+        void ResetCamera() noexcept;
+        void ResetBounds() noexcept;
 
         virtual void Clear() noexcept;
         void Draw(Drawable& drawable) noexcept;

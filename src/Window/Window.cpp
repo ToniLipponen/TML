@@ -313,7 +313,8 @@ namespace tml
 
     void Window::SetActive() const noexcept
     {
-        glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_handle));
+        if(m_handle != glfwGetCurrentContext())
+            glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_handle));
     }
 
     void Window::SetVisible(bool visible) const noexcept

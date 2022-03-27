@@ -5,13 +5,13 @@
 namespace tml
 {
     Texture::Texture()
-    : m_width(0), m_height(0), m_bpp(0), m_id(0)
+    : m_id(0), m_width(0), m_height(0), m_bpp(0)
     {
 
     }
 
     Texture::Texture(Texture&& rhs) noexcept
-    : m_width(rhs.m_width), m_height(rhs.m_height), m_bpp(rhs.m_bpp), m_id(rhs.m_id)
+    : m_id(rhs.m_id), m_width(rhs.m_width), m_height(rhs.m_height), m_bpp(rhs.m_bpp)
     {
         rhs.m_id = 0;
     }
@@ -39,13 +39,13 @@ namespace tml
         m_magFilter = rhs.m_magFilter;
         m_clampMode = rhs.m_clampMode;
 
-        m_width     = 0;
-        m_height    = 0;
-        m_bpp       = 0;
-        m_id        = 0;
-        m_minFilter = LinearMipmapLinear;
-        m_magFilter = LinearMipmapLinear;
-        m_clampMode = ClampToEdge;
+        rhs.m_width     = 0;
+        rhs.m_height    = 0;
+        rhs.m_bpp       = 0;
+        rhs.m_id        = 0;
+        rhs.m_minFilter = LinearMipmapLinear;
+        rhs.m_magFilter = LinearMipmapLinear;
+        rhs.m_clampMode = ClampToEdge;
 
         return *this;
     }

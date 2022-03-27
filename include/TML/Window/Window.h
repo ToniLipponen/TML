@@ -15,7 +15,7 @@ namespace tml
             Fullscreen           = (1 <<  0), //!< Make the window fullscreen. If you want to use the monitors resolution, use the UseMonitorResolution setting.
             Resizeable           = (1 <<  1), //!< Make the window resizeable.
             Maximized            = (1 <<  2), //!< Make the window maximized.
-            VSync                = (1 <<  3), //!< Use vertical synchronization. (Note: Might not work on windows with non fullscreen windows).
+            VSync                = (1 <<  3), //!< Use vertical synchronization. (Note: Might not work on Microsoft Windows™ with non-fullscreen windows).
             Antialias            = (1 <<  4), //!< Enable antialiasing.
             NoTopBar             = (1 <<  5), //!< Make a window with no top bar / title bar.
             LimitAspect          = (1 <<  6), //!< Limit the window aspect ratio to the aspect ratio of width and height.
