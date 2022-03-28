@@ -1,41 +1,35 @@
 #include <TML/Audio/Sound.h>
+#include <TML/Audio/Mixer.h>
 #include <TML/System/Math.h>
-#include <miniaudio/miniaudio.h>
-#include <cstring>
-#include <_Assert.h>
-#include "TML/Audio/Mixer.h"
 
 namespace tml
 {
-    extern ma_decoder_config s_DecoderConfig;
-    Sound::Sound(const std::string &filename)
-    : m_samples(nullptr)
+    Sound::Sound(const String& filename)
+    : m_buffer(std::make_shared<AudioBuffer>())
     {
         LoadFromFile(filename);
     }
 
-    Sound::Sound(const float *data, ui8 channels, ui64 sampleCount)
-    : m_samples(nullptr)
+    Sound::Sound(const float *data, ui8 channels, uint32_t rate, ui64 sampleCount)
+    : m_buffer(std::make_shared<AudioBuffer>())
     {
-        LoadFromMemory(data, channels, sampleCount);
+        LoadFromMemory(data, channels, rate, sampleCount);
     }
 
     Sound::Sound(const Sound& sound)
-    : m_samples(nullptr)
     {
         *this = sound;
     }
 
     Sound::Sound(Sound&& sound) noexcept
-    : m_samples(nullptr)
     {
         *this = sound;
+        sound.m_id = 0;
     }
 
     Sound::~Sound()
     {
         Mixer::GetInstance().RemoveSound(m_id);
-        delete[] m_samples;
     }
 
     Sound& Sound::operator=(const Sound& sound) noexcept
@@ -43,110 +37,84 @@ namespace tml
         if(&sound == this)
             return *this;
 
-        delete[] m_samples;
-        m_samples = new float[sound.m_frameCount];
-        std::memcpy(m_samples, sound.m_samples, sound.m_frameCount);
-
         m_framesRead    = 0;
+        m_buffer        = sound.m_buffer;
         m_frameCount    = sound.m_frameCount;
         m_rate          = sound.m_rate;
         m_channels      = sound.m_channels;
         m_volume        = sound.m_volume;
         m_looping       = sound.m_looping;
         m_valid         = sound.m_valid;
-        m_state         = sound.m_state;
+        m_state         = Stopped;
         return *this;
     }
 
-    Sound& Sound::operator=(Sound&& sound) noexcept
-    {
-        m_samples = sound.m_samples;
-        sound.m_samples = nullptr;
-
-        m_framesRead    = 0;
-        m_frameCount    = sound.m_frameCount;
-        m_rate          = sound.m_rate;
-        m_channels      = sound.m_channels;
-        m_volume        = sound.m_volume;
-        m_looping       = sound.m_looping;
-        m_valid         = sound.m_valid;
-        m_state         = sound.m_state;
-        return *this;
-    }
-
-    bool Sound::LoadFromFile(const std::string &filename) noexcept
+    bool Sound::LoadFromFile(const String& filename) noexcept
     {
         m_state = Stopped;
-        Mixer::GetInstance().RemoveSound(m_id);
-
-        static ma_decoder_config config = ma_decoder_config_init(ma_format_f32, 2, 48000);
-        ma_decoder decoder;
-        ma_result result = ma_decoder_init_file(filename.c_str(), &config, &decoder);
-        m_valid = (result == MA_SUCCESS);
-        if(!m_valid)
-        {
-            tml::Logger::ErrorMessage("Failed to load sound file -> %s", filename.c_str());
-            return false;
-        }
-        m_frameCount = ma_decoder_get_length_in_pcm_frames(&decoder) * decoder.outputChannels;
-
-        delete[] m_samples;
-        m_samples = new float[m_frameCount];
-        ma_decoder_read_pcm_frames(&decoder, m_samples, m_frameCount);
-
+        m_buffer = std::make_shared<AudioBuffer>();
+        m_valid = m_buffer->LoadFromFile(filename);
+        m_frameCount = m_buffer->GetData().size();
+        m_channels = m_buffer->m_channels;
         m_framesRead = 0;
-        m_rate = decoder.outputSampleRate;
-        m_channels = decoder.outputChannels;
-
-        return true;
+        m_rate = m_buffer->m_rate;
+        return m_valid;
     }
 
     bool Sound::LoadFromData(const void *data, ui64 bytes) noexcept
     {
         m_state = Stopped;
-        Mixer::GetInstance().RemoveSound(m_id);
-        static ma_decoder_config config = ma_decoder_config_init(ma_format_f32, 2, 48000);
-        ma_decoder decoder;
-        ma_result result = ma_decoder_init_memory(data, bytes, &config, &decoder);
-        m_valid = (result == MA_SUCCESS);
-        if (!m_valid)
-        {
-            tml::Logger::ErrorMessage("Failed to load sound");
-            return false;
-        }
-        m_frameCount = ma_decoder_get_length_in_pcm_frames(&decoder) * decoder.outputChannels;
-
-        delete[] m_samples;
-        m_samples = new float[m_frameCount];
-        ma_decoder_read_pcm_frames(&decoder, m_samples, m_frameCount);
+        m_buffer = std::make_shared<AudioBuffer>();
+        m_valid = m_buffer->LoadFromData(data, bytes);
+        m_frameCount = m_buffer->GetData().size();
+        m_channels = m_buffer->m_channels;
         m_framesRead = 0;
-        m_rate = decoder.outputSampleRate;
-        m_channels = decoder.outputChannels;
-
-        ma_decoder_uninit(&decoder);
-        return true;
+        m_rate = m_buffer->m_rate;
+        return m_valid;
     }
 
-    bool Sound::LoadFromMemory(const float *data, ui8 channels, ui64 sampleCount) noexcept
+    bool Sound::LoadFromMemory(const float *data, ui8 channels, uint32_t rate, ui64 sampleCount) noexcept
     {
-        delete[] m_samples;
-        m_samples = new float[sampleCount];
-        std::memcpy(m_samples, data, sampleCount * sizeof(float));
-        m_frameCount = sampleCount;
+        m_state = Stopped;
+        m_buffer = std::make_shared<AudioBuffer>();
+        m_valid = m_buffer->LoadFromMemory(data, channels, rate, sampleCount);
+        m_frameCount = m_buffer->GetData().size();
         m_framesRead = 0;
-        m_channels = channels;
-        m_valid = true;
-        return true;
+        m_channels = m_buffer->m_channels;
+        m_rate = rate;
+        return m_valid;
+    }
+
+    void Sound::SetBuffer(const AudioBuffer& buffer) noexcept
+    {
+        m_buffer = std::make_shared<AudioBuffer>(buffer);
+    }
+
+    void Sound::SetBuffer(const std::shared_ptr<AudioBuffer>& buffer) noexcept
+    {
+        m_buffer = buffer;
     }
 
     ui32 Sound::ReadFrames(float *output, ui32 frameCount)
     {
+        if(m_buffer == nullptr)
+            return 0;
+
         const ui32 readFrames = Math::Clamp<ui32>(frameCount * m_channels, 0, m_frameCount - m_framesRead);
 
         for(ui32 i = 0; i < readFrames; ++i)
-            output[i] += m_samples[m_framesRead + i] * m_volume;
+            output[i] += m_buffer->GetData()[m_framesRead + i] * m_volume;
+
+        for(ui32 i = 0; i < readFrames; i += 2)
+        {
+            if(m_balance > 0)
+                output[i] *= 1 - fabsf(m_balance);
+            else
+                output[i+1] *= 1 - fabsf(m_balance);
+        }
 
         m_framesRead += readFrames;
+
         return frameCount;
     }
 

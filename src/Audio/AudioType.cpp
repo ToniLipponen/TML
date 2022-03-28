@@ -1,5 +1,6 @@
 #include <TML/Audio/AudioType.h>
-#include "TML/Audio/Mixer.h"
+#include <TML/Audio/Mixer.h>
+#include <TML/System/Math.h>
 
 namespace tml
 {
@@ -57,9 +58,17 @@ namespace tml
         m_volume = volume;
     }
 
+    void AudioType::SetBalance(float balance)
+    {
+        m_balance = Math::Clamp<float>(balance, -1, 1);
+    }
+
     ui64 AudioType::GetLengthInSeconds() const noexcept
     {
-        return m_frameCount / m_rate / m_channels; // Danger! m_rate or m_channels might be 0. TODO.
+        if(m_rate == 0 & m_channels == 0)
+            return 0;
+
+        return m_frameCount / m_rate / m_channels;
     }
 
     double AudioType::GetProgress() const noexcept

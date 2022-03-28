@@ -98,15 +98,25 @@ namespace tml
             if(framesReadThisIteration == 0)
                 break;
 
-            for(iSample = 0; iSample < framesReadThisIteration*decoder->outputChannels; ++iSample)
-                output[totalFramesRead*decoder->outputChannels + iSample] += temp[iSample] * m_volume;
+            for(iSample = 0; iSample < framesReadThisIteration * decoder->outputChannels; ++iSample)
+                output[totalFramesRead * decoder->outputChannels + iSample] += temp[iSample] * m_volume;
 
             totalFramesRead += framesReadThisIteration;
 
             if(framesReadThisIteration < framesToReadThisIteration)
                 break;
         }
+
         m_framesRead += totalFramesRead * m_channels;
+
+        for(ui32 i = 0; i < totalFramesRead * m_channels; i += 2)
+        {
+            if(m_balance > 0)
+                output[i] *= 1 - fabsf(m_balance);
+            else
+                output[i+1] *= 1 - fabsf(m_balance);
+        }
+
         return totalFramesRead;
     }
 }

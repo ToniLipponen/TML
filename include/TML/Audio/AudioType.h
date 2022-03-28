@@ -1,5 +1,7 @@
 #pragma once
-#include "TML/Types.h"
+#include <TML/Types.h>
+#include <unordered_map>
+#include <functional>
 
 namespace tml
 {
@@ -7,6 +9,7 @@ namespace tml
     {
     public:
         enum State { Stopped, Playing, Paused, Ended };
+        using OnReadFrames = std::function<void(float*, ui32)>;
     public:
         AudioType();
         ~AudioType();
@@ -16,6 +19,7 @@ namespace tml
         virtual void Resume();
         void SetLooping(bool loop);
         void SetVolume(float volume);
+        void SetBalance(float balance);
         float GetVolume() const { return m_volume; }
         bool IsPlaying() const { return m_state == Playing; }
         bool IsLooping() const { return m_looping; }
@@ -30,6 +34,7 @@ namespace tml
         ui32 m_rate;
         ui8 m_channels;
         float m_volume = 1.f;
+        float m_balance = 0;
         bool m_looping = false;
         bool m_valid = false;
         State m_state = Stopped;
