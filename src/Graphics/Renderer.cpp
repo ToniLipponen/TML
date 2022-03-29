@@ -54,15 +54,15 @@ namespace tml
 #else
         TML_ASSERT(gladLoadGL((GLADloadfunc)glfwGetProcAddress), "Failed to initialize renderer");
 #endif
-        GL_CALL(glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MAX_TEXTURE_COUNT));
+        GL_CALL(glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureCount));
 
 #ifdef TML_USE_GLES
         MAX_TEXTURE_COUNT = 8;
 #endif
 
         m_vao           = new VertexArray();
-        m_vertexVector  = new VertexVector(MAX_VERTEX_COUNT);
-        m_indexVector   = new IndexVector(MAX_VERTEX_COUNT * 1.5);
+        m_vertexVector  = new VertexVector(s_maxVertexCount);
+        m_indexVector   = new IndexVector(s_maxIndexCount);
         m_layout        = new BufferLayout();
         m_shader        = new Shader();
 
@@ -102,7 +102,10 @@ namespace tml
 
     void Renderer::SetClearColor(const Color &color) noexcept
     {
-        GL_CALL(glad_glClearColor(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f));
+        m_clearRed   = float(color.r) / 255.f;
+        m_clearGreen = float(color.g) / 255.f;
+        m_clearBlue  = float(color.b) / 255.f;
+        m_clearAlpha = float(color.a) / 255.f;
     }
 
     void Renderer::SetCamera(const Camera &cam) noexcept
@@ -165,6 +168,7 @@ namespace tml
 
     void Renderer::Clear() noexcept
     {
+        GL_CALL(glad_glClearColor(m_clearRed, m_clearGreen, m_clearBlue, m_clearAlpha));
         GL_CALL(glad_glClear(GL_COLOR_BUFFER_BIT));
 
         ResetCamera();
@@ -179,7 +183,7 @@ namespace tml
     void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, float thickness, Color color, bool rounded) noexcept
     {
         ui32 currentElements = m_vertexVector->size();
-        if(currentElements >= MAX_VERTEX_COUNT - 4)
+        if(currentElements >= s_maxVertexCount - 4)
         {
             EndBatch();
             currentElements = 0;
@@ -351,7 +355,7 @@ namespace tml
 
     void Renderer::PushVertexData(const std::vector<Vertex>& vertices, const std::vector<ui32>& indices) noexcept
     {
-        if(MAX_VERTEX_COUNT <= m_vertexVector->size() + vertices.size())
+        if(s_maxVertexCount <= m_vertexVector->size() + vertices.size())
         {
             EndBatch();
         }
@@ -372,7 +376,7 @@ namespace tml
     /// Finds a parking spot for the texture.
     ui32 Renderer::PushTexture(const Texture &texture) noexcept
     {
-        if(m_textures.size() >= (size_t)MAX_TEXTURE_COUNT)
+        if(m_textures.size() >= (size_t)m_maxTextureCount)
             EndBatch();
 
         bool alreadyInMTextures = false;
@@ -408,7 +412,7 @@ namespace tml
                             const Vector2f& br) noexcept
     {
         ui32 currentElements = m_vertexVector->size();
-        if(currentElements >= MAX_VERTEX_COUNT - 4)
+        if(currentElements >= s_maxVertexCount - 4)
             EndBatch();
 
         const ui32 tex = PushTexture(texture);
@@ -448,28 +452,23 @@ namespace tml
 
     void Renderer::BeginBatch() noexcept
     {
-        for(auto& i : m_textures)
-            i = 0;
         m_textures.clear();
         m_vertexVector->clear();
         m_indexVector->clear();
 
-        m_vertexVector->BufferData(nullptr, sizeof(Vertex), MAX_VERTEX_COUNT);
-        m_indexVector->BufferData(nullptr, MAX_VERTEX_COUNT * 1.5);
+        m_vertexVector->BufferData(nullptr, sizeof(Vertex), s_maxVertexCount);
+        m_indexVector->BufferData(nullptr, s_maxIndexCount);
     }
 
-    void Renderer::EndBatch(bool flip) noexcept
+    void Renderer::EndBatch() noexcept
     {
         if(m_vertexVector->size() == 0)
             return;
 
         m_shader->Bind();
 
-        for(size_t i = 0; i < m_textures.size(); i++)
+        for(int i = 0; i < m_textures.size(); i++)
             m_shader->Uniform1i("uTexture" + std::to_string(i), i);
-
-        if(flip)
-            m_view[5] = -m_view[5]; /// Flip the view vertically. This is for RenderTexture.
 
         m_shader->Uniform2f("uViewSize", m_viewport.size.x, m_viewport.size.y);
         m_shader->UniformMat4fv("uView",  1, false, m_view);
@@ -483,9 +482,6 @@ namespace tml
         m_indexVector->Bind();
 
         GL_CALL(glad_glDrawElements(GL_TRIANGLES, m_indexVector->size(), GL_UNSIGNED_INT, nullptr));
-
-        if(flip)
-            m_view[5] = -m_view[5]; /// Flip the view vertically. This is for RenderTexture.
 
         BeginBatch();
     }

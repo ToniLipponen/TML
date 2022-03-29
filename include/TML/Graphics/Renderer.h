@@ -77,13 +77,13 @@ namespace tml
                 const Texture& texture,
                 Vertex::DrawableType type,
                 float rotation = 0.0f,
-                const Vector2f& uvTopLeft = {0.0f, 0.0f},
-                const Vector2f& uvBottomRight = {1.0f, 1.0f}
+                const Vector2f& uvTopLeft = {0.0f, 1.0f},
+                const Vector2f& uvBottomRight = {1.0f, 0.0f}
                 ) noexcept;
 
     protected:
         void BeginBatch() noexcept;
-        void EndBatch(bool flip = false) noexcept;
+        void EndBatch() noexcept;
 
     protected:
         class VertexArray*  m_vao          = nullptr;
@@ -98,9 +98,11 @@ namespace tml
         TexRect m_viewport;
         Text    m_text;
         Texture m_circleTexture;
+        float m_clearRed = 0, m_clearGreen = 0, m_clearBlue = 0, m_clearAlpha = 0;
 
-        constexpr static ui32 MAX_VERTEX_COUNT = 100000;
-        i32 MAX_TEXTURE_COUNT = 8;
+        constexpr static ui32 s_maxVertexCount = 100000;
+        constexpr static ui32 s_maxIndexCount = s_maxVertexCount * 1.5;
+        i32 m_maxTextureCount = 8;
         std::vector<ui32> m_textures;
     };
 }

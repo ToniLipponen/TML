@@ -24,8 +24,7 @@ namespace tml
     Image::Image(i32 w, i32 h, i32 Bpp, const ui8* data) noexcept
     : m_width(w), m_height(h), m_Bpp(Bpp), m_data(new ui8[w*h*Bpp])
     {
-        if(data)
-            std::memcpy(m_data, data, w*h*Bpp);
+        LoadFromMemory(w, h, Bpp, data);
     }
 
     Image::Image(const ui8* data, ui32 s) noexcept
@@ -94,21 +93,30 @@ namespace tml
         delete[] m_data;
         m_data = nullptr;
 
+        bool returnValue;
         const auto imageType = GetTypeFromFilename(fileName);
         switch(imageType)
         {
             case Image::Webp:
+                returnValue = LoadWebp(fileName);
                 Resize(w,h);
-                return LoadWebp(fileName);
+                break;
 
             case Image::Svg:
-                return LoadSvg(fileName, w, h);
+                returnValue = LoadSvg(fileName, w, h);
+                break;
 
             default:
                 m_data = stbi_load(fileName.c_str(), &m_width, &m_height, &m_Bpp, 0);
                 Resize(w,h);
-                return (m_data != nullptr);
+                returnValue = (m_data != nullptr);
+                break;
         }
+
+        if(m_flipOnRead)
+            FlipVertically();
+
+        return returnValue;
     }
 
     void Image::LoadFromMemory(i32 w, i32 h, i32 Bpp, const ui8* data) noexcept
@@ -120,6 +128,10 @@ namespace tml
         }
         if(data)
             memcpy(m_data, data, w*h*Bpp);
+
+        if(m_flipOnRead)
+            FlipVertically();
+
         m_width = w;
         m_height = h;
         m_Bpp = Bpp;
@@ -129,33 +141,55 @@ namespace tml
     {
         delete[] m_data; m_data = nullptr;
         m_data = stbi_load_from_memory(data, static_cast<int>(dataSize), &m_width, &m_height, &m_Bpp, 0);
-        if(m_data == nullptr && !LoadWebp(data, dataSize))
-            return LoadSvg(data, dataSize);
-        else
-            return true;
+        bool returnValue = m_data != nullptr;
+
+        if(!returnValue)
+        {
+            returnValue = LoadWebp(data, dataSize);
+            if(!returnValue)
+                returnValue = LoadSvg(data, dataSize);
+        }
+
+        if(m_flipOnRead)
+            FlipVertically();
+
+        return returnValue;
     }
 
-    bool Image::WriteToFile(const String& fileName, int quality) const noexcept
+    bool Image::WriteToFile(const String& fileName, int quality) noexcept
     {
         const auto type = GetTypeFromFilename(fileName);
 
+        if(m_flipOnWrite)
+            FlipVertically();
+
+        bool returnValue;
         switch(type)
         {
             case Image::Png:
-                return stbi_write_png(fileName.c_str(), m_width, m_height, m_Bpp, m_data, 0) != 0;
+                returnValue = stbi_write_png(fileName.c_str(), m_width, m_height, m_Bpp, m_data, 0) != 0;
+                break;
 
             case Image::Bmp:
-                return stbi_write_bmp(fileName.c_str(), m_width, m_height, m_Bpp, m_data) != 0;
+                returnValue = stbi_write_bmp(fileName.c_str(), m_width, m_height, m_Bpp, m_data) != 0;
+                break;
 
             case Image::Tga:
-                return stbi_write_tga(fileName.c_str(), m_width, m_height, m_Bpp, m_data) != 0;
+                returnValue = stbi_write_tga(fileName.c_str(), m_width, m_height, m_Bpp, m_data) != 0;
+                break;
 
             case Image::Webp:
-                return SaveWebp(fileName, quality);
+                returnValue = SaveWebp(fileName, quality);
+                break;
 
             default:
-                return stbi_write_jpg(fileName.c_str(), m_width, m_height, m_Bpp, m_data, quality) != 0;
+                returnValue = stbi_write_jpg(fileName.c_str(), m_width, m_height, m_Bpp, m_data, quality) != 0;
         }
+
+        if(m_flipOnWrite)
+            FlipVertically();
+
+        return returnValue;
     }
 
     bool Image::Resize(ui32 requestedWidth, ui32 requestedHeight) noexcept
@@ -179,6 +213,35 @@ namespace tml
         return m_data != nullptr;
     }
 
+    void Image::FlipVertically() noexcept
+    {
+        if(m_data == nullptr)
+            return;
+
+        auto* row = new ui8[m_width * m_Bpp];
+        const size_t rowLen = m_width*m_Bpp;
+        const size_t height2 = m_height/2;
+
+        for(size_t i = 0; i < height2; ++i)
+        {
+            std::memcpy(row, m_data+i*rowLen, rowLen);
+            std::memcpy(m_data+i*rowLen, m_data+(m_height-1-i)*rowLen, rowLen);
+            std::memcpy(m_data+(m_height-1-i)*rowLen, row, rowLen);
+        }
+
+        delete[] row;
+    }
+
+    void Image::SetFlipOnLoad(bool flip)
+    {
+        m_flipOnRead = flip;
+    }
+
+    void Image::SetFlipOnWrite(bool flip)
+    {
+        m_flipOnWrite = flip;
+    }
+
     bool Image::LoadSvg(const String& filename, ui32 requestedWidth, ui32 requestedHeight)
     {
         auto data = InFile::GetString(filename);
@@ -195,6 +258,7 @@ namespace tml
         m_width = requestedWidth;
         m_height = requestedHeight;
         m_data = document->render(m_width, m_height);
+
         return m_data != nullptr;
     }
 
@@ -232,7 +296,7 @@ namespace tml
         return false;
     }
 
-    bool Image::SaveWebp(const String& filename, int quality) const noexcept
+    bool Image::SaveWebp(const String& filename, int quality) noexcept
     {
         ui8* output = nullptr;
         ui64 size = 0;

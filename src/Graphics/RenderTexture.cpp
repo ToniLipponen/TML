@@ -30,6 +30,7 @@ namespace tml
     {
         if(active)
         {
+            m_texture.SetMinMagFilter(Texture::Nearest, Texture::Nearest);
             return m_target->AttachTexture(m_texture);
         }
         else
@@ -42,13 +43,15 @@ namespace tml
     void RenderTexture::Clear() noexcept
     {
         SetViewport({0,0}, {m_width, m_height});
+        SetView({0,0}, {m_width, m_height});
         Renderer::Clear();
     }
 
     void RenderTexture::Display() noexcept
     {
-        Renderer::EndBatch(true);
+        Renderer::EndBatch();
         SetActive(false);
+        m_texture.SetMinMagFilter(Texture::Linear, Texture::Linear);
     }
 
     const Texture& RenderTexture::GetTexture() const noexcept

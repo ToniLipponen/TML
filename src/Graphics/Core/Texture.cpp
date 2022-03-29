@@ -58,17 +58,20 @@ namespace tml
     void Texture::LoadFromFile(const String& filename)
     {
         Image img(filename);
+        img.FlipVertically();
         LoadFromImage(img);
     }
 
     void Texture::LoadFromMemory(i32 w, i32 h, ui8 bpp, const ui8* data)
     {
         GL_CALL(glDeleteTextures(1, &m_id));
+
         #ifdef TML_USE_GLES
             GL_CALL(glGenTextures(1, &m_id));
         #else
             GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
         #endif
+
         m_width 	= w;
         m_height 	= h;
         m_bpp 		= bpp;

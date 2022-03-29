@@ -18,6 +18,7 @@ namespace tml
         Image image;
         if(!image.LoadFromFile(filename))
             return false;
+        image.FlipVertically();
 
         m_size = Vector2f(image.GetWidth(), image.GetHeight());
         m_texSize = m_size;
@@ -101,17 +102,17 @@ namespace tml
 
             if(m_rotation != 0)
             {
-                m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos, cos_r, sin_r),                           tl,           0x0, Vertex::TEXTURE});
-                m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos + Vector2f(m_size.x, 0.f), cos_r, sin_r), {br.x, tl.y}, 0x0, Vertex::TEXTURE});
-                m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos + Vector2f(0.f, m_size.y), cos_r, sin_r), {tl.x, br.y}, 0x0, Vertex::TEXTURE});
-                m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos + m_size, cos_r, sin_r),                  br,           0x0, Vertex::TEXTURE});
+                m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos, cos_r, sin_r),                           {tl.x, br.y}, 0x0, Vertex::TEXTURE});
+                m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos + Vector2f(m_size.x, 0.f), cos_r, sin_r), {br.x, br.y}, 0x0, Vertex::TEXTURE});
+                m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos + Vector2f(0.f, m_size.y), cos_r, sin_r), {tl.x, tl.y}, 0x0, Vertex::TEXTURE});
+                m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, m_pos + m_size, cos_r, sin_r),                  {br.x, tl.y}, 0x0, Vertex::TEXTURE});
             }
             else
             {
-                m_vertexData.push_back(Vertex{m_pos,                           tl,           0x0, Vertex::TEXTURE});
-                m_vertexData.push_back(Vertex{m_pos + Vector2f(m_size.x, 0.f), {br.x, tl.y}, 0x0, Vertex::TEXTURE});
-                m_vertexData.push_back(Vertex{m_pos + Vector2f(0.f, m_size.y), {tl.x, br.y}, 0x0, Vertex::TEXTURE});
-                m_vertexData.push_back(Vertex{m_pos + m_size,                  br,           0x0, Vertex::TEXTURE});
+                m_vertexData.push_back(Vertex{m_pos,                           {tl.x, br.y}, 0x0, Vertex::TEXTURE});
+                m_vertexData.push_back(Vertex{m_pos + Vector2f(m_size.x, 0.f), {br.x, br.y}, 0x0, Vertex::TEXTURE});
+                m_vertexData.push_back(Vertex{m_pos + Vector2f(0.f, m_size.y), {tl.x, tl.y}, 0x0, Vertex::TEXTURE});
+                m_vertexData.push_back(Vertex{m_pos + m_size,                  {br.x, tl.y}, 0x0, Vertex::TEXTURE});
             }
             m_updated = false;
         }

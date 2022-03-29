@@ -18,13 +18,13 @@ namespace tml
         bool HttpHost::Send(HttpRequest& request) noexcept
         {
             request.SetProperty("Host", m_address);
-            const auto message = std::move(request.GetRequestString());
+            const auto message = request.GetRequestString();
             return m_socket.Send(message.data(), message.size());
         }
 
         bool HttpHost::GetResponse(HttpResponse& response) noexcept
         {
-            const auto responseString = std::move(GetResponseString());
+            const auto responseString = GetResponseString();
             response.SetContent(responseString);
             return !responseString.empty();
         }
@@ -41,7 +41,7 @@ namespace tml
                 m_socket.Receive(&buffer[0], 512, received);
                 response.append(buffer, received);
             }
-            return std::move(response);
+            return response;
         }
     }
 }

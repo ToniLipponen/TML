@@ -40,19 +40,27 @@ namespace tml
 
         /** @brief Saves image to file. Uses postfix to deduce image file type. eg. .jpg .png .webp ...
          *  @returns true if successful, or false if unsuccessful. */
-        bool WriteToFile(const String& fileName, i32 quality = 90) const noexcept;
+        bool WriteToFile(const String& fileName, i32 quality = 90) noexcept;
 
         /** @brief Resize the image to requested size.
          *  @returns true if successful, or false if unsuccessful. */
         bool Resize(ui32 requestedWidth = 0, ui32 requestedHeight = 0) noexcept;
+        void FlipVertically() noexcept;
+        void SetFlipOnLoad(bool flip);
+        void SetFlipOnWrite(bool flip);
+
     private:
         enum ImageType { None, Jpg, Png, Bmp, Tga, Pic, Pnm, Webp, Svg };
         bool LoadSvg(const String& filename, ui32 requestedWidth = 0, ui32 requestedHeight = 0);
         bool LoadSvg(const ui8* data, ui32 dataSize, ui32 requestedWidth = 0, ui32 requestedHeight = 0);
         bool LoadWebp(const String& filename) noexcept;
         bool LoadWebp(const ui8* data, ui32 size) noexcept;
-        bool SaveWebp(const String& filename, i32 quality = 90) const noexcept;
+        bool SaveWebp(const String& filename, i32 quality = 90) noexcept;
         static ImageType GetTypeFromFilename(const String& filename) noexcept;
+
+    private:
+        bool m_flipOnRead = false;
+        bool m_flipOnWrite = false;
         i32 m_width = 0, m_height = 0, m_Bpp = 0;
         ui8* m_data = nullptr;
     };

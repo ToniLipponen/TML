@@ -47,10 +47,10 @@ namespace tml
             }
             else
             {
-                m_vertexData.push_back(Vertex{topLeft,                    {0.f, 0.f}, hex, Vertex::TEXT});
-                m_vertexData.push_back(Vertex{topLeft + Vector2f(x2, 0.f),{1.f, 0.f}, hex, Vertex::TEXT});
-                m_vertexData.push_back(Vertex{topLeft + Vector2f(0.f, x2),{0.f, 1.f}, hex, Vertex::TEXT});
-                m_vertexData.push_back(Vertex{topLeft + x2,               {1.f, 1.f}, hex, Vertex::TEXT});
+                m_vertexData.push_back(Vertex{topLeft,                    {0.f, 1.f}, hex, Vertex::TEXT});
+                m_vertexData.push_back(Vertex{topLeft + Vector2f(x2, 0.f),{1.f, 1.f}, hex, Vertex::TEXT});
+                m_vertexData.push_back(Vertex{topLeft + Vector2f(0.f, x2),{0.f, 0.f}, hex, Vertex::TEXT});
+                m_vertexData.push_back(Vertex{topLeft + x2,               {1.f, 0.f}, hex, Vertex::TEXT});
             }
             m_updated = false;
         }
