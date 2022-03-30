@@ -14,35 +14,13 @@ TML is a simple library for making games and applications. It provides simple in
 Currently, I have no way of supporting macOS.
 
 # Building
-## Prerequisites Linux
-Before building on Linux, you need to install the X11 development packages, git and cmake.<br><br>
-Ubuntu/Debian: <code>sudo apt install xorg-dev git cmake</code>
-
-RHEL/Fedora: <code>sudo dnf install libXcursor-devel libXi-devel libXinerama-devel libXrandr-devel git cmake</code>
-
-Arch: <code>sudo pacman -S libx11 git cmake</code>
-
-## Prerequisites FreeBSD
-Before building on FreeBSD.<br>
-<code>sudo pkg install gcc cmake git pkgconf xorg</code>
-
-## Prerequisites Windows
-1. Download and install cmake from https://cmake.org
-2. I guess you just install Visual Studio. Or get a compiler some other way.
-
-## Build
-In the terminal / CMD:<br>
-1. <code>git clone --recursive "https://github.com/ToniLipponen/TML.git" </code><br>
-2. <code>cd TML</code><br>
-3. <code>cmake -B build</code><br>
-4. <code>cmake --build build</code><br>
-
-This should build the project into the <b>build</b> directory. In the build directory there is a folder called lib, which contains the library files. And in the examples folder there are some small example programs.
+If you wish to build the project from source, there are some instructions in [BUILDING.md](BUILDING.md)
 
 # Using
-Currently, there are no API documentation or tutorials on how to use this library. There are some VERY simple examples in the <b>examples</b> directory. Once this project is a bit more matured, I will take the time to document the API and make some tutorials.
+Currently, there are no API documentation or tutorials on how to use this library. There are some very simple examples in the [examples](examples) directory. Once this project is a bit more matured, I will take the time to document the API and make some tutorials.
 
 ### Basic example
+    
 ```cpp
 #include <TML/Graphics.h>
 using namespace tml;
@@ -68,6 +46,7 @@ int main()
     return 0;
 }
 ```
+
 # Contributing
 If you're interested in this project, you can help in a couple of different ways:
 
@@ -77,6 +56,9 @@ If you're interested in this project, you can help in a couple of different ways
 4. Create feature requests.
 5. Create example applications.
 6. Testing.
+
+# License
+This project is licensed under the [*_Zlib License_*](LICENSE). External libraries used by TML are also distributed under very permissive licenses (See below). This means you don't have to worry about licensing, when developing software using TML.
 
 # Credits
 |Author|Repo|Library|License|
@@ -90,3 +72,8 @@ If you're interested in this project, you can help in a couple of different ways
 | Dominic Szablewski                     |https://github.com/phoboslab/pl_mpeg|pl_mpeg|MIT|
 | David Capello                          |https://github.com/dacap/clip|clip|MIT|
 | Nwutobo Samuel Ugochukwu               |https://github.com/sammycage|lunasvg|MIT|
+
+# Contact
+You can contact me by email.
+
+toni.lipponen@protonmail.com
