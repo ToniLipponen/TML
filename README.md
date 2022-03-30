@@ -58,20 +58,19 @@ If you're interested in this project, you can help in a couple of different ways
 6. Testing.
 
 # License
-This project is licensed under the [*_Zlib License_*](LICENSE). External libraries used by TML are also distributed under very permissive licenses (See below). This means you don't have to worry about licensing, when developing software using TML.
+This project is licensed under the [Zlib License](LICENSE). External libraries used by TML are also distributed under very permissive licenses (See below). This means you don't have to worry about licensing, when developing software using TML.
 
 # Credits
-|Author|Repo|Library|License|
-|------|----|---|-------|
-|Sean Barret|https://github.com/nothings/stb|stb libraries|Public Domain|
-|David Herberth|https://github.com/Dav1dde/glad|glad|MIT|
-|glfw|https://github.com/glfw/glfw|glfw|Zlib|
-|G-Truc|https://github.com/g-truc/glm|glm|MIT|
-|[Mentioned in 'external/libwebp/AUTHORS']|https://github.com/webmproject/libwebp/|libwebp|BSD 3-clause License|
-| David Reid                             |https://github.com/mackron/miniaudio|miniaudio|Public Domain|
-| Dominic Szablewski                     |https://github.com/phoboslab/pl_mpeg|pl_mpeg|MIT|
-| David Capello                          |https://github.com/dacap/clip|clip|MIT|
-| Nwutobo Samuel Ugochukwu               |https://github.com/sammycage|lunasvg|MIT|
+|Author| Repo                                 |Library|License|
+|------|--------------------------------------|---|-------|
+|Sean Barret| https://github.com/nothings/stb      |stb libraries|Public Domain|
+|David Herberth| https://github.com/Dav1dde/glad      |glad|MIT|
+|glfw| https://github.com/glfw/glfw         |glfw|Zlib|
+|G-Truc| https://github.com/g-truc/glm        |glm|MIT|
+| David Reid                             | https://github.com/mackron/miniaudio |miniaudio|Public Domain|
+| Dominic Szablewski                     | https://github.com/phoboslab/pl_mpeg |pl_mpeg|MIT|
+| David Capello                          | https://github.com/dacap/clip        |clip|MIT|
+| Nwutobo Samuel Ugochukwu               | https://github.com/sammycage/lunasvg |lunasvg|MIT|
 
 # Contact
 You can contact me by email.

@@ -3,9 +3,9 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include "_Assert.h"
+#include "../Headers/_Assert.h"
 
-#include "Logo.h" /// Logo data
+#include "../Headers/Logo.h" /// Logo data
 #include <cstring>
 
 void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);

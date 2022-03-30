@@ -2,7 +2,7 @@
 #include <TML/Graphics/Core/Buffers.h>
 #include <TML/Graphics/Core/Shader.h>
 
-#include "Core/Headers/GLHeader.h" /// Needed for glad_glFlush()
+#include "../Headers/GLHeader.h" /// Needed for glad_glFlush()
 
 namespace tml
 {

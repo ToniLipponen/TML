@@ -1,6 +1,6 @@
 #include <TML/Graphics/Font.h>
 #include <TML/System/File.h>
-#include "_Assert.h"
+#include "../Headers/_Assert.h"
 #define STB_RECT_PACK_IMPLEMENTATION
 #define STB_TRUETYPE_IMPLEMENTATION
 #include <stb/stb_rect_pack.h>

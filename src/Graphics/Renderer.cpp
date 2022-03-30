@@ -2,23 +2,21 @@
 #include <TML/Graphics/Core/Buffers.h>
 #include <TML/Graphics/Core/Shader.h>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
 
 #define GLAD_GL_IMPLEMENTATION
 #define GLAD_GLES2_IMPLEMENTATION
 #define GLAD_EGL_IMPLEMENTATION
 #define GLAD_WGL_IMPLEMENTATION
 #define GLAD_GLX_IMPLEMENTATION
-#include <GLHeader.h>
+#include "../Headers/GLHeader.h"
 
 #define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-
-#include "_Assert.h"
-
-#include "Shaders.h"
-#include "MappedVector.h"
+#include <glfw/include/GLFW/glfw3.h>
+#include "../Headers/_Assert.h"
+#include "../Headers/Shaders.h"
+#include "../Headers/MappedVector.h"
 
 #ifdef PLATFORM_WINDOWS
     #undef DrawText

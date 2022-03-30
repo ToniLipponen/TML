@@ -1,8 +1,9 @@
 #include <TML/Graphics/Drawable/Text.h>
 #include <TML/Graphics/Renderer.h>
 #include <TML/System/Math.h>
+#include <TML/Graphics/Font.h>
 #include <stb/stb_truetype.h>
-#include <Font.h>
+#include "../../Headers/Font.h"
 
 namespace tml
 {

@@ -51,11 +51,11 @@ if(TML_DONT_USE_DSA)
 endif()
 
 file(GLOB_RECURSE HEADERS_FILES include/TML/*.h)
-include_directories(external/glm external/glfw/include include external res external/libwebp/src/ src/Graphics/Core/ src/Graphics/Core/Headers external/asio/include)
+include_directories(include external)
 
 # Add external libraries
+add_subdirectory(external/glm)
 add_subdirectory(external/glfw/)
-add_subdirectory(external/libwebp)
 add_subdirectory(external/Clip)
 add_subdirectory(external/lunasvg)
 

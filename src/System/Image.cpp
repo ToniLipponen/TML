@@ -6,8 +6,6 @@
 #include <stb/stb_image_write.h>
 #include <stb/stb_image_resize.h>
 
-#include <libwebp/src/webp/decode.h>
-#include <libwebp/src/webp/encode.h>
 #include <lunasvg.h>
 #include <TML/System/Image.h>
 #include <TML/System/File.h>
@@ -95,22 +93,15 @@ namespace tml
 
         bool returnValue;
         const auto imageType = GetTypeFromFilename(fileName);
-        switch(imageType)
+        if(imageType == Image::Svg)
         {
-            case Image::Webp:
-                returnValue = LoadWebp(fileName);
-                Resize(w,h);
-                break;
-
-            case Image::Svg:
-                returnValue = LoadSvg(fileName, w, h);
-                break;
-
-            default:
-                m_data = stbi_load(fileName.c_str(), &m_width, &m_height, &m_Bpp, 0);
-                Resize(w,h);
-                returnValue = (m_data != nullptr);
-                break;
+            returnValue = LoadSvg(fileName, w, h);
+        }
+        else
+        {
+            m_data = stbi_load(fileName.c_str(), &m_width, &m_height, &m_Bpp, 0);
+            Resize(w,h);
+            returnValue = (m_data != nullptr);
         }
 
         if(m_flipOnRead)
@@ -144,11 +135,7 @@ namespace tml
         bool returnValue = m_data != nullptr;
 
         if(!returnValue)
-        {
-            returnValue = LoadWebp(data, dataSize);
-            if(!returnValue)
-                returnValue = LoadSvg(data, dataSize);
-        }
+            returnValue = LoadSvg(data, dataSize);
 
         if(m_flipOnRead)
             FlipVertically();
@@ -176,10 +163,6 @@ namespace tml
 
             case Image::Tga:
                 returnValue = stbi_write_tga(fileName.c_str(), m_width, m_height, m_Bpp, m_data) != 0;
-                break;
-
-            case Image::Webp:
-                returnValue = SaveWebp(fileName, quality);
                 break;
 
             default:
@@ -262,60 +245,6 @@ namespace tml
         return m_data != nullptr;
     }
 
-    bool Image::LoadWebp(const String &filename) noexcept
-    {
-        InFile file;
-        file.Open(filename);
-        std::vector<char> data;
-        file.GetBytes(data);
-
-       return LoadWebp(reinterpret_cast<const ui8*>(data.data()), data.size());
-    }
-
-    bool Image::LoadWebp(const ui8 *data, ui32 size) noexcept
-    {
-        WebPBitstreamFeatures features{};
-        auto status = WebPGetFeatures(data, size, &features);
-
-        if(status == VP8_STATUS_OK)
-        {
-            m_width = features.width;
-            m_height = features.height;
-            if(features.has_alpha)
-            {
-                m_Bpp = 4;
-                m_data = WebPDecodeRGBA(data, size, &m_width, &m_height);
-            }
-            else
-            {
-                m_Bpp = 3;
-                m_data = WebPDecodeRGB(data, size, &m_width, &m_height);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    bool Image::SaveWebp(const String& filename, int quality) noexcept
-    {
-        ui8* output = nullptr;
-        ui64 size = 0;
-
-        if(m_Bpp == 3)
-            size = WebPEncodeRGB(m_data, m_width, m_height, m_width * m_Bpp, static_cast<float>(quality), &output);
-        else if(m_Bpp == 4)
-            size = WebPEncodeRGBA(m_data, m_width, m_height, m_width * m_Bpp, static_cast<float>(quality), &output);
-
-        if(size && output)
-        {
-            OutFile file;
-            file.Open(filename);
-            file.Write(reinterpret_cast<const char *>(output), size);
-            return true;
-        }
-        return false;
-    }
-
     Image::ImageType Image::GetTypeFromFilename(const String &filename) noexcept
     {
         String point(".");
@@ -332,15 +261,12 @@ namespace tml
         const auto len = filename.length() - pos;
         const auto str = filename.substr(pos, len);
 
-        /// Doing a bunch of string compares :[
         if(str == ".png")
             return Image::Png;
         else if(str == ".jpg" || str == ".jpeg")
             return Image::Jpg;
         else if(str == ".bmp")
             return Image::Bmp;
-        else if(str == ".webp")
-            return Image::Webp;
         else if(str == ".tga")
             return Image::Tga;
         else if(str == ".pic")

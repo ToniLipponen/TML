@@ -1,6 +1,6 @@
 #include <TML/Graphics/Core/Texture.h>
 #include <TML/Graphics/Core/RenderTarget.h>
-#include "GLHeader.h"
+#include "../../Headers/GLHeader.h"
 
 namespace tml
 {
@@ -18,7 +18,7 @@ namespace tml
 
     Texture::~Texture()
     {
-        GL_CALL(glDeleteTextures(1, &m_id));
+        GL_CALL(glad_glDeleteTextures(1, &m_id));
     }
 
     Texture& Texture::operator=(const Texture& rhs) noexcept
@@ -64,12 +64,12 @@ namespace tml
 
     void Texture::LoadFromMemory(i32 w, i32 h, ui8 bpp, const ui8* data)
     {
-        GL_CALL(glDeleteTextures(1, &m_id));
+        GL_CALL(glad_glDeleteTextures(1, &m_id));
 
         #ifdef TML_USE_GLES
-            GL_CALL(glGenTextures(1, &m_id));
+            GL_CALL(glad_glGenTextures(1, &m_id));
         #else
-            GL_CALL(glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
+            GL_CALL(glad_glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
         #endif
 
         m_width 	= w;
@@ -81,10 +81,10 @@ namespace tml
     void Texture::Bind(ui32 slot) const
     {
         #ifdef TML_USE_GLES
-            GL_CALL(glActiveTexture(GL_TEXTURE0 + slot));
-            GL_CALL(glBindTexture(GL_TEXTURE_2D, m_id));
+            GL_CALL(glad_glActiveTexture(GL_TEXTURE0 + slot));
+            GL_CALL(glad_glBindTexture(GL_TEXTURE_2D, m_id));
         #else
-            GL_CALL(glBindTextureUnit(slot, m_id));
+            GL_CALL(glad_glBindTextureUnit(slot, m_id));
         #endif
     }
 

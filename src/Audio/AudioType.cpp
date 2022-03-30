@@ -65,7 +65,7 @@ namespace tml
 
     ui64 AudioType::GetLengthInSeconds() const noexcept
     {
-        if(m_rate == 0 & m_channels == 0)
+        if((m_rate == 0) || (m_channels == 0))
             return 0;
 
         return m_frameCount / m_rate / m_channels;
