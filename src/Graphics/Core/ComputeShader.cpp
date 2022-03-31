@@ -2,16 +2,10 @@
 #include <TML/System/File.h>
 #include "../../Headers/GLHeader.h"
 
+#ifndef TML_USE_GLES
 namespace tml
 {
-    ComputeShader::ComputeShader()
-    {
-//        #ifdef TML_USE_GLES
-//            Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
-//            Logger::InfoMessage("Exiting now.");
-//            exit(80085);
-//        #endif
-    }
+    ComputeShader::ComputeShader() = default;
 
     bool ComputeShader::LoadFromFile(const String &filename) noexcept
     {
@@ -87,3 +81,46 @@ namespace tml
         GL_CALL(glad_glMemoryBarrier(GL_ALL_BARRIER_BITS));
     }
 }
+
+#else
+namespace tml
+{
+    ComputeShader::ComputeShader()
+    {
+        Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+        exit(80085);
+    }
+
+    bool ComputeShader::LoadFromFile(const String &filename) noexcept
+    {
+        Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+        exit(80085);
+        return false;
+    }
+
+    bool ComputeShader::LoadFromString(const String &source) noexcept
+    {
+        Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+        exit(80085);
+        return false;
+    }
+
+    void ComputeShader::ConnectBuffer(const std::string &name, ui32 index, StorageBuffer& buffer)
+    {
+        Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+        exit(80085);
+    }
+
+    void ComputeShader::Dispatch(uint32_t x, uint32_t y, uint32_t z)
+    {
+        Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+        exit(80085);
+    }
+
+    void ComputeShader::Wait()
+    {
+        Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+        exit(80085);
+    }
+}
+#endif

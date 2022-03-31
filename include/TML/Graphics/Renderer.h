@@ -98,9 +98,9 @@ namespace tml
         TexRect m_viewport;
         Text    m_text;
         Texture m_circleTexture;
-        float m_clearRed = 0, m_clearGreen = 0, m_clearBlue = 0, m_clearAlpha = 0;
+        float m_clearColor[4] = {0,0,0,0};
 
-        constexpr static ui32 s_maxVertexCount = 100000;
+        constexpr static ui32 s_maxVertexCount = 1000000;
         constexpr static ui32 s_maxIndexCount = s_maxVertexCount * 1.5;
         i32 m_maxTextureCount = 8;
         std::vector<ui32> m_textures;

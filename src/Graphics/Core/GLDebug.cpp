@@ -21,6 +21,7 @@ int CheckGLError()
     return 1;
 }
 
+#ifndef TML_USE_GLES
 void GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* user_param)
 {
     auto const src_str = [source]()
@@ -33,8 +34,8 @@ void GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, G
             case GL_DEBUG_SOURCE_THIRD_PARTY: return "THIRD PARTY";
             case GL_DEBUG_SOURCE_APPLICATION: return "APPLICATION";
             case GL_DEBUG_SOURCE_OTHER: return "OTHER";
+            default: return "UNKNOWN";
         }
-        return "UNKNOWN";
     }();
 
     auto const type_str = [type]()
@@ -48,8 +49,8 @@ void GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, G
             case GL_DEBUG_TYPE_PERFORMANCE: return "PERFORMANCE";
             case GL_DEBUG_TYPE_MARKER: return "MARKER";
             case GL_DEBUG_TYPE_OTHER: return "OTHER";
+            default: return "UNKNOWN";
         }
-        return "UNKNOWN";
     }();
 
     auto const severity_str = [severity]()
@@ -60,9 +61,10 @@ void GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, G
             case GL_DEBUG_SEVERITY_LOW: return "LOW";
             case GL_DEBUG_SEVERITY_MEDIUM: return "MEDIUM";
             case GL_DEBUG_SEVERITY_HIGH: return "HIGH";
+            default: return "UNKNOWN";
         }
-        return "UNKNOWN";
     }();
 
-    std::cout << src_str << ", " << type_str << ", " << severity_str << ", " << id << ": " << message << '\n';
+    std::cout << src_str << ", " << type_str << ", " << severity_str << ", " << id << ": " << message << "\n";
 }
+#endif

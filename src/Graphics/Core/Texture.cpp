@@ -80,7 +80,7 @@ namespace tml
 
     void Texture::Bind(ui32 slot) const
     {
-        #ifdef TML_USE_GLES
+        #if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
             GL_CALL(glad_glActiveTexture(GL_TEXTURE0 + slot));
             GL_CALL(glad_glBindTexture(GL_TEXTURE_2D, m_id));
         #else

@@ -11,14 +11,10 @@ namespace tml
         VertexBuffer() noexcept;
         VertexBuffer(const void *data, ui32 vertexSize, ui32 numOfVertices) noexcept;
         ~VertexBuffer() noexcept;
-        void Bind() const noexcept; // Doesn't do anything on GL 4.5
+        void Bind() const noexcept;
         void Unbind() const noexcept;
-        void BufferData(void *data, ui32 vertexSize, ui32 numOfVertices) noexcept;
-        void SetData(void *data, ui32 vertexSize, ui32 numOfVertices) noexcept;
-
+        void BufferData(const void *data, ui32 vertexSize, ui32 numOfVertices) noexcept;
         void PushData(const void *data, ui32 vertexSize, ui32 numOfVertices) noexcept;
-        void Flush() noexcept;
-
         constexpr ui32 DataSize() const noexcept { return m_dataSize; }
         constexpr ui32 VertexCount() const noexcept { return m_vertexCount; }
 
@@ -33,7 +29,8 @@ namespace tml
         void* m_mappedPtr = nullptr;
     };
 
-    class IndexBuffer {
+    class IndexBuffer
+    {
     public:
         IndexBuffer() noexcept;
         IndexBuffer(const ui32 *data, ui32 elements) noexcept;
@@ -42,8 +39,6 @@ namespace tml
         void Unbind() const noexcept;
         void BufferData(const ui32 *data, ui32 elements) noexcept;
         void PushData(const ui32 *data, ui32 elements) noexcept;
-        void SetData(const ui32 *data, ui32 elements) noexcept;
-        void Flush() noexcept;
         inline constexpr ui32 Elements() const noexcept { return m_elements; }
 
     public:
@@ -79,23 +74,20 @@ namespace tml
     public:
         BufferLayout() : m_stride(0) {}
 
-        void Push(ui32 elements, ui32 size, DataType type) noexcept {
+        void Push(ui32 elements, ui32 size, DataType type) noexcept
+        {
             m_layout.push_back(Attribute{elements, size, type});
             m_stride += elements * size;
         }
 
-        void Clear() {
+        void Clear()
+        {
             m_layout.clear();
             m_stride = 0;
         }
 
-        inline constexpr std::vector<Attribute> const & GetData() const noexcept {
-            return m_layout;
-        }
-
-        inline constexpr ui32 GetStride() const noexcept {
-            return m_stride;
-        }
+        inline constexpr std::vector<Attribute> const & GetData() const noexcept { return m_layout; }
+        inline constexpr ui32 GetStride() const noexcept { return m_stride; }
 
     private:
         std::vector<Attribute> m_layout;

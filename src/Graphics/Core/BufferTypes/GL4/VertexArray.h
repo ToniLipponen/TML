@@ -1,6 +1,4 @@
 #pragma once
-#include "../../../../Headers/GLHeader.h"
-#include <TML/Graphics/Core/Buffers.h>
 
 namespace tml
 {

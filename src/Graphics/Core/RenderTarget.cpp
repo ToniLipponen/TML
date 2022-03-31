@@ -6,7 +6,11 @@ namespace tml
     RenderTarget::RenderTarget()
     : m_id(0)
     {
+#if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
         GL_CALL(glad_glGenFramebuffers(1, &m_id));
+#else
+        GL_CALL(glad_glCreateFramebuffers(1, &m_id));
+#endif
     }
 
     RenderTarget::~RenderTarget()
@@ -26,14 +30,16 @@ namespace tml
 
     bool RenderTarget::AttachTexture(const Texture &texture) const
     {
-        Bind();
         GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-#ifdef TML_USE_GLES
+
+#if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
+        Bind();
         GL_CALL(glad_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.GetID(), 0));
-#else
-        GL_CALL(glad_glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture.GetID(), 0));
-#endif
         GL_CALL(glad_glDrawBuffers(1, drawBuffers));
+#else
+        GL_CALL(glad_glNamedFramebufferTexture(m_id, GL_COLOR_ATTACHMENT0, texture.GetID(), 0));
+        GL_CALL(glad_glNamedFramebufferDrawBuffers(m_id, 1, drawBuffers));
+#endif
         return (glad_glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
     }
 }

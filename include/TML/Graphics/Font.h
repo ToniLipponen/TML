@@ -25,6 +25,5 @@ namespace tml
     private:
         void* m_cdata;
         Texture m_texture;
-        ui8* m_bitmap = nullptr;
     };
 }

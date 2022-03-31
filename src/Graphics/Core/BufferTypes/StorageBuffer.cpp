@@ -2,6 +2,7 @@
 #include "../../../Headers/GLHeader.h"
 #include <cstring>
 
+#ifndef TML_USE_GLES
 namespace tml
 {
     StorageBuffer::StorageBuffer() noexcept
@@ -49,3 +50,38 @@ namespace tml
         GL_CALL(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, m_id));
     }
 }
+
+#else
+
+namespace tml
+{
+    StorageBuffer::StorageBuffer() noexcept
+    : m_id(0)
+    {
+    }
+
+    void StorageBuffer::Bind() const noexcept
+    {
+    }
+
+    void StorageBuffer::Unbind() const noexcept
+    {
+    }
+
+    void StorageBuffer::BufferData(const void* data, ui32 size) noexcept
+    {
+    }
+
+    void StorageBuffer::UpdateData(const void *data, ui32 bytes) noexcept
+    {
+    }
+
+    void StorageBuffer::RetrieveData(void *data, ui32 bytes) noexcept
+    {
+    }
+
+    void StorageBuffer::BindBufferBase(ui32 index) const noexcept
+    {
+    }
+}
+#endif

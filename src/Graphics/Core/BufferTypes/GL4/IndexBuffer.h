@@ -1,6 +1,4 @@
 #pragma once
-#include "../../../../Headers/GLHeader.h"
-#include <TML/Graphics/Core/Buffers.h>
 #include <cstring>
 
 namespace tml
@@ -40,14 +38,17 @@ namespace tml
     void IndexBuffer::BufferData(const ui32* data, ui32 elements) noexcept
     {
         m_capacity = elements;
+
         if(data)
             m_elements = elements;
+        else
+            m_elements = 0;
 
-        GL_CALL(glad_glNamedBufferStorage(m_id, m_capacity * 4, data, BUFFER_STORAGE_FLAGS));
         if(m_mappedPtr)
         {
             GL_CALL(glad_glUnmapNamedBuffer(m_id));
         }
+        GL_CALL(glad_glNamedBufferStorage(m_id, m_capacity * 4, data, BUFFER_STORAGE_FLAGS));
         m_mappedPtr = GL_CALL(glad_glMapNamedBuffer(m_id, MAP_RANGE_FLAGS));
     }
 
@@ -60,16 +61,5 @@ namespace tml
             std::memcpy(dest, data, size);
             m_elements += elements;
         }
-    }
-
-    void IndexBuffer::SetData(const ui32 *data, ui32 elements) noexcept
-    {
-        Flush();
-        PushData(data, elements);
-    }
-
-    void IndexBuffer::Flush() noexcept
-    {
-        m_elements = 0;
     }
 }

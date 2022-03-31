@@ -38,7 +38,7 @@ namespace tml
         virtual void Display();
 
         bool Create(i32 w, i32 h, const std::string& title, ui32 settings = None, const Window* shared = nullptr) noexcept;
-        void Close() noexcept; /// Destroys the window.
+        void Close() noexcept; //!< Destroys the window.
         bool IsOpen() const noexcept;
         
         const void* GetHandle() const noexcept;
@@ -49,8 +49,8 @@ namespace tml
         Vector2i GetSize() const noexcept;
         Vector2i GetPosition() const noexcept;
 
-        bool PollEvents(Event& e) const noexcept;
-        bool WaitEvents(Event& e) const noexcept;
+        bool PollEvents(Event& e) noexcept;
+        bool WaitEvents(Event& e) noexcept;
 
         void SetPosition(i32 x, i32 y) noexcept;
         void SetSize(ui32 width, ui32 height) noexcept;
@@ -76,6 +76,7 @@ namespace tml
         void Hide() const noexcept;
 
     protected:
+        Vector2i m_size;
         void SetCallbacks();
         void* m_handle = nullptr;
         void* m_cursor = nullptr;

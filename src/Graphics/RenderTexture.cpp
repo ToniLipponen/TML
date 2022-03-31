@@ -31,7 +31,9 @@ namespace tml
         if(active)
         {
             m_texture.SetMinMagFilter(Texture::Nearest, Texture::Nearest);
-            return m_target->AttachTexture(m_texture);
+            auto returnValue = m_target->AttachTexture(m_texture);
+            m_target->Bind();
+            return returnValue;
         }
         else
         {

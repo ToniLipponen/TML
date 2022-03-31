@@ -55,7 +55,7 @@ namespace tml
         GL_CALL(glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureCount));
 
 #ifdef TML_USE_GLES
-        MAX_TEXTURE_COUNT = 8;
+        m_maxTextureCount = 8;
 #endif
 
         m_vao           = new VertexArray();
@@ -74,19 +74,17 @@ namespace tml
         m_shader->Bind();
 
         Image circleImage;
-        circleImage.LoadFromMemory(2048, 2048, 1, nullptr);
-        MakeCircle(circleImage, 2048);
+        circleImage.LoadFromMemory(4096, 4096, 1, nullptr);
+        MakeCircle(circleImage, 4096);
         m_circleTexture.LoadFromImage(circleImage);
 
         GL_CALL(glEnable(GL_BLEND));
         GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
         GL_CALL(glBlendEquation(GL_FUNC_ADD));
 
-#ifndef TML_USE_GLES
-    #ifndef TML_NO_GL_DEBUGGING
+#if !defined(TML_USE_GLES) && !defined(TML_NO_GL_DEBUGGING)
         glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageCallback(GLMessageCallback, nullptr);
-    #endif
 #endif
     }
     Renderer::~Renderer()
@@ -100,10 +98,10 @@ namespace tml
 
     void Renderer::SetClearColor(const Color &color) noexcept
     {
-        m_clearRed   = float(color.r) / 255.f;
-        m_clearGreen = float(color.g) / 255.f;
-        m_clearBlue  = float(color.b) / 255.f;
-        m_clearAlpha = float(color.a) / 255.f;
+        m_clearColor[0] = float(color.r) / 255.0f;
+        m_clearColor[1] = float(color.g) / 255.0f;
+        m_clearColor[2] = float(color.b) / 255.0f;
+        m_clearColor[3] = float(color.a) / 255.0f;
     }
 
     void Renderer::SetCamera(const Camera &cam) noexcept
@@ -166,8 +164,7 @@ namespace tml
 
     void Renderer::Clear() noexcept
     {
-        GL_CALL(glad_glClearColor(m_clearRed, m_clearGreen, m_clearBlue, m_clearAlpha));
-        GL_CALL(glad_glClear(GL_COLOR_BUFFER_BIT));
+        GL_CALL(glad_glClearBufferfv(GL_COLOR, 0, m_clearColor));
 
         ResetCamera();
         ResetBounds();
@@ -451,9 +448,6 @@ namespace tml
     void Renderer::BeginBatch() noexcept
     {
         m_textures.clear();
-        m_vertexVector->clear();
-        m_indexVector->clear();
-
         m_vertexVector->BufferData(nullptr, sizeof(Vertex), s_maxVertexCount);
         m_indexVector->BufferData(nullptr, s_maxIndexCount);
     }
@@ -465,7 +459,7 @@ namespace tml
 
         m_shader->Bind();
 
-        for(int i = 0; i < m_textures.size(); i++)
+        for(int i = 0; i < static_cast<int>(m_textures.size()); ++i)
             m_shader->Uniform1i("uTexture" + std::to_string(i), i);
 
         m_shader->Uniform2f("uViewSize", m_viewport.size.x, m_viewport.size.y);

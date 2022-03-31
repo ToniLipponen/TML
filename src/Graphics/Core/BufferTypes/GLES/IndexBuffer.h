@@ -1,6 +1,4 @@
 #pragma once
-#include "../../../../Headers/GLHeader.h"
-#include <TML/Graphics/Core/Buffers.h>
 #include <cstring>
 
 namespace tml
@@ -14,15 +12,8 @@ namespace tml
     IndexBuffer::IndexBuffer(const ui32* data, ui32 elements) noexcept
     : m_id(0), m_elements(0), m_capacity(elements)
     {
-        if(data)
-        {
-            m_elements = m_capacity;
-        }
         GL_CALL(glad_glGenBuffers(1, &m_id));
-        Bind();
-        GL_CALL(glad_glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements * 4, data, GL_DYNAMIC_DRAW));
-        m_mappedPtr = GL_CALL(glad_glMapNamedBuffer(m_id, MAP_RANGE_FLAGS));
-        Unbind();
+        BufferData(data, elements);
     }
 
     IndexBuffer::~IndexBuffer() noexcept
@@ -43,14 +34,22 @@ namespace tml
     void IndexBuffer::BufferData(const ui32* data, ui32 elements) noexcept
     {
         m_capacity = elements;
+
         if(data)
             m_elements = elements;
         else
             m_elements = 0;
 
         Bind();
+
+        if(m_mappedPtr)
+        {
+            GL_CALL(glad_glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER));
+        }
+
         GL_CALL(glad_glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements * 4, data, GL_DYNAMIC_DRAW));
-        m_mappedPtr = GL_CALL(glad_glMapNamedBuffer(m_id, MAP_RANGE_FLAGS));
+        m_mappedPtr = GL_CALL(glad_glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, elements * 4, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT));
+
         Unbind();
     }
 
@@ -64,16 +63,5 @@ namespace tml
             m_elements += elements;
         }
         Unbind();
-    }
-
-    void IndexBuffer::SetData(const ui32 *data, ui32 elements) noexcept
-    {
-        Flush();
-        PushData(data, elements);
-    }
-
-    void IndexBuffer::Flush() noexcept
-    {
-        m_elements = 0;
     }
 }

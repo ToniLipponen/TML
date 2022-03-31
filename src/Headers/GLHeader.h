@@ -7,14 +7,14 @@
     #ifdef TML_USE_GLES
         #include <glad/gles2.h>
     #else
-        #include "glad/gl.h"
+        #include <glad/gl.h>
     #endif
 #endif
 
-// Disables OpenGL debugging
 #ifndef TML_NO_GL_DEBUGGING
 #include <cassert>
-    #define GL_CALL(x) x; assert(CheckGLError() == 0)
+    #define GL_CALL(x) x; \
+    assert(CheckGLError() == 0)
 #else
     #define GL_CALL(x) x
 #endif

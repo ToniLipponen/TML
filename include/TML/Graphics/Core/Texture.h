@@ -55,7 +55,7 @@ namespace tml
         virtual inline void Upload(const void* data) const noexcept;
         ClampMode m_clampMode = ClampToEdge;
         Filter m_minFilter = LinearMipmapLinear;
-        Filter m_magFilter = LinearMipmapLinear;
+        Filter m_magFilter = Linear;
         ui32 m_id;
         i32 m_width, m_height, m_bpp;
     };

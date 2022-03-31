@@ -1,6 +1,4 @@
 #pragma once
-#include "../../../../Headers/GLHeader.h"
-#include <TML/Graphics/Core/Buffers.h>
 #include <cstring>
 
 namespace tml
@@ -14,16 +12,8 @@ namespace tml
     VertexBuffer::VertexBuffer(const void* data, ui32 vertexSize, ui32 vertexCount) noexcept
     : m_id(0), m_dataSize(0), m_vertexCount(0), m_capacity(vertexSize * vertexCount)
     {
-        if(data)
-        {
-            m_vertexCount = vertexCount;
-            m_dataSize = m_capacity;
-        }
         GL_CALL(glad_glGenBuffers(1, &m_id));
-        Bind();
-        GL_CALL(glad_glBufferData(GL_ARRAY_BUFFER, m_capacity, data, GL_DYNAMIC_DRAW));
-        m_mappedPtr = GL_CALL(glad_glMapBufferRange(GL_ARRAY_BUFFER, 0, m_capacity, GL_MAP_WRITE_BIT));
-        Unbind();
+        BufferData(data, vertexSize, vertexCount);
     }
 
     VertexBuffer::~VertexBuffer() noexcept
@@ -41,7 +31,7 @@ namespace tml
         GL_CALL(glad_glBindBuffer(GL_ARRAY_BUFFER, 0));
     }
 
-    void VertexBuffer::BufferData(void* data, ui32 vertexSize, ui32 vertexCount) noexcept
+    void VertexBuffer::BufferData(const void* data, ui32 vertexSize, ui32 vertexCount) noexcept
     {
         m_capacity = vertexSize * vertexCount;
 
@@ -50,9 +40,22 @@ namespace tml
             m_vertexCount = vertexCount;
             m_dataSize = m_capacity;
         }
+        else
+        {
+            m_vertexCount = 0;
+            m_dataSize = 0;
+        }
+
         Bind();
+
+        if(m_mappedPtr)
+        {
+            GL_CALL(glad_glUnmapBuffer(GL_ARRAY_BUFFER));
+        }
+
         GL_CALL(glad_glBufferData(GL_ARRAY_BUFFER, m_capacity, data, GL_DYNAMIC_DRAW));
         m_mappedPtr = GL_CALL(glad_glMapBufferRange(GL_ARRAY_BUFFER, 0, m_capacity, GL_MAP_WRITE_BIT));
+
         Unbind();
     }
 
@@ -68,19 +71,5 @@ namespace tml
             m_vertexCount += vertexCount;
         }
         Unbind();
-    }
-
-    void VertexBuffer::SetData(void *data, ui32 s, ui32 n) noexcept
-    {
-        m_dataSize = s * n;
-        Bind();
-        GL_CALL(glad_glBufferSubData(GL_ARRAY_BUFFER, 0, m_dataSize, data));
-        Unbind();
-    }
-
-    void VertexBuffer::Flush() noexcept
-    {
-        m_dataSize = 0;
-        m_vertexCount = 0;
     }
 }

@@ -82,11 +82,11 @@ namespace tml
         glfwWindowHint(GLFW_DECORATED,                 (settings & Settings::NoTopBar)     == 0);
         glfwWindowHint(GLFW_RESIZABLE,                 (settings & Settings::Resizeable)   != 0);
         glfwWindowHint(GLFW_MAXIMIZED,                 (settings & Settings::Maximized)    != 0);
-        glfwWindowHint(GLFW_DOUBLEBUFFER,              (settings & Settings::VSync)        != 0);
         glfwWindowHint(GLFW_VISIBLE,                   (settings & Settings::Hidden)       == 0);
         glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER,   (settings & Settings::Transparent)  != 0);
         glfwWindowHint(GLFW_FLOATING,                  (settings & Settings::AlwaysOnTop)  != 0);
         glfwWindowHint(GLFW_SAMPLES, static_cast<int>(((settings & Settings::Antialias) >> 4) * 8));
+        glfwWindowHint(GLFW_DOUBLEBUFFER,              (settings & Settings::VSync)        != 0);
 
         auto* primaryMonitor = glfwGetPrimaryMonitor();
         auto* monitor = (settings & Settings::Fullscreen) ? primaryMonitor : nullptr;
@@ -99,8 +99,10 @@ namespace tml
         if(m_handle == nullptr)
             return false;
 
+        m_size = {w, h};
         auto handle = static_cast<GLFWwindow*>(m_handle);
         glfwMakeContextCurrent(handle);
+        glfwSwapInterval((settings & Settings::VSync) != 0);
 
         /// Set window logo to TML-logo ///////////
         Image image(LOGO_DATA.data(), static_cast<int>(LOGO_DATA.size()));
@@ -177,14 +179,24 @@ namespace tml
         return y;
     }
 
-    bool Window::PollEvents(Event& e) const noexcept
+    bool Window::PollEvents(Event& e) noexcept
     {
-        return EventSystem::GetInstance().PollEvents(m_handle, e);
+        const auto returnValue = EventSystem::GetInstance().PollEvents(m_handle, e);
+
+        if(e.type == Event::WindowResized)
+            m_size = Vector2i{e.size.x, e.size.y};
+
+        return returnValue;
     }
 
-    bool Window::WaitEvents(Event& e) const noexcept
+    bool Window::WaitEvents(Event& e) noexcept
     {
-        return EventSystem::GetInstance().WaitEvents(m_handle, e);
+        const auto returnValue = EventSystem::GetInstance().WaitEvents(m_handle, e);
+
+        if(e.type == Event::WindowResized)
+            m_size = Vector2i{e.size.x, e.size.y};
+
+        return returnValue;
     }
 
     Vector2i Window::GetPosition() const noexcept
@@ -198,12 +210,7 @@ namespace tml
 
     Vector2i Window::GetSize() const noexcept
     {
-        if(!m_handle)
-            return {0,0};
-
-        i32 x, y;
-        glfwGetWindowSize(static_cast<GLFWwindow*>(m_handle), &x, &y);
-        return {x,y};
+        return m_size;
     }
 
     void Window::SetPosition(i32 x, i32 y) noexcept

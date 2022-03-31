@@ -253,7 +253,7 @@ void main()
        case 2u:
            mediump vec4 color = SampleTex(vTexID);
            mediump float alpha = color.r * vColor.a;
-           if(apha > 0.1)
+           if(alpha > 0.1)
            {
                outColor = vColor;
                outColor.a = alpha;

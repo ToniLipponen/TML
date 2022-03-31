@@ -30,11 +30,6 @@ namespace tml
         {
             return m_vertexCount;
         }
-
-        void clear() noexcept
-        {
-            Flush();
-        }
     };
 
     class IndexVector : public IndexBuffer
@@ -59,11 +54,6 @@ namespace tml
         ui64 size() const noexcept
         {
             return m_elements;
-        }
-
-        void clear() noexcept
-        {
-            Flush();
         }
     };
 }

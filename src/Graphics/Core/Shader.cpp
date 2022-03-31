@@ -55,7 +55,9 @@ namespace tml
     void Shader::LoadFromString(const std::string& vs, const std::string& fs) const noexcept
     {
         if(m_id == 0)
+        {
             m_id = GL_CALL(glad_glCreateProgram());
+        }
 
         ui32 _vs = GL_CALL(glad_glCreateShader(GL_VERTEX_SHADER));
         ui32 _fs = GL_CALL(glad_glCreateShader(GL_FRAGMENT_SHADER));

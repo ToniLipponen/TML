@@ -1,7 +1,6 @@
 #include <TML/Graphics/RenderWindow.h>
 #include <TML/Graphics/Core/Buffers.h>
 #include <TML/Graphics/Core/Shader.h>
-
 #include "../Headers/GLHeader.h" /// Needed for glad_glFlush()
 
 namespace tml
@@ -19,10 +18,10 @@ namespace tml
         SetActive();
 
         if(m_autoResizeViewport)
-            SetViewport({0,0}, GetSize());
+            SetViewport({0,0}, m_size);
 
         if(m_autoResizeView)
-            SetView({0,0}, GetSize());
+            SetView({0,0}, m_size);
 
         Renderer::Clear();
     }
