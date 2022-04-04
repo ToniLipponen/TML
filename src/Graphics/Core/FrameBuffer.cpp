@@ -1,9 +1,9 @@
-#include <TML/Graphics/Core/RenderTarget.h>
+#include <TML/Graphics/Core/FrameBuffer.h>
 #include "../../Headers/GLHeader.h"
 
 namespace tml
 {
-    RenderTarget::RenderTarget()
+    FrameBuffer::FrameBuffer()
     : m_id(0)
     {
 #if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
@@ -13,22 +13,22 @@ namespace tml
 #endif
     }
 
-    RenderTarget::~RenderTarget()
+    FrameBuffer::~FrameBuffer()
     {
         GL_CALL(glad_glDeleteFramebuffers(1, &m_id));
     }
 
-    void RenderTarget::Bind() const noexcept
+    void FrameBuffer::Bind() const noexcept
     {
         GL_CALL(glad_glBindFramebuffer(GL_FRAMEBUFFER, m_id));
     }
 
-    void RenderTarget::Unbind() const noexcept
+    void FrameBuffer::Unbind() const noexcept
     {
         GL_CALL(glad_glBindFramebuffer(GL_FRAMEBUFFER, 0));
     }
 
-    bool RenderTarget::AttachTexture(const Texture &texture) const
+    bool FrameBuffer::AttachTexture(const Texture &texture) const
     {
         GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
 

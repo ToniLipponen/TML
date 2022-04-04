@@ -3,6 +3,7 @@
 #include <TML/System/Clock.h>
 #include <string>
 #include <algorithm>
+#include <iostream>
 
 namespace tml
 {
@@ -95,7 +96,9 @@ namespace tml
                         c->ForEachChild([](BaseComponent* c2)
                         {
                             c2->AddToProcessStack(c2);
+                            return false;
                         });
+                        return false;
                     });
                 }
                 else
@@ -111,12 +114,56 @@ namespace tml
                         c->ForEachChild([](BaseComponent* c2)
                         {
                             c2->AddToProcessStack(c2);
+                            return false;
                         });
+                        return false;
                     });
                 }
                 Event e{};
                 CallUIFunc("ChildAdded", e);
             }
+        }
+
+        bool BaseComponent::RemoveChild(const std::string& id)
+        {
+            auto* ptr = FindComponent(id);
+            if(ptr == nullptr)
+                return false;
+
+            return RemoveChild(ptr);
+        }
+
+        bool BaseComponent::RemoveChild(BaseComponent *component)
+        {
+            if(component == nullptr)
+                return false;
+
+            if(!m_children.empty())
+            {
+                for(size_t i = 0; i < m_children.size(); i++)
+                {
+                    if(m_children.at(i) == component)
+                    {
+                        m_children.erase(m_children.begin() + i);
+                        delete component;
+                        Event e{};
+                        CallUIFunc("ChildRemoved", e);
+                        return true;
+                    }
+                }
+            }
+
+            for(auto* i : m_children)
+            {
+                if(i->RemoveChild(component))
+                {
+                    Event e{};
+                    CallUIFunc("ChildRemoved", e);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         BaseComponent* BaseComponent::FindComponent(const std::string& name)
@@ -171,6 +218,18 @@ namespace tml
                 i->Raise();
         }
 
+        void BaseComponent::ForEachChild(const std::function<bool(BaseComponent *)> &function)
+        {
+            if(!m_children.empty())
+            {
+                for(ssize_t i = m_children.size()-1; i >= 0; i--)
+                {
+                    if(function(m_children.at(i)))
+                        break;
+                }
+            }
+        }
+
         void BaseComponent::SetPosition(const Vector2i &position)
         {
             if(position != m_pos)
@@ -196,11 +255,9 @@ namespace tml
 
         void BaseComponent::ProcessEvents(Event& event, double dt)
         {
+            CallUIFunc("Any", event);
             switch(event.type)
             {
-                default:
-                    CallUIFunc("Any", event);
-
                 case Event::EventType::MouseButtonPressed:
                     CallUIFunc("MouseDown", event);
                     break;
@@ -239,6 +296,9 @@ namespace tml
 
                 case Event::EventType::TextEntered:
                     CallUIFunc("TextEntered", event);
+                    break;
+
+                default:
                     break;
             }
         }
@@ -288,6 +348,12 @@ namespace tml
             }
         }
 
+        void BaseComponent::SetSizePolicy(SizePolicy horizontal, SizePolicy vertical)
+        {
+            m_hSizePolicy = horizontal;
+            m_vSizePolicy = vertical;
+        }
+
         bool BaseComponent::CallUIFunc(const std::string& name, Event &event)
         {
             if(m_listeners.find(name) != m_listeners.end())
@@ -314,7 +380,10 @@ namespace tml
                 {
                     if(c2->Focused())
                         c2->UnFocus();
+
+                    return false;
                 });
+                return false;
             });
         }
 
@@ -331,7 +400,7 @@ namespace tml
                 auto& processStack = component->GetRoot()->m_processStack;
                 if(!processStack.empty())
                 {
-                    for(i64 i = 0; i < processStack.size() - 1; ++i)
+                    for(i64 i = 0; i < processStack.size(); ++i)
                     {
                         if(processStack.at(i) == component)
                         {

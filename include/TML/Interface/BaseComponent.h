@@ -57,16 +57,18 @@ namespace tml
              * @Resized When the size of the component is changed.
              * @Moved When the position of the component is changed.
              * @ChildAdded When a child gets added to the component.
+             * @ChildRemoved When a child gets removed from the component.
              * @WindowResized When a window returns a resize event.
              * @Any When an event occurs.
              */
             void AddListener(const std::string& name, UIFunc callback);
             void AddChild(BaseComponent* component, const std::string& id = "");
+            bool RemoveChild(const std::string& id);
+            bool RemoveChild(BaseComponent* component);
 
-            BaseComponent* FindComponent(const std::string& id); /// DANGER! Returns nullptr if not found.
-            BaseComponent* FindComponent(ui64); /// DANGER! Returns nullptr if not found.
-
-            BaseComponent* GetParent(); /// DANGER! Returns nullptr if the component doesn't have a parent.
+            BaseComponent* FindComponent(const std::string& id); //!< DANGER! Returns nullptr if not found.
+            BaseComponent* FindComponent(ui64);                  //!< DANGER! Returns nullptr if not found.
+            BaseComponent* GetParent(); //!< DANGER! Returns nullptr if the component doesn't have a parent.
             BaseComponent* GetRoot();
 
             constexpr inline ui64 GetHash() const noexcept { return m_hash; }
@@ -74,27 +76,14 @@ namespace tml
             virtual bool ContainsPoint(const Vector2i& p);
             void Update(Event& event);
             void Draw(Renderer& renderer);
-
             inline SizePolicy GetHorizontalSizePolicy() const { return m_hSizePolicy; }
             inline SizePolicy GetVerticalSizePolicy() const { return m_vSizePolicy; }
-
-            void SetSizePolicy(SizePolicy horizontal, SizePolicy vertical)
-            {
-                m_hSizePolicy = horizontal;
-                m_vSizePolicy = vertical;
-            }
-
+            void SetSizePolicy(SizePolicy horizontal, SizePolicy vertical);
             void SetPrimaryColor(const Color& color) { m_pColor = color; }
             void SetSecondaryColor(const Color& color) { m_sColor = color; }
             void SetActiveColor(const Color& color) { m_activeColor = color; }
             void Raise();
-
-            void ForEachChild(const std::function<void(BaseComponent* c)>& function)
-            {
-                for(auto* i : m_children)
-                    function(i);
-            }
-
+            void ForEachChild(const std::function<bool(BaseComponent* c)>& function);
             void SetPosition(const Vector2i& position);
             void SetSize(const Vector2i& size);
             inline constexpr Vector2i GetPosition() const { return m_pos; }
@@ -112,7 +101,7 @@ namespace tml
 
             Vector2i m_pos;
             Vector2i m_size;
-            Vector2i m_originalSize; // Layouts might resize a component, so the original size needs to be saved.
+            Vector2i m_originalSize; //!< Layouts might resize a component, so the original size needs to be saved.
             Color m_pColor;
             Color m_sColor;
             Color m_activeColor;
@@ -120,11 +109,11 @@ namespace tml
             SizePolicy m_hSizePolicy = Fixed; // Horizontal size policy.
             SizePolicy m_vSizePolicy = Fixed; // Vertical size policy.
 
-            ui64 m_hash = 0; // hash of m_id
+            ui64 m_hash = 0;
             std::string m_id;
             std::vector<BaseComponent*> m_children;
+            std::deque<BaseComponent*> m_processStack;
             std::unordered_map<std::string, std::vector<UIFunc>> m_listeners;
-            std::vector<BaseComponent*> m_processStack;
             BaseComponent* m_parent;
             StateFlag m_state;
 

@@ -104,19 +104,6 @@ namespace tml
         m_clearColor[3] = float(color.a) / 255.0f;
     }
 
-    void Renderer::SetCamera(const Camera &cam) noexcept
-    {
-        ResetCamera();
-        const auto pos = cam.GetPosition();
-        const auto zoom = cam.GetZoom();
-        auto* view = reinterpret_cast<glm::mat4*>(m_view);
-
-        *view = glm::rotate(*view, cam.GetRotation(), glm::vec3(0.f, 0.f, 1.f));
-        *view = glm::scale(*view, glm::vec3(zoom, zoom, 0));
-        *view = glm::translate(*view, glm::vec3(-pos.x, -pos.y, 0));
-    }
-
-    /// TODO: Find out why setting bounds doesn't work
     void Renderer::SetBounds(const Vector2i& pos, const Vector2i& size) noexcept
     {
         EndBatch();
@@ -143,18 +130,6 @@ namespace tml
         );
     }
 
-    void Renderer::ResetCamera() noexcept
-    {
-        EndBatch();
-        BeginBatch();
-        auto* view = reinterpret_cast<glm::mat4*>(m_view);
-        auto* scale = reinterpret_cast<glm::mat4*>(m_scale);
-
-        *view  = glm::mat4(1.0f);
-        *scale = glm::mat4(1.0f);
-    }
-
-    /// TODO: Find out why resetting bounds doesn't work
     void Renderer::ResetBounds() noexcept
     {
         EndBatch();
@@ -165,8 +140,6 @@ namespace tml
     void Renderer::Clear() noexcept
     {
         GL_CALL(glad_glClearBufferfv(GL_COLOR, 0, m_clearColor));
-
-        ResetCamera();
         ResetBounds();
     }
 

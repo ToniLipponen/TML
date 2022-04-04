@@ -10,7 +10,7 @@ namespace tml
         Image() noexcept;
         Image(i32 w, i32 h, i32 Bpp, const ui8* data) noexcept;
         Image(const ui8* data, ui32 dataSize) noexcept;
-        Image(const String& fileName, ui32 requestedWidth = 0, ui32 requestedHeight = 0) noexcept;
+        Image(const String& fileName, i32 requestedWidth = 0, i32 requestedHeight = 0) noexcept;
         Image(const Image& image) noexcept;
         Image(Image&& image) noexcept;
         ~Image() noexcept;
@@ -25,7 +25,7 @@ namespace tml
 
         /** @brief Loads image from file.
          *  @returns true if successful, or false if unsuccessful. */
-        bool LoadFromFile(const String& fileName, ui32 requestedWidth = 0, ui32 requestedHeight = 0) noexcept;
+        bool LoadFromFile(const String& fileName, i32 requestedWidth = 0, i32 requestedHeight = 0) noexcept;
 
         /** @brief Creates image from pixel data in memory.
          *  @param w Width in pixels.
@@ -44,15 +44,15 @@ namespace tml
 
         /** @brief Resize the image to requested size.
          *  @returns true if successful, or false if unsuccessful. */
-        bool Resize(ui32 requestedWidth = 0, ui32 requestedHeight = 0) noexcept;
+        bool Resize(i32 requestedWidth = 0, i32 requestedHeight = 0) noexcept;
         void FlipVertically() noexcept;
         void SetFlipOnLoad(bool flip);
         void SetFlipOnWrite(bool flip);
 
     private:
         enum ImageType { None, Jpg, Png, Bmp, Tga, Pic, Pnm, Svg };
-        bool LoadSvg(const String& filename, ui32 requestedWidth = 0, ui32 requestedHeight = 0);
-        bool LoadSvg(const ui8* data, ui32 dataSize, ui32 requestedWidth = 0, ui32 requestedHeight = 0);
+        bool LoadSvg(const String& filename, i32 requestedWidth = 0, i32 requestedHeight = 0);
+        bool LoadSvg(const ui8* data, ui32 dataSize, i32 requestedWidth = 0, i32 requestedHeight = 0);
         static ImageType GetTypeFromFilename(const String& filename) noexcept;
 
     private:

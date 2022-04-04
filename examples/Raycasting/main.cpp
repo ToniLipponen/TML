@@ -1,5 +1,5 @@
-#include <TML/TML.h>
-#include <TML/Graphics/Ray.h>
+#include <TML/Graphics.h>
+#include <TML/System/Clock.h>
 
 using namespace tml;
 struct Scene
@@ -30,7 +30,7 @@ struct Scene
                     nearest = hitInfo.points.at(0).distance;
                 }
             }
-            window.DrawLine(pos, pos + ray.direction * nearest, 1, 0xffffff66, false);
+            window.DrawLine(pos, pos + ray.direction * nearest, 1, int(0xffffff66), false);
         }
     }
 };
@@ -68,5 +68,6 @@ int main()
             window.DrawRect({100, 100}, {100, 100}, 0x770000ff,0, scene.rects.at(1).GetRotation());
             scene.Raycast(mousePos, window);
         window.Display();
+        delta = clock.Reset();
     }
 }

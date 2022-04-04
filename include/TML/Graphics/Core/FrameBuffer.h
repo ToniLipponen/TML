@@ -4,11 +4,11 @@
 
 namespace tml
 {
-    class RenderTarget
+    class FrameBuffer
     {
     public:
-        RenderTarget();
-        ~RenderTarget();
+        FrameBuffer();
+        ~FrameBuffer();
         void Bind() const noexcept;
         void Unbind() const noexcept;
         bool AttachTexture(const Texture& texture) const;

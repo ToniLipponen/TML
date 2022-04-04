@@ -1,5 +1,4 @@
 #include <TML/Graphics/Camera.h>
-#include <glad/gl.h>
 #include <glm/glm/glm.hpp>
 #include <glm/glm/gtc/matrix_transform.hpp>
 
@@ -7,7 +6,7 @@ namespace tml
 {
     Camera::Camera() = default;
 
-    Camera::Camera(const Vector2f &pos, float zoom, float rotation)
+    Camera::Camera(const Vector2f& pos, float zoom, float rotation)
     : m_pos(pos), m_zoom(zoom), m_rotation(rotation)
     {
 
@@ -58,33 +57,27 @@ namespace tml
         return m_rotation;
     }
 
-    Vector2f Camera::ScreenToWorld(const Vector2f &point) const noexcept
+    Vector2f Camera::ScreenToWorld(const Vector2f &point, const Vector2f& size) const noexcept
     {
-        static int f[4];
-        glad_glGetIntegerv(GL_VIEWPORT, f);
-        glm::mat4 m = glm::mat4(1.0f);
-        const auto t = glm::translate(glm::mat4(1.0f), glm::vec3(-m_pos.x, -m_pos.y, 0));
-        const auto r = glm::rotate(glm::mat4(1.0f), m_rotation, glm::vec3(0.f, 0.f, 1.f));
-        const auto s = glm::scale(glm::mat4(1.0f), glm::vec3(m_zoom, m_zoom, 1.f));
-        const auto o = glm::translate(glm::mat4(1.0f), glm::vec3(f[2]/2.f, f[3]/2.f, 0));
-        m = o*r*t*s;
-        m = glm::inverse(m);
-        const auto res = m * glm::vec4(point.x, point.y, -1, 1);
-
-        return Vector2f{res.x, res.y} + (m_pos - (m_pos / m_zoom));
+        const auto size2 = size / 2;
+        auto n = glm::mat4(1.0f);
+        n = glm::translate(n, glm::vec3(-m_pos.x, -m_pos.y, 0));
+        n = glm::rotate(n, m_rotation, glm::vec3(0.f, 0.f, 1.f));
+        n = glm::scale(n, glm::vec3(m_zoom, m_zoom, 1.f));
+        n = glm::translate(glm::mat4(1.0f), glm::vec3(size2.x, size2.y, 0)) * n;
+        const auto res = glm::inverse(n) * glm::vec4(point.x, point.y, -1, 1);
+        return Vector2f{res.x, res.y} + (m_pos - (m_pos / m_zoom)) + size2;
     }
 
-    Vector2f Camera::WorldToScreen(const Vector2f &point) const noexcept
+    Vector2f Camera::WorldToScreen(const Vector2f &point, const Vector2f& size) const noexcept
     {
-        int f[4];
-        glad_glGetIntegerv(GL_VIEWPORT, f);
-        const auto n = glm::mat4(1.0f);
-        const auto t = glm::translate(n, glm::vec3(-m_pos.x, -m_pos.y, 0));
-        const auto r = glm::rotate(n, m_rotation, glm::vec3(0.f, 0.f, 1.f));
-        const auto s = glm::scale(n, glm::vec3(m_zoom, m_zoom, 1.f));
-        const auto o = glm::translate(n, glm::vec3(f[2]/2.f, f[3]/2.f, 0));
-        const glm::mat4 m = o*r*t*s;
-        const auto res = m * glm::vec4(point.x, point.y, -1, 1);
-        return Vector2f{res.x, res.y} + (m_pos - (m_pos / m_zoom)) * -1.f * m_zoom;
+        const auto size2 = size / 2;
+        auto n = glm::mat4(1.0f);
+        n = glm::translate(n, glm::vec3(-m_pos.x, -m_pos.y, 0));
+        n = glm::rotate(n, m_rotation, glm::vec3(0.f, 0.f, 1.f));
+        n = glm::scale(n, glm::vec3(m_zoom, m_zoom, 1.f));
+        n = glm::translate(n, glm::vec3(size2.x, size2.y, 0));
+        const auto res = n * glm::vec4(point.x, point.y, -1, 1);
+        return (Vector2f{res.x, res.y} + (m_pos - (m_pos / m_zoom)) * -1.f * m_zoom) - size2;
     }
 }

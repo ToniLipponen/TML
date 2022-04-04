@@ -1,10 +1,4 @@
 /**
- * @brief Very simple image viewer application. You can either drag and drop images into the window, or copy and paste them with CTRL + V.
- * You can zoom in and out with mouse wheel. Press R to reset view. Press F to toggle filtering.
- * This demo might be a bit messy. If you want, you can copy this and make something a bit more polished out of it.
- */
-
-/**
   Copyright (C) 2022 Toni Lipponen
 
   This software is provided 'as-is', without any express or implied
@@ -24,12 +18,17 @@
   3. This notice may not be removed or altered from any source distribution.
  */
 
+/**
+ * @Usage Very simple image viewer application. You can either drag and drop images into the window, or copy and paste them with CTRL + V.
+ * You can zoom in and out with mouse wheel. Press R to reset view. Press F to toggle filtering.
+ * This demo might be a bit messy. If you want, you can copy this and make something a bit more polished out of it.
+ */
+
 #include <TML/Graphics.h>
 #include <TML/Window.h>
 #include <TML/System.h>
 
 using namespace tml;
-void Draw(Camera& cam, Sprite& image, RenderWindow& window);
 
 int main(int argc, char** argv)
 {
@@ -43,23 +42,22 @@ int main(int argc, char** argv)
         const float aspect = imageSize.y / imageSize.x;
         const float window_aspect = (float)window.GetHeight() / (float)window.GetWidth();
 
-        Vector2f s = image.GetSize();
+        imageSize = image.GetSize();
 
         if(aspect < window_aspect)
         {
-            s.x = window.GetWidth();
-            s.y = s.x * aspect;
-            image.SetPosition({0, (window.GetHeight() - s.y) / 2});
+            imageSize.x = window.GetWidth();
+            imageSize.y = imageSize.x * aspect;
+            image.SetPosition({0, (window.GetHeight() - imageSize.y) / 2});
         }
         else
         {
-            s.y = window.GetHeight();
-            s.x = s.y / aspect;
-            image.SetPosition({(window.GetWidth() - s.x) / 2, 0});
+            imageSize.y = window.GetHeight();
+            imageSize.x = imageSize.y / aspect;
+            image.SetPosition({(window.GetWidth() - imageSize.x) / 2, 0});
         }
 
-        image.SetSize(s);
-        Draw(cam, image, window);
+        image.SetSize(imageSize);
     };
 
     if(argc > 1)
@@ -76,7 +74,6 @@ int main(int argc, char** argv)
     bool click = false;
     bool filter = true;
 
-    Clock clock;
     while(window.IsOpen())
     {
         Event windowEvent{};
@@ -95,17 +92,13 @@ int main(int argc, char** argv)
                     break;
                 case Event::MouseButtonReleased:
                     if(windowEvent.mouseButton.button == Mouse::Left)
-                    {
                         click = false;
-                    }
+
                     break;
 
                 case Event::MouseMoved:
                     if(click)
-                    {
                         cam.SetPosition((oldCamPos - (Vector2f(windowEvent.mouseMove.x, windowEvent.mouseMove.y) - beginPos) / cam.GetZoom()));
-                        scaleImage();
-                    }
                     break;
 
                 case Event::DragAndDrop:
@@ -116,15 +109,14 @@ int main(int argc, char** argv)
                         window.SetTitle(fileName.cpp_str() + " - " + std::to_string(int(image.GetSize().x)) + "x" + std::to_string(int(image.GetSize().y)));
                         imageSize = image.GetSize();
                     }
+
                     for(int i = 0; i < windowEvent.dragAndDrop.count; i++)
-                    {
                         delete[] windowEvent.dragAndDrop.paths[i];
-                    }
+
                     delete[] windowEvent.dragAndDrop.paths;
 
                     cam.SetPosition({0, 0});
                     cam.SetZoom(1);
-                    scaleImage();
                 } break;
 
                 case Event::KeyPressed:
@@ -139,21 +131,21 @@ int main(int argc, char** argv)
                                 Image img;
                                 if(img.LoadFromFile(str))
                                 {
+                                    img.FlipVertically();
                                     image.LoadFromImage(img);
                                     imageSize = image.GetSize();
                                     window.SetTitle(str.cpp_str() + " - " + std::to_string(img.GetWidth()) + " x " + std::to_string(img.GetHeight()));
-                                    scaleImage();
                                 }
                             }
                             else if(Clipboard::HasImage())
                             {
                                 Image img;
                                 Clipboard::GetImage(img);
+                                img.FlipVertically();
                                 image.LoadFromImage(img);
 
                                 imageSize = image.GetSize();
                                 window.SetTitle(std::to_string(img.GetWidth()) + " x " + std::to_string(img.GetHeight()));
-                                scaleImage();
                             }
                         }
                     }
@@ -161,40 +153,33 @@ int main(int argc, char** argv)
                     {
                         cam.SetPosition({0, 0});
                         cam.SetZoom(1);
-                        scaleImage();
                     }
                     else if(windowEvent.key.code == Keyboard::KEY_F)
-                    {
                         image.SetInterpolation(filter = !filter);
-                        Draw(cam, image, window);
-                    }
+
                     break;
 
                 case Event::MouseWheelScrolled:
                     cam.Zoom(windowEvent.mouseWheelScroll.delta * cam.GetZoom() / 5);
                     if(cam.GetZoom() < 0.1)
                         cam.SetZoom(0.1);
-                    scaleImage();
                     break;
 
                 case Event::WindowResized:
                     cam.SetPosition({0, 0});
-                    scaleImage();
                     break;
                 case Event::Closed:
                     window.Close();
                     break;
                 default:break;
             }
+
+            scaleImage();
+            window.Clear();
+            window.SetCamera(cam);
+            window.Draw(image);
+            window.Display();
         }
     }
     return 0;
-}
-
-void Draw(Camera& cam, Sprite& image, RenderWindow& window)
-{
-    window.Clear();
-    window.SetCamera(cam);
-    window.Draw(image);
-    window.Display();
 }

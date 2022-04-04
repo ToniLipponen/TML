@@ -16,6 +16,7 @@ namespace tml
     void RenderWindow::Clear() noexcept
     {
         SetActive();
+        ResetCamera();
 
         if(m_autoResizeViewport)
             SetViewport({0,0}, m_size);

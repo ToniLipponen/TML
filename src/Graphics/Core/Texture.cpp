@@ -1,5 +1,5 @@
 #include <TML/Graphics/Core/Texture.h>
-#include <TML/Graphics/Core/RenderTarget.h>
+#include <TML/Graphics/Core/FrameBuffer.h>
 #include "../../Headers/GLHeader.h"
 
 namespace tml
@@ -110,9 +110,9 @@ namespace tml
         #ifndef TML_USE_GLES
             GL_CALL(glad_glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData));
         #else
-            RenderTarget target;
-            target.AttachTexture((*this));
-            target.Bind();
+            FrameBuffer frameBuffer;
+            frameBuffer.AttachTexture((*this));
+            frameBuffer.Bind();
             GL_CALL(glad_glReadPixels(0, 0, m_width, m_height, GL_RGBA, GL_UNSIGNED_BYTE, imgData));
         #endif
     }

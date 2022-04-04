@@ -1,12 +1,10 @@
 #pragma once
 #include <TML/Window/Window.h>
-#include <TML/Graphics/Renderer.h>
-#include <TML/Graphics/RenderTexture.h>
-#include <TML/System/Clock.h>
+#include <TML/Graphics/RenderTarget.h>
 
 namespace tml
 {
-    class RenderWindow : public Window, public Renderer
+    class RenderWindow : public Window, public RenderTarget
     {
     public:
         enum Settings : ui32
@@ -20,6 +18,7 @@ namespace tml
         void Display() override;
         void Screenshot(Image& image);
     private:
+        Vector2f GetRenderTargetSize() const noexcept override { return GetSize(); }
         bool m_autoResizeView = true;
         bool m_autoResizeViewport = true;
     };

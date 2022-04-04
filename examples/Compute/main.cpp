@@ -144,7 +144,7 @@ int main()
         if(Mouse::ButtonDown(Mouse::Left))
             window.DrawText("Attracting", {0, 60}, 30, Color::Green);
         else
-            window.DrawText("Repulsing", {0, 60}, 30, Color::Red);
+            window.DrawText("Repelling", {0, 60}, 30, Color::Red);
 
         window.Display();
     }

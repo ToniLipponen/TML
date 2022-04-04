@@ -31,7 +31,7 @@ namespace tml
         LoadFromData(data, s);
     }
 
-    Image::Image(const String& fileName, ui32 w, ui32 h) noexcept
+    Image::Image(const String& fileName, i32 w, i32 h) noexcept
     : m_width(0), m_height(0), m_Bpp(0), m_data(nullptr)
     {
         LoadFromFile(fileName, w, h);
@@ -86,13 +86,14 @@ namespace tml
         return *this;
     }
 
-    bool Image::LoadFromFile(const String& fileName, ui32 w, ui32 h) noexcept
+    bool Image::LoadFromFile(const String& fileName, i32 w, i32 h) noexcept
     {
         delete[] m_data;
         m_data = nullptr;
 
-        bool returnValue;
         const auto imageType = GetTypeFromFilename(fileName);
+        bool returnValue;
+
         if(imageType == Image::Svg)
         {
             returnValue = LoadSvg(fileName, w, h);
@@ -117,6 +118,7 @@ namespace tml
             delete[] m_data;
             m_data = new ui8[w*h*Bpp];
         }
+
         if(data)
             memcpy(m_data, data, w*h*Bpp);
 
@@ -175,7 +177,7 @@ namespace tml
         return returnValue;
     }
 
-    bool Image::Resize(ui32 requestedWidth, ui32 requestedHeight) noexcept
+    bool Image::Resize(i32 requestedWidth, i32 requestedHeight) noexcept
     {
         if(m_data == nullptr || m_width == 0 || m_height == 0 ||
         (requestedWidth == (unsigned)m_width && requestedHeight == (unsigned)m_height) || (requestedWidth == 0 && requestedHeight == 0))
@@ -225,15 +227,16 @@ namespace tml
         m_flipOnWrite = flip;
     }
 
-    bool Image::LoadSvg(const String& filename, ui32 requestedWidth, ui32 requestedHeight)
+    bool Image::LoadSvg(const String& filename, i32 requestedWidth, i32 requestedHeight)
     {
         auto data = InFile::GetString(filename);
         return LoadSvg(reinterpret_cast<const ui8 *>(data.data()), static_cast<ui32>(data.size()), requestedWidth, requestedHeight);
     }
 
-    bool Image::LoadSvg(const ui8* data, ui32 dataSize, ui32 requestedWidth, ui32 requestedHeight)
+    bool Image::LoadSvg(const ui8* data, ui32 dataSize, i32 requestedWidth, i32 requestedHeight)
     {
         auto document = lunasvg::Document::loadFromData(reinterpret_cast<const char*>(data), dataSize);
+
         if(!document)
             return false;
 
@@ -247,15 +250,15 @@ namespace tml
 
     Image::ImageType Image::GetTypeFromFilename(const String &filename) noexcept
     {
-        String point(".");
+        ssize_t pos = 0;
 
-        ui64 pos = 0;
-        for(pos = filename.length()-1; pos > 0; --pos)
+        for(pos = static_cast<ssize_t>(filename.length()) - 1; pos >= 0; --pos)
         {
             if(filename.at(pos) == '.')
                 break;
         }
-        if(pos == 0)
+
+        if(pos == 0 || pos == -1)
             return Image::None;
 
         const auto len = filename.length() - pos;

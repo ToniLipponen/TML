@@ -1,5 +1,4 @@
 #pragma once
-#include <TML/Graphics/Camera.h>
 #include <TML/Graphics/Drawable/Rectangle.h>
 #include <TML/Graphics/Drawable/Circle.h>
 #include <TML/Graphics/Drawable/Sprite.h>
@@ -16,16 +15,12 @@ namespace tml
         Renderer();
         virtual ~Renderer();
 
-        void SetClearColor(const Color& color) noexcept;
-
-        void SetCamera(const Camera& cam) noexcept;
         void SetBounds(const Vector2i& pos, const Vector2i& size) noexcept;
-        void SetViewport(const Vector2i& pos, const Vector2i& size) noexcept;
+        virtual void SetViewport(const Vector2i& pos, const Vector2i& size) noexcept;
         void SetView(const Vector2i& pos, const Vector2i& size) noexcept;
-
-        void ResetCamera() noexcept;
         void ResetBounds() noexcept;
 
+        void SetClearColor(const Color& color) noexcept;
         virtual void Clear() noexcept;
         void Draw(Drawable& drawable) noexcept;
 
@@ -95,10 +90,11 @@ namespace tml
         float   m_view[16];
         float   m_proj[16];
         float   m_scale[16];
+        float   m_clearColor[4] = {0,0,0,0};
+
         TexRect m_viewport;
         Text    m_text;
         Texture m_circleTexture;
-        float m_clearColor[4] = {0,0,0,0};
 
         constexpr static ui32 s_maxVertexCount = 1000000;
         constexpr static ui32 s_maxIndexCount = s_maxVertexCount * 1.5;
