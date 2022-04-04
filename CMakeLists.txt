@@ -30,8 +30,7 @@ set(TML_VERSION 0.0.1)
 # SSE3
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
     if(UNIX)
-        add_compile_options(-msse3)
-        add_definitions(-Wall)
+        add_compile_options(-msse3 -Wall)
     elseif(WIN32)
         # Add some options here
     endif()

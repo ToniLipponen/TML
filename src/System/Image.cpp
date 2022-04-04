@@ -250,9 +250,9 @@ namespace tml
 
     Image::ImageType Image::GetTypeFromFilename(const String &filename) noexcept
     {
-        ssize_t pos = 0;
+        int64_t pos;
 
-        for(pos = static_cast<ssize_t>(filename.length()) - 1; pos >= 0; --pos)
+        for(pos = static_cast<int64_t>(filename.length()) - 1; pos >= 0; --pos)
         {
             if(filename.at(pos) == '.')
                 break;

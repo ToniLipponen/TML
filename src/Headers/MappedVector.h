@@ -17,7 +17,7 @@ namespace tml
 
         void push_back(const Vertex& vertex) noexcept
         {
-            if(m_mappedPtr && m_vertexCount * sizeof(Vertex) < m_capacity * sizeof(Vertex))
+            if(m_mappedPtr && m_vertexCount < m_capacity)
             {
                 auto dest = ((Vertex*) m_mappedPtr);
                 dest[m_vertexCount] = vertex;

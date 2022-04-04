@@ -222,7 +222,7 @@ namespace tml
         {
             if(!m_children.empty())
             {
-                for(ssize_t i = m_children.size()-1; i >= 0; i--)
+                for(int64_t i = m_children.size()-1; i >= 0; i--)
                 {
                     if(function(m_children.at(i)))
                         break;

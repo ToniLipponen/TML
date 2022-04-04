@@ -109,7 +109,7 @@ namespace tml
             SizePolicy m_hSizePolicy = Fixed; // Horizontal size policy.
             SizePolicy m_vSizePolicy = Fixed; // Vertical size policy.
 
-            ui64 m_hash = 0;
+            uint64_t m_hash = 0;
             std::string m_id;
             std::vector<BaseComponent*> m_children;
             std::deque<BaseComponent*> m_processStack;
