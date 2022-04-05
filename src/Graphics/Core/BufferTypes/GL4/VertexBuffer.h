@@ -23,12 +23,12 @@ namespace tml
 
     void VertexBuffer::Bind() const noexcept
     {
-
+        GL_CALL(glad_glBindBuffer(GL_ARRAY_BUFFER, m_id));
     }
 
     void VertexBuffer::Unbind() const noexcept
     {
-
+        GL_CALL(glad_glBindBuffer(GL_ARRAY_BUFFER, 0));
     }
 
     void VertexBuffer::BufferData(const void* data, ui32 vertexSize, ui32 vertexCount) noexcept
@@ -51,8 +51,9 @@ namespace tml
             GL_CALL(glad_glUnmapNamedBuffer(m_id));
         }
 
-        GL_CALL(glad_glNamedBufferStorage(m_id, m_capacity, data, BUFFER_STORAGE_FLAGS));
-        m_mappedPtr = GL_CALL(glad_glMapNamedBuffer(m_id, MAP_RANGE_FLAGS));
+        Bind();
+        GL_CALL(glad_glBufferData(GL_ARRAY_BUFFER, m_capacity, data, GL_STREAM_DRAW));
+        m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, MAP_RANGE_FLAGS | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT));
     }
 
     void VertexBuffer::PushData(const void* data, ui32 vertexSize, ui32 vertexCount) noexcept

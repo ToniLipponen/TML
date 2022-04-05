@@ -12,12 +12,8 @@ namespace tml
     IndexBuffer::IndexBuffer(const ui32* data, ui32 elements) noexcept
     : m_id(0), m_elements(0), m_capacity(elements)
     {
-        if(data)
-            m_elements = elements;
-
         GL_CALL(glad_glCreateBuffers(1, &m_id));
-        GL_CALL(glad_glNamedBufferStorage(m_id, m_capacity * 4, data, BUFFER_STORAGE_FLAGS));
-        m_mappedPtr = GL_CALL(glad_glMapNamedBuffer(m_id, MAP_RANGE_FLAGS));
+        BufferData(data, elements);
     }
 
     IndexBuffer::~IndexBuffer() noexcept
@@ -27,12 +23,12 @@ namespace tml
 
     void IndexBuffer::Bind() const noexcept
     {
-
+        GL_CALL(glad_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id));
     }
 
     void IndexBuffer::Unbind() const noexcept
     {
-
+        GL_CALL(glad_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
     }
 
     void IndexBuffer::BufferData(const ui32* data, ui32 elements) noexcept
@@ -48,8 +44,10 @@ namespace tml
         {
             GL_CALL(glad_glUnmapNamedBuffer(m_id));
         }
-        GL_CALL(glad_glNamedBufferStorage(m_id, m_capacity * 4, data, BUFFER_STORAGE_FLAGS));
-        m_mappedPtr = GL_CALL(glad_glMapNamedBuffer(m_id, MAP_RANGE_FLAGS));
+
+        Bind();
+        GL_CALL(glad_glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_capacity * 4, data, GL_STREAM_DRAW));
+        m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, MAP_RANGE_FLAGS | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT));
     }
 
     void IndexBuffer::PushData(const ui32* data, ui32 elements) noexcept

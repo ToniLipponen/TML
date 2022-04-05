@@ -29,7 +29,7 @@ namespace tml
 
     void StorageBuffer::UpdateData(const void *data, ui32 bytes) noexcept
     {
-        void* p = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, bytes, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT));
+        void* p = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, bytes, GL_MAP_WRITE_BIT));
 
         if(p && data)
             std::memcpy(p, data, bytes);
@@ -39,7 +39,7 @@ namespace tml
 
     void StorageBuffer::RetrieveData(void *data, ui32 bytes) noexcept
     {
-        void* p = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, bytes, GL_MAP_READ_BIT | GL_MAP_INVALIDATE_BUFFER_BIT));
+        void* p = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, bytes, GL_MAP_READ_BIT));
 
         if(data && p)
             std::memcpy(data, p, bytes);

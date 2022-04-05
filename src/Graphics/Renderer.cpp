@@ -139,8 +139,8 @@ namespace tml
 
     void Renderer::Clear() noexcept
     {
-        GL_CALL(glad_glClearBufferfv(GL_COLOR, 0, m_clearColor));
         ResetBounds();
+        GL_CALL(glad_glClearBufferfv(GL_COLOR, 0, m_clearColor));
     }
 
     void Renderer::Draw(Drawable& d) noexcept
@@ -447,7 +447,6 @@ namespace tml
         m_indexVector->Bind();
 
         GL_CALL(glad_glDrawElements(GL_TRIANGLES, m_indexVector->size(), GL_UNSIGNED_INT, nullptr));
-
         BeginBatch();
     }
 }

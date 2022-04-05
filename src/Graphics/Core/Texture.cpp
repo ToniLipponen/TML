@@ -80,12 +80,12 @@ namespace tml
 
     void Texture::Bind(ui32 slot) const
     {
-        #if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
-            GL_CALL(glad_glActiveTexture(GL_TEXTURE0 + slot));
-            GL_CALL(glad_glBindTexture(GL_TEXTURE_2D, m_id));
-        #else
-            GL_CALL(glad_glBindTextureUnit(slot, m_id));
-        #endif
+#if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
+        GL_CALL(glad_glActiveTexture(GL_TEXTURE0 + slot));
+        GL_CALL(glad_glBindTexture(GL_TEXTURE_2D, m_id));
+#else
+        GL_CALL(glad_glBindTextureUnit(slot, m_id));
+#endif
     }
 
     void Texture::SetMinMagFilter(Filter min, Filter mag)
@@ -156,16 +156,15 @@ namespace tml
                 case 4: ch = GL_RGBA8;  chi = GL_RGBA;  break;
                 default:ch = GL_RGB8;   chi = GL_RGB;   break;
             }
-            #ifdef TML_USE_GLES
-                GL_CALL(glad_glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, data));
-                GL_CALL(glad_glBindImageTexture(0, m_id, 0, GL_FALSE, 0, GL_READ_WRITE, ch));
-                GL_CALL(glad_glGenerateMipmap(GL_TEXTURE_2D));
-            #else
-                GL_CALL(glad_glTextureStorage2D(m_id, 8, ch, m_width, m_height));
-                GL_CALL(glad_glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, data));
-                GL_CALL(glad_glBindImageTexture(0, m_id, 0, GL_FALSE, 0, GL_READ_WRITE, ch));
-                GL_CALL(glad_glGenerateTextureMipmap(m_id));
-            #endif
+#ifdef TML_USE_GLES
+            GL_CALL(glad_glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, data));
+            GL_CALL(glad_glGenerateMipmap(GL_TEXTURE_2D));
+#else
+            GL_CALL(glad_glTextureStorage2D(m_id, 8, ch, m_width, m_height));
+            GL_CALL(glad_glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, data));
+            GL_CALL(glad_glBindImageTexture(0, m_id, 0, GL_FALSE, 0, GL_READ_WRITE, ch));
+            GL_CALL(glad_glGenerateTextureMipmap(m_id));
+#endif
         }
     }
 }
