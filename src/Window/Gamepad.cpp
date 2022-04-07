@@ -14,20 +14,50 @@ namespace tml
             return static_cast<bool>(glfwJoystickPresent(gamepad));
         }
 
-        Vector2f GetAxis(GamepadEnum gamepad, Joystick joystick)
+        Vector2f GetAxisValue(GamepadEnum gamepad, Joystick joystick)
         {
             int axisCount = 0;
-            const auto* floats = glfwGetJoystickAxes(gamepad, &axisCount);
-            const auto* axis = reinterpret_cast<const Vector2f*>(floats);
+            const auto* axis = glfwGetJoystickAxes(gamepad, &axisCount);
 
-            if(floats == nullptr || axisCount == 0)
+            if(axis == nullptr || axisCount == 0)
                 return {};
 
-            if(joystick == LeftJoystick)
-                return axis[0];
 
+            /// Note to self. Check out why this is works and the code below it doesn't.
+            if(joystick == LeftJoystick)
+                return {axis[GLFW_GAMEPAD_AXIS_LEFT_X], axis[GLFW_GAMEPAD_AXIS_LEFT_Y]};
             else
-                return {floats[3], floats[4] };
+                return {axis[GLFW_GAMEPAD_AXIS_RIGHT_Y], axis[GLFW_GAMEPAD_AXIS_LEFT_TRIGGER]};
+
+
+            /// This doesn't work correctly on my system.
+            if(joystick == LeftJoystick)
+                return {axis[GLFW_GAMEPAD_AXIS_LEFT_X], axis[GLFW_GAMEPAD_AXIS_LEFT_Y]};
+            else
+                return {axis[GLFW_GAMEPAD_AXIS_RIGHT_X], axis[GLFW_GAMEPAD_AXIS_RIGHT_Y]};
+        }
+
+        float GetTriggerValue(GamepadEnum gamepad, Trigger trigger)
+        {
+            int axisCount = 0;
+            const auto* axis = glfwGetJoystickAxes(gamepad, &axisCount);
+
+            if(axis && axisCount && axisCount >= 4)
+            {
+
+                if(trigger == LeftTrigger)
+                    return (axis[GLFW_GAMEPAD_AXIS_RIGHT_X] + 1.0f) / 2.0f;
+                else
+                    return (axis[GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER] + 1.0f) / 2.0f;
+
+                /// Same problem as on line 26
+                if(trigger == LeftTrigger)
+                    return (axis[GLFW_GAMEPAD_AXIS_LEFT_TRIGGER] + 1.0f) / 2.0f;
+                else
+                    return (axis[GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER] + 1.0f) / 2.0f;
+            }
+
+            return 0;
         }
 
         bool IsButtonPressed(GamepadEnum gamepad, Gamepad::Button button)

@@ -30,7 +30,7 @@ namespace tml
             return Color(r / rhs, g / rhs, b / rhs, a / rhs);
         }
 
-        inline constexpr Color operator*(i32 rhs) const noexcept {
+        inline constexpr Color operator*(float rhs) const noexcept {
             return Color(r * rhs, g * rhs, b * rhs, a * rhs);
         }
 
