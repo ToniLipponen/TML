@@ -10,7 +10,11 @@ struct Scene
     void Raycast(const Vector2f& pos, RenderWindow& window)
     {
         Ray ray(pos, 0);
-        for(ui32 i = 0; i < 360; i++)
+        Shape shape;
+        shape.AddPoint(pos, Color::White);
+        const float max = sqrt(pow(window.GetWidth(), 2) + pow(window.GetHeight(), 2));
+
+        for(float i = 0; i <= 360.1f;)
         {
             ray.direction = Math::AngleToHeading(i);
             float nearest = 10000;
@@ -30,14 +34,17 @@ struct Scene
                     nearest = hitInfo.points.at(0).distance;
                 }
             }
-            window.DrawLine(pos, pos + ray.direction * nearest, 1, int(0xffffff66), false);
+
+            shape.AddPoint(pos + ray.direction * nearest, Color::White * Math::Map<float>(nearest, 0, max, 1, 0));
+            i += 0.1f;
         }
+        window.Draw(shape);
     }
 };
 
 int main()
 {
-    RenderWindow window(800, 600, "Raycasting", Window::VSync);
+    RenderWindow window(800, 600, "Ray casting", Window::VSync | Window::Resizeable | Window::Antialias);
     const Vector2f windowSize2 = window.GetSize() / 2;
 
     Scene scene;
@@ -55,10 +62,19 @@ int main()
 
         while(window.PollEvents(event))
         {
-            if(event.type == tml::Event::Closed)
-                window.Close();
-            else if(event.type == tml::Event::MouseMoved)
-                mousePos = Vector2f(event.mouseMove.x, event.mouseMove.y);
+            switch(event.type)
+            {
+                case tml::Event::Closed:
+                    window.Close();
+                    break;
+                case tml::Event::MouseMoved:
+                    mousePos = Vector2f(event.mouseMove.x, event.mouseMove.y);
+                    break;
+                case tml::Event::WindowResized:
+                    scene.rects.at(0) = Rectangle(0,0, event.size.x, event.size.y);
+                    break;
+                default:break;
+            }
         }
 
         scene.rects.at(1).Rotate(delta * 100.0);
@@ -68,6 +84,7 @@ int main()
             window.DrawRect({100, 100}, {100, 100}, 0x770000ff,0, scene.rects.at(1).GetRotation());
             scene.Raycast(mousePos, window);
         window.Display();
+
         delta = clock.Reset();
     }
 }
