@@ -14,7 +14,7 @@ struct Scene
         shape.AddPoint(pos, Color::White);
         const float max = sqrt(pow(window.GetWidth(), 2) + pow(window.GetHeight(), 2));
 
-        for(float i = 0; i <= 360.0f;)
+        for(float i = 0; i <= 360.1f;)
         {
             ray.direction = Math::AngleToHeading(i);
             float nearest = 10000;
@@ -36,7 +36,7 @@ struct Scene
             }
 
             shape.AddPoint(pos + ray.direction * nearest, Color::White * Math::Map<float>(nearest, 0, max, 1, 0));
-            i += 0.01f;
+            i += 0.1f;
         }
         window.Draw(shape);
     }
