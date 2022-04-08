@@ -6,7 +6,7 @@ namespace tml
     struct Color
     {
         Color() = default;
-        constexpr Color(ui8 r, ui8 g, ui8 b) : r(r), g(g), b(b), a(255.f) {}
+        constexpr Color(ui8 r, ui8 g, ui8 b) : r(r), g(g), b(b), a(255) {}
         constexpr Color(ui8 r, ui8 g, ui8 b, ui8 a) : r(r), g(g), b(b), a(a) {}
         explicit constexpr Color(ui32 hex) noexcept
         : r((hex & 0xff000000) >> 24),
@@ -26,7 +26,7 @@ namespace tml
 
           }
 
-        inline constexpr Color operator/(i32 rhs) const noexcept {
+        inline constexpr Color operator/(float rhs) const noexcept {
             return Color(r / rhs, g / rhs, b / rhs, a / rhs);
         }
 

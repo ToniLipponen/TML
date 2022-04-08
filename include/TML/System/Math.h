@@ -98,6 +98,12 @@ namespace tml
         }
 
         template<typename T>
+        inline constexpr T Map(T value, T min1, T max1, T min2, T max2) noexcept
+        {
+            return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+        }
+
+        template<typename T>
         inline constexpr T Quadratic(const T &p0, const T &p1, const T &p2, const double t) noexcept
         {
             return Lerp(
