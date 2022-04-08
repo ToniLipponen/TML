@@ -31,7 +31,7 @@ namespace tml
             glfwGetGamepadState(gamepad, &state);
 
             if(trigger == LeftTrigger)
-                return (state.axes[GLFW_GAMEPAD_AXIS_LEFT_TRIGGER] + 1.0f) / 2.0f;
+                return (state.axes[GLFW_GAMEPAD_AXIS_LEFT_TRIGGER] + 1.0f) / 2.0f; //!< Converting range from [-1.0 ... 1.0] to [0.0 ... 1.0], where 1.0 means the trigger is completely pressed down.
             else
                 return (state.axes[GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER] + 1.0f) / 2.0f;
         }
