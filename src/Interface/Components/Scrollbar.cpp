@@ -12,8 +12,9 @@ namespace tml
                 m_size = Vector2i(length, thickness);
             else
                 m_size = Vector2i(thickness, length);
-            m_sColor = 0x4d8be4ff;
             m_pColor = 0xccccccff;
+
+            AddListener("Click", [](BaseComponent*, Event& e) { e = {}; });
 
             AddListener("MouseDown", [&](BaseComponent* c, Event& e)
             {
@@ -49,23 +50,21 @@ namespace tml
         {
             if(axis == Vertical)
             {
-                const float barSize = m_size.y / m_max;
+                const float barSize = m_size.y / static_cast<float>(m_max);
                 const auto barPos = Math::Min(m_pos.y + barSize * m_value, m_pos.y + m_size.y - barSize);
 
                 window.DrawRect(m_pos, m_size, m_pColor);
-                window.DrawRect(Vector2f(m_pos.x, barPos), Vector2f(m_size.x, barSize), m_sColor);
+                window.DrawRect(Vector2f(m_pos.x, barPos), Vector2f(m_size.x, barSize), m_activeColor);
             }
             else
             {
-                const float barSize = m_size.x / m_max;
+                const float barSize = m_size.x / static_cast<float>(m_max);
                 const auto barPos = Math::Min(m_pos.x + barSize * m_value, m_pos.x + m_size.x - barSize);
 
                 window.DrawRect(m_pos, m_size, m_pColor);
-                window.DrawRect(Vector2f(barPos, m_pos.y), Vector2f(barSize, m_size.y), m_sColor);
+                window.DrawRect(Vector2f(barPos, m_pos.y), Vector2f(barSize, m_size.y), m_activeColor);
             }
-
         }
-
 
         template class Scrollbar<Horizontal>;
         template class Scrollbar<Vertical>;

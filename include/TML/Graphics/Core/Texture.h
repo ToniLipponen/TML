@@ -35,19 +35,20 @@ namespace tml
         Texture& operator=(Texture&& rhs) noexcept;
         void LoadFromImage(const Image& image);
         void LoadFromFile(const String& filename);
-        void LoadFromMemory(i32 w, i32 h, ui8 bpp, const ui8* data);
+        void LoadFromMemory(int32_t w, int32_t h, uint8_t bpp, const uint8_t* data);
 
-        void Bind(ui32 slot = 0) const;
+        void Bind(uint32_t slot = 0) const;
+        void BindToImageSlot(uint32_t slot = 0) const;
         void SetMinMagFilter(Filter min, Filter mag);
         void SetClampMode(ClampMode mode);
 
         inline constexpr Filter     GetMinFilter()          const noexcept { return m_minFilter; }
         inline constexpr Filter     GetMagFilter()          const noexcept { return m_magFilter; }
         inline constexpr ClampMode  GetClampMode()          const noexcept { return m_clampMode; }
-        inline constexpr ui32       GetID()                 const noexcept { return m_id;        }
-        inline constexpr ui32       GetWidth()              const noexcept { return m_width;     }
-        inline constexpr ui32       GetHeight()             const noexcept { return m_height;    }
-        inline constexpr ui32       GetBpp()                const noexcept { return m_bpp;       }
+        inline constexpr uint32_t   GetID()                 const noexcept { return m_id;        }
+        inline constexpr uint32_t   GetWidth()              const noexcept { return m_width;     }
+        inline constexpr uint32_t   GetHeight()             const noexcept { return m_height;    }
+        inline constexpr uint32_t   GetBpp()                const noexcept { return m_bpp;       }
         void                        GetData(Image& image)   const noexcept;
         
     protected:
@@ -56,7 +57,8 @@ namespace tml
         ClampMode m_clampMode = ClampToEdge;
         Filter m_minFilter = LinearMipmapLinear;
         Filter m_magFilter = Linear;
-        ui32 m_id;
-        i32 m_width, m_height, m_bpp;
+
+        uint32_t m_id;
+        int32_t m_width, m_height, m_bpp, m_internalFormat, m_format;
     };
 }

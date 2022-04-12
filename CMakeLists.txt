@@ -83,6 +83,7 @@ if(TML_BUILD_EXAMPLES)
     add_subdirectory(examples/Compute)
     add_subdirectory(examples/ImageViewer)
     add_subdirectory(examples/Http)
+    add_subdirectory(examples/PostProcessing)
     add_subdirectory(examples/testing_area)
 endif()
 

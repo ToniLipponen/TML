@@ -30,16 +30,13 @@ namespace tml
 
     bool FrameBuffer::AttachTexture(const Texture &texture) const
     {
-        GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-
 #if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
         Bind();
         GL_CALL(glad_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.GetID(), 0));
-        GL_CALL(glad_glDrawBuffers(1, drawBuffers));
 #else
         GL_CALL(glad_glNamedFramebufferTexture(m_id, GL_COLOR_ATTACHMENT0, texture.GetID(), 0));
-        GL_CALL(glad_glNamedFramebufferDrawBuffers(m_id, 1, drawBuffers));
 #endif
+
         return (glad_glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
     }
 }

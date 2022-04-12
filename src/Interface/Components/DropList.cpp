@@ -1,20 +1,16 @@
-#include <TML/Interface/Components/Dropmenu.h>
+#include <TML/Interface/Components/DropList.h>
 #include <utility>
 
 namespace tml
 {
     namespace Interface
     {
-        Dropmenu::Dropmenu(i32 x, i32 y, ui32 width, ui32 height)
+        DropList::DropList(i32 x, i32 y, ui32 width, ui32 height)
+        : BaseComponent(x,y,width,height)
         {
-            m_pos = Vector2i(x,y);
-            m_size = Vector2i(width, height);
-            AddChild(m_listComponent = new Listbox(x, y + height + 2, width, 0));
+            AddChild(m_listComponent = new Listbox(x, y + height + 2, width, 200));
             m_listComponent->Disable();
-            m_listComponent->AddListener("Click", [](BaseComponent* c, Event& e){
-                c->Disable();
-                e = Event{};
-            });
+            m_listComponent->AddListener("Click", [](BaseComponent* c, Event& e){ c->Disable(); });
 
             AddListener("MouseDown", [&](BaseComponent*, Event& e){
                 if(m_state.MouseOver)
@@ -22,6 +18,8 @@ namespace tml
                     m_state.MouseDown = e.mouseButton.button;
                     e = Event{};
                 }
+                else
+                    m_listComponent->Disable();
             });
             AddListener("Click", [&](BaseComponent* c, Event& e)
             {
@@ -31,8 +29,6 @@ namespace tml
                     m_listComponent->Raise();
                     e = Event{};
                 }
-                else
-                    m_listComponent->Disable();
             });
             AddListener("Moved", [&](BaseComponent* c, Event& e)
             {
@@ -40,38 +36,42 @@ namespace tml
             });
         }
 
-        void Dropmenu::AddValue(String value)
+        void DropList::AddValue(String value)
         {
             m_listComponent->AddValue(std::move(value));
-            m_listComponent->SetSize(Vector2i(m_size.x, m_listComponent->GetElementsCount() * 20.f));
         }
 
-        void Dropmenu::SetValue(ui32 index, String value)
+        void DropList::SetValue(ui32 index, String value)
         {
             m_listComponent->SetValue(index, value);
         }
 
-        String Dropmenu::GetValue(ui32 index)
+        void DropList::SetListHeight(int height)
+        {
+            m_listComponent->SetSize({m_size.x, height});
+        }
+
+        String DropList::GetValue(ui32 index)
         {
             return m_listComponent->GetValue(index);
         }
 
-        String Dropmenu::GetSelectedValue() const
+        String DropList::GetSelectedValue() const
         {
             return m_listComponent->GetSelectedValue();
         }
 
-        tml::i32 Dropmenu::GetSelectedIndex() const
+        tml::i32 DropList::GetSelectedIndex() const
         {
             return m_listComponent->GetSelectedIndex();
         }
 
-        void Dropmenu::Clear()
+        void DropList::Clear()
         {
             m_listComponent->Clear();
         }
 
-        void Dropmenu::pDraw(Renderer &window)
+        void DropList::pDraw(Renderer &window)
         {
             String selected_value;
             if(m_listComponent)

@@ -75,6 +75,16 @@ namespace tml
         m_width 	= w;
         m_height 	= h;
         m_bpp 		= bpp;
+
+        switch(m_bpp)
+        {
+            case 1:  m_internalFormat = GL_R8;     m_format = GL_RED;   break;
+            case 2:  m_internalFormat = GL_RG8;    m_format = GL_RG;    break;
+            case 3:  m_internalFormat = GL_RGB8;   m_format = GL_RGB;   break;
+            case 4:  m_internalFormat = GL_RGBA8;  m_format = GL_RGBA;  break;
+            default: m_internalFormat = GL_RGB8;   m_format = GL_RGB;   break;
+        }
+
         Upload(data);
     }
 
@@ -86,6 +96,11 @@ namespace tml
 #else
         GL_CALL(glad_glBindTextureUnit(slot, m_id));
 #endif
+    }
+
+    void Texture::BindToImageSlot(uint32_t slot) const
+    {
+        GL_CALL(glad_glBindImageTexture(slot, m_id, 0, GL_FALSE, 0, GL_READ_WRITE, m_internalFormat));
     }
 
     void Texture::SetMinMagFilter(Filter min, Filter mag)
@@ -103,17 +118,17 @@ namespace tml
 
     void Texture::GetData(Image& image) const noexcept
     {
-        image.LoadFromMemory(m_width, m_height, 4, nullptr);
+        image.LoadFromMemory(m_width, m_height, m_bpp, nullptr);
         auto* imgData = image.GetData();
-        Bind();
 
         #ifndef TML_USE_GLES
-            GL_CALL(glad_glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData));
+            GL_CALL(glad_glGetTextureImage(m_id, 0, m_format, GL_UNSIGNED_BYTE, m_width*m_height*m_bpp, imgData));
         #else
+            Bind();
             FrameBuffer frameBuffer;
             frameBuffer.AttachTexture((*this));
             frameBuffer.Bind();
-            GL_CALL(glad_glReadPixels(0, 0, m_width, m_height, GL_RGBA, GL_UNSIGNED_BYTE, imgData));
+            GL_CALL(glad_glReadPixels(0, 0, m_width, m_height, m_format, GL_UNSIGNED_BYTE, imgData));
         #endif
     }
 
@@ -147,22 +162,12 @@ namespace tml
 
         if(m_width > 0 && m_height > 0)
         {
-            i32 ch = 0, chi = 0; // Format & internal format
-            switch(m_bpp)
-            {
-                case 1: ch = GL_R8;     chi = GL_RED;   break;
-                case 2: ch = GL_RG8;    chi = GL_RG;    break;
-                case 3: ch = GL_RGB8;   chi = GL_RGB;   break;
-                case 4: ch = GL_RGBA8;  chi = GL_RGBA;  break;
-                default:ch = GL_RGB8;   chi = GL_RGB;   break;
-            }
 #ifdef TML_USE_GLES
-            GL_CALL(glad_glTexImage2D(GL_TEXTURE_2D, 0, ch, m_width, m_height, 0, chi, GL_UNSIGNED_BYTE, data));
+            GL_CALL(glad_glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_width, m_height, 0, m_format, GL_UNSIGNED_BYTE, data));
             GL_CALL(glad_glGenerateMipmap(GL_TEXTURE_2D));
 #else
-            GL_CALL(glad_glTextureStorage2D(m_id, 8, ch, m_width, m_height));
-            GL_CALL(glad_glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, chi, GL_UNSIGNED_BYTE, data));
-            GL_CALL(glad_glBindImageTexture(0, m_id, 0, GL_FALSE, 0, GL_READ_WRITE, ch));
+            GL_CALL(glad_glTextureStorage2D(m_id, 8, m_internalFormat, m_width, m_height));
+            GL_CALL(glad_glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, m_format, GL_UNSIGNED_BYTE, data));
             GL_CALL(glad_glGenerateTextureMipmap(m_id));
 #endif
         }

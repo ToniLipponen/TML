@@ -53,10 +53,7 @@ namespace tml
         TML_ASSERT(gladLoadGL((GLADloadfunc)glfwGetProcAddress), "Failed to initialize renderer");
 #endif
         GL_CALL(glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureCount));
-
-#ifdef TML_USE_GLES
-        m_maxTextureCount = 8;
-#endif
+        m_maxTextureCount = Math::Min(m_maxTextureCount, 32);
 
         m_vao           = new VertexArray();
         m_vertexVector  = new VertexVector(s_maxVertexCount);
@@ -87,6 +84,7 @@ namespace tml
         glDebugMessageCallback(GLMessageCallback, nullptr);
 #endif
     }
+
     Renderer::~Renderer()
     {
         delete m_vao;
@@ -380,7 +378,7 @@ namespace tml
                             const Vector2f& br) noexcept
     {
         ui32 currentElements = m_vertexVector->size();
-        if(currentElements >= s_maxVertexCount - 4)
+        if(currentElements >= s_maxVertexCount)
             EndBatch();
 
         const ui32 tex = PushTexture(texture);
@@ -442,7 +440,6 @@ namespace tml
 
         m_vao->BufferData(*m_vertexVector, *m_indexVector, *m_layout);
         m_vao->Bind();
-
         m_vertexVector->Bind();
         m_indexVector->Bind();
 
