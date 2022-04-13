@@ -4,7 +4,7 @@
 [![Build on linux](https://github.com/ToniLipponen/TML/actions/workflows/build_linux.yml/badge.svg?branch=master)](https://github.com/ToniLipponen/TML/actions/workflows/build_linux.yml)
 [![Build on windows](https://github.com/ToniLipponen/TML/actions/workflows/build_windows.yml/badge.svg?branch=master)](https://github.com/ToniLipponen/TML/actions/workflows/build_windows.yml)
 
-TML is a simple library for making games and applications. It provides simple interfaces for window creation, graphics rendering, audio playback and keyboard/mouse input. 
+TML is a simple library for making games and applications. It provides interfaces for window creation, graphics rendering, audio playback and keyboard/mouse/controller input. 
 
 # Supported platforms
 - <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Unofficial_Windows_logo_variant_-_2002–2012_%28Multicolored%29.svg/1161px-Unofficial_Windows_logo_variant_-_2002–2012_%28Multicolored%29.svg.png" width=14 height=14 alt=""> Windows
