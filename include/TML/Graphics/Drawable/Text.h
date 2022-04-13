@@ -16,7 +16,6 @@ namespace tml
         void SetFont(const std::shared_ptr<Font>& font) noexcept;
         void SetSpacing(float spacing) noexcept;
         void SetKerning(float kerning) noexcept;
-
         inline constexpr const String& GetString() const noexcept { return m_string; }
         Vector2f GetDimensions() noexcept;
         
@@ -35,6 +34,6 @@ namespace tml
         float m_lineSpacing = 0;
         float m_kerning = 0;
         Vector2f m_dimensions;
-        static Font* s_defaultFont;
+        static std::unique_ptr<Font> s_defaultFont;
     };
 }

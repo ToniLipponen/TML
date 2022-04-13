@@ -16,13 +16,13 @@ namespace tml
 {
     Font::Font()
     {
-        m_cdata = new stbtt_packedchar[512];
+        m_cdata = new stbtt_packedchar[1024];
     }
 
     Font::Font(const Font& rhs)
     {
-        m_cdata = new stbtt_packedchar[512];
-        std::memcpy(m_cdata, rhs.m_cdata, sizeof(stbtt_packedchar) * 512);
+        m_cdata = new stbtt_packedchar[1024];
+        std::memcpy(m_cdata, rhs.m_cdata, sizeof(stbtt_packedchar) * 1024);
         m_texture = rhs.m_texture;
     }
 
@@ -33,7 +33,7 @@ namespace tml
 
     Font& Font::operator=(const Font& rhs)
     {
-        std::memcpy(m_cdata, rhs.m_cdata, sizeof(stbtt_packedchar) * 512);
+        std::memcpy(m_cdata, rhs.m_cdata, sizeof(stbtt_packedchar) * 1024);
         m_texture = rhs.m_texture;
         return *this;
     }
@@ -45,18 +45,21 @@ namespace tml
         if(!file.Open(filename))
             return;
         file.GetBytes(buffer);
-        LoadFromMemory(reinterpret_cast<const ui8 *>(buffer.data()), buffer.size());
+        LoadFromMemory(reinterpret_cast<const ui8 *>(buffer.data()));
     }
 
-    void Font::LoadFromMemory(const ui8* data, ui32 size)
+    void Font::LoadFromMemory(const ui8* data)
     {
         auto* bitmap = new ui8[ATLAS_SIZE*ATLAS_SIZE];
+
         stbtt_pack_context context;
         stbtt_PackBegin(&context, bitmap, ATLAS_SIZE, ATLAS_SIZE, 0, 1, nullptr);
         stbtt_PackSetOversampling(&context, OVER_SAMPLING, OVER_SAMPLING);
         stbtt_PackSetSkipMissingCodepoints(&context, 1);
-        stbtt_PackFontRange(&context, data, 0, GLYPH_SIZE, 32, 512, (stbtt_packedchar*)m_cdata);
+        stbtt_PackFontRange(&context, data, 0, GLYPH_SIZE, 32, 1024, (stbtt_packedchar*)m_cdata);
         stbtt_PackEnd(&context);
+
         m_texture.LoadFromMemory(ATLAS_SIZE, ATLAS_SIZE, 1, bitmap);
+        delete[] bitmap;
     }
 }

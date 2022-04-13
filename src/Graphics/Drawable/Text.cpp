@@ -7,7 +7,7 @@
 
 namespace tml
 {
-    Font* Text::s_defaultFont = nullptr;
+    std::unique_ptr<Font> Text::s_defaultFont = nullptr;
 
     Text::Text()
     {
@@ -70,8 +70,8 @@ namespace tml
     {
         if(!s_defaultFont)
         {
-            s_defaultFont = new Font;
-            s_defaultFont->LoadFromMemory(TML_DEFAULT_FONT_DATA, TML_DEFAULT_FONT_LENGTH);
+            s_defaultFont = std::make_unique<Font>();
+            s_defaultFont->LoadFromMemory(TML_DEFAULT_FONT_DATA);
         }
         m_dimensions = Vector2f{0, m_size.y};
         float x = 0, y = 48;
@@ -107,9 +107,11 @@ namespace tml
 
                 default:
                     stbtt_aligned_quad q;
-                    stbtt_GetPackedQuad(((const stbtt_packedchar *)font.m_cdata), 4096, 4096, int(c-32), &x, &y, &q, 0);
+                    stbtt_GetPackedQuad(((const stbtt_packedchar *)font.m_cdata), 4096, 4096, int(c-32), &x, &y, &q, 1);
                     NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
 
+                    /// Rounding the vertex positions of the quad.
+                    /// This seems to improve the quality of the text, when the font size is small.
                     q.x0 = roundf(q.x0);
                     q.x1 = roundf(q.x1);
                     q.y0 = roundf(q.y0);

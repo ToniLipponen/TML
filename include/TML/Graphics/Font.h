@@ -18,7 +18,7 @@ namespace tml
         Font& operator=(const Font& rhs);
 
         void LoadFromFile(const std::string &filename);
-        void LoadFromMemory(const ui8 *data, ui32 size);
+        void LoadFromMemory(const ui8 *data);
         friend class Text;
         friend class Renderer;
 
