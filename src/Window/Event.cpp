@@ -1,7 +1,7 @@
 #include <TML/Window/Event.h>
 
 #define GLFW_INCLUDE_NONE
-#include "GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
 #include <thread>
 #include <chrono>
 
@@ -15,14 +15,20 @@ namespace tml
     {
         if(m_instance == nullptr)
             m_instance = new EventSystem();
+
         return *m_instance;
     }
 
-    bool EventSystem::Register(const void *handle) noexcept
+    bool EventSystem::Register(const void* handle) noexcept
     {
-        auto preSize = m_handles.size();
+        const auto preSize = m_handles.size();
         m_handles[handle] = std::queue<Event>();
         return preSize < m_handles.size();
+    }
+
+    bool EventSystem::Remove(const void* handle) noexcept
+    {
+        return m_handles.erase(handle) > 0;
     }
 
     bool EventSystem::PollEvents(const void* handle, Event& event) noexcept

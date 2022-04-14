@@ -106,11 +106,11 @@ namespace tml
             });
             AddListener("Moved", [&](BaseComponent* c, Event& e)
             {
-                m_text.SetPosition(e.move.x, e.move.y);
+                m_text.SetPosition(e.pos.x, e.pos.y);
             });
             AddListener("Resized", [&](BaseComponent* c, Event& e)
             {
-                m_text.SetSize(e.size.y);
+                m_text.SetSize(e.size.h);
                 const Vector2i textSize = m_text.GetDimensions();
                 m_text.SetPosition(m_pos + Vector2i(0, m_size.y / 2.f - textSize.y / 2));
             });

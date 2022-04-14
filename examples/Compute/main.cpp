@@ -105,14 +105,14 @@ int main()
             if(event.type == tml::Event::Closed)
                 window.Close();
             else if(event.type == tml::Event::MouseMoved)
-                mousePos = Vector2f(event.mouseMove.x, event.mouseMove.y);
+                mousePos = Vector2f(event.pos.x, event.pos.y);
         }
 
         /// Bind the compute shader.
         shader.Bind();
 
         /// Update storage buffer & connect it to the compute shader.
-        shaderData.UpdateData(circles.data(), circles.size() * sizeof(PhysicsCircle));
+        shaderData.BufferData(circles.data(), circles.size() * sizeof(PhysicsCircle));
         shader.ConnectBuffer("myBuffer", 1, shaderData);
 
         /// Set uniforms.

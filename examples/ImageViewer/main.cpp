@@ -98,7 +98,7 @@ int main(int argc, char** argv)
 
                 case Event::MouseMoved:
                     if(click)
-                        cam.SetPosition((oldCamPos - (Vector2f(windowEvent.mouseMove.x, windowEvent.mouseMove.y) - beginPos) / cam.GetZoom()));
+                        cam.SetPosition((oldCamPos - (Vector2f(windowEvent.pos.x, windowEvent.pos.y) - beginPos) / cam.GetZoom()));
                     break;
 
                 case Event::DragAndDrop:

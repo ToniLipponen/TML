@@ -31,13 +31,12 @@
 
 namespace tml
 {
-    class Event
+    struct Event
     {
-    public:
         struct ResizeEvent
         {
-            i32 x;
-            i32 y;
+            i32 w;
+            i32 h;
         };
 
         struct MoveEvent
@@ -60,12 +59,6 @@ namespace tml
             ui32 unicode; //!< UTF-32 Unicode value of the character
         };
 
-        struct MouseMoveEvent
-        {
-            i32 x; //!< X position of the mouse pointer, relative to the left of the owner window
-            i32 y; //!< Y position of the mouse pointer, relative to the top of the owner window
-        };
-
         struct MouseButtonEvent
         {
             ui32 button; //!< Code of the button that has been pressed
@@ -75,7 +68,7 @@ namespace tml
 
         struct MouseWheelScrollEvent
         {
-            float delta; //!< Wheel offset (positive is up/left, negative is down/right). High-precision mice may use non-integral offsets.
+            float delta; //!< Vertical scroll offset.
             i32 x;       //!< X position of the mouse pointer, relative to the left of the owner window
             i32 y;       //!< Y position of the mouse pointer, relative to the top of the owner window
         };
@@ -94,8 +87,9 @@ namespace tml
             WindowMinimized,        //!< The window was minimized (no data)
             WindowMaximized,        //!< The window was maximized (no data)
             WindowRestored,         //!< The window was restored (no data)
+            WindowMoved,            //!< The window was moved (data in event.pos)
             InterfaceResized,       //!< tml::Interface component is resized (data in event.size)
-            InterfaceMoved,         //!< tml::Interface component is moved (data in event.move)
+            InterfaceMoved,         //!< tml::Interface component is moved (data in event.pos)
             LostFocus,              //!< The window lost the focus (no data)
             GainedFocus,            //!< The window gained the focus (no data)
             TextEntered,            //!< A character was entered (data in event.text)
@@ -104,7 +98,7 @@ namespace tml
             MouseWheelScrolled,     //!< The mouse wheel was scrolled (data in event.mouseWheelScroll)
             MouseButtonPressed,     //!< A mouse button was pressed (data in event.mouseButton)
             MouseButtonReleased,    //!< A mouse button was released (data in event.mouseButton)
-            MouseMoved,             //!< The mouse cursor moved (data in event.mouseMove)
+            MouseMoved,             //!< The mouse cursor moved (data in event.pos)
             MouseEntered,           //!< The mouse cursor entered the area of the window (no data)
             MouseLeft,              //!< The mouse cursor left the area of the window (no data)
             DragAndDrop,            //!< File or files dragged onto a window. (data in event.dragAndDrop)
@@ -114,11 +108,10 @@ namespace tml
 
         union
         {
-            MoveEvent             move;
+            MoveEvent             pos;
             ResizeEvent           size;
             KeyEvent              key;
             TextEvent             text;
-            MouseMoveEvent        mouseMove;
             MouseButtonEvent      mouseButton;
             MouseWheelScrollEvent mouseWheelScroll;
             DragAndDropEvent      dragAndDrop;
@@ -135,11 +128,12 @@ namespace tml
         void operator=(const EventSystem&)  = delete;
         static EventSystem& GetInstance();
 
-        bool Register(const void* handle) noexcept;
-        bool PollEvents(const void*, Event& e) noexcept;     /// Checks if there is events in the event queue.
-        bool WaitEvents(const void*, Event& e) noexcept;     /// Blocks until there is an event in the event queue.
-        void PushEvent(const void*, Event& event) noexcept;  /// Pushed new event to the event queue.
-        bool PopEvent(const void*, Event& e) noexcept;       /// Get event from event queue. Returns true if popped new event.
+        bool Register(const void* handle) noexcept;          //!< Register new sender / emitter.
+        bool Remove(const void* handle) noexcept;            //!< Remove a sender / emitter.
+        bool PollEvents(const void*, Event& e) noexcept;     //!< Checks if there is events in the event queue.
+        bool WaitEvents(const void*, Event& e) noexcept;     //!< Blocks until there is an event in the event queue.
+        void PushEvent(const void*, Event& event) noexcept;  //!< Pushed new event to the event queue.
+        bool PopEvent(const void*, Event& e) noexcept;       //!< Get event from event queue. Returns true if popped new event.
 
     private:
         std::map<const void*, std::queue<Event>> m_handles;

@@ -14,7 +14,7 @@ namespace tml
             m_size = m_text.GetDimensions();
             AddListener("Moved", [&](BaseComponent*, Event& e)
             {
-                m_text.SetPosition(e.move.x, e.move.y);
+                m_text.SetPosition(e.pos.x, e.pos.y);
             });
         }
 

@@ -30,14 +30,17 @@ void TextInput::SetValue(const std::string &string)
 void TextInput::InitListeners()
 {
     static auto search_forwards = [&](){
-        i32 index = m_cursorIndex;
+        size_t index = m_cursorIndex;
         for(;index < m_value.size()-1; index++)
             if(m_value.at(index) == ' ')
                 break;
         return index;
     };
     static auto search_backwards = [&](){
-        i32 index = m_cursorIndex-1;
+        if(m_cursorIndex == 0)
+            return (size_t)0;
+
+        size_t index = m_cursorIndex-1;
         for(;index > 0; index--)
             if(m_value.at(index) == ' ')
                 break;
@@ -102,14 +105,14 @@ void TextInput::InitListeners()
                     {
                         if(e.key.control)
                         {
-                            const i32 index = Math::Max(search_backwards(), 0);
+                            const auto index = Math::Max<int>(search_backwards(), 0);
                             m_value.erase(m_value.begin() + index, m_value.begin() + m_cursorIndex);
                             m_cursorIndex -= (m_cursorIndex - index);
                         }
                         else
                         {
                             m_value.erase(m_value.begin() + m_cursorIndex - 1);
-                            m_cursorIndex = Math::Clamp<ui32>(--m_cursorIndex, 0, m_value.size());
+                            m_cursorIndex = Math::Clamp<int>(--m_cursorIndex, 0, m_value.size());
                         }
                     }
                     break;
@@ -163,13 +166,13 @@ void TextInput::InitListeners()
 
     AddListener("Moved", [&](BaseComponent* c, Event& e)
     {
-        m_text.SetPosition(e.move.x, e.move.y);
+        m_text.SetPosition(e.pos.x, e.pos.y);
         m_cursorPos = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
     });
 
     AddListener("Resized", [&](BaseComponent* c, Event& e)
     {
-        m_text.SetSize(e.size.y);
+        m_text.SetSize(e.size.h);
         const Vector2i textSize = m_text.GetDimensions();
         m_text.SetPosition(m_pos + Vector2i(0, m_size.y / 2.f - textSize.y / 2.f));
     });

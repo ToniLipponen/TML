@@ -116,9 +116,9 @@ namespace tml
         StorageBuffer() noexcept;
         void Bind() const noexcept;
         void Unbind() const noexcept;
-        void BufferData(const void* data, ui32 bytes) noexcept;
-        void UpdateData(const void* data, ui32 bytes) noexcept;
-        void RetrieveData(void* data, ui32 bytes) noexcept;
+        void BufferData(const void* data, ui32 bytes) const noexcept;
+        void UpdateData(const void* data, ui32 bytes) const noexcept;
+        void RetrieveData(void* data, ui32 bytes) const noexcept;
     protected:
         void BindBufferBase(ui32 index) const noexcept;
         friend class ComputeShader;

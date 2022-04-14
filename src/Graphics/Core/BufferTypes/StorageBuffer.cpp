@@ -21,12 +21,12 @@ namespace tml
         GL_CALL(glad_glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0));
     }
 
-    void StorageBuffer::BufferData(const void* data, ui32 size) noexcept
+    void StorageBuffer::BufferData(const void* data, ui32 size) const noexcept
     {
         GL_CALL(glad_glNamedBufferData(m_id, size, data, GL_DYNAMIC_COPY));
     }
 
-    void StorageBuffer::UpdateData(const void *data, ui32 bytes) noexcept
+    void StorageBuffer::UpdateData(const void *data, ui32 bytes)  const noexcept
     {
         void* p = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, bytes, GL_MAP_WRITE_BIT));
 
@@ -36,11 +36,11 @@ namespace tml
         GL_CALL(glad_glUnmapNamedBuffer(m_id));
     }
 
-    void StorageBuffer::RetrieveData(void *data, ui32 bytes) noexcept
+    void StorageBuffer::RetrieveData(void *data, ui32 bytes) const noexcept
     {
         void* p = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, bytes, GL_MAP_READ_BIT));
 
-        if(data && p)
+        if(p && data)
             std::memcpy(data, p, bytes);
 
         GL_CALL(glad_glUnmapNamedBuffer(m_id));

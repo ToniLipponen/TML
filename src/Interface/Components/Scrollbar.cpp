@@ -32,9 +32,9 @@ namespace tml
                 if(m_state.MouseDown != -1)
                 {
                     if(axis == Horizontal)
-                        m_value = Math::Clamp<float>(float(e.mouseMove.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
+                        m_value = Math::Clamp<float>(float(e.pos.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
                     else
-                        m_value = m_max - Math::Clamp<float>(m_max - float((e.mouseMove.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
+                        m_value = m_max - Math::Clamp<float>(m_max - float((e.pos.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
                 }
             });
         }

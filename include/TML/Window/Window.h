@@ -75,9 +75,11 @@ namespace tml
         void Show() const noexcept;
         void Hide() const noexcept;
 
-    protected:
-        Vector2i m_size;
+    private:
+        void HandleWindowEvents(const Event& e) noexcept;
         void SetCallbacks();
+    protected:
+        Vector2i m_size, m_pos;
         void* m_handle = nullptr;
         void* m_cursor = nullptr;
         static bool s_glfwInitialized;

@@ -18,6 +18,7 @@ void CursorEnterCallback(GLFWwindow* window, int entered);
 void WindowMaximizeCallback(GLFWwindow* window, int maximized);
 void WindowMinimizeCallback(GLFWwindow* window, int minimized);
 void CursorPosCallback(GLFWwindow* window, double x, double y);
+void WindowMoveCallback(GLFWwindow* window, int x, int y);
 
 namespace tml
 {
@@ -104,11 +105,12 @@ namespace tml
 
         /// Set window logo to TML-logo ///////////
         Image image(LOGO_DATA.data(), static_cast<int>(LOGO_DATA.size()));
-        GLFWimage img;
 
+        GLFWimage img;
         img.width = image.GetWidth();
         img.height = image.GetHeight();
         img.pixels = image.GetData();
+
         glfwSetWindowIcon(handle, 1, &img);
         ////////////////////////////////////////////
 
@@ -125,6 +127,7 @@ namespace tml
 
     void Window::Close() noexcept
     {
+        tml::EventSystem::GetInstance().Remove(m_handle);
         glfwDestroyWindow(static_cast<GLFWwindow*>(m_handle));
         m_handle = nullptr;
     }
@@ -133,6 +136,7 @@ namespace tml
     {
         if(m_handle)
             return !glfwWindowShouldClose(static_cast<GLFWwindow*>(m_handle));
+        
         return false;
     }
 
@@ -143,67 +147,41 @@ namespace tml
 
     i32 Window::GetWidth() const noexcept
     {
-        if(!m_handle)
-            return 0;
-        i32 w, h;
-        glfwGetWindowSize(static_cast<GLFWwindow*>(m_handle), &w, &h);
-        return w;
+        return m_size.x;
     }
 
     i32 Window::GetHeight() const noexcept
     {
-        if(!m_handle)
-            return 0;
-        i32 w, h;
-        glfwGetWindowSize(static_cast<GLFWwindow*>(m_handle), &w, &h);
-        return h;
+        return m_size.y;
     }
 
     i32 Window::GetX() const noexcept
     {
-        if(!m_handle)
-            return 0;
-        i32 x, y;
-        glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &x, &y);
-        return x;
+        return m_pos.x;
     }
 
     i32 Window::GetY() const noexcept
     {
-        if(!m_handle)
-            return 0;
-        i32 x, y;
-        glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &x, &y);
-        return y;
+        return m_pos.y;
     }
 
     bool Window::PollEvents(Event& e) noexcept
     {
         const auto returnValue = EventSystem::GetInstance().PollEvents(m_handle, e);
-
-        if(e.type == Event::WindowResized)
-            m_size = Vector2i{e.size.x, e.size.y};
-
+        HandleWindowEvents(e);
         return returnValue;
     }
 
     bool Window::WaitEvents(Event& e) noexcept
     {
         const auto returnValue = EventSystem::GetInstance().WaitEvents(m_handle, e);
-
-        if(e.type == Event::WindowResized)
-            m_size = Vector2i{e.size.x, e.size.y};
-
+        HandleWindowEvents(e);
         return returnValue;
     }
 
     Vector2i Window::GetPosition() const noexcept
     {
-        if(!m_handle)
-            return {0,0};
-        i32 x, y;
-        glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &x, &y);
-        return {x,y};
+        return m_pos;
     }
 
     Vector2i Window::GetSize() const noexcept
@@ -244,6 +222,7 @@ namespace tml
             glfwDestroyCursor(static_cast<GLFWcursor*>(m_cursor));
             m_cursor = nullptr;
         }
+
         GLFWimage img;
         img.width = image.GetWidth();
         img.height = image.GetHeight();
@@ -337,6 +316,23 @@ namespace tml
         glfwHideWindow(static_cast<GLFWwindow*>(m_handle));
     }
 
+    void Window::HandleWindowEvents(const Event &e) noexcept
+    {
+        switch(e.type)
+        {
+            case Event::WindowResized:
+                m_size = Vector2i{e.size.w, e.size.h};
+                break;
+
+            case Event::WindowMoved:
+                m_pos = Vector2i{e.pos.x, e.pos.y};
+                break;
+
+            default:
+                break;
+        }
+    }
+
     void Window::SetCallbacks()
     {
         auto* handle = static_cast<GLFWwindow*>(m_handle);
@@ -352,6 +348,7 @@ namespace tml
         glfwSetWindowMaximizeCallback(handle, WindowMaximizeCallback);
         glfwSetWindowIconifyCallback(handle, WindowMinimizeCallback);
         glfwSetCursorPosCallback(handle, CursorPosCallback);
+        glfwSetWindowPosCallback(handle, WindowMoveCallback);
         tml::EventSystem::GetInstance().Register(handle);
     }
 }
@@ -423,8 +420,8 @@ void WindowResizeCallback(GLFWwindow* window, int x, int y)
 {
     tml::Event event{};
     event.type = tml::Event::WindowResized;
-    event.size.x = x;
-    event.size.y = y;
+    event.size.w = x;
+    event.size.h = y;
     tml::EventSystem::GetInstance().PushEvent(window, event);
 }
 
@@ -467,7 +464,14 @@ void CursorPosCallback(GLFWwindow* window, double x, double y)
 {
     Event event{};
     event.type = Event::MouseMoved;
-    event.mouseMove.x = static_cast<int>(x);
-    event.mouseMove.y = static_cast<int>(y);
+    event.pos = {static_cast<int>(x), static_cast<int>(y)};
+    tml::EventSystem::GetInstance().PushEvent(window, event);
+}
+
+void WindowMoveCallback(GLFWwindow* window, int x, int y)
+{
+    Event event{};
+    event.type = Event::WindowMoved;
+    event.pos = {x, y};
     tml::EventSystem::GetInstance().PushEvent(window, event);
 }

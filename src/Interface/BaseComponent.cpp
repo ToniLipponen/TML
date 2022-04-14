@@ -18,7 +18,7 @@ namespace tml
         }
 
         BaseComponent::BaseComponent(i32 x, i32 y, ui32 w, ui32 h)
-        : m_pColor(Color::White), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr), m_pos(x,y), m_size(w,h), m_originalSize(w,h)
+        : m_pColor(Color::White), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_pos(x,y), m_size(w,h), m_originalSize(w,h), m_parent(nullptr)
         {
             m_state.Enabled = true;
         }
@@ -237,8 +237,8 @@ namespace tml
                 m_pos = position;
                 Event e{};
                 e.type = Event::InterfaceMoved;
-                e.move.x = position.x;
-                e.move.y = position.y;
+                e.pos.x = position.x;
+                e.pos.y = position.y;
                 CallUIFunc("Moved", e);
             }
         }
@@ -248,8 +248,8 @@ namespace tml
             m_size = size;
             Event e{};
             e.type = Event::InterfaceResized;
-            e.size.x = size.x;
-            e.size.y = size.y;
+            e.size.w = size.x;
+            e.size.h = size.y;
             CallUIFunc("Resized", e);
         }
 
@@ -273,7 +273,7 @@ namespace tml
                 case Event::EventType::MouseMoved:
                 {
                     const bool oldMouseOver = m_state.MouseOver;
-                    m_state.MouseOver = ContainsPoint({event.mouseMove.x, event.mouseMove.y});
+                    m_state.MouseOver = ContainsPoint({event.pos.x, event.pos.y});
                     CallUIFunc("MouseMoved", event);
                     if(m_state.MouseOver && !oldMouseOver)
                         CallUIFunc("MouseEnter", event);
