@@ -51,9 +51,8 @@ namespace tml
             GL_CALL(glad_glUnmapNamedBuffer(m_id));
         }
 
-        Bind();
-        GL_CALL(glad_glBufferData(GL_ARRAY_BUFFER, m_capacity, data, GL_STREAM_DRAW));
-        m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, MAP_RANGE_FLAGS | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT));
+        GL_CALL(glad_glNamedBufferData(m_id, m_capacity, data, GL_STREAM_DRAW));
+        m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, MAP_RANGE_FLAGS | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT));
     }
 
     void VertexBuffer::PushData(const void* data, ui32 vertexSize, ui32 vertexCount) noexcept

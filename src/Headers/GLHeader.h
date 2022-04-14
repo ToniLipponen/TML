@@ -1,5 +1,5 @@
 #pragma once
-#include "TML/System/Platform.h"
+#include <TML/System/Platform.h>
 
 #ifdef PLATFORM_WINDOWS
     #include <glad/gl.h>

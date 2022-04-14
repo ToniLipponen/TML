@@ -23,8 +23,7 @@ namespace tml
 
     void StorageBuffer::BufferData(const void* data, ui32 size) noexcept
     {
-        Bind();
-        GL_CALL(glad_glBufferData(GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_READ));
+        GL_CALL(glad_glNamedBufferData(m_id, size, data, GL_DYNAMIC_COPY));
     }
 
     void StorageBuffer::UpdateData(const void *data, ui32 bytes) noexcept

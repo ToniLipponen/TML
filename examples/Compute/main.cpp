@@ -112,7 +112,7 @@ int main()
         shader.Bind();
 
         /// Update storage buffer & connect it to the compute shader.
-        shaderData.BufferData(circles.data(), circles.size() * sizeof(PhysicsCircle));
+        shaderData.UpdateData(circles.data(), circles.size() * sizeof(PhysicsCircle));
         shader.ConnectBuffer("myBuffer", 1, shaderData);
 
         /// Set uniforms.
