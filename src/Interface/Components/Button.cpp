@@ -64,7 +64,6 @@ Button::Button(const std::string& text, i32 x, i32 y, ui32 w, ui32 h, const UIFu
     });
 }
 
-
 void Button::SetText(const std::string &str)
 {
     m_text.SetString(str);

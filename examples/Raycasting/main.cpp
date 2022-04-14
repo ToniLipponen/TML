@@ -68,10 +68,10 @@ int main()
                     window.Close();
                     break;
                 case tml::Event::MouseMoved:
-                    mousePos = Vector2f(event.mouseMove.x, event.mouseMove.y);
+                    mousePos = Vector2f(event.pos.x, event.pos.y);
                     break;
                 case tml::Event::WindowResized:
-                    scene.rects.at(0) = Rectangle(0,0, event.size.x, event.size.y);
+                    scene.rects.at(0) = Rectangle(0,0, event.size.w, event.size.h);
                     break;
                 default:break;
             }
