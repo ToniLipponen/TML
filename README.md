@@ -4,7 +4,7 @@
 [![Build on linux](https://github.com/ToniLipponen/TML/actions/workflows/build_linux.yml/badge.svg?branch=master)](https://github.com/ToniLipponen/TML/actions/workflows/build_linux.yml)
 [![Build on windows](https://github.com/ToniLipponen/TML/actions/workflows/build_windows.yml/badge.svg?branch=master)](https://github.com/ToniLipponen/TML/actions/workflows/build_windows.yml)
 
-TML is a simple library for making games and applications. It provides simple interfaces for window creation, graphics rendering, audio playback and keyboard/mouse input. 
+TML is a simple library for making games and applications. It provides interfaces for window creation, graphics rendering, audio playback and keyboard/mouse/controller input. 
 
 # Supported platforms
 - <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Unofficial_Windows_logo_variant_-_2002–2012_%28Multicolored%29.svg/1161px-Unofficial_Windows_logo_variant_-_2002–2012_%28Multicolored%29.svg.png" width=14 height=14 alt=""> Windows
@@ -17,7 +17,7 @@ Currently, I have no way of supporting macOS.
 If you wish to build the project from source, there are some instructions in [BUILDING.md](BUILDING.md)
 
 # Using
-Currently, there are no API documentation or tutorials on how to use this library. There are some very simple examples in the [examples](examples) directory. Once this project is a bit more matured, I will take the time to document the API and make some tutorials.
+Currently, there is no API documentation or tutorials on how to use this library. There are some very simple examples in the [examples](examples) directory. Once this project is a bit more matured, I will take the time to document the API and make some tutorials.
 
 ### Basic example
     
@@ -48,14 +48,7 @@ int main()
 ```
 
 # Contributing
-If you're interested in this project, you can help in a couple of different ways:
-
-1. Contribute code to the library.
-2. Review code.
-3. Report bugs and other issues.
-4. Create feature requests.
-5. Create example applications.
-6. Testing.
+If you're interested in this project, you can help by testing, contributing code, reporting bugs or other issues, and suggesting new features or changes.
 
 # License
 This project is licensed under the [Zlib License](LICENSE). External libraries used by TML are also distributed under very permissive licenses (See below). This means you don't have to worry about licensing, when developing software using TML.
