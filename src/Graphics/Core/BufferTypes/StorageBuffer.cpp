@@ -69,15 +69,15 @@ namespace tml
     {
     }
 
-    void StorageBuffer::BufferData(const void* data, ui32 size) noexcept
+    void StorageBuffer::BufferData(const void* data, ui32 size) const noexcept
     {
     }
 
-    void StorageBuffer::UpdateData(const void *data, ui32 bytes) noexcept
+    void StorageBuffer::UpdateData(const void *data, ui32 bytes) const noexcept
     {
     }
 
-    void StorageBuffer::RetrieveData(void *data, ui32 bytes) noexcept
+    void StorageBuffer::RetrieveData(void *data, ui32 bytes) const noexcept
     {
     }
 

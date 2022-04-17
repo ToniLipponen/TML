@@ -96,8 +96,8 @@ namespace tml
         Text    m_text;
         Texture m_circleTexture;
 
-        constexpr static ui32 s_maxVertexCount = 1000000;
-        constexpr static ui32 s_maxIndexCount = s_maxVertexCount * 1.5;
+        constexpr static ui32 s_maxVertexCount = 10000;
+        constexpr static ui32 s_maxIndexCount = s_maxVertexCount * 4;
         i32 m_maxTextureCount = 8;
         std::vector<ui32> m_textures;
     };

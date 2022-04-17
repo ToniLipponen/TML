@@ -33,6 +33,14 @@ namespace tml
 
     void VertexBuffer::BufferData(const void* data, ui32 vertexSize, ui32 vertexCount) noexcept
     {
+        Bind();
+
+        if(m_mappedPtr)
+        {
+            GL_CALL(glad_glFlushMappedBufferRange(GL_ARRAY_BUFFER, 0, m_dataSize));
+            GL_CALL(glad_glUnmapBuffer(GL_ARRAY_BUFFER));
+        }
+
         m_capacity = vertexSize * vertexCount;
 
         if(data)
@@ -46,15 +54,8 @@ namespace tml
             m_dataSize = 0;
         }
 
-        Bind();
-
-        if(m_mappedPtr)
-        {
-            GL_CALL(glad_glUnmapBuffer(GL_ARRAY_BUFFER));
-        }
-
-        GL_CALL(glad_glBufferData(GL_ARRAY_BUFFER, m_capacity, data, GL_DYNAMIC_DRAW));
-        m_mappedPtr = GL_CALL(glad_glMapBufferRange(GL_ARRAY_BUFFER, 0, m_capacity, GL_MAP_WRITE_BIT));
+        GL_CALL(glad_glBufferData(GL_ARRAY_BUFFER, m_capacity, data, GL_STATIC_DRAW));
+        m_mappedPtr = GL_CALL(glad_glMapBufferRange(GL_ARRAY_BUFFER, 0, m_capacity, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT | GL_MAP_FLUSH_EXPLICIT_BIT));
 
         Unbind();
     }

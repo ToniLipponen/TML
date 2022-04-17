@@ -33,6 +33,14 @@ namespace tml
 
     void IndexBuffer::BufferData(const ui32* data, ui32 elements) noexcept
     {
+        Bind();
+
+        if(m_mappedPtr)
+        {
+            GL_CALL(glad_glFlushMappedBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, m_elements*4));
+            GL_CALL(glad_glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER));
+        }
+
         m_capacity = elements;
 
         if(data)
@@ -40,15 +48,8 @@ namespace tml
         else
             m_elements = 0;
 
-        Bind();
-
-        if(m_mappedPtr)
-        {
-            GL_CALL(glad_glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER));
-        }
-
-        GL_CALL(glad_glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements * 4, data, GL_DYNAMIC_DRAW));
-        m_mappedPtr = GL_CALL(glad_glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, elements * 4, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT));
+        GL_CALL(glad_glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements * 4, data, GL_STATIC_DRAW));
+        m_mappedPtr = GL_CALL(glad_glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, elements * 4, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT | GL_MAP_FLUSH_EXPLICIT_BIT));
 
         Unbind();
     }

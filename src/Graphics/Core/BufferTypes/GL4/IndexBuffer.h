@@ -23,30 +23,32 @@ namespace tml
 
     void IndexBuffer::Bind() const noexcept
     {
-        GL_CALL(glad_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id));
+
     }
 
     void IndexBuffer::Unbind() const noexcept
     {
-        GL_CALL(glad_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+
     }
 
     void IndexBuffer::BufferData(const ui32* data, ui32 elements) noexcept
     {
+        if(m_mappedPtr)
+        {
+            GL_CALL(glad_glFlushMappedNamedBufferRange(m_id, 0, m_elements*4));
+            GL_CALL(glad_glUnmapNamedBuffer(m_id));
+        }
+
         m_capacity = elements;
+        const auto size = elements * 4;
 
         if(data)
             m_elements = elements;
         else
             m_elements = 0;
 
-        if(m_mappedPtr)
-        {
-            GL_CALL(glad_glUnmapNamedBuffer(m_id));
-        }
-
-        GL_CALL(glad_glNamedBufferData(m_id, m_capacity * 4, data, GL_STREAM_DRAW));
-        m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, MAP_RANGE_FLAGS | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT));
+        GL_CALL(glad_glNamedBufferData(m_id, size, data, GL_STATIC_DRAW));
+        m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, size, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT | GL_MAP_FLUSH_EXPLICIT_BIT));
     }
 
     void IndexBuffer::PushData(const ui32* data, ui32 elements) noexcept

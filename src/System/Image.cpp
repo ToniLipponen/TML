@@ -132,7 +132,9 @@ namespace tml
 
     bool Image::LoadFromData(const ui8 *data, ui32 dataSize) noexcept
     {
-        delete[] m_data; m_data = nullptr;
+        delete[] m_data;
+        m_data = nullptr;
+
         m_data = stbi_load_from_memory(data, static_cast<int>(dataSize), &m_width, &m_height, &m_Bpp, 0);
         bool returnValue = m_data != nullptr;
 

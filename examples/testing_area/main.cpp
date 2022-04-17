@@ -23,6 +23,8 @@ int main()
 
     Clock clock;
     double dt;
+    uint64_t samples = 0;
+    double accumulatedDelta = 0;
 
     while(window.IsOpen())
     {
@@ -39,7 +41,10 @@ int main()
         window.Clear();
         layout.Draw(window);
         window.DrawText("FPS: " + std::to_string(int(1.0 / dt)), {10, 10}, 20, Color::Black);
+        window.DrawText("Avg: " + std::to_string(int(1.0 / (accumulatedDelta / samples))), {100, 10}, 20, Color::Black);
         window.Display();
+        samples++;
+        accumulatedDelta += dt;
     }
     return 0;
 }
