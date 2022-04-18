@@ -11,9 +11,8 @@ namespace tml
         }
 
         HorizontalLayout::HorizontalLayout(int32_t x, int32_t y, uint32_t w, uint32_t h)
+        : BaseComponent(x,y,w,h)
         {
-            m_pos = Vector2i(x,y);
-            m_size = Vector2i(w,h);
             m_hSizePolicy = Expand;
             m_vSizePolicy = Expand;
             AddListener("ChildAdded", [&](BaseComponent* c, Event& e)
@@ -35,11 +34,15 @@ namespace tml
             });
         }
 
+        void HorizontalLayout::pDraw(Renderer& renderer)
+        {
+            renderer.DrawRect(m_pos, m_size, m_pColor);
+        }
+
         void HorizontalLayout::ScaleChildren()
         {
             std::vector<BaseComponent*> expandThese;
-            std::vector<BaseComponent*> clampThese;
-            float fixedSize = 0, clampSize = 0;
+            float fixedSize = 0;
             for(auto* item : m_children)
             {
                 const auto itemSize = item->GetSize();
@@ -49,12 +52,10 @@ namespace tml
                     case Fixed:
                         fixedSize += itemSize.x + m_padding.x;
                         break;
-                    case Clamp:
-                        clampSize += itemSize.x + m_padding.x;
-                        clampThese.push_back(item);
+                    case Expand:
+                        expandThese.push_back(item);
                         break;
                     default:
-                        expandThese.push_back(item);
                         break;
                 }
                 switch(item->GetVerticalSizePolicy())
@@ -74,21 +75,6 @@ namespace tml
             }
             float widthMinusFixedWidth = Math::Max<float>(m_size.x - fixedSize, 0);
             float expandSize = widthMinusFixedWidth; /// How much size there is to expand children.
-
-            if(!clampThese.empty())
-            {
-                auto multiplier = Math::Max<float>(widthMinusFixedWidth / clampSize, 0);
-                for(auto i : clampThese)
-                {
-                    auto iSize = i->GetSize();
-                    auto iOldSize = i->GetOriginalSize();
-                    auto scale = Math::Clamp<float>(multiplier, 0, iOldSize.x / float(iSize.x));
-                    auto iNewSize = Vector2f(iSize.x * scale, iSize.y);
-                    i->SetSize(iNewSize);
-
-                    expandSize -= iNewSize.x;
-                }
-            }
 
             auto expandedChildren = expandThese.size();
             if(expandedChildren != 0)

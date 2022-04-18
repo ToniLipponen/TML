@@ -15,7 +15,7 @@ namespace tml
         : BaseComponent(x,y,w,h)
         {
             m_pColor = 0xc7c7c7ff;
-            m_hSizePolicy = m_vSizePolicy = Expand;
+            m_hSizePolicy = m_vSizePolicy = Fixed;
             SetCallbacks();
         }
 
@@ -23,14 +23,16 @@ namespace tml
         {
             window.DrawTexture(m_surface.GetTexture(), m_pos, m_size);
             window.DrawGrid(m_pos, m_size, 1,1, m_pColor);
-//            m_surface.
         }
 
         void Viewport::SetCallbacks()
         {
             m_surface.Create(m_size.x, m_size.y);
             m_surface.SetClearColor(Color::Black);
-            // No callbacks
+            AddListener("Resized", [&](BaseComponent* c, Event& e)
+            {
+                m_surface.Create(c->GetSize().x, c->GetSize().y);
+            });
         }
     }
 }

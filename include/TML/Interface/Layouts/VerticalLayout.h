@@ -12,7 +12,7 @@ namespace tml
             VerticalLayout(int32_t x, int32_t y, uint32_t w, uint32_t h);
 
         private:
-            void pDraw(Renderer& renderer) override {};
+            void pDraw(Renderer& renderer) override;
             void ScaleChildren();
             void AlignChildren();
         };

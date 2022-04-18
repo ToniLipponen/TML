@@ -16,13 +16,13 @@ namespace tml
                 m_pos = Vector2i(x,y);
                 m_size = Vector2i(size, thickness);
                 m_vSizePolicy = Fixed;
-                m_hSizePolicy = Expand;
+                m_hSizePolicy = Fixed;
             }
             else
             {
                 m_pos = Vector2i(x,y);
                 m_size = Vector2i(thickness, size);
-                m_vSizePolicy = Expand;
+                m_vSizePolicy = Fixed;
                 m_hSizePolicy = Fixed;
             }
 

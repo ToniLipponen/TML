@@ -30,10 +30,6 @@ namespace tml
     void RenderWindow::Display()
     {
         EndBatch();
-
-        /// Fixes an issue with GLFW, where the screen remains black even when swapping buffers.
-        /// This only seems to be an issue on some platforms.
-        GL_CALL(glad_glFlush());
         Window::Display();
     }
 

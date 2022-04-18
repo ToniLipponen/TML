@@ -29,36 +29,32 @@ namespace tml
             });
         }
 
+        void VerticalLayout::pDraw(Renderer& renderer)
+        {
+            renderer.DrawRect(m_pos, m_size, m_pColor);
+        }
+
         void VerticalLayout::ScaleChildren()
         {
-            std::vector<BaseComponent*> expandThese, clampThese;
+            std::vector<BaseComponent*> expandThese;
             float height = 0;
-            for(auto& item : m_children)
+            for(auto* item : m_children)
             {
                 const auto itemSize = item->GetSize();
-                const auto originalSize = item->GetOriginalSize();
+
                 switch(item->GetVerticalSizePolicy())
                 {
-                    case Fixed:
-                        height += itemSize.y + m_padding.y;
-                        break;
-                    case Clamp:
-                        clampThese.push_back(item);
+                    case Expand:
+                        expandThese.push_back(item);
                         break;
                     default: /// Expand
-                        expandThese.push_back(item);
+                        height += itemSize.y + m_padding.y;
                         break;
                 }
                 switch(item->GetHorizontalSizePolicy())
                 {
                     case Expand:
                         item->SetSize({m_size.x, itemSize.y});
-                        break;
-                    case Clamp:
-                        if(itemSize.x > m_size.x)
-                            item->SetSize({m_size.x, itemSize.y});
-                        else if(itemSize.x < originalSize.x)
-                            item->SetSize({Math::Min<int32_t>(originalSize.x, m_size.x), itemSize.y});
                         break;
                     default:
                         break;
@@ -67,21 +63,6 @@ namespace tml
 
             float heightMinusFixedHeight = Math::Max<float>(m_size.y - height, 0);
             float expandSize = heightMinusFixedHeight;
-
-            if(!clampThese.empty())
-            {
-                auto multiplier = Math::Max<float>(heightMinusFixedHeight / height, 0);
-                for(auto i : clampThese)
-                {
-                    auto iSize = i->GetSize();
-                    auto iOldSize = i->GetOriginalSize();
-                    auto scale = Math::Clamp<float>(multiplier, 0, iOldSize.y / float(iSize.y));
-                    auto iNewSize = Vector2i(iSize.x, iSize.y * scale);
-                    i->SetSize(iNewSize);
-
-                    expandSize -= iNewSize.y;
-                }
-            }
 
             const auto expandedChildren = expandThese.size();
             if(expandedChildren != 0)

@@ -13,7 +13,6 @@ Button::Button(const std::string& text, int32_t x, int32_t y, uint32_t w, uint32
     {
         m_text.SetSize(20);
         m_size = m_text.GetDimensions() + Vector2f(10, 0);
-        m_originalSize = m_size;
     }
     else
     {
