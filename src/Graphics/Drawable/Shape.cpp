@@ -5,28 +5,28 @@
 
 namespace tml
 {
-    ui32 Shape::AddPoint(const Vector2f& position) noexcept
+    uint32_t Shape::AddPoint(const Vector2f& position) noexcept
     {
         m_points.push_back({position, m_color});
         m_updated = true;
         return m_points.size();
     }
 
-    ui32 Shape::AddPoint(const Vector2f& position, const Color& color) noexcept
+    uint32_t Shape::AddPoint(const Vector2f& position, const Color& color) noexcept
     {
         m_points.push_back({position, color});
         m_updated = true;
         return m_points.size();
     }
 
-    ui32 Shape::AddPoint(const ShapePoint& point) noexcept
+    uint32_t Shape::AddPoint(const ShapePoint& point) noexcept
     {
         m_points.push_back(point);
         m_updated = true;
         return m_points.size();
     }
 
-    bool Shape::SetPoint(ui32 index, const Vector2f& position) noexcept
+    bool Shape::SetPoint(uint32_t index, const Vector2f& position) noexcept
     {
         if(index < GetPointCount())
         {
@@ -37,7 +37,7 @@ namespace tml
         return false;
     }
 
-    bool Shape::SetPoint(ui32 index, const Vector2f& position, const Color& color) noexcept
+    bool Shape::SetPoint(uint32_t index, const Vector2f& position, const Color& color) noexcept
     {
         if(index < GetPointCount())
         {
@@ -48,7 +48,7 @@ namespace tml
         return false;
     }
 
-    bool Shape::SetPoint(ui32 index, const ShapePoint& point)
+    bool Shape::SetPoint(uint32_t index, const ShapePoint& point)
     {
         if(index < GetPointCount())
         {
@@ -59,7 +59,7 @@ namespace tml
         return false;
     }
 
-    bool Shape::RemovePoint(ui32 index) noexcept
+    bool Shape::RemovePoint(uint32_t index) noexcept
     {
         if(index < GetPointCount())
         {
@@ -81,7 +81,7 @@ namespace tml
         return false;
     }
 
-    ui32 Shape::GetPointCount() const noexcept
+    uint32_t Shape::GetPointCount() const noexcept
     {
         return m_points.size();
     }
@@ -111,10 +111,10 @@ namespace tml
                 }
             }
 
-            i64 elements = static_cast<i64>(m_points.size());
-            elements = Math::Max<i64>(elements-2, 0);
+            auto elements = static_cast<int64_t>(m_points.size());
+            elements = Math::Max<int64_t>(elements-2, 0);
 
-            for(i64 i = 0; i < elements; ++i)
+            for(size_t i = 0; i < elements; ++i)
             {
                 m_indexData.push_back(0);
                 m_indexData.push_back(i+1);

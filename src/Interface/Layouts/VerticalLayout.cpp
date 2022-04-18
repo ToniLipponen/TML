@@ -4,7 +4,7 @@ namespace tml
 {
     namespace Interface
     {
-        VerticalLayout::VerticalLayout(i32 x, i32 y, ui32 w, ui32 h)
+        VerticalLayout::VerticalLayout(int32_t x, int32_t y, uint32_t w, uint32_t h)
         : BaseComponent(x,y,w,h)
         {
             m_hSizePolicy = Expand;
@@ -58,7 +58,7 @@ namespace tml
                         if(itemSize.x > m_size.x)
                             item->SetSize({m_size.x, itemSize.y});
                         else if(itemSize.x < originalSize.x)
-                            item->SetSize({Math::Min<i32>(originalSize.x, m_size.x), itemSize.y});
+                            item->SetSize({Math::Min<int32_t>(originalSize.x, m_size.x), itemSize.y});
                         break;
                     default:
                         break;

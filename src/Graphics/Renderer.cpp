@@ -24,15 +24,15 @@
 
 namespace tml
 {
-    static constexpr void MakeCircle(Image& image, ui32 resolution) noexcept
+    static constexpr void MakeCircle(Image& image, uint32_t resolution) noexcept
     {
         auto* buffer = image.GetData();
         const auto radius = resolution / 2.0;
         const auto center = Vector2f(radius);
 
-        for(ui32 i = 0; i < resolution; ++i)
+        for(uint32_t i = 0; i < resolution; ++i)
         {
-            for(ui32 j = 0; j < resolution; ++j)
+            for(uint32_t j = 0; j < resolution; ++j)
             {
                 const double dist = Math::Distance(Vector2f(j, i), center);
                 const double d = dist / radius;
@@ -148,7 +148,7 @@ namespace tml
 
     void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, float thickness, Color color, bool rounded) noexcept
     {
-        ui32 currentElements = m_vertexVector->size();
+        uint32_t currentElements = m_vertexVector->size();
         if(currentElements >= s_maxVertexCount - 4)
         {
             EndBatch();
@@ -197,9 +197,9 @@ namespace tml
             auto ry = Vector2f{0.f, roundness};
 
             auto hex = color.Hex();
-            const ui32 slot = PushTexture(m_circleTexture);
+            const uint32_t slot = PushTexture(m_circleTexture);
             std::vector<Vertex> cornerVertices;
-            std::vector<ui32> cornerIndices = {
+            std::vector<uint32_t> cornerIndices = {
                      0, 1, 2,    1, 3, 2,
                      4, 5, 6,    5, 7, 6,
                      8, 9,10,    9,11,10,
@@ -211,7 +211,7 @@ namespace tml
             const float cos_r = std::cos(Math::DegToRad(rotation));
             const float sin_r = std::sin(Math::DegToRad(rotation));
 
-            ui32 typeAndTex = slot | Vertex::TEXT;
+            uint32_t typeAndTex = slot | Vertex::TEXT;
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos,       cos_r, sin_r), {0.0f,0.0f}, hex, typeAndTex});
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+rx,    cos_r, sin_r), {0.5f,0.0f}, hex, typeAndTex});
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+ry,    cos_r, sin_r), {0.0f,0.5f}, hex, typeAndTex});
@@ -285,15 +285,15 @@ namespace tml
         }
     }
 
-    void Renderer::DrawGrid(const Vector2f& top_left, const Vector2f& size, ui32 rows, ui32 columns, const Color& color,
+    void Renderer::DrawGrid(const Vector2f& top_left, const Vector2f& size, uint32_t rows, uint32_t columns, const Color& color,
                             float thickness, bool rounded) noexcept
     {
-        for(ui32 i = 0; i <= rows; ++i)
+        for(uint32_t i = 0; i <= rows; ++i)
         {
             DrawLine(top_left + Vector2f{0.f,    (size.y / rows) * i},
                      top_left + Vector2f{size.x, (size.y / rows) * i}, thickness, color, ((i == 0) || (i == rows)) && rounded);
         }
-        for(ui32 i = 0; i <= columns; ++i)
+        for(uint32_t i = 0; i <= columns; ++i)
         {
             DrawLine(top_left + Vector2f{(size.x / columns) * i, 0.f},
                      top_left + Vector2f{(size.x / columns) * i, size.y}, thickness, color, false);
@@ -319,7 +319,7 @@ namespace tml
         Draw(m_text);
     }
 
-    void Renderer::PushVertexData(const std::vector<Vertex>& vertices, const std::vector<ui32>& indices) noexcept
+    void Renderer::PushVertexData(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices) noexcept
     {
         if(s_maxVertexCount <= m_vertexVector->size() + vertices.size())
         {
@@ -331,23 +331,23 @@ namespace tml
             m_indexVector->push_back(size + i);
     }
 
-    void Renderer::PushVertexData(std::vector<Vertex>& vertices, const std::vector<ui32>& indices, const Texture& tex) noexcept
+    void Renderer::PushVertexData(std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const Texture& tex) noexcept
     {
-        const ui32 slot = PushTexture(tex);
+        const uint32_t slot = PushTexture(tex);
         for(Vertex& i : vertices)
             i.texAndType = slot | i.texAndType;
         PushVertexData(vertices, indices);
     }
 
     /// Finds a parking spot for the texture.
-    ui32 Renderer::PushTexture(const Texture &texture) noexcept
+    uint32_t Renderer::PushTexture(const Texture &texture) noexcept
     {
         if(m_textures.size() >= (size_t)m_maxTextureCount)
             EndBatch();
 
         bool alreadyInMTextures = false;
         const auto id = texture.GetID();
-        ui32 index = 0;
+        uint32_t index = 0;
 
         for(const auto i : m_textures)
         {
@@ -377,16 +377,16 @@ namespace tml
                             const Vector2f& tl,
                             const Vector2f& br) noexcept
     {
-        ui32 currentElements = m_vertexVector->size();
+        uint32_t currentElements = m_vertexVector->size();
         if(currentElements >= s_maxVertexCount)
             EndBatch();
 
-        const ui32 tex = PushTexture(texture);
-        const ui32 hex = col.Hex();
+        const uint32_t tex = PushTexture(texture);
+        const uint32_t hex = col.Hex();
 
         currentElements = m_vertexVector->size(); // PushTexture() might have ended the last batch, so we need to get the m_vertexVector->size() again
 
-        const ui32 typeAndTex = tex | type;
+        const uint32_t typeAndTex = tex | type;
         if(rotation != 0)
         {
             const Vector2f origin = (pos + pos + size) * 0.5f;

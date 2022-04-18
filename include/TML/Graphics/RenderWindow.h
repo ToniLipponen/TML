@@ -7,13 +7,13 @@ namespace tml
     class RenderWindow : public Window, public RenderTarget
     {
     public:
-        enum Settings : ui32
+        enum Settings : uint32_t
         {
             DontAutoResizeView      = (1 << 16),
             DontAutoResizeViewport  = (1 << 17)
         };
     public:
-        RenderWindow(ui32 w, ui32 h, const std::string& title, ui32 settings = Window::Settings::None, const Window* shared = nullptr);
+        RenderWindow(uint32_t w, uint32_t h, const std::string& title, uint32_t settings = Window::Settings::None, const Window* shared = nullptr);
         void Clear() noexcept override;
         void Display() override;
         void Screenshot(Image& image);

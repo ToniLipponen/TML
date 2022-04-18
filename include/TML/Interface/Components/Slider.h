@@ -9,7 +9,7 @@ namespace tml
         class Slider : public BaseComponent
         {
         public:
-            Slider(i32 x, i32 y, ui32 size, ui32 thickness = 20,
+            Slider(int32_t x, int32_t y, uint32_t size, uint32_t thickness = 20,
                    float min = 0.0f, float max = 1.0f);
             void SetValue(float value);
             inline float GetValue() const { return m_value; }

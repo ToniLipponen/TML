@@ -9,7 +9,7 @@ namespace tml
         class Button : public BaseComponent
         {
         public:
-            explicit Button(const std::string& text, i32 x = 0, i32 y = 0, ui32 w = 0, ui32 h = 0,
+            explicit Button(const std::string& text, int32_t x = 0, int32_t y = 0, uint32_t w = 0, uint32_t h = 0,
                             const UIFunc& onClick = nullptr, bool expand = false);
             void SetText(const std::string& str);
             void SetTextSize(float s) { m_text.SetSize(s);}

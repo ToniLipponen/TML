@@ -9,7 +9,7 @@ namespace tml
         class TextInput : public BaseComponent
         {
         public:
-            TextInput(i32 x, i32 y, i32 width, i32 height = 30);
+            TextInput(int32_t x, int32_t y, uint32_t width, uint32_t height = 30);
             void SetValue(const std::string& string);
             inline constexpr const String& GetValue() const noexcept { return m_text.GetString(); }
         private:
@@ -17,7 +17,7 @@ namespace tml
             void pDraw(Renderer &renderer) override;
             Text m_text;
             String m_value;
-            i32 m_cursorIndex = 0;
+            int32_t m_cursorIndex = 0;
             double m_blinkTimer = 0;
             bool m_showLine = true;
             float m_cursorPos = 0;

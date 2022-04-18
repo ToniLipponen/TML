@@ -3,4 +3,3 @@ project(tml-graphics)
 
 file(GLOB_RECURSE SRC_FILES ./*.cpp)
 add_library(tml-graphics ${SRC_FILES})
-set_target_properties(tml-graphics PROPERTIES VERSION ${TML_VERSION} SOVERSION ${TML_VERSION})

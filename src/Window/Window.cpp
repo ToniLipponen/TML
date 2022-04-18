@@ -35,7 +35,7 @@ namespace tml
         }
     }
 
-    Window::Window(i32 w, i32 h, const std::string& title, ui32 settings, const Window* shared)
+    Window::Window(int32_t w, int32_t h, const std::string& title, uint32_t settings, const Window* shared)
     : m_handle(nullptr)
     {
         if(!s_glfwInitialized)
@@ -59,7 +59,7 @@ namespace tml
             glfwSwapBuffers(static_cast<GLFWwindow*>(m_handle));
     }
 
-    bool Window::Create(i32 w, i32 h, const std::string& title, ui32 settings, const Window* shared) noexcept
+    bool Window::Create(int32_t w, int32_t h, const std::string& title, uint32_t settings, const Window* shared) noexcept
     {
         if(settings & NoClient)
         {
@@ -149,22 +149,22 @@ namespace tml
         return m_handle;
     }
 
-    i32 Window::GetWidth() const noexcept
+    int32_t Window::GetWidth() const noexcept
     {
         return m_size.x;
     }
 
-    i32 Window::GetHeight() const noexcept
+    int32_t Window::GetHeight() const noexcept
     {
         return m_size.y;
     }
 
-    i32 Window::GetX() const noexcept
+    int32_t Window::GetX() const noexcept
     {
         return m_pos.x;
     }
 
-    i32 Window::GetY() const noexcept
+    int32_t Window::GetY() const noexcept
     {
         return m_pos.y;
     }
@@ -193,12 +193,12 @@ namespace tml
         return m_size;
     }
 
-    void Window::SetPosition(i32 x, i32 y) noexcept
+    void Window::SetPosition(int32_t x, int32_t y) noexcept
     {
         glfwSetWindowPos(static_cast<GLFWwindow*>(m_handle), x, y);
     }
 
-    void Window::SetSize(ui32 w, ui32 h) noexcept
+    void Window::SetSize(uint32_t w, uint32_t h) noexcept
     {
         glfwRestoreWindow(static_cast<GLFWwindow*>(m_handle));
         glfwSetWindowSize(static_cast<GLFWwindow*>(m_handle), static_cast<int>(w), static_cast<int>(h));
@@ -252,7 +252,7 @@ namespace tml
         glfwSetInputMode(static_cast<GLFWwindow*>(m_handle), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
 
-    void Window::SetAspectRatio(i32 x, i32 y) noexcept
+    void Window::SetAspectRatio(int32_t x, int32_t y) noexcept
     {
         glfwSetWindowAspectRatio(static_cast<GLFWwindow*>(m_handle), x, y);
     }
@@ -262,7 +262,7 @@ namespace tml
         glfwSetWindowAspectRatio(static_cast<GLFWwindow*>(m_handle), ratio.x, ratio.y);
     }
 
-    void Window::SetSizeLimits(i32 minWidth, i32 minHeight, i32 maxWidth, i32 maxHeight) noexcept
+    void Window::SetSizeLimits(int32_t minWidth, int32_t minHeight, int32_t maxWidth, int32_t maxHeight) noexcept
     {
         glfwSetWindowSizeLimits(static_cast<GLFWwindow*>(m_handle), minWidth, minHeight, maxWidth, maxHeight);
     }
@@ -287,21 +287,23 @@ namespace tml
         glfwRestoreWindow(static_cast<GLFWwindow*>(m_handle));
     }
 
-    void Window::SetFullscreen(bool full, i32 user_w, i32 user_h) noexcept
+    void Window::SetFullscreen(bool full, int32_t user_w, int32_t user_h) noexcept
     {
         int w = 0, h = 0, x = 0, y = 0;
         auto monitor = glfwGetPrimaryMonitor();
         glfwGetMonitorWorkarea(monitor, &x, &y, &w, &h);
 
-        w = (user_w > 0) ? Math::Min<i32>(user_w, w) : w;
-        h = (user_h > 0) ? Math::Min<i32>(user_h, h) : h;
+        w = (user_w > 0) ? Math::Min<int32_t>(user_w, w) : w;
+        h = (user_h > 0) ? Math::Min<int32_t>(user_h, h) : h;
 
         glfwSetWindowMonitor(static_cast<GLFWwindow*>(m_handle), full ? monitor : nullptr, x, y, w, h, GLFW_DONT_CARE);
     }
 
-    void Window::SetActive() const noexcept
+    void Window::SetActive(bool active) const noexcept
     {
-        if(m_handle != glfwGetCurrentContext())
+        if(!active)
+            glfwMakeContextCurrent(nullptr);
+        else if(m_handle != glfwGetCurrentContext())
             glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_handle));
     }
 

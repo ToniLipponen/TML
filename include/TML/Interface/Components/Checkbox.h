@@ -8,7 +8,7 @@ namespace tml
         class Checkbox : public BaseComponent
         {
         public:
-            Checkbox(i32 x, i32 y, ui32 size, bool checked = false);
+            Checkbox(int32_t x, int32_t y, uint32_t size, bool checked = false);
             bool GetValue() const { return m_value; }
         private:
             void pDraw(Renderer &renderer) override;

@@ -9,7 +9,7 @@ namespace tml
         GL_CALL(glad_glCreateBuffers(1, &m_id));
     }
 
-    IndexBuffer::IndexBuffer(const ui32* data, ui32 elements) noexcept
+    IndexBuffer::IndexBuffer(const uint32_t* data, uint32_t elements) noexcept
     : m_id(0), m_elements(0), m_capacity(elements)
     {
         GL_CALL(glad_glCreateBuffers(1, &m_id));
@@ -31,7 +31,7 @@ namespace tml
 
     }
 
-    void IndexBuffer::BufferData(const ui32* data, ui32 elements) noexcept
+    void IndexBuffer::BufferData(const uint32_t* data, uint32_t elements) noexcept
     {
         if(m_mappedPtr)
         {
@@ -51,12 +51,12 @@ namespace tml
         m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, size, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT | GL_MAP_FLUSH_EXPLICIT_BIT));
     }
 
-    void IndexBuffer::PushData(const ui32* data, ui32 elements) noexcept
+    void IndexBuffer::PushData(const uint32_t* data, uint32_t elements) noexcept
     {
         if(m_mappedPtr)
         {
-            const ui32 size = elements * sizeof(ui32);
-            auto dest = ((ui8 *) m_mappedPtr) + m_elements * sizeof(ui32);
+            const uint32_t size = elements * sizeof(uint32_t);
+            auto dest = ((uint8_t*) m_mappedPtr) + m_elements * sizeof(uint32_t);
             std::memcpy(dest, data, size);
             m_elements += elements;
         }

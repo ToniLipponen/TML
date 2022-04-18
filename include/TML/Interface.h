@@ -12,6 +12,5 @@
 #include <TML/Interface/Components/Spacer.h>
 #include <TML/Interface/Components/Menubar.h>
 #include <TML/Interface/Components/Viewport.h>
-
 #include <TML/Interface/Layouts/VerticalLayout.h>
 #include <TML/Interface/Layouts/HorizontalLayout.h>

@@ -9,17 +9,17 @@ namespace tml
         class Scrollbar : public BaseComponent
         {
         public:
-            Scrollbar(i32 x, i32 y, ui32 length, ui32 thickness = 20);
-            void SetRange(ui32 min, ui32 max) noexcept { m_min = min; m_max = max; }
+            Scrollbar(int32_t x, int32_t y, uint32_t length, uint32_t thickness = 20);
+            void SetRange(uint32_t min, uint32_t max) noexcept { m_min = min; m_max = max; }
             Vector2i GetRange() noexcept { return Vector2i(m_min, m_max); }
-            i32 GetValue() const noexcept { return i32(m_value); }
-            void SetValue(ui32 value);
+            int32_t GetValue() const noexcept { return int32_t(m_value); }
+            void SetValue(uint32_t value);
         private:
             void pDraw(Renderer &renderer) override;
 
-            i32 m_value = 0;
-            ui32 m_max = 1;
-            ui32 m_min = 0;
+            int32_t m_value = 0;
+            uint32_t m_max = 1;
+            uint32_t m_min = 0;
         };
 
         using HScrollbar = Scrollbar<Horizontal>;     // Vertical scrollbar.

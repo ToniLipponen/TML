@@ -1,6 +1,5 @@
 #pragma once
 #include <TML/System/Math/Vector2.h>
-#include <TML/Types.h>
 #include <vector>
 
 namespace tml
@@ -16,7 +15,7 @@ namespace tml
             };
             inline constexpr bool operator==(bool) const noexcept { return  intersects; }
             inline constexpr bool operator!=(bool) const noexcept { return !intersects; }
-            inline Info& operator[](ui32 index) noexcept { return points.at(index); }
+            inline Info& operator[](uint32_t index) noexcept { return points.at(index); }
 
             bool intersects = false;
             std::vector<Info> points;

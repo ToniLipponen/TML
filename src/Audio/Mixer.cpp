@@ -36,7 +36,7 @@ namespace tml
             {
                 if(sound.second->IsPlaying())
                 {
-                    const tml::ui32 frames = sound.second->ReadFrames(pOutputF32, frameCount);
+                    const uint32_t frames = sound.second->ReadFrames(pOutputF32, frameCount);
                     if(frames < frameCount)
                     {
                         sound.second->Stop();
@@ -45,7 +45,7 @@ namespace tml
                     }
                 }
             }
-            for(ui32 i = 0; i < frameCount*2; ++i)
+            for(uint32_t i = 0; i < frameCount*2; ++i)
                 pOutputF32[i] *= maDevice->masterVolumeFactor;
         }
     }
@@ -83,18 +83,18 @@ namespace tml
         reinterpret_cast<ma_device*>(m_outputDevice)->masterVolumeFactor = gain;
     }
 
-    void Mixer::AddSound(ui64 id, AudioType* sound) noexcept
+    void Mixer::AddSound(uint64_t id, AudioType* sound) noexcept
     {
-        m_sounds.insert(std::pair<ui32, AudioType*>(id, sound));
+        m_sounds.insert(std::pair<uint32_t, AudioType*>(id, sound));
     }
 
-    void Mixer::RemoveSound(ui64 id) noexcept
+    void Mixer::RemoveSound(uint64_t id) noexcept
     {
         if(m_sounds.find(id) != m_sounds.end())
             m_sounds.erase(id);
     }
 
-    ui64 Mixer::GetAudioID() noexcept
+    uint64_t Mixer::GetAudioID() noexcept
     {
         return m_soundCount++;
     }

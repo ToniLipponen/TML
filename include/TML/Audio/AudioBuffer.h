@@ -7,6 +7,11 @@ namespace tml
     class AudioBuffer
     {
     public:
+        AudioBuffer() = default;
+        explicit AudioBuffer(const String& filename);
+        AudioBuffer(const void* data, size_t bytes);
+        AudioBuffer(const float* samples, uint8_t channels, uint32_t rate, size_t samplesCount);
+
         AudioBuffer operator+(const AudioBuffer& rhs) const noexcept;
         AudioBuffer& operator+=(const AudioBuffer& rhs) noexcept;
 

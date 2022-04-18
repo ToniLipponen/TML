@@ -10,7 +10,12 @@ namespace tml
         LoadFromFile(filename);
     }
 
-    Sound::Sound(const float *data, ui8 channels, uint32_t rate, ui64 sampleCount)
+    Sound::Sound(const void* data, size_t bytes)
+    {
+        LoadFromData(data, bytes);
+    }
+
+    Sound::Sound(const float *data, uint8_t channels, uint32_t rate, size_t sampleCount)
     : m_buffer(std::make_shared<AudioBuffer>())
     {
         LoadFromMemory(data, channels, rate, sampleCount);
@@ -52,8 +57,8 @@ namespace tml
     bool Sound::LoadFromFile(const String& filename) noexcept
     {
         m_state = Stopped;
-        m_buffer = std::make_shared<AudioBuffer>();
-        m_valid = m_buffer->LoadFromFile(filename);
+        m_buffer = std::make_shared<AudioBuffer>(filename);
+        m_valid = !m_buffer->GetData().empty();
         m_frameCount = m_buffer->GetData().size();
         m_channels = m_buffer->m_channels;
         m_framesRead = 0;
@@ -61,11 +66,11 @@ namespace tml
         return m_valid;
     }
 
-    bool Sound::LoadFromData(const void *data, ui64 bytes) noexcept
+    bool Sound::LoadFromData(const void *data, size_t bytes) noexcept
     {
         m_state = Stopped;
-        m_buffer = std::make_shared<AudioBuffer>();
-        m_valid = m_buffer->LoadFromData(data, bytes);
+        m_buffer = std::make_shared<AudioBuffer>(data, bytes);
+        m_valid = !m_buffer->GetData().empty();
         m_frameCount = m_buffer->GetData().size();
         m_channels = m_buffer->m_channels;
         m_framesRead = 0;
@@ -73,11 +78,11 @@ namespace tml
         return m_valid;
     }
 
-    bool Sound::LoadFromMemory(const float *data, ui8 channels, uint32_t rate, ui64 sampleCount) noexcept
+    bool Sound::LoadFromMemory(const float *data, uint8_t channels, uint32_t rate, size_t sampleCount) noexcept
     {
         m_state = Stopped;
-        m_buffer = std::make_shared<AudioBuffer>();
-        m_valid = m_buffer->LoadFromMemory(data, channels, rate, sampleCount);
+        m_buffer = std::make_shared<AudioBuffer>(data, channels, rate, sampleCount);
+        m_valid = !m_buffer->GetData().empty();
         m_frameCount = m_buffer->GetData().size();
         m_framesRead = 0;
         m_channels = m_buffer->m_channels;
@@ -95,17 +100,17 @@ namespace tml
         m_buffer = buffer;
     }
 
-    ui32 Sound::ReadFrames(float *output, ui32 frameCount)
+    uint32_t Sound::ReadFrames(float *output, uint32_t frameCount)
     {
         if(m_buffer == nullptr)
             return 0;
 
-        const ui32 readFrames = Math::Clamp<ui32>(frameCount * m_channels, 0, m_frameCount - m_framesRead);
+        const uint32_t readFrames = Math::Clamp<uint32_t>(frameCount * m_channels, 0, m_frameCount - m_framesRead);
 
-        for(ui32 i = 0; i < readFrames; ++i)
+        for(uint32_t i = 0; i < readFrames; ++i)
             output[i] += m_buffer->GetData()[m_framesRead + i] * m_volume;
 
-        for(ui32 i = 0; i < readFrames; i += 2)
+        for(uint32_t i = 0; i < readFrames; i += 2)
         {
             if(m_balance > 0)
                 output[i] *= 1 - fabsf(m_balance);

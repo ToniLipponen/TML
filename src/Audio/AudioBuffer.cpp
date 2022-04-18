@@ -6,6 +6,22 @@
 
 namespace tml
 {
+
+    AudioBuffer::AudioBuffer(const String& filename)
+    {
+        LoadFromFile(filename);
+    }
+
+    AudioBuffer::AudioBuffer(const void* data, size_t bytes)
+    {
+        LoadFromData(data, bytes);
+    }
+
+    AudioBuffer::AudioBuffer(const float* samples, uint8_t channels, uint32_t rate, size_t samplesCount)
+    {
+        LoadFromMemory(samples, channels, rate, samplesCount);
+    }
+
     AudioBuffer AudioBuffer::operator+(const AudioBuffer &rhs) const noexcept
     {
         AudioBuffer newBuffer = *this;
@@ -34,7 +50,7 @@ namespace tml
         return returnValue;
     }
 
-    bool AudioBuffer::LoadFromData(const void *data, ui64 bytes) noexcept
+    bool AudioBuffer::LoadFromData(const void *data, size_t bytes) noexcept
     {
         static ma_decoder_config config = ma_decoder_config_init(ma_format_f32, 2, 48000);
         ma_decoder decoder;
@@ -58,7 +74,7 @@ namespace tml
         return returnResult;
     }
 
-    bool AudioBuffer::LoadFromMemory(const float *data, ui8 channels, uint32_t rate, size_t sampleCount) noexcept
+    bool AudioBuffer::LoadFromMemory(const float *data, uint8_t channels, uint32_t rate, size_t sampleCount) noexcept
     {
         if(data == nullptr || channels < 1 || rate == 0)
             return false;

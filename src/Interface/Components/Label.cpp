@@ -4,7 +4,7 @@ namespace tml
 {
     namespace Interface
     {
-        Label::Label(i32 x, i32 y, ui32 s, std::string str)
+        Label::Label(int32_t x, int32_t y, uint32_t s, std::string str)
         {
             m_pos.x = x;
             m_pos.y = y;

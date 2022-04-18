@@ -17,7 +17,7 @@ namespace tml
             m_state.Enabled = true;
         }
 
-        BaseComponent::BaseComponent(i32 x, i32 y, ui32 w, ui32 h)
+        BaseComponent::BaseComponent(int32_t x, int32_t y, uint32_t w, uint32_t h)
         : m_pColor(Color::White), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_pos(x,y), m_size(w,h), m_originalSize(w,h), m_parent(nullptr)
         {
             m_state.Enabled = true;
@@ -168,11 +168,11 @@ namespace tml
 
         BaseComponent* BaseComponent::FindComponent(const std::string& name)
         {
-            const ui64 hash = s_hash(name);
+            const uint64_t hash = s_hash(name);
             return FindComponent(hash);
         }
 
-        BaseComponent* BaseComponent::FindComponent(ui64 hash)
+        BaseComponent* BaseComponent::FindComponent(uint64_t hash)
         {
             if(m_children.empty())
                 return nullptr;
@@ -321,14 +321,14 @@ namespace tml
                 if(event.type == Event::EventType::WindowResized)
                 {
                     CallUIFunc("WindowResized", event);
-                    for(i64 i = m_processStack.size() - 1; i >= 0; --i)
+                    for(int64_t i = m_processStack.size() - 1; i >= 0; --i)
                     {
                         auto* item = m_processStack.at(i);
                         item->CallUIFunc("WindowResized", event);
                     }
                 }
 
-                for(i64 i = m_processStack.size() - 1; i >= 0; --i)
+                for(int64_t i = m_processStack.size() - 1; i >= 0; --i)
                 {
                     auto* item = m_processStack.at(i);
                     if(item->Enabled())
@@ -400,7 +400,7 @@ namespace tml
                 auto& processStack = component->GetRoot()->m_processStack;
                 if(!processStack.empty())
                 {
-                    for(i64 i = 0; i < processStack.size(); ++i)
+                    for(int64_t i = 0; i < processStack.size(); ++i)
                     {
                         if(processStack.at(i) == component)
                         {

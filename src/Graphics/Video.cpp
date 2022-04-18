@@ -57,7 +57,7 @@ namespace tml
         plm_set_loop(reinterpret_cast<plm_t*>(m_stream), static_cast<int>(loop));
     }
 
-    bool Video::Advance(f64 step) noexcept
+    bool Video::Advance(double step) noexcept
     {
         m_ended = static_cast<bool>(plm_has_ended(reinterpret_cast<plm_t*>(m_stream)));
         if((m_oneDividedByFrameRate < (m_timer += step)) && !m_ended)

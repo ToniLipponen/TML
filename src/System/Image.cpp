@@ -19,26 +19,26 @@ namespace tml
 
     }
 
-    Image::Image(i32 w, i32 h, i32 Bpp, const ui8* data) noexcept
-    : m_width(w), m_height(h), m_Bpp(Bpp), m_data(new ui8[w*h*Bpp])
+    Image::Image(int32_t w, int32_t h, int32_t Bpp, const uint8_t* data) noexcept
+    : m_width(w), m_height(h), m_Bpp(Bpp), m_data(new uint8_t[w*h*Bpp])
     {
         LoadFromMemory(w, h, Bpp, data);
     }
 
-    Image::Image(const ui8* data, ui32 s) noexcept
+    Image::Image(const uint8_t* data, uint32_t s) noexcept
     : m_width(0), m_height(0), m_Bpp(0), m_data(nullptr)
     {
         LoadFromData(data, s);
     }
 
-    Image::Image(const String& fileName, i32 w, i32 h) noexcept
+    Image::Image(const String& fileName, int32_t w, int32_t h) noexcept
     : m_width(0), m_height(0), m_Bpp(0), m_data(nullptr)
     {
         LoadFromFile(fileName, w, h);
     }
 
     Image::Image(const Image& image) noexcept
-    : m_width(image.m_width), m_height(image.m_height), m_Bpp(image.m_Bpp), m_data(new ui8[m_width*m_height*m_Bpp])
+    : m_width(image.m_width), m_height(image.m_height), m_Bpp(image.m_Bpp), m_data(new uint8_t[m_width*m_height*m_Bpp])
     {
         if(image.m_data)
             std::memcpy(m_data, image.m_data, m_width*m_height*m_Bpp);
@@ -65,7 +65,7 @@ namespace tml
         this->m_Bpp = rhs.m_Bpp;
 
         delete[] m_data;
-        m_data = new ui8[m_width * m_height * m_Bpp];
+        m_data = new uint8_t[m_width * m_height * m_Bpp];
         if(rhs.m_data)
             std::memcpy(m_data, rhs.m_data, m_width * m_height * m_Bpp);
         return *this;
@@ -86,7 +86,7 @@ namespace tml
         return *this;
     }
 
-    bool Image::LoadFromFile(const String& fileName, i32 w, i32 h) noexcept
+    bool Image::LoadFromFile(const String& fileName, int32_t w, int32_t h) noexcept
     {
         delete[] m_data;
         m_data = nullptr;
@@ -111,12 +111,12 @@ namespace tml
         return returnValue;
     }
 
-    void Image::LoadFromMemory(i32 w, i32 h, i32 Bpp, const ui8* data) noexcept
+    void Image::LoadFromMemory(int32_t w, int32_t h, int32_t Bpp, const uint8_t* data) noexcept
     {
         if((m_width * m_height) != (w * h) || m_Bpp != Bpp)
         {
             delete[] m_data;
-            m_data = new ui8[w*h*Bpp];
+            m_data = new uint8_t[w*h*Bpp];
         }
 
         if(data)
@@ -130,7 +130,7 @@ namespace tml
         m_Bpp = Bpp;
     }
 
-    bool Image::LoadFromData(const ui8 *data, ui32 dataSize) noexcept
+    bool Image::LoadFromData(const uint8_t *data, uint32_t dataSize) noexcept
     {
         delete[] m_data;
         m_data = nullptr;
@@ -179,7 +179,7 @@ namespace tml
         return returnValue;
     }
 
-    bool Image::Resize(i32 requestedWidth, i32 requestedHeight) noexcept
+    bool Image::Resize(int32_t requestedWidth, int32_t requestedHeight) noexcept
     {
         if(m_data == nullptr || m_width == 0 || m_height == 0 ||
         (requestedWidth == (unsigned)m_width && requestedHeight == (unsigned)m_height) || (requestedWidth == 0 && requestedHeight == 0))
@@ -191,7 +191,7 @@ namespace tml
         else if(requestedHeight == 0)
             requestedHeight = requestedWidth * m_width / m_height;
 
-        auto* newData = new ui8[requestedWidth * requestedHeight * m_Bpp];
+        auto* newData = new uint8_t[requestedWidth * requestedHeight * m_Bpp];
         stbir_resize_uint8(m_data, m_width, m_height, 0, newData, requestedWidth, requestedHeight, 0, m_Bpp);
         delete[] m_data;
         m_data = newData;
@@ -205,7 +205,7 @@ namespace tml
         if(m_data == nullptr)
             return;
 
-        auto* row = new ui8[m_width * m_Bpp];
+        auto* row = new uint8_t[m_width * m_Bpp];
         const size_t rowLen = m_width*m_Bpp;
         const size_t height2 = m_height/2;
 
@@ -229,13 +229,13 @@ namespace tml
         m_flipOnWrite = flip;
     }
 
-    bool Image::LoadSvg(const String& filename, i32 requestedWidth, i32 requestedHeight)
+    bool Image::LoadSvg(const String& filename, int32_t requestedWidth, int32_t requestedHeight)
     {
         auto data = InFile::GetString(filename);
-        return LoadSvg(reinterpret_cast<const ui8 *>(data.data()), static_cast<ui32>(data.size()), requestedWidth, requestedHeight);
+        return LoadSvg(reinterpret_cast<const uint8_t *>(data.data()), static_cast<uint32_t>(data.size()), requestedWidth, requestedHeight);
     }
 
-    bool Image::LoadSvg(const ui8* data, ui32 dataSize, i32 requestedWidth, i32 requestedHeight)
+    bool Image::LoadSvg(const uint8_t* data, uint32_t dataSize, int32_t requestedWidth, int32_t requestedHeight)
     {
         auto document = lunasvg::Document::loadFromData(reinterpret_cast<const char*>(data), dataSize);
 

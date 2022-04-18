@@ -5,7 +5,7 @@ namespace tml
 {
     namespace Interface
     {
-        DropList::DropList(i32 x, i32 y, ui32 width, ui32 height)
+        DropList::DropList(int32_t x, int32_t y, uint32_t width, uint32_t height)
         : BaseComponent(x,y,width,height)
         {
             AddChild(m_listComponent = new Listbox(x, y + height + 2, width, 200));
@@ -41,7 +41,7 @@ namespace tml
             m_listComponent->AddValue(std::move(value));
         }
 
-        void DropList::SetValue(ui32 index, String value)
+        void DropList::SetValue(uint32_t index, String value)
         {
             m_listComponent->SetValue(index, value);
         }
@@ -51,7 +51,7 @@ namespace tml
             m_listComponent->SetSize({m_size.x, height});
         }
 
-        String DropList::GetValue(ui32 index)
+        String DropList::GetValue(uint32_t index)
         {
             return m_listComponent->GetValue(index);
         }
@@ -61,7 +61,7 @@ namespace tml
             return m_listComponent->GetSelectedValue();
         }
 
-        tml::i32 DropList::GetSelectedIndex() const
+        int32_t DropList::GetSelectedIndex() const
         {
             return m_listComponent->GetSelectedIndex();
         }

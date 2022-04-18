@@ -9,7 +9,7 @@ namespace tml
         class NumericInput : public BaseComponent
         {
         public:
-            NumericInput(i32 x, i32 y, ui32 w, ui32 h, T value = 0);
+            NumericInput(int32_t x, int32_t y, uint32_t w, uint32_t h, T value = 0);
             void SetValue(T value);
             T GetValue() const;
 
@@ -21,7 +21,7 @@ namespace tml
             T m_increment = 1;
             std::string m_valueStr;
             Text m_text;
-            i32 m_cursorIndex = 0;
+            int32_t m_cursorIndex = 0;
         };
     }
 }

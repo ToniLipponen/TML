@@ -24,8 +24,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-# Set API version
-set(TML_VERSION 0.0.1)
+# set(TML_API_VERSION 1.0.0)
 
 # SSE3
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
@@ -45,7 +44,7 @@ endif()
 if(TML_USE_GLES)
     add_compile_definitions(TML_USE_GLES=1)
 endif()
-if(TML_DONT_USE_DSA)
+if (TML_DONT_USE_DSA)
     add_compile_definitions(TML_DONT_USE_DSA=1)
 endif()
 
@@ -62,12 +61,12 @@ add_subdirectory(external/lunasvg)
 add_subdirectory(src/Audio)
 add_subdirectory(src/Graphics)
 add_subdirectory(src/Interface)
+add_subdirectory(src/Network)
 add_subdirectory(src/System)
 add_subdirectory(src/Window)
-add_subdirectory(src/Network)
 
 add_library(tml src/TOKEN_SOURCE_FILE.cpp ${HEADER_FILES})
-target_link_libraries(tml tml-audio tml-interface tml-graphics tml-window tml-system tml-network)
+target_link_libraries(tml tml-audio tml-graphics tml-interface tml-network tml-system tml-window)
 
 if(UNIX)
     set(CMAKE_INSTALL_PREFIX /usr/)

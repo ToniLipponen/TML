@@ -5,7 +5,7 @@ namespace tml
     namespace Interface
     {
         template<ComponentAxis axis>
-        Slider<axis>::Slider(i32 x, i32 y, ui32 size, ui32 thickness, float min, float max)
+        Slider<axis>::Slider(int32_t x, int32_t y, uint32_t size, uint32_t thickness, float min, float max)
         {
             m_min = Math::Max<float>(min, 0);
             m_max = Math::Max<float>(max, 0);

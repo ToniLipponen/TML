@@ -2,6 +2,7 @@
 #include <miniaudio/miniaudio.h>
 #include <TML/System/File.h>
 #include <TML/Audio/Mixer.h>
+#include <cmath>
 
 namespace tml
 {
@@ -10,7 +11,7 @@ namespace tml
         LoadFromFile(filename);
     }
 
-    Music::Music(const char* data, ui32 bytes)
+    Music::Music(const char* data, uint32_t bytes)
     {
         LoadFromData(data, bytes);
     }
@@ -47,7 +48,7 @@ namespace tml
         return true;
     }
 
-    bool Music::LoadFromData(const char* data, ui32 bytes)
+    bool Music::LoadFromData(const char* data, uint32_t bytes)
     {
         m_state = Stopped;
         Mixer::GetInstance().RemoveSound(m_id);
@@ -78,23 +79,23 @@ namespace tml
         AudioType::Stop();
     }
 
-    ui32 Music::ReadFrames(float *output, ui32 frameCount)
+    uint32_t Music::ReadFrames(float *output, uint32_t frameCount)
     {
         auto* decoder = (ma_decoder*)m_decoder;
         float temp[4096];
-        ui32 tempCapInFrames = (sizeof(temp) / sizeof(float)) / decoder->outputChannels;
-        ui32 totalFramesRead = 0;
+        uint32_t tempCapInFrames = (sizeof(temp) / sizeof(float)) / decoder->outputChannels;
+        uint32_t totalFramesRead = 0;
 
         while(totalFramesRead < frameCount)
         {
-            ui32 iSample;
-            ui32 framesReadThisIteration;
-            ui32 totalFramesRemaining = frameCount - totalFramesRead;
-            ui32 framesToReadThisIteration = tempCapInFrames;
+            uint32_t iSample;
+            uint32_t framesReadThisIteration;
+            uint32_t totalFramesRemaining = frameCount - totalFramesRead;
+            uint32_t framesToReadThisIteration = tempCapInFrames;
             if(framesToReadThisIteration > totalFramesRemaining)
                 framesToReadThisIteration = totalFramesRemaining;
 
-            framesReadThisIteration = (ui32)ma_decoder_read_pcm_frames(decoder, temp, framesToReadThisIteration);
+            framesReadThisIteration = (uint32_t)ma_decoder_read_pcm_frames(decoder, temp, framesToReadThisIteration);
             if(framesReadThisIteration == 0)
                 break;
 
@@ -109,7 +110,7 @@ namespace tml
 
         m_framesRead += totalFramesRead * m_channels;
 
-        for(ui32 i = 0; i < totalFramesRead * m_channels; i += 2)
+        for(uint32_t i = 0; i < totalFramesRead * m_channels; i += 2)
         {
             if(m_balance > 0)
                 output[i] *= 1 - fabsf(m_balance);

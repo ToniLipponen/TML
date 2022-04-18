@@ -1,15 +1,16 @@
 #pragma once
-#include <TML/Types.h>
+#include <cstdint>
 #include <TML/Window/Input.h>
 #include <TML/Window/Event.h>
 #include <TML/System/Image.h>
+#include <TML/System/Math/Vector2.h>
 
 namespace tml
 {
     class Window
     {
     public:
-        enum Settings : ui32
+        enum Settings : uint32_t
         {
             None                 = (0 <<  0), //!< No settings.
             Fullscreen           = (1 <<  0), //!< Make the window fullscreen. If you want to use the monitors resolution, use the UseMonitorResolution setting.
@@ -28,7 +29,7 @@ namespace tml
         };
     public:
         Window();
-        Window(i32 width, i32 height, const std::string& title, ui32 settings = None, const Window* shared = nullptr);
+        Window(int32_t width, int32_t height, const std::string& title, uint32_t settings = None, const Window* shared = nullptr);
         Window(const Window &) = delete;
         Window(const Window&&) = delete;
         Window& operator=(const Window&) = delete;
@@ -37,23 +38,23 @@ namespace tml
         virtual ~Window();
         virtual void Display();
 
-        bool Create(i32 w, i32 h, const std::string& title, ui32 settings = None, const Window* shared = nullptr) noexcept;
+        bool Create(int32_t w, int32_t h, const std::string& title, uint32_t settings = None, const Window* shared = nullptr) noexcept;
         void Close() noexcept; //!< Destroys the window.
         bool IsOpen() const noexcept;
         
         const void* GetHandle() const noexcept;
-        i32 GetWidth() const noexcept;
-        i32 GetHeight() const noexcept;
-        i32 GetX() const noexcept;
-        i32 GetY() const noexcept;
+        int32_t GetWidth() const noexcept;
+        int32_t GetHeight() const noexcept;
+        int32_t GetX() const noexcept;
+        int32_t GetY() const noexcept;
         Vector2i GetSize() const noexcept;
         Vector2i GetPosition() const noexcept;
 
         bool PollEvents(Event& e) noexcept;
         bool WaitEvents(Event& e) noexcept;
 
-        void SetPosition(i32 x, i32 y) noexcept;
-        void SetSize(ui32 width, ui32 height) noexcept;
+        void SetPosition(int32_t x, int32_t y) noexcept;
+        void SetSize(uint32_t width, uint32_t height) noexcept;
         void SetTitle(const std::string& title) noexcept;
         void SetIcon(const Image& image) const noexcept;
         void SetCursor(const Image& image) noexcept;
@@ -61,16 +62,16 @@ namespace tml
         void HideCursor() noexcept;
         void ShowCursor() noexcept;
 
-        void SetAspectRatio(i32 x, i32 y) noexcept;
+        void SetAspectRatio(int32_t x, int32_t y) noexcept;
         void SetAspectRatio(const Vector2i& ratio) noexcept;
-        void SetSizeLimits(i32 minWidth, i32 minHeight, i32 maxWidth, i32 maxHeight) noexcept;
+        void SetSizeLimits(int32_t minWidth, int32_t minHeight, int32_t maxWidth, int32_t maxHeight) noexcept;
         void SetSizeLimits(const Vector2i& min, const Vector2i& max) noexcept;
 
         void Minimize() const noexcept;
         void Maximize() const noexcept;
         void Restore() const noexcept;
-        void SetFullscreen(bool fullscreen, i32 w = -1, i32 h = -1) noexcept;
-        void SetActive() const noexcept;
+        void SetFullscreen(bool fullscreen, int32_t w = -1, int32_t h = -1) noexcept;
+        void SetActive(bool active = true) const noexcept;
         void SetVisible(bool visible = true) const noexcept;
         void Show() const noexcept;
         void Hide() const noexcept;

@@ -9,7 +9,7 @@ namespace tml
     public:
         RenderTexture();
         virtual ~RenderTexture() noexcept;
-        void Create(i32 width, i32 height) noexcept;
+        void Create(int32_t width, int32_t height) noexcept;
         bool SetActive(bool active = true);
         void Clear() noexcept override;
         void Display() noexcept;
@@ -17,8 +17,8 @@ namespace tml
         
     private:
         Vector2f GetRenderTargetSize() const noexcept override { return {m_width, m_height}; }
-        i32 m_width = 0;
-        i32 m_height = 0;
+        int32_t m_width = 0;
+        int32_t m_height = 0;
         Texture m_texture;
         class FrameBuffer* m_frameBuffer;
     };

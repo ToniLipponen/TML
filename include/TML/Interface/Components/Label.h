@@ -9,7 +9,7 @@ namespace tml
         class Label : public BaseComponent
         {
         public:
-            Label(i32 x, i32 y, ui32 s = 20, std::string str = "Label");
+            Label(int32_t x, int32_t y, uint32_t s = 20, std::string str = "Label");
             void SetValue(std::string str);
             virtual bool ContainsPoint(const Vector2i& p) override;
         private:

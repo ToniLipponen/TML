@@ -5,7 +5,7 @@
 
 namespace tml
 {
-    RenderWindow::RenderWindow(ui32 w, ui32 h, const std::string& title, ui32 settings, const Window* shared)
+    RenderWindow::RenderWindow(uint32_t w, uint32_t h, const std::string& title, uint32_t settings, const Window* shared)
     : Window(w , h, title, settings, shared)
     {
         SetView({0,0}, {w,h});
@@ -41,7 +41,7 @@ namespace tml
     {
         auto w = GetWidth();
         auto h = GetHeight();
-        ui32* buffer = new ui32[w*h];
+        uint32_t* buffer = new uint32_t[w*h];
         image.LoadFromMemory(w, h, 4, nullptr);
         glad_glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
@@ -49,7 +49,7 @@ namespace tml
         {
             for(auto j = 0; j < w; ++j)
             {
-                ((ui32*)image.GetData())[i * w + j] = buffer[((h - i) * w) + j];
+                ((uint32_t*)image.GetData())[i * w + j] = buffer[((h - i) * w) + j];
             }
         }
 

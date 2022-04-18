@@ -45,12 +45,12 @@ namespace tml
         if(!file.Open(filename))
             return;
         file.GetBytes(buffer);
-        LoadFromMemory(reinterpret_cast<const ui8 *>(buffer.data()));
+        LoadFromMemory(reinterpret_cast<const uint8_t*>(buffer.data()));
     }
 
-    void Font::LoadFromMemory(const ui8* data)
+    void Font::LoadFromMemory(const uint8_t* data)
     {
-        auto* bitmap = new ui8[ATLAS_SIZE*ATLAS_SIZE];
+        auto* bitmap = new uint8_t[ATLAS_SIZE*ATLAS_SIZE];
 
         stbtt_pack_context context;
         stbtt_PackBegin(&context, bitmap, ATLAS_SIZE, ATLAS_SIZE, 0, 1, nullptr);

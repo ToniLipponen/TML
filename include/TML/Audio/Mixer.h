@@ -1,5 +1,5 @@
 #pragma once
-#include "TML/Types.h"
+#include <cstdint>
 #include "Music.h"
 #include <map>
 #include <memory>
@@ -14,17 +14,17 @@ namespace tml
     public:
         static Mixer& GetInstance() noexcept;
         void SetGain(float gain) noexcept;
-        void AddSound(ui64 id, AudioType* snd) noexcept;
-        void RemoveSound(ui64 id) noexcept;
-        ui64 GetAudioID() noexcept;
+        void AddSound(uint64_t id, AudioType* snd) noexcept;
+        void RemoveSound(uint64_t id) noexcept;
+        uint64_t GetAudioID() noexcept;
 
     private:
-        friend void MixerOnAudioCallback(void* device, void* pOutput, const void* pInput, ui32 frameCount);
+        friend void MixerOnAudioCallback(void* device, void* pOutput, const void* pInput, uint32_t frameCount);
 
     protected:
         static Mixer* s_instance;
         void* m_outputDevice = nullptr;
-        std::map<ui64, AudioType*> m_sounds;
-        ui64 m_soundCount = 0;
+        std::map<uint64_t, AudioType*> m_sounds;
+        uint64_t m_soundCount = 0;
     };
 }

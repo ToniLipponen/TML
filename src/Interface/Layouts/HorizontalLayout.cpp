@@ -10,7 +10,7 @@ namespace tml
 
         }
 
-        HorizontalLayout::HorizontalLayout(i32 x, i32 y, ui32 w, ui32 h)
+        HorizontalLayout::HorizontalLayout(int32_t x, int32_t y, uint32_t w, uint32_t h)
         {
             m_pos = Vector2i(x,y);
             m_size = Vector2i(w,h);
@@ -66,7 +66,7 @@ namespace tml
                         if(itemSize.y > m_size.y)
                             item->SetSize({itemSize.x, m_size.y});
                         else if(itemSize.y < originalSize.y)
-                            item->SetSize({itemSize.x, Math::Min<i32>(originalSize.y, m_size.y)});
+                            item->SetSize({itemSize.x, Math::Min<int32_t>(originalSize.y, m_size.y)});
                         break;
                     default:
                         break;

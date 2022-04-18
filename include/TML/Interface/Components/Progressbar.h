@@ -8,7 +8,7 @@ namespace tml
         class Progressbar : public BaseComponent
         {
         public:
-            Progressbar(i32 x, i32 y, ui32 w, ui32 h = 30);
+            Progressbar(int32_t x, int32_t y, uint32_t w, uint32_t h = 30);
             float GetValue() const noexcept;
             void SetValue(float value) noexcept;
             void SetTextColor(const Color& color) noexcept;

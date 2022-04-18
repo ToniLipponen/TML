@@ -20,7 +20,7 @@ namespace tml
         bool LoadFromFile(const std::string& fileName) noexcept;
         void SetFrameRate(double fps) noexcept;
         void SetLooping(bool loop) const noexcept;
-        bool Advance(double step) noexcept; ///@brief Returns false when no frames are available.
+        bool Advance(double step) noexcept; //!< Returns false when no frames are available.
 
     private:
         void OnDraw(class Renderer*, Texture*) noexcept override;
@@ -29,8 +29,8 @@ namespace tml
         double m_timer = 1;
         double m_oneDividedByFrameRate = 1.0 / m_frameRate;
         bool m_ended = false;
-        i32 m_streamWidth = 0; // Dimensions of the actual video
-        i32 m_streamHeight = 0;
+        int32_t m_streamWidth = 0; //!< Dimensions of the actual video
+        int32_t m_streamHeight = 0;
         Texture m_y, m_cb, m_cr;
     };
 }

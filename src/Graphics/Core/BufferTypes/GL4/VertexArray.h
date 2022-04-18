@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 namespace tml
 {
@@ -13,9 +14,9 @@ namespace tml
     {
         GL_CALL(glad_glCreateVertexArrays(1, &m_id));
         auto& lo = layout.GetData();
-        ui32 offset = 0;
+        uint32_t offset = 0;
         GL_CALL(glad_glVertexArrayVertexBuffer(m_id, 0, vb.m_id, 0, layout.GetStride()));
-        for(size_t i = 0; i < lo.size(); i++)
+        for(uint64_t i = 0; i < lo.size(); i++)
         {
             GL_CALL(glad_glEnableVertexArrayAttrib(m_id, i));
             if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
@@ -47,9 +48,9 @@ namespace tml
     void VertexArray::BufferData(VertexBuffer& vb, BufferLayout& layout) noexcept
     {
         auto& lo = layout.GetData();
-        ui32 offset = 0;
+        uint32_t offset = 0;
         GL_CALL(glad_glVertexArrayVertexBuffer(m_id, 0, vb.m_id, 0, layout.GetStride()));
-        for(size_t i = 0; i < lo.size(); i++)
+        for(uint64_t i = 0; i < lo.size(); i++)
         {
             GL_CALL(glad_glEnableVertexArrayAttrib(m_id, i));
             if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
@@ -67,9 +68,9 @@ namespace tml
     void VertexArray::BufferData(VertexBuffer& vb, IndexBuffer& ib, BufferLayout& layout) noexcept
     {
         auto& lo = layout.GetData();
-        ui32 offset = 0;
+        uint32_t offset = 0;
         GL_CALL(glad_glVertexArrayVertexBuffer(m_id, 0, vb.m_id, 0, layout.GetStride()));
-        for(size_t i = 0; i < lo.size(); i++)
+        for(uint64_t i = 0; i < lo.size(); i++)
         {
             GL_CALL(glad_glEnableVertexArrayAttrib(m_id, i));
             if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)

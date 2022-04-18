@@ -2,7 +2,7 @@
 
 using namespace tml::Interface;
 
-Button::Button(const std::string& text, i32 x, i32 y, ui32 w, ui32 h, const UIFunc& onClick, bool expand)
+Button::Button(const std::string& text, int32_t x, int32_t y, uint32_t w, uint32_t h, const UIFunc& onClick, bool expand)
 : BaseComponent(x,y,w,h)
 {
     m_hSizePolicy = expand ? SizePolicy::Expand : SizePolicy::Clamp;

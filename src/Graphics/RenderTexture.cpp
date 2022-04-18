@@ -16,7 +16,7 @@ namespace tml
         delete m_frameBuffer;
     }
 
-    void RenderTexture::Create(i32 width, i32 height) noexcept
+    void RenderTexture::Create(int32_t width, int32_t height) noexcept
     {
         if(!m_frameBuffer)
             m_frameBuffer = new FrameBuffer();

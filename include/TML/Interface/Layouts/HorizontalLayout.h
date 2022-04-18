@@ -10,7 +10,7 @@ namespace tml
         {
         public:
             HorizontalLayout();
-            HorizontalLayout(i32 x, i32 y, ui32 w, ui32 h);
+            HorizontalLayout(int32_t x, int32_t y, uint32_t w, uint32_t h);
 
         private:
             void pDraw(Renderer &renderer) override {}

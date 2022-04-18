@@ -1,5 +1,5 @@
 #pragma once
-#include <TML/Types.h>
+#include <cstdint>
 #include <unordered_map>
 #include <functional>
 
@@ -9,7 +9,7 @@ namespace tml
     {
     public:
         enum State { Stopped, Playing, Paused, Ended };
-        using OnReadFrames = std::function<void(float*, ui32)>;
+        using OnReadFrames = std::function<void(float*, uint32_t)>;
     public:
         AudioType();
         ~AudioType();
@@ -23,21 +23,21 @@ namespace tml
         float GetVolume() const { return m_volume; }
         bool IsPlaying() const { return m_state == Playing; }
         bool IsLooping() const { return m_looping; }
-        virtual ui32 ReadFrames(float* output, ui32 frameCount) = 0;
-        inline constexpr ui64 GetLength() const noexcept { return m_frameCount; } //!< @brief Returns length in PCM frames.
-        ui64 GetLengthInSeconds() const noexcept;
+        virtual uint32_t ReadFrames(float* output, uint32_t frameCount) = 0;
+        inline constexpr uint64_t GetLength() const noexcept { return m_frameCount; }
+        uint64_t GetLengthInSeconds() const noexcept;
         double GetProgress() const noexcept;
 
     protected:
-        ui64 m_framesRead;
-        ui64 m_frameCount;
-        ui32 m_rate;
-        ui8 m_channels;
+        uint64_t m_framesRead;
+        uint64_t m_frameCount;
+        uint32_t m_rate;
+        uint8_t m_channels;
         float m_volume = 1.f;
         float m_balance = 0;
         bool m_looping = false;
         bool m_valid = false;
         State m_state = Stopped;
-        ui64 m_id;
+        uint64_t m_id;
     };
 }

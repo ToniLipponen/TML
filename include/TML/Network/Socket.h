@@ -1,6 +1,7 @@
 #pragma once
-#include <TML/Types.h>
 #include <TML/System/Platform.h>
+#include <string>
+#include <cstdint>
 
 namespace tml
 {

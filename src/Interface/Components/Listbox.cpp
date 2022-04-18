@@ -5,7 +5,7 @@ namespace tml
 {
     namespace Interface
     {
-        Listbox::Listbox(i32 x, i32 y, ui32 width, ui32 height)
+        Listbox::Listbox(int32_t x, int32_t y, uint32_t width, uint32_t height)
         {
             m_pos = Vector2i(x, y);
             m_size = Vector2i(width, height);
@@ -92,7 +92,7 @@ namespace tml
                 m_scrollbar->Disable();
         }
 
-        void Listbox::SetValue(ui32 index, String value)
+        void Listbox::SetValue(uint32_t index, String value)
         {
             if(index > m_values.size() - 1)
                 return;
@@ -100,7 +100,7 @@ namespace tml
                 m_values.at(index) = std::move(value);
         }
 
-        String Listbox::GetValue(ui32 index)
+        String Listbox::GetValue(uint32_t index)
         {
             if(index >= m_values.size())
                 return {};
@@ -117,12 +117,12 @@ namespace tml
             return "";
         }
 
-        tml::i32 Listbox::GetSelectedIndex() const
+        int32_t Listbox::GetSelectedIndex() const
         {
             return m_selectedIndex;
         }
 
-        tml::ui32 Listbox::GetElementsCount() const
+        uint32_t Listbox::GetElementsCount() const
         {
             return m_values.size();
         }
@@ -136,7 +136,7 @@ namespace tml
             return false;
         }
 
-        void Listbox::RemoveValue(ui32 index)
+        void Listbox::RemoveValue(uint32_t index)
         {
             if(index >= 0 && index < m_values.size())
             {
@@ -156,10 +156,10 @@ namespace tml
             m_values.clear();
         }
 
-        i32 Listbox::GetOverFlow() const noexcept
+        int32_t Listbox::GetOverFlow() const noexcept
         {
             const float valuesSize = (m_values.size() * 20.f);
-            return Math::Max<i32>((valuesSize - m_size.y) / 20, 0);
+            return Math::Max<int32_t>((valuesSize - m_size.y) / 20, 0);
         }
 
         void Listbox::pDraw(Renderer &window)

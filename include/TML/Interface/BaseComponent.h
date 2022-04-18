@@ -31,7 +31,7 @@ namespace tml
 
         public:
             BaseComponent();
-            BaseComponent(i32 x, i32 y, ui32 w, ui32 h);
+            BaseComponent(int32_t x, int32_t y, uint32_t w, uint32_t h);
             virtual ~BaseComponent();
             void Focus();
             void UnFocus();
@@ -66,12 +66,12 @@ namespace tml
             bool RemoveChild(const std::string& id);
             bool RemoveChild(BaseComponent* component);
 
-            BaseComponent* FindComponent(const std::string& id); //!< DANGER! Returns nullptr if not found.
-            BaseComponent* FindComponent(ui64);                  //!< DANGER! Returns nullptr if not found.
-            BaseComponent* GetParent(); //!< DANGER! Returns nullptr if the component doesn't have a parent.
+            BaseComponent* FindComponent(const std::string& id);    //!< DANGER! Returns nullptr if not found.
+            BaseComponent* FindComponent(uint64_t);                 //!< DANGER! Returns nullptr if not found.
+            BaseComponent* GetParent();                             //!< DANGER! Returns nullptr if the component doesn't have a parent.
             BaseComponent* GetRoot();
 
-            constexpr inline ui64 GetHash() const noexcept { return m_hash; }
+            constexpr inline uint64_t GetHash() const noexcept { return m_hash; }
             constexpr inline const std::string& GetID() const noexcept { return m_id; }
             virtual bool ContainsPoint(const Vector2i& p);
             void Update(Event& event);

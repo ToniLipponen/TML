@@ -1,5 +1,4 @@
 #pragma once
-
 #include <TML/Graphics/Camera.h>
 #include <TML/Graphics/Core/ComputeShader.h>
 #include <TML/Graphics/Color.h>

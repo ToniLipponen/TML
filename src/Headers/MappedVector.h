@@ -9,7 +9,7 @@ namespace tml
     class VertexVector : public VertexBuffer
     {
     public:
-        explicit VertexVector(ui64 length)
+        explicit VertexVector(size_t length)
         : VertexBuffer(nullptr, sizeof(Vertex), length)
         {
 
@@ -26,7 +26,7 @@ namespace tml
             }
         }
 
-        ui64 size() const noexcept
+        size_t size() const noexcept
         {
             return m_vertexCount;
         }
@@ -35,23 +35,23 @@ namespace tml
     class IndexVector : public IndexBuffer
     {
     public:
-        explicit IndexVector(ui64 length)
+        explicit IndexVector(size_t length)
         : IndexBuffer(nullptr, length)
         {
 
         }
 
-        void push_back(ui32 index) noexcept
+        void push_back(uint32_t index) noexcept
         {
             if(m_mappedPtr && m_elements < m_capacity)
             {
-                auto dest = ((ui32*) m_mappedPtr);
+                auto dest = ((uint32_t*) m_mappedPtr);
                 dest[m_elements] = index;
                 ++m_elements;
             }
         }
 
-        ui64 size() const noexcept
+        size_t size() const noexcept
         {
             return m_elements;
         }

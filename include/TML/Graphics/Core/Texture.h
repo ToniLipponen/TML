@@ -1,5 +1,4 @@
 #pragma once
-#include <TML/Types.h>
 #include <TML/System/Math/Vector2.h>
 #include <TML/System/Image.h>
 

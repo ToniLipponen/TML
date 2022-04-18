@@ -34,7 +34,7 @@ namespace tml
     {
         if(m_updated)
         {
-            const ui32 hex = m_color.Hex();
+            const uint32_t hex = m_color.Hex();
             const Vector2f topLeft = m_pos - m_size.x;
             const float x2 = m_size.x * 2;
             m_vertexData.clear();

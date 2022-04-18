@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 
 #pragma once
-#include "TML/Types.h"
+#include <cstdint>
 #include <queue>
 #include <map>
 
@@ -35,19 +35,19 @@ namespace tml
     {
         struct ResizeEvent
         {
-            i32 w;
-            i32 h;
+            int32_t w;
+            int32_t h;
         };
 
         struct MoveEvent
         {
-            i32 x;
-            i32 y;
+            int32_t x;
+            int32_t y;
         };
 
         struct KeyEvent
         {
-            i32 code;     //!< Code of the key that has been pressed
+            int32_t code;     //!< Code of the key that has been pressed
             bool alt;     //!< Is the Alt key pressed?
             bool control; //!< Is the Control key pressed?
             bool shift;   //!< Is the Shift key pressed?
@@ -56,26 +56,26 @@ namespace tml
 
         struct TextEvent
         {
-            ui32 unicode; //!< UTF-32 Unicode value of the character
+            uint32_t unicode; //!< UTF-32 Unicode value of the character
         };
 
         struct MouseButtonEvent
         {
-            ui32 button; //!< Code of the button that has been pressed
-            i32 x;       //!< X position of the mouse pointer, relative to the left of the owner window
-            i32 y;       //!< Y position of the mouse pointer, relative to the top of the owner window
+            uint32_t button; //!< Code of the button that has been pressed
+            int32_t x;       //!< X position of the mouse pointer, relative to the left of the owner window
+            int32_t y;       //!< Y position of the mouse pointer, relative to the top of the owner window
         };
 
         struct MouseWheelScrollEvent
         {
             float delta; //!< Vertical scroll offset.
-            i32 x;       //!< X position of the mouse pointer, relative to the left of the owner window
-            i32 y;       //!< Y position of the mouse pointer, relative to the top of the owner window
+            int32_t x;       //!< X position of the mouse pointer, relative to the left of the owner window
+            int32_t y;       //!< Y position of the mouse pointer, relative to the top of the owner window
         };
 
         struct DragAndDropEvent
         {
-            i32 count;      //!< Number of dropped files
+            int32_t count;      //!< Number of dropped files
             char** paths;   //!< File paths in UTF-8 strings (memory needs to be freed manually)
         };
 

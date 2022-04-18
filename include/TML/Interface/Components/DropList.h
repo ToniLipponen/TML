@@ -10,12 +10,12 @@ namespace tml
         class DropList : public BaseComponent
         {
         public:
-            DropList(i32 x, i32 y, ui32 width, ui32 height = 20);
+            DropList(int32_t x, int32_t y, uint32_t width, uint32_t height = 20);
             void AddValue(String value);
-            void SetValue(ui32 index, String value);
+            void SetValue(uint32_t index, String value);
             void SetListHeight(int height);
-            i32 GetSelectedIndex() const;
-            String GetValue(ui32 index);
+            int32_t GetSelectedIndex() const;
+            String GetValue(uint32_t index);
             String GetSelectedValue() const;
             void Clear(); //!< Deletes every item in the list.
         private:

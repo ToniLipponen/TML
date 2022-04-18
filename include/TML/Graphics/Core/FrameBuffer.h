@@ -1,5 +1,4 @@
 #pragma once
-#include <TML/Types.h>
 #include <TML/Graphics/Core/Texture.h>
 
 namespace tml
@@ -14,6 +13,6 @@ namespace tml
         bool AttachTexture(const Texture& texture) const;
 
     private:
-        ui32 m_id;
+        uint32_t m_id;
     };
 }

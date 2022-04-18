@@ -9,7 +9,7 @@ namespace tml
         GL_CALL(glad_glCreateBuffers(1, &m_id));
     }
 
-    VertexBuffer::VertexBuffer(const void* data, ui32 vertexSize, ui32 vertexCount) noexcept
+    VertexBuffer::VertexBuffer(const void* data, uint32_t vertexSize, uint32_t vertexCount) noexcept
     : m_id(0), m_dataSize(0), m_vertexCount(0), m_capacity(vertexSize * vertexCount)
     {
         GL_CALL(glad_glCreateBuffers(1, &m_id));
@@ -31,7 +31,7 @@ namespace tml
 
     }
 
-    void VertexBuffer::BufferData(const void* data, ui32 vertexSize, ui32 vertexCount) noexcept
+    void VertexBuffer::BufferData(const void* data, uint32_t vertexSize, uint32_t vertexCount) noexcept
     {
         if(m_mappedPtr)
         {
@@ -56,12 +56,12 @@ namespace tml
         m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT | GL_MAP_FLUSH_EXPLICIT_BIT));
     }
 
-    void VertexBuffer::PushData(const void* data, ui32 vertexSize, ui32 vertexCount) noexcept
+    void VertexBuffer::PushData(const void* data, uint32_t vertexSize, uint32_t vertexCount) noexcept
     {
         if(m_mappedPtr)
         {
-            const ui32 size = vertexSize * vertexCount;
-            auto dest = ((ui8 *) m_mappedPtr) + m_dataSize;
+            const uint32_t size = vertexSize * vertexCount;
+            auto dest = ((uint8_t*) m_mappedPtr) + m_dataSize;
             std::memcpy(dest, data, size);
             m_dataSize += size;
             m_vertexCount += vertexCount;

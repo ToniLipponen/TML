@@ -11,7 +11,7 @@ namespace tml
             SetCallbacks();
         }
 
-        Viewport::Viewport(i32 x, i32 y, ui32 w, ui32 h)
+        Viewport::Viewport(int32_t x, int32_t y, uint32_t w, uint32_t h)
         : BaseComponent(x,y,w,h)
         {
             m_pColor = 0xc7c7c7ff;

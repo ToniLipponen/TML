@@ -1,14 +1,14 @@
 #pragma once
-#include <TML/Types.h>
+#include <cstdint>
 
 namespace tml
 {
     struct Color
     {
         Color() = default;
-        constexpr Color(ui8 r, ui8 g, ui8 b) : r(r), g(g), b(b), a(255) {}
-        constexpr Color(ui8 r, ui8 g, ui8 b, ui8 a) : r(r), g(g), b(b), a(a) {}
-        explicit constexpr Color(ui32 hex) noexcept
+        constexpr Color(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b), a(255) {}
+        constexpr Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : r(r), g(g), b(b), a(a) {}
+        explicit constexpr Color(uint32_t hex) noexcept
         : r((hex & 0xff000000) >> 24),
           g((hex & 0x00ff0000) >> 16),
           b((hex & 0x0000ff00) >> 8),
@@ -17,7 +17,7 @@ namespace tml
 
           }
 
-        constexpr Color(i32 hex) noexcept
+        constexpr Color(int32_t hex) noexcept
         : r((hex & 0xff000000) >> 24),
           g((hex & 0x00ff0000) >> 16),
           b((hex & 0x0000ff00) >> 8),
@@ -41,14 +41,14 @@ namespace tml
         inline constexpr Color operator-(const Color& color) const noexcept {
             return Color(r - color.r, g - color.g, b - color.b, a - color.a);
         }
-        inline constexpr ui32 Hex() const noexcept {
-            return (static_cast<ui32>(r) << 24) | (static_cast<ui32>(g) << 16) | (static_cast<ui32>(b) << 8) | static_cast<ui32>(a);
+        inline constexpr uint32_t Hex() const noexcept {
+            return (static_cast<uint32_t>(r) << 24) | (static_cast<uint32_t>(g) << 16) | (static_cast<uint32_t>(b) << 8) | static_cast<uint32_t>(a);
         }
 
-        ui8 r = 0;
-        ui8 g = 0;
-        ui8 b = 0;
-        ui8 a = 0;
+        uint8_t r = 0;
+        uint8_t g = 0;
+        uint8_t b = 0;
+        uint8_t a = 0;
 
         static const Color Red;
         static const Color Green;

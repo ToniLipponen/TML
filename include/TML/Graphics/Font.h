@@ -3,7 +3,6 @@
 #include <map>
 #include <unordered_map>
 
-#include <TML/Types.h>
 #include <TML/System/Math/Vector2.h>
 #include <TML/Graphics/Core/Texture.h>
 
@@ -18,7 +17,7 @@ namespace tml
         Font& operator=(const Font& rhs);
 
         void LoadFromFile(const std::string &filename);
-        void LoadFromMemory(const ui8 *data);
+        void LoadFromMemory(const uint8_t *data);
         friend class Text;
         friend class Renderer;
 

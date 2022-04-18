@@ -6,7 +6,7 @@ namespace tml
     namespace Interface
     {
         template<typename T>
-        NumericInput<T>::NumericInput(i32 x, i32 y, ui32 w, ui32 h, T value)
+        NumericInput<T>::NumericInput(int32_t x, int32_t y, uint32_t w, uint32_t h, T value)
         : BaseComponent(x,y,w,h)
         {
             m_value = value;
@@ -73,7 +73,7 @@ namespace tml
                                     m_value = 0;
                                 else
                                     m_value = StringToType<T>(m_valueStr);
-                                m_cursorIndex = Math::Clamp<ui32>(m_cursorIndex--, 0, m_valueStr.length());
+                                m_cursorIndex = Math::Clamp<uint32_t>(m_cursorIndex--, 0, m_valueStr.length());
                             }
                             break;
                         case Keyboard::KEY_PERIOD:
@@ -85,10 +85,10 @@ namespace tml
                             }
                             break;
                         case Keyboard::KEY_LEFT:
-                            m_cursorIndex = Math::Clamp<i32>(--m_cursorIndex, 0, m_valueStr.length());
+                            m_cursorIndex = Math::Clamp<int32_t>(--m_cursorIndex, 0, m_valueStr.length());
                             break;
                         case Keyboard::KEY_RIGHT:
-                            m_cursorIndex = Math::Clamp<i32>(++m_cursorIndex, 0, m_valueStr.length());
+                            m_cursorIndex = Math::Clamp<int32_t>(++m_cursorIndex, 0, m_valueStr.length());
                             break;
                         case Keyboard::KEY_UP:
                             Increment();
@@ -172,14 +172,14 @@ namespace tml
             }
         }
 
-        template class NumericInput<i64>;
-        template class NumericInput<ui64>;
-        template class NumericInput<i32>;
-        template class NumericInput<ui32>;
-        template class NumericInput<i16>;
-        template class NumericInput<ui16>;
-        template class NumericInput<i8>;
-        template class NumericInput<ui8>;
+        template class NumericInput<int64_t>;
+        template class NumericInput<uint64_t>;
+        template class NumericInput<int32_t>;
+        template class NumericInput<uint32_t>;
+        template class NumericInput<int16_t>;
+        template class NumericInput<uint16_t>;
+        template class NumericInput<int8_t>;
+        template class NumericInput<uint8_t>;
         template class NumericInput<float>;
         template class NumericInput<double>;
     }

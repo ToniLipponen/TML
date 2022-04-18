@@ -41,7 +41,7 @@ namespace tml
                                const Color& color, bool rounded = true, float step = 0.01f) noexcept;
 
         /// @brief Draws a grid. The rows and columns mean how many cells the grid should contain horizontally and vertically.
-        void DrawGrid(const Vector2f& top_left, const Vector2f& size, ui32 rows, ui32 columns,
+        void DrawGrid(const Vector2f& top_left, const Vector2f& size, uint32_t rows, uint32_t columns,
                      const Color& color, float thickness = 1.f, bool rounded = false) noexcept;
 
         /// @brief Does exactly what it says. Just draws a texture on pos with given size.
@@ -62,9 +62,9 @@ namespace tml
          * because the vertex data is going to have to be constructed on each draw.
          * If you are going to be drawing text that doesn't change each frame, you should use Renderer::Draw(Text& text) instead. */
         void DrawText(const String& text, const Vector2f& pos, float size, const Color& color = Color::White) noexcept;
-        void PushVertexData(const std::vector<Vertex>& vertices, const std::vector<ui32>& indices) noexcept;
-        void PushVertexData(std::vector<Vertex>& vertices, const std::vector<ui32>& indices, const Texture& texture) noexcept;
-        ui32 PushTexture(const Texture&) noexcept;
+        void PushVertexData(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices) noexcept;
+        void PushVertexData(std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const Texture& texture) noexcept;
+        uint32_t PushTexture(const Texture&) noexcept;
         void PushQuad(
                 const Vector2f& pos,
                 const Vector2f& size,
@@ -96,9 +96,9 @@ namespace tml
         Text    m_text;
         Texture m_circleTexture;
 
-        constexpr static ui32 s_maxVertexCount = 10000;
-        constexpr static ui32 s_maxIndexCount = s_maxVertexCount * 4;
-        i32 m_maxTextureCount = 8;
-        std::vector<ui32> m_textures;
+        constexpr static uint32_t s_maxVertexCount = 10000;
+        constexpr static uint32_t s_maxIndexCount = s_maxVertexCount * 4;
+        int32_t m_maxTextureCount = 8;
+        std::vector<uint32_t> m_textures;
     };
 }

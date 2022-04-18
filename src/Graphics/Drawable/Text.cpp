@@ -76,15 +76,15 @@ namespace tml
         m_dimensions = Vector2f{0, m_size.y};
         float x = 0, y = 48;
         float width = 0, height = 0;
-        ui32 count = 0;
+        uint32_t count = 0;
         m_vertexData.clear();
         m_indexData.clear();
-        const ui32 hex = m_color.Hex();
+        const uint32_t hex = m_color.Hex();
         Font& font = m_font ? *m_font : *s_defaultFont;
 
         for(auto c : m_string)
         {
-            if(Math::InRange<i32>(c, 0, 8) || Math::InRange<i32>(c, 14, 31))
+            if(Math::InRange<int32_t>(c, 0, 8) || Math::InRange<int32_t>(c, 14, 31))
                 continue;
 
             switch(c)

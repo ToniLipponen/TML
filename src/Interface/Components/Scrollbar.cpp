@@ -5,7 +5,7 @@ namespace tml
     namespace Interface
     {
         template<ComponentAxis axis>
-        Scrollbar<axis>::Scrollbar(i32 x, i32 y, ui32 length, ui32 thickness)
+        Scrollbar<axis>::Scrollbar(int32_t x, int32_t y, uint32_t length, uint32_t thickness)
         {
             m_pos = Vector2i(x,y);
             if(axis == Horizontal)
@@ -40,9 +40,9 @@ namespace tml
         }
 
         template<ComponentAxis axis>
-        void Scrollbar<axis>::SetValue(ui32 value)
+        void Scrollbar<axis>::SetValue(uint32_t value)
         {
-            m_value = Math::Clamp<i32>(value, m_min, m_max);
+            m_value = Math::Clamp<int32_t>(value, m_min, m_max);
         }
 
         template<ComponentAxis axis>

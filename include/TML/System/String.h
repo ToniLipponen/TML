@@ -1,7 +1,5 @@
 #pragma once
 #include <string>
-#include <TML/Types.h>
-
 #include "String/tinyutf8.h"
 
 namespace tml
@@ -25,10 +23,8 @@ namespace tml
             {
                 return std::stod(str);
             }
-            else
-                throw "Convertable type is not literal.";
+            static_assert(true, "Convertable type is not literal.");
         }
-        else
-            throw "Convertable type is not literal.";
+        static_assert(true, "Convertable type is not literal.");
     }
 }

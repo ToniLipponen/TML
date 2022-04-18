@@ -3,7 +3,7 @@
 
 using namespace tml::Interface;
 
-TextInput::TextInput(i32 x, i32 y, i32 width, i32 height)
+TextInput::TextInput(int32_t x, int32_t y, uint32_t width, uint32_t height)
 {
     m_pos = Vector2i(x,y);
     m_size = Vector2i(width, height);
@@ -90,14 +90,14 @@ void TextInput::InitListeners()
                     if(e.key.control)
                         m_cursorIndex = search_backwards();
                     else
-                        m_cursorIndex = Math::Clamp<i32>(--m_cursorIndex, 0, m_value.size());
+                        m_cursorIndex = Math::Clamp<int32_t>(--m_cursorIndex, 0, m_value.size());
                     break;
 
                 case Keyboard::KEY_RIGHT:
                     if(e.key.control)
                         m_cursorIndex = search_forwards();
                     else
-                        m_cursorIndex = Math::Clamp<i32>(++m_cursorIndex, 0, m_value.size());
+                        m_cursorIndex = Math::Clamp<int32_t>(++m_cursorIndex, 0, m_value.size());
                     break;
 
                 case Keyboard::KEY_BACKSPACE:
@@ -105,14 +105,14 @@ void TextInput::InitListeners()
                     {
                         if(e.key.control)
                         {
-                            const auto index = Math::Max<int>(search_backwards(), 0);
+                            const auto index = Math::Max<int32_t>(search_backwards(), 0);
                             m_value.erase(m_value.begin() + index, m_value.begin() + m_cursorIndex);
                             m_cursorIndex -= (m_cursorIndex - index);
                         }
                         else
                         {
                             m_value.erase(m_value.begin() + m_cursorIndex - 1);
-                            m_cursorIndex = Math::Clamp<int>(--m_cursorIndex, 0, m_value.size());
+                            m_cursorIndex = Math::Clamp<int32_t>(--m_cursorIndex, 0, m_value.size());
                         }
                     }
                     break;
@@ -121,7 +121,7 @@ void TextInput::InitListeners()
                     {
                         if(e.key.control)
                         {
-                            const ui32 index = search_forwards();
+                            const uint32_t index = search_forwards();
                             m_value.erase(m_value.begin() + m_cursorIndex, m_value.begin() + index);
                         }
                         else

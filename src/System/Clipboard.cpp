@@ -37,10 +37,10 @@ namespace tml
             clip::image clipImage;
             clip::get_image(clipImage);
             image.LoadFromMemory(
-                    static_cast<i32>(clipImage.spec().width),
-                    static_cast<i32>(clipImage.spec().height),
+                    static_cast<int32_t>(clipImage.spec().width),
+                    static_cast<int32_t>(clipImage.spec().height),
                     4,
-                    reinterpret_cast<const ui8 *>(clipImage.data())
+                    reinterpret_cast<const uint8_t*>(clipImage.data())
             );
             return true;
         }

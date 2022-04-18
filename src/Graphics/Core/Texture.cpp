@@ -62,7 +62,7 @@ namespace tml
         LoadFromImage(img);
     }
 
-    void Texture::LoadFromMemory(i32 w, i32 h, ui8 bpp, const ui8* data)
+    void Texture::LoadFromMemory(int32_t w, int32_t h, uint8_t bpp, const uint8_t* data)
     {
         GL_CALL(glad_glDeleteTextures(1, &m_id));
 
@@ -88,7 +88,7 @@ namespace tml
         Upload(data);
     }
 
-    void Texture::Bind(ui32 slot) const
+    void Texture::Bind(uint32_t slot) const
     {
 #if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
         GL_CALL(glad_glActiveTexture(GL_TEXTURE0 + slot));

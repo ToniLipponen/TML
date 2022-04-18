@@ -4,7 +4,7 @@ namespace tml
 {
     namespace Interface
     {
-        Checkbox::Checkbox(i32 x, i32 y, ui32 size, bool checked)
+        Checkbox::Checkbox(int32_t x, int32_t y, uint32_t size, bool checked)
         {
             m_pos = Vector2f(x,y);
             m_size = Vector2f(size,size);

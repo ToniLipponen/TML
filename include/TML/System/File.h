@@ -46,24 +46,24 @@ namespace tml
             return exists;
         }
 
-        ui32 FileSize() const noexcept
+        uint32_t FileSize() const noexcept
         {
             return m_dataLen;
         }
 
-        static i64 FileSize(const String &filename)
+        static int64_t FileSize(const String &filename)
         {
             std::ifstream file(filename.c_str());
             if (!file.is_open() || file.fail())
                 return 0;
 
             file.seekg(0, std::iostream::end);
-            i64 size = file.tellg();
+            int64_t size = file.tellg();
             file.close();
             return size;
         }
     protected:
-        i64 m_dataLen = 0;
+        int64_t m_dataLen = 0;
         bool m_isValid = false;
         std::fstream m_stream;
     };
@@ -100,7 +100,7 @@ namespace tml
             }
         }
 
-        void Read(void* dest, ui64 bytes) noexcept
+        void Read(void* dest, size_t bytes) noexcept
         {
             m_stream.read((char*)dest, bytes);
         }
@@ -186,7 +186,7 @@ namespace tml
         /// @brief Appends n amount of byte to the file.
         /// @param data pointer to data you want to append.
         /// @param n the size of data in bytes.
-        void Write(const char* data, ui64 n)
+        void Write(const char* data, size_t n)
         {
             if(data && m_stream.is_open() && m_stream.good())
             {

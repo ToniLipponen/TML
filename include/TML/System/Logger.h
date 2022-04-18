@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include "Platform.h"
-#include "TML/Types.h"
 
 namespace tml
 {

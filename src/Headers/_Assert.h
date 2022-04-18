@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TML/Types.h"
+#include <cstdint>
 #include "TML/System/Logger.h"
 
 #ifndef TML_NO_DEBUGGING

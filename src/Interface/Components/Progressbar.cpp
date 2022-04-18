@@ -4,7 +4,7 @@ namespace tml
 {
     namespace Interface
     {
-        Progressbar::Progressbar(i32 x, i32 y, ui32 w, ui32 h)
+        Progressbar::Progressbar(int32_t x, int32_t y, uint32_t w, uint32_t h)
         {
             m_pos = Vector2i(x,y);
             m_size = Vector2i(w,h);
@@ -29,7 +29,7 @@ namespace tml
 
         void Progressbar::pDraw(Renderer &window)
         {
-            m_text.SetString(std::to_string(ui32(m_value * 100)) + "%");
+            m_text.SetString(std::to_string(uint32_t(m_value * 100)) + "%");
             m_text.SetSize(m_size.y / 2);
             m_text.SetPosition({m_pos.x + (m_size.x / 2) - (m_text.GetDimensions().x / 2), static_cast<float>(m_pos.y + m_size.y / 4)});
 
