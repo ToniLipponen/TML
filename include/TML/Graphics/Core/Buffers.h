@@ -11,7 +11,7 @@ namespace tml
         VertexBuffer() noexcept;
         VertexBuffer(const void *data, uint32_t vertexSize, uint32_t numOfVertices) noexcept;
         ~VertexBuffer() noexcept;
-        void Bind() const noexcept;
+        void Bind() noexcept;
         void Unbind() const noexcept;
         void BufferData(const void *data, uint32_t vertexSize, uint32_t numOfVertices) noexcept;
         void PushData(const void *data, uint32_t vertexSize, uint32_t numOfVertices) noexcept;
@@ -35,7 +35,7 @@ namespace tml
         IndexBuffer() noexcept;
         IndexBuffer(const uint32_t *data, uint32_t elements) noexcept;
         ~IndexBuffer() noexcept;
-        void Bind() const noexcept;
+        void Bind() noexcept;
         void Unbind() const noexcept;
         void BufferData(const uint32_t *data, uint32_t elements) noexcept;
         void PushData(const uint32_t *data, uint32_t elements) noexcept;

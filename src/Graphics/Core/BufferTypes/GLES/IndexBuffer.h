@@ -21,9 +21,15 @@ namespace tml
         GL_CALL(glad_glDeleteBuffers(1, &m_id));
     }
 
-    void IndexBuffer::Bind() const noexcept
+    void IndexBuffer::Bind() noexcept
     {
         GL_CALL(glad_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id));
+
+        if(m_mappedPtr)
+        {
+            GL_CALL(glad_glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER));
+            m_mappedPtr = nullptr;
+        }
     }
 
     void IndexBuffer::Unbind() const noexcept
@@ -35,12 +41,6 @@ namespace tml
     {
         Bind();
 
-        if(m_mappedPtr)
-        {
-            GL_CALL(glad_glFlushMappedBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, m_elements*4));
-            GL_CALL(glad_glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER));
-        }
-
         m_capacity = elements;
 
         if(data)
@@ -48,8 +48,11 @@ namespace tml
         else
             m_elements = 0;
 
-        GL_CALL(glad_glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements * 4, data, GL_STATIC_DRAW));
-        m_mappedPtr = GL_CALL(glad_glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, elements * 4, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT | GL_MAP_FLUSH_EXPLICIT_BIT));
+        if(m_mappedPtr)
+            GL_CALL(glad_glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER));
+
+        GL_CALL(glad_glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements * 4, data, BUFFER_USAGE_FLAG));
+        m_mappedPtr = GL_CALL(glad_glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, elements * 4, BUFFER_MAP_FLAGS));
 
         Unbind();
     }

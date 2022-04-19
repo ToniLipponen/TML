@@ -443,6 +443,7 @@ namespace tml
         m_vertexVector->Bind();
         m_indexVector->Bind();
 
+//        GL_CALL(glad_glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_indexVector->size())));
         GL_CALL(glad_glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indexVector->size()), GL_UNSIGNED_INT, nullptr));
         BeginBatch();
     }

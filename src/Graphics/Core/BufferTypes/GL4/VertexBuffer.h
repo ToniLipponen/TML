@@ -21,9 +21,13 @@ namespace tml
         GL_CALL(glad_glDeleteBuffers(1, &m_id));
     }
 
-    void VertexBuffer::Bind() const noexcept
+    void VertexBuffer::Bind() noexcept
     {
-
+        if(m_mappedPtr)
+        {
+            GL_CALL(glad_glUnmapNamedBuffer(m_id));
+            m_mappedPtr = nullptr;
+        }
     }
 
     void VertexBuffer::Unbind() const noexcept
@@ -33,12 +37,6 @@ namespace tml
 
     void VertexBuffer::BufferData(const void* data, uint32_t vertexSize, uint32_t vertexCount) noexcept
     {
-        if(m_mappedPtr)
-        {
-            GL_CALL(glad_glFlushMappedNamedBufferRange(m_id, 0, m_dataSize));
-            GL_CALL(glad_glUnmapNamedBuffer(m_id));
-        }
-
         m_capacity = vertexSize * vertexCount;
 
         if(data)
@@ -51,6 +49,9 @@ namespace tml
             m_vertexCount = 0;
             m_dataSize = 0;
         }
+
+        if(m_mappedPtr)
+            GL_CALL(glad_glUnmapNamedBuffer(m_id));
 
         GL_CALL(glad_glNamedBufferData(m_id, m_capacity, data, BUFFER_USAGE_FLAG));
         m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, BUFFER_MAP_FLAGS));

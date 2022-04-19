@@ -21,9 +21,14 @@ namespace tml
         GL_CALL(glad_glDeleteBuffers(1, &m_id));
     }
 
-    void IndexBuffer::Bind() const noexcept
+    void IndexBuffer::Bind() noexcept
     {
-
+        if(m_mappedPtr)
+        {
+//            GL_CALL(glad_glFlushMappedNamedBufferRange(m_id, 0, m_elements*4));
+            GL_CALL(glad_glUnmapNamedBuffer(m_id));
+            m_mappedPtr = nullptr;
+        }
     }
 
     void IndexBuffer::Unbind() const noexcept
@@ -35,7 +40,7 @@ namespace tml
     {
         if(m_mappedPtr)
         {
-            GL_CALL(glad_glFlushMappedNamedBufferRange(m_id, 0, m_elements*4));
+//            GL_CALL(glad_glFlushMappedNamedBufferRange(m_id, 0, m_elements*4));
             GL_CALL(glad_glUnmapNamedBuffer(m_id));
         }
 
