@@ -47,8 +47,8 @@ namespace tml
         else
             m_elements = 0;
 
-        GL_CALL(glad_glNamedBufferData(m_id, size, data, GL_STATIC_DRAW));
-        m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, size, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT | GL_MAP_FLUSH_EXPLICIT_BIT));
+        GL_CALL(glad_glNamedBufferData(m_id, size, data, BUFFER_USAGE_FLAG));
+        m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, size, BUFFER_MAP_FLAGS));
     }
 
     void IndexBuffer::PushData(const uint32_t* data, uint32_t elements) noexcept

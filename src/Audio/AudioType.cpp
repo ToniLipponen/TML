@@ -63,7 +63,7 @@ namespace tml
         m_balance = Math::Clamp<float>(balance, -1, 1);
     }
 
-    size_t AudioType::GetLengthInSeconds() const noexcept
+    uint64_t AudioType::GetLengthInSeconds() const noexcept
     {
         if((m_rate == 0) || (m_channels == 0))
             return 0;

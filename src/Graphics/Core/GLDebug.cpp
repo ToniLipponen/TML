@@ -16,13 +16,13 @@ int CheckGLError()
         case 1284: tml::Logger::ErrorMessage("GL_STACK_UNDERFLOW");              break;
         case 1285: tml::Logger::ErrorMessage("GL_OUT_OF_MEMORY");                break;
         case 1286: tml::Logger::ErrorMessage("GL_INVALID_FRAMEBUFFER_OPERATION");break;
-        default:                                                                 break;
+        default:                                                                      break;
     }
     return 1;
 }
 
 #ifndef TML_USE_GLES
-void GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* user_param)
+void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* user_param)
 {
     auto const src_str = [source]()
     {

@@ -14,7 +14,7 @@ namespace tml
         GL_CALL(glGenVertexArrays(1, &m_id));
 
         auto& lo = layout.GetData();
-        ui64 offset = 0;
+        uint64_t offset = 0;
 
         BufferData(vb, layout);
     }
@@ -37,7 +37,7 @@ namespace tml
     void VertexArray::BufferData(VertexBuffer& vb, BufferLayout& layout) noexcept
     {
         auto& lo = layout.GetData();
-        ui64 offset = 0;
+        uint64_t offset = 0;
 
         Bind();
         vb.Bind();
@@ -57,7 +57,7 @@ namespace tml
     void VertexArray::BufferData(VertexBuffer& vb, IndexBuffer& ib, BufferLayout& layout) noexcept
     {
         auto& lo = layout.GetData();
-        ui64 offset = 0;
+        uint64_t offset = 0;
 
         Bind();
         vb.Bind();

@@ -35,7 +35,7 @@ namespace tml
         IndexBuffer() noexcept;
         IndexBuffer(const uint32_t *data, uint32_t elements) noexcept;
         ~IndexBuffer() noexcept;
-        void Bind() const noexcept; // Doesn't do anything on GL 4.5
+        void Bind() const noexcept;
         void Unbind() const noexcept;
         void BufferData(const uint32_t *data, uint32_t elements) noexcept;
         void PushData(const uint32_t *data, uint32_t elements) noexcept;

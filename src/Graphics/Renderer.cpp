@@ -52,6 +52,11 @@ namespace tml
 #else
         TML_ASSERT(gladLoadGL((GLADloadfunc)glfwGetProcAddress), "Failed to initialize renderer");
 #endif
+
+#if !defined(TML_USE_GLES) && !defined(TML_NO_GL_DEBUGGING)
+        glEnable(GL_DEBUG_OUTPUT);
+        glDebugMessageCallback(GLMessageCallback, nullptr);
+#endif
         GL_CALL(glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureCount));
         m_maxTextureCount = Math::Min(m_maxTextureCount, 32);
 
@@ -78,11 +83,6 @@ namespace tml
         GL_CALL(glEnable(GL_BLEND));
         GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
         GL_CALL(glBlendEquation(GL_FUNC_ADD));
-
-#if !defined(TML_USE_GLES) && !defined(TML_NO_GL_DEBUGGING)
-        glEnable(GL_DEBUG_OUTPUT);
-        glDebugMessageCallback(GLMessageCallback, nullptr);
-#endif
     }
 
     Renderer::~Renderer()
@@ -443,7 +443,7 @@ namespace tml
         m_vertexVector->Bind();
         m_indexVector->Bind();
 
-        GL_CALL(glad_glDrawElements(GL_TRIANGLES, m_indexVector->size(), GL_UNSIGNED_INT, nullptr));
+        GL_CALL(glad_glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indexVector->size()), GL_UNSIGNED_INT, nullptr));
         BeginBatch();
     }
 }

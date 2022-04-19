@@ -2,8 +2,6 @@
 #include "TML/Graphics/Drawable/Vertex.h"
 #include "TML/Graphics/Core/Buffers.h"
 
-/// \brief These are just vectors that map to GPU memory.
-
 namespace tml
 {
     class VertexVector : public VertexBuffer
@@ -26,7 +24,7 @@ namespace tml
             }
         }
 
-        size_t size() const noexcept
+        uint32_t size() const noexcept
         {
             return m_vertexCount;
         }
@@ -51,7 +49,7 @@ namespace tml
             }
         }
 
-        size_t size() const noexcept
+        uint32_t size() const noexcept
         {
             return m_elements;
         }

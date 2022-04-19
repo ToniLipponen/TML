@@ -1,3 +1,4 @@
+#include "BufferFlags.h"
 #include "../../../Headers/GLHeader.h"
 #include <TML/Graphics/Core/Buffers.h>
 
