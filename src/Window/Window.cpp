@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include "../Headers/_Assert.h"
 #include "../Headers/Logo.h" /// Logo data
+#include "GLContext/GLContext.h"
 
 void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);
 void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
@@ -22,29 +23,16 @@ void WindowMoveCallback(GLFWwindow* window, int x, int y);
 
 namespace tml
 {
-    bool Window::s_glfwInitialized = false;
-
     Window::Window()
     : m_handle(nullptr)
     {
-        if(!s_glfwInitialized)
-        {
-            s_glfwInitialized = (glfwInit() == GLFW_TRUE);
-            TML_ASSERT(s_glfwInitialized, "Failed to initialize GLFW.");
-            glfwSetErrorCallback([](int, const char* m){ Logger::ErrorMessage("GLFW ERROR: %s", m); });
-        }
+
     }
 
-    Window::Window(int32_t w, int32_t h, const std::string& title, uint32_t settings, const Window* shared)
+    Window::Window(int32_t w, int32_t h, const std::string& title, uint32_t settings)
     : m_handle(nullptr)
     {
-        if(!s_glfwInitialized)
-        {
-            s_glfwInitialized = (glfwInit() == GLFW_TRUE);
-            TML_ASSERT(s_glfwInitialized, "Failed to initialize GLFW.");
-            glfwSetErrorCallback([](int, const char* m){ Logger::ErrorMessage("GLFW ERROR: %s", m); });
-        }
-        if(!Create(w, h, title, settings, shared))
+        if(!Create(w, h, title, settings))
             Logger::ErrorMessage("Failed to create a window");
     }
 
@@ -59,23 +47,17 @@ namespace tml
             glfwSwapBuffers(static_cast<GLFWwindow*>(m_handle));
     }
 
-    bool Window::Create(int32_t w, int32_t h, const std::string& title, uint32_t settings, const Window* shared) noexcept
+    bool Window::Create(int32_t w, int32_t h, const std::string& title, uint32_t settings) noexcept
     {
+        GLFWwindow* glContextHandle = nullptr;
         if(settings & NoClient)
         {
+            TML_ASSERT(glfwInit() == GLFW_TRUE, "Failed to initialize GLFW");
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         }
         else
         {
-#if defined(TML_USE_GLES)
-            glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-#else
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#endif
+            glContextHandle = static_cast<GLFWwindow*>(GLContext::GetInstance().GetContextHandle());
         }
 
         glfwWindowHint(GLFW_DECORATED,                 (settings & Settings::NoTopBar)     == 0);
@@ -94,14 +76,18 @@ namespace tml
             glfwGetMonitorWorkarea(primaryMonitor, nullptr, nullptr, &w, &h);
 
         /// Create the actual window
-        m_handle = glfwCreateWindow(w, h, title.c_str(), monitor, shared ? static_cast<GLFWwindow*>(shared->m_handle) : nullptr);
+        m_handle = glfwCreateWindow(w, h, title.c_str(), monitor, glContextHandle);
         if(m_handle == nullptr)
             return false;
 
         m_size = {w, h};
+        m_pos  = {0,0};
+
         auto handle = static_cast<GLFWwindow*>(m_handle);
         glfwMakeContextCurrent(handle);
-        glfwSwapInterval((settings & Settings::VSync) != 0);
+
+        if((settings & Settings::VSync) > 0)
+            glfwSwapInterval(1);
 
         /// Set window logo to TML-logo ///////////
         Image image(LOGO_DATA.data(), static_cast<int>(LOGO_DATA.size()));

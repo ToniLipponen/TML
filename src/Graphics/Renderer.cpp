@@ -5,16 +5,7 @@
 #include <glm/glm/glm.hpp>
 #include <glm/glm/gtc/matrix_transform.hpp>
 
-#define GLAD_GL_IMPLEMENTATION
-#define GLAD_GLES2_IMPLEMENTATION
-#define GLAD_EGL_IMPLEMENTATION
-#define GLAD_WGL_IMPLEMENTATION
-#define GLAD_GLX_IMPLEMENTATION
 #include "../Headers/GLHeader.h"
-
-#define GLFW_INCLUDE_NONE
-#include <glfw/include/GLFW/glfw3.h>
-#include "../Headers/_Assert.h"
 #include "../Headers/Shaders.h"
 #include "../Headers/MappedVector.h"
 
@@ -43,20 +34,6 @@ namespace tml
 
     Renderer::Renderer()
     {
-#ifdef TML_USE_GLES
-    #ifdef PLATFORM_WINDOWS
-        TML_ASSERT(gladLoadGL((GLADloadfunc)glfwGetProcAddress), "Failed to initialize renderer");
-    #else
-        TML_ASSERT(gladLoadGLES2((GLADloadfunc)glfwGetProcAddress), "Failed to initialize renderer");
-    #endif
-#else
-        TML_ASSERT(gladLoadGL((GLADloadfunc)glfwGetProcAddress), "Failed to initialize renderer");
-#endif
-
-#if !defined(TML_USE_GLES) && !defined(TML_NO_GL_DEBUGGING)
-        glEnable(GL_DEBUG_OUTPUT);
-        glDebugMessageCallback(GLMessageCallback, nullptr);
-#endif
         GL_CALL(glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureCount));
         m_maxTextureCount = Math::Min(m_maxTextureCount, 32);
 

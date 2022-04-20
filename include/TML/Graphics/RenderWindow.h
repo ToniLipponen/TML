@@ -13,7 +13,7 @@ namespace tml
             DontAutoResizeViewport  = (1 << 17)
         };
     public:
-        RenderWindow(uint32_t w, uint32_t h, const std::string& title, uint32_t settings = Window::Settings::None, const Window* shared = nullptr);
+        RenderWindow(uint32_t w, uint32_t h, const std::string& title, uint32_t settings = Window::Settings::None);
         void Clear() noexcept override;
         void Display() override;
         void Screenshot(Image& image);

@@ -29,7 +29,7 @@ namespace tml
         };
     public:
         Window();
-        Window(int32_t width, int32_t height, const std::string& title, uint32_t settings = None, const Window* shared = nullptr);
+        Window(int32_t width, int32_t height, const std::string& title, uint32_t settings = None);
         Window(const Window &) = delete;
         Window(const Window&&) = delete;
         Window& operator=(const Window&) = delete;
@@ -38,7 +38,7 @@ namespace tml
         virtual ~Window();
         virtual void Display();
 
-        bool Create(int32_t w, int32_t h, const std::string& title, uint32_t settings = None, const Window* shared = nullptr) noexcept;
+        bool Create(int32_t w, int32_t h, const std::string& title, uint32_t settings = None) noexcept;
         void Close() noexcept; //!< Destroys the window.
         bool IsOpen() const noexcept;
         

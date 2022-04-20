@@ -5,8 +5,8 @@
 
 namespace tml
 {
-    RenderWindow::RenderWindow(uint32_t w, uint32_t h, const std::string& title, uint32_t settings, const Window* shared)
-    : Window(w , h, title, settings, shared)
+    RenderWindow::RenderWindow(uint32_t w, uint32_t h, const std::string& title, uint32_t settings)
+    : Window(w , h, title, settings)
     {
         SetView({0,0}, {w,h});
         m_autoResizeView = (settings & DontAutoResizeView) == 0;

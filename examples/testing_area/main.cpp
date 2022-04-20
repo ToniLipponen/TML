@@ -5,6 +5,7 @@ using namespace Interface;
 int main()
 {
     RenderWindow window(800, 600, "Window", Window::Resizeable);
+    RenderWindow window2(400, 400, "Window2");
 
     VerticalLayout layout(10,30, 300, 500);
     DropList* dropList;
@@ -37,6 +38,16 @@ int main()
 
             layout.Update(event);
         }
+
+        while(window2.PollEvents(event))
+        {
+            if(event.type == Event::Closed)
+                window2.Close();
+        }
+
+        window2.Clear();
+        window2.DrawCircle(window2.GetSize() / 2, 100, Color::Green);
+        window2.Display();
 
         window.Clear();
         layout.Draw(window);
