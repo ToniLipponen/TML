@@ -45,7 +45,7 @@ namespace tml
         /** @brief Resize the image to requested size.
          *  @returns true if successful, or false if unsuccessful. */
         bool Resize(int32_t requestedWidth = 0, int32_t requestedHeight = 0) noexcept;
-        void FlipVertically() noexcept;
+        bool FlipVertically() noexcept;
         void SetFlipOnLoad(bool flip);
         void SetFlipOnWrite(bool flip);
 
@@ -56,9 +56,9 @@ namespace tml
         static ImageType GetTypeFromFilename(const String& filename) noexcept;
 
     private:
-        bool m_flipOnRead = false;
-        bool m_flipOnWrite = false;
         int32_t m_width = 0, m_height = 0, m_Bpp = 0;
         uint8_t* m_data = nullptr;
+        bool m_flipOnRead = false;
+        bool m_flipOnWrite = false;
     };
 }

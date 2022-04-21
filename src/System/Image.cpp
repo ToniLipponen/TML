@@ -133,7 +133,6 @@ namespace tml
     bool Image::LoadFromData(const uint8_t *data, uint32_t dataSize) noexcept
     {
         delete[] m_data;
-        m_data = nullptr;
 
         m_data = stbi_load_from_memory(data, static_cast<int>(dataSize), &m_width, &m_height, &m_Bpp, 0);
         bool returnValue = m_data != nullptr;
@@ -151,8 +150,7 @@ namespace tml
     {
         const auto type = GetTypeFromFilename(fileName);
 
-        if(m_flipOnWrite)
-            FlipVertically();
+        stbi_flip_vertically_on_write(m_flipOnWrite);
 
         bool returnValue;
         switch(type)
@@ -173,8 +171,7 @@ namespace tml
                 returnValue = stbi_write_jpg(fileName.c_str(), m_width, m_height, m_Bpp, m_data, quality) != 0;
         }
 
-        if(m_flipOnWrite)
-            FlipVertically();
+        stbi_flip_vertically_on_write(0);
 
         return returnValue;
     }
@@ -197,26 +194,30 @@ namespace tml
         m_data = newData;
         m_width = requestedWidth;
         m_height = requestedHeight;
-        return m_data != nullptr;
+        return true;
     }
 
-    void Image::FlipVertically() noexcept
+    bool Image::FlipVertically() noexcept
     {
         if(m_data == nullptr)
-            return;
+            return false;
 
-        auto* row = new uint8_t[m_width * m_Bpp];
-        const size_t rowLen = m_width*m_Bpp;
-        const size_t height2 = m_height/2;
+        const size_t rowLen = m_width * m_Bpp;
+        const size_t height2 = m_height / 2;
+        auto* row = new uint8_t[rowLen];
 
         for(size_t i = 0; i < height2; ++i)
         {
-            std::memcpy(row, m_data+i*rowLen, rowLen);
-            std::memcpy(m_data+i*rowLen, m_data+(m_height-1-i)*rowLen, rowLen);
-            std::memcpy(m_data+(m_height-1-i)*rowLen, row, rowLen);
+            auto* bottom = m_data + (m_height - 1 - i) * rowLen;
+            auto* top = m_data + i * rowLen;
+
+            std::memcpy(row, top, rowLen);
+            std::memcpy(top, bottom, rowLen);
+            std::memcpy(bottom, row, rowLen);
         }
 
         delete[] row;
+        return true;
     }
 
     void Image::SetFlipOnLoad(bool flip)

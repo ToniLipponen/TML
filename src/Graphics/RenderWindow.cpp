@@ -37,22 +37,13 @@ namespace tml
         Window::Display();
     }
 
-    void RenderWindow::Screenshot(Image& image)
+    Image RenderWindow::Screenshot() const noexcept
     {
-        auto w = GetWidth();
-        auto h = GetHeight();
-        uint32_t* buffer = new uint32_t[w*h];
-        image.LoadFromMemory(w, h, 4, nullptr);
-        glad_glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-
-        for(auto i = 0; i < h; ++i)
-        {
-            for(auto j = 0; j < w; ++j)
-            {
-                ((uint32_t*)image.GetData())[i * w + j] = buffer[((h - i) * w) + j];
-            }
-        }
-
-        delete[] buffer;
+        const auto w = GetWidth();
+        const auto h = GetHeight();
+        Image image(w, h, 4, nullptr);
+        GL_CALL(glad_glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, image.GetData()));
+        image.FlipVertically();
+        return image;
     }
 }

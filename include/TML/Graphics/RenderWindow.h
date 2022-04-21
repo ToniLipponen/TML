@@ -16,7 +16,7 @@ namespace tml
         RenderWindow(uint32_t w, uint32_t h, const std::string& title, uint32_t settings = Window::Settings::None);
         void Clear() noexcept override;
         void Display() override;
-        void Screenshot(Image& image);
+        Image Screenshot() const noexcept;
     private:
         Vector2f GetRenderTargetSize() const noexcept override { return GetSize(); }
         bool m_autoResizeView = true;
