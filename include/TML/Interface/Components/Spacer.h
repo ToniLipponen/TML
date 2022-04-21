@@ -10,7 +10,7 @@ namespace tml
         public:
             Spacer();
         private:
-            void pDraw(RenderTarget& renderTarget) override {}
+            void pDraw(Renderer &renderer) override {}
         };
     }
 }

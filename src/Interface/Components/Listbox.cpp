@@ -1,4 +1,5 @@
 #include <TML/Interface/Components/Listbox.h>
+#include <TML/System/Logger.h>
 
 namespace tml
 {
@@ -47,9 +48,9 @@ namespace tml
             {
                 if(m_state.MouseOver)
                 {
-                    if(e.mouseWheelScroll.deltaY > 0.0)
+                    if(e.mouseWheelScroll.delta > 0.0)
                         m_scrollbar->SetValue(m_scrollbar->GetValue() - 1);
-                    else if(e.mouseWheelScroll.deltaY < 0.0)
+                    else if(e.mouseWheelScroll.delta < 0.0)
                         m_scrollbar->SetValue(m_scrollbar->GetValue() + 1);
 
                     e = Event{};
@@ -161,23 +162,21 @@ namespace tml
             return Math::Max<int32_t>((valuesSize - m_size.y) / 20, 0);
         }
 
-        void Listbox::pDraw(RenderTarget& renderTarget)
+        void Listbox::pDraw(Renderer &window)
         {
-            renderTarget.DrawRect(m_pos, m_size, m_pColor);
-            renderTarget.SetBounds(m_pos, m_size);
-            renderTarget.DrawRect(m_pos + Vector2f(0, (m_selectedIndex-m_scrollbar->GetValue()) * 20), Vector2f(m_size.x, 20.f), m_activeColor);
+            window.DrawRect(m_pos, m_size, m_pColor);
+            window.SetBounds(m_pos, m_size);
+            window.DrawRect(m_pos + Vector2f(0, (m_selectedIndex-m_scrollbar->GetValue()) * 20), Vector2f(m_size.x, 20.f), m_activeColor);
 
             for(int i = 0; i < m_values.size(); i++)
             {
-                renderTarget.DrawText(m_values.at(i), m_pos + Vector2i(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20, Color::Black);
+                window.DrawText(m_values.at(i), m_pos + Vector2i(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20, Color::Black);
             }
-
-            renderTarget.ResetBounds();
-
+            window.ResetBounds();
             if(m_state.Focused)
-                renderTarget.DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
+                window.DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
             else
-                renderTarget.DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
+                window.DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
         }
     }
 }

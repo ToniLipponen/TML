@@ -11,7 +11,7 @@ namespace tml
         public:
             explicit Menubar(RenderWindow& window);
         private:
-            void pDraw(RenderTarget& renderTarget) override;
+            void pDraw(Renderer &renderer) override;
         };
     }
 }
