@@ -1,0 +1,17 @@
+#pragma once
+#include <TML/System/Math/Vector2.h>
+
+namespace tml
+{
+    namespace Interface
+    {
+        class Layout
+        {
+        public:
+            void SetPadding(const Vector2i& padding){ m_padding = padding; }
+            Vector2i GetPadding() const noexcept { return m_padding; }
+        protected:
+            Vector2i m_padding = {5, 5};
+        };
+    }
+}
