@@ -1,0 +1,85 @@
+#include <TML/Interface/Components/Button.h>
+
+using namespace tml::Interface;
+
+Button::Button(const std::string& text, int32_t x, int32_t y, uint32_t w, uint32_t h, const UIFunc& onClick, bool expand)
+: BaseComponent(x,y,w,h)
+{
+    m_hSizePolicy = expand ? SizePolicy::Expand : SizePolicy::Clamp;
+    m_vSizePolicy = SizePolicy::Clamp;
+    m_text.SetString(text);
+    m_text.SetColor(Color::Black);
+    if(h == 0)
+    {
+        m_text.SetSize(20);
+        m_size = m_text.GetDimensions() + Vector2f(10, 0);
+        m_originalSize = m_size;
+    }
+    else
+    {
+        m_text.SetSize(h*0.8f);
+    }
+
+    const Vector2i textSize = m_text.GetDimensions();
+    m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
+
+    AddListener("Click", [&](BaseComponent* c, Event& e)
+    {
+        UnFocus();
+        e = Event{};
+    });
+
+    if(onClick)
+        AddListener("Click", onClick);
+
+    AddListener("MouseUp", [&](BaseComponent* c, Event& e)
+    {
+        if(!m_state.MouseOver)
+            UnFocus();
+    });
+
+    AddListener("MouseDown",[&](BaseComponent* c, Event& e)
+    {
+        if(m_state.MouseOver)
+        {
+            Focus();
+            m_state.MouseDown = e.mouseButton.button;
+            e = Event{};
+        }
+        else
+            UnFocus();
+    });
+
+    AddListener("Moved", [&](BaseComponent* c, Event& e)
+    {
+        const Vector2i textSize = m_text.GetDimensions();
+        m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
+    });
+
+    AddListener("Resized", [&](BaseComponent* c, Event& e)
+    {
+        m_text.SetSize(e.size.h*0.8);
+        const Vector2i textSize = m_text.GetDimensions();
+        m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
+    });
+}
+
+void Button::SetRoundness(float roundness)
+{
+    m_roundness = roundness;
+}
+
+void Button::SetText(const std::string &str)
+{
+    m_text.SetString(str);
+}
+
+void Button::pDraw(Renderer &window)
+{
+    window.DrawRect(m_pos, m_size, m_state.Focused || m_state.MouseOver ? m_activeColor : m_sColor, m_roundness);
+    window.DrawRect(m_pos + Vector2f(1,1), m_size - Vector2f(2,2), m_state.MouseDown > -1 ? m_activeColor : m_pColor, m_roundness);
+
+    window.SetBounds(m_pos, m_size);
+    window.Draw(m_text);
+    window.ResetBounds();
+}
