@@ -14,7 +14,7 @@ namespace tml
             inline constexpr const String& GetValue() const noexcept { return m_text.GetString(); }
         private:
             void InitListeners();
-            void pDraw(RenderTarget& renderTarget) override;
+            void pDraw(Renderer &renderer) override;
             Text m_text;
             String m_value;
             int32_t m_cursorIndex = 0;

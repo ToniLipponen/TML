@@ -71,21 +71,21 @@ namespace tml
             m_listComponent->Clear();
         }
 
-        void DropList::pDraw(RenderTarget& renderTarget)
+        void DropList::pDraw(Renderer &window)
         {
             String selected_value;
             if(m_listComponent)
                 selected_value = m_listComponent->GetSelectedValue();
 
-            renderTarget.DrawRect(m_pos, m_size, m_pColor);
-            renderTarget.SetBounds(m_pos, m_size);
-            renderTarget.DrawText(selected_value, m_pos, m_size.y, Color::Black);
-            renderTarget.ResetBounds();
+            window.DrawRect(m_pos, m_size, m_pColor);
+            window.SetBounds(m_pos, m_size);
+            window.DrawText(selected_value, m_pos, m_size.y, Color::Black);
+            window.ResetBounds();
 
             if(m_state.Focused)
-                renderTarget.DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
+                window.DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
             else
-                renderTarget.DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
+                window.DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
         }
     }
 }
