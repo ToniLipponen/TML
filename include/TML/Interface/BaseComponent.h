@@ -75,7 +75,11 @@ namespace tml
             constexpr inline const std::string& GetID() const noexcept { return m_id; }
             virtual bool ContainsPoint(const Vector2i& p);
             void Update(Event& event);
+<<<<<<< HEAD
             void Draw(RenderTarget &renderer);
+=======
+            void Draw(Renderer& renderer);
+>>>>>>> 612e14f (Experimental GUI branch.)
             inline SizePolicy GetHorizontalSizePolicy() const { return m_hSizePolicy; }
             inline SizePolicy GetVerticalSizePolicy() const { return m_vSizePolicy; }
             void SetSizePolicy(SizePolicy horizontal, SizePolicy vertical);
@@ -97,7 +101,11 @@ namespace tml
             void RemoveFromProcessStack(BaseComponent* component);
             bool CallUIFunc(const std::string& name, Event& event);
             void ProcessEvents(Event& event, double dt);
+<<<<<<< HEAD
             virtual void pDraw(RenderTarget &renderer) = 0;
+=======
+            virtual void pDraw(Renderer &renderer) = 0;
+>>>>>>> 612e14f (Experimental GUI branch.)
 
             Vector2i m_pos;
             Vector2i m_size;
