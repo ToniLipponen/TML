@@ -1,4 +1,5 @@
 #include <TML/Interface/BaseComponent.h>
+#include <TML/Graphics/Renderer.h>
 #include <TML/System/Clock.h>
 #include <string>
 #include <algorithm>
@@ -337,7 +338,7 @@ namespace tml
             ProcessEvents(event, delta);
         }
 
-        void BaseComponent::Draw(RenderTarget &renderer)
+        void BaseComponent::Draw(Renderer& renderer)
         {
             pDraw(renderer);
             for(auto* i : m_processStack)

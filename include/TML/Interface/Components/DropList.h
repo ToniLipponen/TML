@@ -19,7 +19,7 @@ namespace tml
             String GetSelectedValue() const;
             void Clear(); //!< Deletes every item in the list.
         private:
-            void pDraw(RenderTarget& renderTarget) override;
+            void pDraw(Renderer &renderer) override;
             Listbox* m_listComponent;
         };
     }
