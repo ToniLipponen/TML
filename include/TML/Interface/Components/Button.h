@@ -15,9 +15,9 @@ namespace tml
             void SetText(const std::string& str);
             void SetTextSize(float s) { m_text.SetSize(s);}
             void SetTextColor(const Color& color){ m_text.SetColor(color); }
-            inline const String& GetText() const noexcept { return m_text.GetString(); }
+            inline constexpr const String& GetText() const noexcept { return m_text.GetString(); }
         private:
-            void pDraw(RenderTarget& renderTarget) override;
+            void pDraw(Renderer &renderer) override;
             Text m_text;
             float m_roundness = 0;
         };

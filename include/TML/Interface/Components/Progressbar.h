@@ -1,6 +1,5 @@
 #pragma once
 #include <TML/Interface/BaseComponent.h>
-#include <TML/Graphics/Drawable/Text.h>
 
 namespace tml
 {
@@ -14,7 +13,7 @@ namespace tml
             void SetValue(float value) noexcept;
             void SetTextColor(const Color& color) noexcept;
         private:
-            void pDraw(RenderTarget& renderTarget) override;
+            void pDraw(Renderer &renderer) override;
             float m_value = 0;
             Text m_text;
         };
