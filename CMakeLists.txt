@@ -60,17 +60,16 @@ add_subdirectory(external/lunasvg)
 # Add modules
 add_subdirectory(src/Audio)
 add_subdirectory(src/Graphics)
-add_subdirectory(src/Interface)
 add_subdirectory(src/Network)
 add_subdirectory(src/System)
 add_subdirectory(src/Window)
 
 add_library(tml src/TOKEN_SOURCE_FILE.cpp ${HEADER_FILES})
-target_link_libraries(tml tml-audio tml-graphics tml-interface tml-network tml-system tml-window)
+target_link_libraries(tml tml-audio tml-graphics tml-network tml-system tml-window)
 
 if(UNIX)
     set(CMAKE_INSTALL_PREFIX /usr/)
-    install(TARGETS tml-audio tml-interface tml-graphics tml-window tml-system tml-network DESTINATION /usr/lib)
+    install(TARGETS tml-audio tml-graphics tml-window tml-system tml-network DESTINATION /usr/lib)
     install(DIRECTORY include/TML DESTINATION /usr/include)
 endif()
 
@@ -83,7 +82,6 @@ if(TML_BUILD_EXAMPLES)
     add_subdirectory(examples/ImageViewer)
     add_subdirectory(examples/Http)
     add_subdirectory(examples/PostProcessing)
-    add_subdirectory(examples/testing_area)
 endif()
 
 # Removing TML library file, because it doesn't actually contain anything.
