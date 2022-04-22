@@ -9,8 +9,8 @@
 #include <vector>
 
 #define ATLAS_SIZE 4096
-#define OVER_SAMPLING 4
-#define GLYPH_SIZE ATLAS_SIZE / 16.0 / OVER_SAMPLING
+#define OVER_SAMPLING 2
+#define GLYPH_SIZE 96
 
 namespace tml
 {
@@ -50,10 +50,10 @@ namespace tml
 
     void Font::LoadFromMemory(const uint8_t* data)
     {
-        auto* bitmap = new uint8_t[ATLAS_SIZE*ATLAS_SIZE];
+        auto* bitmap = new uint8_t[ATLAS_SIZE * ATLAS_SIZE];
 
         stbtt_pack_context context;
-        stbtt_PackBegin(&context, bitmap, ATLAS_SIZE, ATLAS_SIZE, 0, 1, nullptr);
+        stbtt_PackBegin(&context, bitmap, ATLAS_SIZE, ATLAS_SIZE, 0, 10, nullptr);
         stbtt_PackSetOversampling(&context, OVER_SAMPLING, OVER_SAMPLING);
         stbtt_PackSetSkipMissingCodepoints(&context, 1);
         stbtt_PackFontRange(&context, data, 0, GLYPH_SIZE, 32, 1024, (stbtt_packedchar*)m_cdata);

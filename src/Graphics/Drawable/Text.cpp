@@ -60,10 +60,10 @@ namespace tml
 
     inline constexpr void NormalizeQuad(stbtt_aligned_quad& q, double s, double x, double y) noexcept
     {
-        q.x1 = float((q.x1 * (s / 64.0)) + x);
-        q.x0 = float((q.x0 * (s / 64.0)) + x);
-        q.y0 = float((q.y0 * (s / 64.0)) + y);
-        q.y1 = float((q.y1 * (s / 64.0)) + y);
+        q.x1 = float((q.x1 * (s / 96.0)) + x);
+        q.x0 = float((q.x0 * (s / 96.0)) + x);
+        q.y0 = float((q.y0 * (s / 96.0)) + y);
+        q.y1 = float((q.y1 * (s / 96.0)) + y);
     }
 
     void Text::Generate()
@@ -74,7 +74,7 @@ namespace tml
             s_defaultFont->LoadFromMemory(TML_DEFAULT_FONT_DATA);
         }
         m_dimensions = Vector2f{0, m_size.y};
-        float x = 0, y = 48;
+        float x = 0, y = 96.0 - (96.0 / 3.0);
         float width = 0, height = 0;
         uint32_t count = 0;
         m_vertexData.clear();
@@ -96,7 +96,7 @@ namespace tml
                 case '\n':
                     m_dimensions.x = Math::Max(width, m_dimensions.x);
                     m_dimensions.y = Math::Max(height+m_size.x+m_lineSpacing, m_dimensions.y);
-                    y += 64.0 - (64.0 / 3.0) + m_lineSpacing;
+                    y += 96.0 - (96.0 / 3.0) + m_lineSpacing;
                     x = 0;
                     width = 0;
                     break;
@@ -107,15 +107,8 @@ namespace tml
 
                 default:
                     stbtt_aligned_quad q;
-                    stbtt_GetPackedQuad(((const stbtt_packedchar *)font.m_cdata), 4096, 4096, int(c-32), &x, &y, &q, 1);
+                    stbtt_GetPackedQuad(((const stbtt_packedchar *)font.m_cdata), 4096, 4096, int(c-32), &x, &y, &q, 0);
                     NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
-
-                    /// Rounding the vertex positions of the quad.
-                    /// This seems to improve the quality of the text, when the font size is small.
-                    q.x0 = roundf(q.x0);
-                    q.x1 = roundf(q.x1);
-                    q.y0 = roundf(q.y0);
-                    q.y1 = roundf(q.y1);
 
                     m_vertexData.push_back({{q.x0, q.y0}, {q.s0, q.t0}, hex, Vertex::TEXT});
                     m_vertexData.push_back({{q.x1, q.y0}, {q.s1, q.t0}, hex, Vertex::TEXT});
