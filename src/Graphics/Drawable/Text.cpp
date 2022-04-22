@@ -68,13 +68,16 @@ namespace tml
 
     void Text::Generate()
     {
+        constexpr static float hOffset = 96 - 96.0 / 4.0;
+
         if(!s_defaultFont)
         {
             s_defaultFont = std::make_unique<Font>();
             s_defaultFont->LoadFromMemory(TML_DEFAULT_FONT_DATA);
         }
+
         m_dimensions = Vector2f{0, m_size.y};
-        float x = 0, y = 96.0 - (96.0 / 3.0);
+        float x = 0, y = hOffset;
         float width = 0, height = 0;
         uint32_t count = 0;
         m_vertexData.clear();
@@ -96,7 +99,7 @@ namespace tml
                 case '\n':
                     m_dimensions.x = Math::Max(width, m_dimensions.x);
                     m_dimensions.y = Math::Max(height+m_size.x+m_lineSpacing, m_dimensions.y);
-                    y += 96.0 - (96.0 / 3.0) + m_lineSpacing;
+                    y += hOffset + m_lineSpacing;
                     x = 0;
                     width = 0;
                     break;
