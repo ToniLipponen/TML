@@ -62,4 +62,9 @@ namespace tml
         m_texture.LoadFromMemory(ATLAS_SIZE, ATLAS_SIZE, 1, bitmap);
         delete[] bitmap;
     }
+
+    void Font::GetAlignedQuad(void *output, int codePoint, float& x, float& y)
+    {
+        stbtt_GetPackedQuad(static_cast<const stbtt_packedchar*>(m_cdata), 4096, 4096, codePoint, &x, &y, static_cast<stbtt_aligned_quad*>(output), 0);
+    }
 }

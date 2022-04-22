@@ -21,6 +21,9 @@ namespace tml
         friend class Text;
         friend class Renderer;
 
+    protected:
+        void GetAlignedQuad(void* output, int codePoint, float& x, float& y);
+
     private:
         void* m_cdata;
         Texture m_texture;

@@ -2,8 +2,13 @@
 #include <TML/Graphics/Renderer.h>
 #include <TML/System/Math.h>
 #include <TML/Graphics/Font.h>
-#include <stb/stb_truetype.h>
-#include "../../Headers/Font.h"
+#include "../../Headers/Font.h" //!< Default font data.
+
+struct stbtt_aligned_quad
+{
+    float x0,y0,s0,t0; // top-left
+    float x1,y1,s1,t1; // bottom-right
+};
 
 namespace tml
 {
@@ -83,7 +88,7 @@ namespace tml
         m_vertexData.clear();
         m_indexData.clear();
         const uint32_t hex = m_color.Hex();
-        Font& font = m_font ? *m_font : *s_defaultFont;
+        Font* font = m_font ? m_font.get() : s_defaultFont.get();
 
         for(auto c : m_string)
         {
@@ -109,8 +114,9 @@ namespace tml
                     break;
 
                 default:
-                    stbtt_aligned_quad q;
-                    stbtt_GetPackedQuad(((const stbtt_packedchar *)font.m_cdata), 4096, 4096, int(c-32), &x, &y, &q, 0);
+                    stbtt_aligned_quad q{};
+
+                    font->GetAlignedQuad(&q, (int)c - 32, x, y);
                     NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
 
                     m_vertexData.push_back({{q.x0, q.y0}, {q.s0, q.t0}, hex, Vertex::TEXT});
