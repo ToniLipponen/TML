@@ -30,8 +30,11 @@ namespace tml
 
     void Text::SetString(const String& string) noexcept
     {
-        m_string = string;
-        m_updated = true;
+        if(string != m_string)
+        {
+            m_string = string;
+            m_updated = true;
+        }
     }
 
     void Text::SetFont(const Font& font) noexcept
@@ -42,19 +45,29 @@ namespace tml
 
     void Text::SetFont(const std::shared_ptr<Font>& font) noexcept
     {
-        m_font = font;
+        if(m_font != font)
+        {
+            m_font = font;
+            m_updated = true;
+        }
     }
 
     void Text::SetSpacing(float s) noexcept
     {
-        m_updated = (m_lineSpacing != s) || m_updated;
-        m_lineSpacing = s;
+        if(m_lineSpacing != s)
+        {
+            m_updated = true;
+            m_lineSpacing = s;
+        }
     }
 
     void Text::SetKerning(float s) noexcept
     {
-        m_updated = (m_kerning != s) || m_updated;
-        m_kerning = s;
+        if(m_kerning != s)
+        {
+            m_updated = true;
+            m_kerning = s;
+        }
     }
 
     Vector2f Text::GetDimensions() noexcept

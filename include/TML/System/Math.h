@@ -75,18 +75,17 @@ namespace tml
             return b;
         }
 
-        template<typename T>
-        inline constexpr T Step(T edge, T x) noexcept
+        /** @brief Returns 1 if x is more than edge, otherwise returns 0. */
+        inline constexpr double Step(double edge, double x) noexcept
         {
             if(x < edge)
                 return 0;
             return 1;
         }
 
-        template<typename T>
-        inline constexpr T SmoothStep(T edge0, T edge1, T x) noexcept
+        inline constexpr double SmoothStep(double edge0, double edge1, double x) noexcept
         {
-            const T t = Clamp<T>((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+            const auto t = Clamp<double>((x - edge0) / (edge1 - edge0), 0.0, 1.0);
             return t * t * (3.0 - 2.0 * t);
         }
 

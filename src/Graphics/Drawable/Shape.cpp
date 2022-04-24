@@ -114,7 +114,7 @@ namespace tml
             auto elements = static_cast<int64_t>(m_points.size());
             elements = Math::Max<int64_t>(elements-2, 0);
 
-            for(size_t i = 0; i < elements; ++i)
+            for(int64_t i = 0; i < elements; ++i)
             {
                 m_indexData.push_back(0);
                 m_indexData.push_back(i+1);

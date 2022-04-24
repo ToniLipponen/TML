@@ -29,7 +29,7 @@ namespace tml
 
     }
 
-    Window::Window(int32_t w, int32_t h, const std::string& title, uint32_t settings)
+    Window::Window(int32_t w, int32_t h, const String& title, uint32_t settings)
     : m_handle(nullptr)
     {
         if(!Create(w, h, title, settings))
@@ -43,11 +43,12 @@ namespace tml
 
     void Window::Display()
     {
-        if(IsOpen())
+        /// Swap buffers if this window is still open and there is an opengl context associated with this window.
+        if(IsOpen() && m_hasGLContext)
             glfwSwapBuffers(static_cast<GLFWwindow*>(m_handle));
     }
 
-    bool Window::Create(int32_t w, int32_t h, const std::string& title, uint32_t settings) noexcept
+    bool Window::Create(int32_t w, int32_t h, const String& title, uint32_t settings) noexcept
     {
         GLFWwindow* glContextHandle = nullptr;
         if(settings & NoClient)
@@ -58,6 +59,7 @@ namespace tml
         else
         {
             glContextHandle = static_cast<GLFWwindow*>(GLContext::GetInstance().GetContextHandle());
+            m_hasGLContext = (glContextHandle != nullptr); //!< If glContext handle is nullptr, a context was not created.
         }
 
         glfwWindowHint(GLFW_DECORATED,                 (settings & Settings::NoTopBar)     == 0);
@@ -186,7 +188,7 @@ namespace tml
         glfwSetWindowSize(static_cast<GLFWwindow*>(m_handle), static_cast<int>(w), static_cast<int>(h));
     }
 
-    void Window::SetTitle(const std::string& title) noexcept
+    void Window::SetTitle(const String& title) noexcept
     {
         glfwSetWindowTitle(static_cast<GLFWwindow *>(m_handle), title.c_str());
     }

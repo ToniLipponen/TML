@@ -65,6 +65,7 @@ This project is licensed under the [Zlib License](LICENSE). External libraries u
 | David Capello                          | https://github.com/dacap/clip        |clip|MIT|
 | Nwutobo Samuel Ugochukwu               | https://github.com/sammycage/lunasvg |lunasvg|MIT|
 
+### And a special thank you to JetBrains for providing me with a free license for CLion.
 # Contact
 You can contact me by email.
 
