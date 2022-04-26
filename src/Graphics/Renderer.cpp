@@ -27,7 +27,7 @@ namespace tml
             {
                 const double dist = Math::Distance(Vector2f(j, i), center);
                 const double d = dist / radius;
-                buffer[i * resolution + j] = static_cast<unsigned char>(Math::SmoothStep<double>(0.0, 0.002, 1.0 - d) * 255.0);
+                buffer[i * resolution + j] = static_cast<unsigned char>(Math::SmoothStep(0.0, 0.002, 1.0 - d) * 255.0);
             }
         }
     }

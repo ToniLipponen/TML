@@ -4,6 +4,7 @@
 #include <TML/Window/Event.h>
 #include <TML/System/Image.h>
 #include <TML/System/Math/Vector2.h>
+#include <TML/System/String.h>
 
 namespace tml
 {
@@ -29,7 +30,7 @@ namespace tml
         };
     public:
         Window();
-        Window(int32_t width, int32_t height, const std::string& title, uint32_t settings = None);
+        Window(int32_t width, int32_t height, const String& title, uint32_t settings = None);
         Window(const Window &) = delete;
         Window(const Window&&) = delete;
         Window& operator=(const Window&) = delete;
@@ -38,7 +39,7 @@ namespace tml
         virtual ~Window();
         virtual void Display();
 
-        bool Create(int32_t w, int32_t h, const std::string& title, uint32_t settings = None) noexcept;
+        bool Create(int32_t w, int32_t h, const String& title, uint32_t settings = None) noexcept;
         void Close() noexcept; //!< Destroys the window.
         bool IsOpen() const noexcept;
         
@@ -55,7 +56,7 @@ namespace tml
 
         void SetPosition(int32_t x, int32_t y) noexcept;
         void SetSize(uint32_t width, uint32_t height) noexcept;
-        void SetTitle(const std::string& title) noexcept;
+        void SetTitle(const String& title) noexcept;
         void SetIcon(const Image& image) const noexcept;
         void SetCursor(const Image& image) noexcept;
         void ResetCursor() noexcept;
@@ -79,10 +80,11 @@ namespace tml
     private:
         void HandleWindowEvents(const Event& e) noexcept;
         void SetCallbacks();
+
     protected:
         Vector2i m_size, m_pos;
         void* m_handle = nullptr;
         void* m_cursor = nullptr;
-        static bool s_glfwInitialized;
+        bool m_hasGLContext = false;
     };
 }

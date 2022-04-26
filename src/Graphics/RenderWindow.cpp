@@ -5,7 +5,7 @@
 
 namespace tml
 {
-    RenderWindow::RenderWindow(uint32_t w, uint32_t h, const std::string& title, uint32_t settings)
+    RenderWindow::RenderWindow(uint32_t w, uint32_t h, const String& title, uint32_t settings)
     : Window(w , h, title, settings)
     {
         SetView({0,0}, {w,h});
