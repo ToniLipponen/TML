@@ -48,12 +48,12 @@ namespace tml
         SetBounds({0,0}, {m_width, m_height});
         SetViewport({0,0}, {m_width, m_height});
         ResetCamera();
-        Renderer::Clear();
+        RenderTarget::Clear();
     }
 
     void RenderTexture::Display() noexcept
     {
-        Renderer::EndBatch();
+        RenderTarget::EndBatch();
         SetActive(false);
     }
 

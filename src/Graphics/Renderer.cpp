@@ -1,4 +1,4 @@
-#include <TML/Graphics/Renderer.h>
+#include "Renderer.h"
 #include <TML/Graphics/Core/Buffers.h>
 #include <TML/Graphics/Core/Shader.h>
 
@@ -71,6 +71,20 @@ namespace tml
         delete m_shader;
     }
 
+    Renderer& Renderer::GetInstance() noexcept
+    {
+        static Renderer s_rendererInstance;
+        s_rendererInstance.Reset();
+        return s_rendererInstance;
+    }
+
+    void Renderer::Reset() noexcept
+    {
+        *reinterpret_cast<glm::mat4*>(m_view)  = glm::mat4(1.0);
+        *reinterpret_cast<glm::mat4*>(m_scale) = glm::mat4(1.0);
+        *reinterpret_cast<glm::mat4*>(m_proj)  = glm::mat4(1.0);
+    }
+
     void Renderer::SetClearColor(const Color &color) noexcept
     {
         m_clearColor[0] = float(color.r) / 255.0f;
@@ -85,6 +99,29 @@ namespace tml
         BeginBatch();
         GL_CALL(glad_glScissor(pos.x, m_viewport.size.y - pos.y - size.y, size.x, size.y));
         GL_CALL(glad_glEnable(GL_SCISSOR_TEST));
+    }
+
+    void Renderer::SetCamera(const Camera& camera) noexcept
+    {
+        EndBatch();
+        BeginBatch();
+
+        const auto pos = camera.GetPosition();
+        const auto zoom = camera.GetZoom();
+
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::rotate(view, camera.GetRotation(), glm::vec3(0.f, 0.f, 1.f));
+        view = glm::scale(view, glm::vec3(zoom, zoom, 0));
+        view = glm::translate(view, glm::vec3(-pos.x, -pos.y, 0));
+
+        *reinterpret_cast<glm::mat4*>(m_view) = view;
+    }
+
+    void Renderer::ResetCamera() noexcept
+    {
+        EndBatch();
+        BeginBatch();
+        *reinterpret_cast<glm::mat4*>(m_view) = glm::mat4(1.0f);
     }
 
     void Renderer::SetViewport(const Vector2i &pos, const Vector2i &size) noexcept
@@ -116,6 +153,12 @@ namespace tml
     {
         ResetBounds();
         GL_CALL(glad_glClearBufferfv(GL_COLOR, 0, m_clearColor));
+    }
+
+    void Renderer::Clear(float color[4]) noexcept
+    {
+        ResetBounds();
+        GL_CALL(glad_glClearBufferfv(GL_COLOR, 0, color));
     }
 
     void Renderer::Draw(Drawable& d) noexcept

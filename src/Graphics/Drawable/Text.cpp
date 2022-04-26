@@ -1,5 +1,5 @@
 #include <TML/Graphics/Drawable/Text.h>
-#include <TML/Graphics/Renderer.h>
+#include "../Renderer.h"
 #include <TML/System/Math.h>
 #include <TML/Graphics/Font.h>
 #include "../../Headers/Font.h" //!< Default font data.

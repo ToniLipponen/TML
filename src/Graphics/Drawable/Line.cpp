@@ -1,5 +1,5 @@
 #include <TML/Graphics/Drawable/Line.h>
-#include <TML/Graphics/Renderer.h>
+#include "../Renderer.h"
 #include <TML/System/Math.h>
 
 namespace tml

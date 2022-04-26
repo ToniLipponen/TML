@@ -24,12 +24,12 @@ namespace tml
         if(m_autoResizeView)
             SetView({0,0}, m_size);
 
-        Renderer::Clear();
+        RenderTarget::Clear();
     }
 
     void RenderWindow::Display()
     {
-        EndBatch();
+        RenderTarget::EndBatch();
 
         /// Fixes an issue with GLFW, where the screen remains black even when swapping buffers.
         /// This only seems to be an issue on some platforms.

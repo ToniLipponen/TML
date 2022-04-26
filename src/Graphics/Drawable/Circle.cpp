@@ -1,5 +1,5 @@
 #include <TML/Graphics/Drawable/Circle.h>
-#include <TML/Graphics/Renderer.h>
+#include "../Renderer.h"
 
 namespace tml
 {
