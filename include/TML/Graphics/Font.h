@@ -1,8 +1,4 @@
 #pragma once
-#include <string>
-#include <map>
-#include <unordered_map>
-
 #include <TML/System/Math/Vector2.h>
 #include <TML/Graphics/Core/Texture.h>
 
@@ -16,8 +12,8 @@ namespace tml
         ~Font();
         Font& operator=(const Font& rhs);
 
-        void LoadFromFile(const std::string &filename);
-        void LoadFromMemory(const uint8_t *data);
+        void LoadFromFile(const String& filename);
+        void LoadFromData(const uint8_t *data);
         friend class Text;
         friend class Renderer;
 

@@ -38,17 +38,17 @@ namespace tml
         return *this;
     }
 
-    void Font::LoadFromFile(const std::string& filename)
+    void Font::LoadFromFile(const String& filename)
     {
         std::vector<char> buffer;
         InFile file;
         if(!file.Open(filename))
             return;
         file.GetBytes(buffer);
-        LoadFromMemory(reinterpret_cast<const uint8_t*>(buffer.data()));
+        LoadFromData(reinterpret_cast<const uint8_t *>(buffer.data()));
     }
 
-    void Font::LoadFromMemory(const uint8_t* data)
+    void Font::LoadFromData(const uint8_t* data)
     {
         auto* bitmap = new uint8_t[ATLAS_SIZE * ATLAS_SIZE];
 

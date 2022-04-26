@@ -15,11 +15,11 @@ namespace tml
     std::unique_ptr<Font> Text::s_defaultFont = nullptr;
 
     Text::Text()
+    : m_font(nullptr), m_string(""), m_lineSpacing(0), m_kerning(0), m_dimensions(0)
     {
         m_color = Color{255,255,255,255};
         m_pos   = Vector2f{0,0};
         m_size  = Vector2f{32,32};
-        m_font  = nullptr;
     }
 
     void Text::SetSize(float s) noexcept
@@ -78,7 +78,7 @@ namespace tml
         if(!s_defaultFont)
         {
             s_defaultFont = std::make_unique<Font>();
-            s_defaultFont->LoadFromMemory(TML_DEFAULT_FONT_DATA);
+            s_defaultFont->LoadFromData(TML_DEFAULT_FONT_DATA);
         }
 
         m_dimensions = Vector2f{0, m_size.y};
