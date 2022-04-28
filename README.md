@@ -6,6 +6,21 @@
 
 TML is a simple library for making games and applications. It provides interfaces for window creation, graphics rendering, audio playback and keyboard/mouse/controller input. 
 
+# Notable features
+- 2D batch renderer, including sprite batching
+- Compute shaders through OpenGL 4.5
+- No external dependencies
+- Modular design
+- Written in C++14
+- OpenGL 4.5 and OpenGL ES 3.1 backends
+
+# Modules
+- Audio
+- Graphics
+- Network
+- System
+- Window
+
 # Supported platforms
 - <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Unofficial_Windows_logo_variant_-_2002–2012_%28Multicolored%29.svg/1161px-Unofficial_Windows_logo_variant_-_2002–2012_%28Multicolored%29.svg.png" width=14 height=14 alt=""> Windows
 - <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/1200px-Tux.svg.png" width=14 height=14 alt=""> Linux
