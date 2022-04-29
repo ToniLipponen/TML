@@ -83,6 +83,7 @@ if(TML_BUILD_EXAMPLES)
     add_subdirectory(examples/ImageViewer)
     add_subdirectory(examples/Http)
     add_subdirectory(examples/PostProcessing)
+    add_subdirectory(examples/experiments)
 endif()
 
 # Removing TML library file, because it doesn't actually contain anything.

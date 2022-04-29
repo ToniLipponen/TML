@@ -177,17 +177,17 @@ void TextInput::InitListeners()
     });
 }
 
-void TextInput::pDraw(Renderer& window)
+void TextInput::pDraw(RenderTarget& renderTarget)
 {
     /// Todo: Clean this up. What a mess.
     const auto clampedRounded = Math::Clamp<float>(m_roundness, 0, m_size.y / 2);
     m_text.SetPosition(m_pos + Vector2i(Math::Clamp<float>(m_roundness, 0, m_size.y / 2), m_size.y / 2.f - m_size.y / 2.f));
-    window.DrawRect(m_pos, m_size, m_state.MouseOver || m_state.MouseDown > -1 || m_state.Focused ? m_activeColor : m_sColor, clampedRounded);
-    window.DrawRect(m_pos+Vector2f(1,1), m_size-Vector2f(2,2), m_pColor, clampedRounded);
+    renderTarget.DrawRect(m_pos, m_size, m_state.MouseOver || m_state.MouseDown > -1 || m_state.Focused ? m_activeColor : m_sColor, clampedRounded);
+    renderTarget.DrawRect(m_pos+Vector2f(1,1), m_size-Vector2f(2,2), m_pColor, clampedRounded);
 
-    window.SetBounds(m_pos + Vector2f(clampedRounded, 0), m_size - Vector2f(clampedRounded * 2, 0));
-    window.Draw(m_text);
+    renderTarget.SetBounds(m_pos + Vector2f(clampedRounded, 0), m_size - Vector2f(clampedRounded * 2, 0));
+    renderTarget.Draw(m_text);
     if(m_state.Focused)
-        window.DrawLine({m_cursorPos + clampedRounded, m_pos.y + (m_size.y / 10.0f)}, {m_cursorPos + clampedRounded, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, Color::Black, 0);
-    window.ResetBounds();
+        renderTarget.DrawLine({m_cursorPos + clampedRounded, m_pos.y + (m_size.y / 10.0f)}, {m_cursorPos + clampedRounded, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, Color::Black, 0);
+    renderTarget.ResetBounds();
 }
