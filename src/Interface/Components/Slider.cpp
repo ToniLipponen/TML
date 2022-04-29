@@ -63,21 +63,21 @@ namespace tml
         }
 
         template<ComponentAxis axis>
-        void Slider<axis>::pDraw(Renderer &window)
+        void Slider<axis>::pDraw(RenderTarget& renderTarget)
         {
-            window.DrawRect(m_pos, m_size, m_state.MouseOver || m_state.MouseDown > -1 ? m_activeColor : m_sColor, m_roundness);
-            window.DrawRect(m_pos+Vector2f(1,1), m_size-Vector2f(2,2), m_pColor, m_roundness);
+            renderTarget.DrawRect(m_pos, m_size, m_state.MouseOver || m_state.MouseDown > -1 ? m_activeColor : m_sColor, m_roundness);
+            renderTarget.DrawRect(m_pos+Vector2f(1,1), m_size-Vector2f(2,2), m_pColor, m_roundness);
 
             if(axis == Horizontal)
             {
                 const auto x = Math::Max<float>(Math::Lerp<float>(0, m_size.x, m_value / m_max), m_size.y-1);
-                window.DrawRect(m_pos + Vector2f(1,1), Vector2f(x, (float)m_size.y) - Vector2f(2,2), m_activeColor, m_roundness);
+                renderTarget.DrawRect(m_pos + Vector2f(1,1), Vector2f(x, (float)m_size.y) - Vector2f(2,2), m_activeColor, m_roundness);
             }
             else
             {
                 /** Todo: Make this look better, when the slider value is at minimum.*/
                 const auto y = Math::Lerp<float>(0, m_size.y, 1.0 - m_value / m_max);
-                window.DrawRect(m_pos + Vector2i(0, y), Vector2f(m_size.x, m_size.y - y), m_activeColor, m_roundness);
+                renderTarget.DrawRect(m_pos + Vector2i(0, y), Vector2f(m_size.x, m_size.y - y), m_activeColor, m_roundness);
             }
         }
 

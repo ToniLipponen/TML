@@ -17,7 +17,7 @@ namespace tml
             void SetTextColor(const Color& color){ m_text.SetColor(color); }
             inline constexpr const String& GetText() const noexcept { return m_text.GetString(); }
         private:
-            void pDraw(Renderer &renderer) override;
+            void pDraw(RenderTarget& renderTarget) override;
             Text m_text;
             float m_roundness = 0;
         };

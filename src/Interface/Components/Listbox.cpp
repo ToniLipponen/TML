@@ -162,21 +162,23 @@ namespace tml
             return Math::Max<int32_t>((valuesSize - m_size.y) / 20, 0);
         }
 
-        void Listbox::pDraw(Renderer &window)
+        void Listbox::pDraw(RenderTarget& renderTarget)
         {
-            window.DrawRect(m_pos, m_size, m_pColor);
-            window.SetBounds(m_pos, m_size);
-            window.DrawRect(m_pos + Vector2f(0, (m_selectedIndex-m_scrollbar->GetValue()) * 20), Vector2f(m_size.x, 20.f), m_activeColor);
+            renderTarget.DrawRect(m_pos, m_size, m_pColor);
+            renderTarget.SetBounds(m_pos, m_size);
+            renderTarget.DrawRect(m_pos + Vector2f(0, (m_selectedIndex-m_scrollbar->GetValue()) * 20), Vector2f(m_size.x, 20.f), m_activeColor);
 
             for(int i = 0; i < m_values.size(); i++)
             {
-                window.DrawText(m_values.at(i), m_pos + Vector2i(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20, Color::Black);
+                renderTarget.DrawText(m_values.at(i), m_pos + Vector2i(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20, Color::Black);
             }
-            window.ResetBounds();
+
+            renderTarget.ResetBounds();
+
             if(m_state.Focused)
-                window.DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
+                renderTarget.DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
             else
-                window.DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
+                renderTarget.DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
         }
     }
 }

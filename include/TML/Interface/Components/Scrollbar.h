@@ -15,7 +15,7 @@ namespace tml
             int32_t GetValue() const noexcept { return int32_t(m_value); }
             void SetValue(uint32_t value);
         private:
-            void pDraw(Renderer &renderer) override;
+            void pDraw(RenderTarget& renderTarget) override;
 
             int32_t m_value = 0;
             uint32_t m_max = 1;
