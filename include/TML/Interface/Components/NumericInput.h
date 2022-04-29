@@ -1,5 +1,6 @@
 #pragma once
 #include <TML/Interface/BaseComponent.h>
+#include <TML/Graphics/Drawable/Text.h>
 
 namespace tml
 {
@@ -16,7 +17,7 @@ namespace tml
         private:
             void Increment();
             void Decrement();
-            virtual void pDraw(Renderer &renderer) override;
+            void pDraw(RenderTarget& renderTarget) override;
             T m_value = 0;
             T m_increment = 1;
             std::string m_valueStr;
