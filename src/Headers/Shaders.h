@@ -78,13 +78,6 @@ uniform sampler2D uTexture29;
 uniform sampler2D uTexture30;
 uniform sampler2D uTexture31;
 
-const mat4 bt601 = mat4(
-  1.16438,  0.00000,  1.59603, -0.87079,
-  1.16438, -0.39176, -0.81297,  0.52959,
-  1.16438,  2.01723,  0.00000, -1.08139,
-  0, 0, 0, 1
-);
-
 vec4 SampleTex(uint index)
 {
     switch(index)
@@ -146,12 +139,6 @@ void main()
            }
            else
                 discard;
-       break;
-       case 3u:
-           const float y  = SampleTex(vTexID    ).r;
-           const float cb = SampleTex(vTexID + 1).r;
-           const float cr = SampleTex(vTexID + 2).r;
-           outColor = vec4(y,cb,cr,1.0) * bt601;
        break;
        default:
            discard;
@@ -239,13 +226,6 @@ uniform sampler2D uTexture29;
 uniform sampler2D uTexture30;
 uniform sampler2D uTexture31;
 
-mediump mat4 bt601 = mat4(
-  1.16438,  0.00000,  1.59603, -0.87079,
-  1.16438, -0.39176, -0.81297,  0.52959,
-  1.16438,  2.01723,  0.00000, -1.08139,
-  0, 0, 0, 1
-);
-
 mediump vec4 SampleTex(uint index)
 {
     switch(index)
@@ -308,12 +288,6 @@ void main()
            }
            else
                discard;
-       break;
-       case 3u:
-           mediump float y  = SampleTex(vTexID     ).r;
-           mediump float cb = SampleTex(vTexID + 1u).r;
-           mediump float cr = SampleTex(vTexID + 2u).r;
-           outColor = vec4(y,cb,cr,1.0) * bt601;
        break;
        default:
            discard;
