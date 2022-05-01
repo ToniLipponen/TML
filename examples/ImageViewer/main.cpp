@@ -120,7 +120,7 @@ int main(int argc, char** argv)
                 } break;
 
                 case Event::KeyPressed:
-                    if(windowEvent.key.code == Keyboard::KEY_V && windowEvent.key.control)
+                    if(windowEvent.key.value == Keyboard::KEY_V && windowEvent.key.control)
                     {
                         if(!Clipboard::IsEmpty())
                         {
@@ -149,18 +149,18 @@ int main(int argc, char** argv)
                             }
                         }
                     }
-                    else if(windowEvent.key.code == Keyboard::KEY_R)
+                    else if(windowEvent.key.value == Keyboard::KEY_R)
                     {
                         cam.SetPosition({0, 0});
                         cam.SetZoom(1);
                     }
-                    else if(windowEvent.key.code == Keyboard::KEY_F)
+                    else if(windowEvent.key.value == Keyboard::KEY_F)
                         image.SetInterpolation(filter = !filter);
 
                     break;
 
                 case Event::MouseWheelScrolled:
-                    cam.Zoom(windowEvent.mouseWheelScroll.delta * cam.GetZoom() / 5);
+                    cam.Zoom(windowEvent.mouseWheelScroll.deltaY * cam.GetZoom() / 5);
                     if(cam.GetZoom() < 0.1)
                         cam.SetZoom(0.1);
                     break;
