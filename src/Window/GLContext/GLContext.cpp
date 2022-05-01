@@ -13,8 +13,6 @@
 
 namespace tml
 {
-    GLContext* GLContext::s_glContext = nullptr;
-
     GLContext::GLContext()
     {
         /// Initialize GLFW.
@@ -61,13 +59,16 @@ namespace tml
 #endif
     }
 
+    GLContext::~GLContext()
+    {
+        glfwDestroyWindow(static_cast<GLFWwindow*>(m_contextHandle));
+        glfwTerminate();
+    }
+
     GLContext& GLContext::GetInstance() noexcept
     {
-        if(!s_glContext)
-            s_glContext = new GLContext;
-
-        TML_ASSERT(s_glContext, "Failed to construct a tml::GLContext");
-        return *s_glContext;
+        static GLContext glContext;
+        return glContext;
     }
 
     void* GLContext::GetContextHandle() const noexcept
