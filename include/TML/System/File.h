@@ -58,7 +58,7 @@ namespace tml
     class InFile : public FileBase
     {
     public:
-        using FileBase::FileBase;
+        InFile() = default;
 
         explicit InFile(const String& filename)
         {
@@ -153,7 +153,7 @@ namespace tml
     class OutFile : public FileBase
     {
     public:
-        using FileBase::FileBase;
+        OutFile() = default;
 
         /// @brief Opens an output file.
         /// @returns true if successful, otherwise returns false.
