@@ -62,6 +62,7 @@ namespace tml
     GLContext::~GLContext()
     {
         glfwDestroyWindow(static_cast<GLFWwindow*>(m_contextHandle));
+        gladLoaderUnloadGL();
         glfwTerminate();
     }
 

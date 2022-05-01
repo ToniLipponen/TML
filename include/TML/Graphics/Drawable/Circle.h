@@ -13,9 +13,10 @@ namespace tml
         void SetRadius(float r);
         float GetRadius() const noexcept;
 
+        Vector2f SetSize(const Vector2f &)  noexcept = delete;
+        Vector2f SetSize(float,float)       noexcept = delete;
+
     private:
-        Vector2f SetSize(const Vector2f &)  noexcept{ return 0; }
-        Vector2f SetSize(float,float)       noexcept{ return 0; }
         void OnDraw(class Renderer* renderer, class Texture*) noexcept override;
     };
 }

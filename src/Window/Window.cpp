@@ -20,6 +20,7 @@ void WindowMaximizeCallback(GLFWwindow* window, int maximized);
 void WindowMinimizeCallback(GLFWwindow* window, int minimized);
 void CursorPosCallback(GLFWwindow* window, double x, double y);
 void WindowMoveCallback(GLFWwindow* window, int x, int y);
+void GamepadCallback(int jid, int event);
 
 namespace tml
 {
@@ -88,19 +89,12 @@ namespace tml
         auto handle = static_cast<GLFWwindow*>(m_handle);
         glfwMakeContextCurrent(handle);
 
-        if((settings & Settings::VSync) > 0)
+        if((settings & Settings::VSync) != 0)
             glfwSwapInterval(1);
 
-        /// Set window logo to TML-logo ///////////
+        /** Set window icon to TML-logo **/
         Image image(LOGO_DATA.data(), static_cast<int>(LOGO_DATA.size()));
-
-        GLFWimage img;
-        img.width = image.GetWidth();
-        img.height = image.GetHeight();
-        img.pixels = image.GetData();
-
-        glfwSetWindowIcon(handle, 1, &img);
-        ////////////////////////////////////////////
+        SetIcon(image);
 
         if((settings & Settings::LimitAspect) != 0)
             SetAspectRatio(w,h);
@@ -339,6 +333,7 @@ namespace tml
         glfwSetWindowIconifyCallback(handle, WindowMinimizeCallback);
         glfwSetCursorPosCallback(handle, CursorPosCallback);
         glfwSetWindowPosCallback(handle, WindowMoveCallback);
+        glfwSetJoystickCallback(GamepadCallback);
         tml::EventSystem::GetInstance().Register(handle);
     }
 }
@@ -351,9 +346,12 @@ void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
     auto mousePos = tml::Mouse::GetPosition();
     Event event{};
     event.type = Event::MouseWheelScrolled;
-    event.mouseWheelScroll.x = mousePos.x;
-    event.mouseWheelScroll.y = mousePos.y;
-    event.mouseWheelScroll.delta = yoffset;
+
+    event.mouseWheelScroll.x      = static_cast<int>(mousePos.x);
+    event.mouseWheelScroll.y      = static_cast<int>(mousePos.y);
+    event.mouseWheelScroll.deltaY = static_cast<float>(yoffset);
+    event.mouseWheelScroll.deltaX = static_cast<float>(xoffset);
+
     tml::EventSystem::GetInstance().PushEvent(window, event);
 }
 
@@ -369,9 +367,14 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 {
     Event event{};
     event.type = (action == GLFW_PRESS || action == GLFW_REPEAT) ? Event::KeyPressed : Event::KeyReleased;
-    event.key.code = key;
-    event.key.control = (mods == GLFW_MOD_CONTROL);
-    event.key.shift = (mods == GLFW_MOD_SHIFT);
+    event.key.value = key;
+    event.key.code = scancode;
+
+    event.key.control   = (mods & GLFW_MOD_CONTROL) != 0;
+    event.key.shift     = (mods & GLFW_MOD_SHIFT)   != 0;
+    event.key.alt       = (mods & GLFW_MOD_ALT)     != 0;
+    event.key.system    = (mods & GLFW_MOD_SUPER)   != 0;
+
     tml::EventSystem::GetInstance().PushEvent(window, event);
 }
 
@@ -464,4 +467,12 @@ void WindowMoveCallback(GLFWwindow* window, int x, int y)
     event.type = Event::WindowMoved;
     event.pos = {x, y};
     tml::EventSystem::GetInstance().PushEvent(window, event);
+}
+
+void GamepadCallback(int jid, int glfwEvent)
+{
+    Event event{};
+    event.type = glfwEvent == GLFW_CONNECTED ? Event::GamepadConnected : Event::GamepadDisconnected;
+    event.gamepad.id = jid;
+    tml::EventSystem::GetInstance().PushGlobalEvent(event);
 }

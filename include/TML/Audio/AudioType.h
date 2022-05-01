@@ -9,7 +9,7 @@ namespace tml
     {
     public:
         enum State { Stopped, Playing, Paused, Ended };
-        using OnReadFrames = std::function<void(float*, uint32_t)>;
+
     public:
         AudioType();
         ~AudioType();

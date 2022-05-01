@@ -17,8 +17,8 @@ namespace tml
 
         bool LoadFromFile(const String& filename) noexcept;                   //!< Loads sound from file.
         bool LoadFromData(const void* data, size_t bytes) noexcept;           //!< Loads sound from raw file data.
-        bool LoadFromMemory(const float* data, uint8_t channels,              //!< Loads sound from samples in memory.
-                            uint32_t rate, size_t samplesCount) noexcept;
+        bool LoadFromMemory(const float* data, uint8_t channels,
+                            uint32_t rate, size_t samplesCount) noexcept;     //!< Loads sound from samples in memory.
         void Append(const AudioBuffer& anotherBuffer) noexcept;               //!< Appends anotherBuffer data to this buffer.
         void Clear() noexcept;                                                //!< Clears samples.
         const std::vector<float>& GetData() const noexcept { return m_data; }

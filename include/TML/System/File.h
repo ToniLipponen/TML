@@ -12,19 +12,6 @@ namespace tml
     {
     public:
         FileBase() = default;
-        explicit FileBase(const String& filename)
-        {
-            m_stream.open(filename.c_str(), std::ios::ate | std::ios::in | std::ios::out | std::ios::binary);
-            if (!m_stream.is_open() || m_stream.fail())
-            {
-                m_isValid = false;
-                Logger::ErrorMessage("Could not open file -> %s", filename.c_str());
-            }
-
-            m_isValid = true;
-            m_dataLen = m_stream.tellg();
-            m_stream.seekg(0, std::iostream::beg);
-        }
 
         virtual ~FileBase()
         {
@@ -73,15 +60,27 @@ namespace tml
     public:
         using FileBase::FileBase;
 
+        explicit InFile(const String& filename)
+        {
+            m_stream.open(filename.c_str(), std::ios::ate | std::ios::in | std::ios::binary);
+            if (!m_stream.is_open() || m_stream.fail())
+            {
+                m_isValid = false;
+            }
+
+            m_isValid = true;
+            m_dataLen = m_stream.tellg();
+            m_stream.seekg(0, std::iostream::beg);
+        }
+
         bool Open(const String& filename) override
         {
             m_stream.clear();
-            m_stream.open(filename.c_str(), std::ios::ate | std::ios::in);
+            m_stream.open(filename.c_str(), std::ios::ate | std::ios::in | std::ios::binary);
 
             if (!m_stream.is_open() || m_stream.fail())
             {
                 m_isValid = false;
-                Logger::ErrorMessage("Could not open file -> %s", filename.c_str());
                 return false;
             }
 
@@ -125,8 +124,8 @@ namespace tml
         {
             if (m_isValid)
             {
-                String str;
-                m_stream.read(str.data(), m_dataLen);
+                std::string str(m_dataLen, 0);
+                Read(&str[0], m_dataLen);
                 return str;
             }
             else
@@ -165,7 +164,6 @@ namespace tml
             if (!m_stream.is_open() || m_stream.fail())
             {
                 m_isValid = false;
-                Logger::ErrorMessage("Could not open file -> %s", filename.c_str());
                 return false;
             }
 

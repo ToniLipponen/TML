@@ -146,6 +146,8 @@ int main()
         else
             window.DrawText("Repelling", {0, 60}, 30, Color::Red);
 
+        window.DrawText("Press Mouse Left To Attract", {0, 90}, 30);
+
         window.Display();
     }
 }

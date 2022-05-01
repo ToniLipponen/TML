@@ -10,6 +10,7 @@ namespace tml
     {
     private:
         Mixer();
+        ~Mixer();
 
     public:
         static Mixer& GetInstance() noexcept;
@@ -22,7 +23,6 @@ namespace tml
         friend void MixerOnAudioCallback(void* device, void* pOutput, const void* pInput, uint32_t frameCount);
 
     protected:
-        static Mixer* s_instance;
         void* m_outputDevice = nullptr;
         std::map<uint64_t, AudioType*> m_sounds;
         uint64_t m_soundCount = 0;

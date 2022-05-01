@@ -2,7 +2,6 @@
 #include "../Renderer.h"
 #include <TML/System/Math.h>
 
-
 namespace tml
 {
     uint32_t Shape::AddPoint(const Vector2f& position) noexcept
@@ -102,9 +101,6 @@ namespace tml
             }
             else
             {
-                const float cos_r = std::cos(Math::DegToRad(m_rotation));
-                const float sin_r = std::sin(Math::DegToRad(m_rotation));
-
                 for(auto& i : m_points)
                 {
                     m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, i.pos+m_pos, cos_r, sin_r), {0, 0}, i.color.Hex(), Vertex::COLOR});

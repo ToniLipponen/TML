@@ -12,7 +12,7 @@ namespace tml
         m_indexData = {0,1,2, 1,3,2};
     }
 
-    Line::Line(const Vector2f& a, const Vector2f& b, uint32_t thickness, const Color& color)
+    Line::Line(const Vector2f& a, const Vector2f& b, float thickness, const Color& color)
     : a(a), b(b)
     {
         m_size.x = thickness;

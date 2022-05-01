@@ -7,16 +7,12 @@
 
 namespace tml
 {
-    EventSystem* EventSystem::m_instance = nullptr;
-
     EventSystem::EventSystem() = default;
 
     EventSystem& EventSystem::GetInstance()
     {
-        if(m_instance == nullptr)
-            m_instance = new EventSystem();
-
-        return *m_instance;
+        static EventSystem instance;
+        return instance;
     }
 
     bool EventSystem::Register(const void* handle) noexcept
@@ -56,6 +52,12 @@ namespace tml
     {
         if(m_handles.find(handle) != m_handles.end())
             m_handles.at(handle).push(event);
+    }
+
+    void EventSystem::PushGlobalEvent(Event& event) noexcept
+    {
+        for(auto& queue : m_handles)
+            queue.second.push(event);
     }
 
     bool EventSystem::PopEvent(const void* handle, Event& e) noexcept

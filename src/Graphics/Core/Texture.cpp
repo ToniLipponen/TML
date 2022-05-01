@@ -1,30 +1,38 @@
 #include <TML/Graphics/Core/Texture.h>
 #include <TML/Graphics/Core/FrameBuffer.h>
 #include "../../Headers/GLHeader.h"
+#include "../../Window/GLContext/GLContext.h"
 
 namespace tml
 {
     Texture::Texture()
-    : m_id(0), m_width(0), m_height(0), m_bpp(0)
+    : m_id(0), m_width(0), m_height(0), m_bpp(0), m_internalFormat(0), m_format(0)
     {
 
     }
 
     Texture::Texture(Texture&& rhs) noexcept
-    : m_id(rhs.m_id), m_width(rhs.m_width), m_height(rhs.m_height), m_bpp(rhs.m_bpp)
+    : m_id(rhs.m_id),
+      m_width(rhs.m_width),
+      m_height(rhs.m_height),
+      m_bpp(rhs.m_bpp),
+      m_internalFormat(rhs.m_internalFormat),
+      m_format(rhs.m_format)
     {
         rhs.m_id = 0;
     }
 
     Texture::~Texture()
     {
-        GL_CALL(glad_glDeleteTextures(1, &m_id));
+        if(glad_glDeleteTextures)
+        {
+            GL_CALL(glad_glDeleteTextures(1, &m_id));
+        }
     }
 
     Texture& Texture::operator=(const Texture& rhs) noexcept
     {
-        Image image;
-        rhs.GetData(image);
+        Image image = rhs.GetData();
         LoadFromImage(image);
         return *this;
     }
@@ -50,20 +58,23 @@ namespace tml
         return *this;
     }
     
-    void Texture::LoadFromImage(const Image& image)
+    bool Texture::LoadFromImage(const Image& image) noexcept
     {
-        LoadFromMemory(image.GetWidth(), image.GetHeight(), image.GetBpp(), image.GetData());
+        return LoadFromMemory(image.GetWidth(), image.GetHeight(), image.GetBpp(), image.GetData());
     }
 
-    void Texture::LoadFromFile(const String& filename)
+    bool Texture::LoadFromFile(const String& filename) noexcept
     {
         Image img(filename);
         img.FlipVertically();
-        LoadFromImage(img);
+        return LoadFromImage(img);
     }
 
-    void Texture::LoadFromMemory(int32_t w, int32_t h, uint8_t bpp, const uint8_t* data)
+    bool Texture::LoadFromMemory(int32_t w, int32_t h, uint8_t bpp, const uint8_t* data) noexcept
     {
+        /**
+         *  Delete the old texture handle, and create a new one.
+         */
         GL_CALL(glad_glDeleteTextures(1, &m_id));
 
         #ifdef TML_USE_GLES
@@ -72,23 +83,30 @@ namespace tml
             GL_CALL(glad_glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
         #endif
 
+        bool noErrors = true;
+
+        if(m_id == 0)
+            noErrors = false;
+
         m_width 	= w;
         m_height 	= h;
         m_bpp 		= bpp;
 
         switch(m_bpp)
         {
-            case 1:  m_internalFormat = GL_R8;     m_format = GL_RED;   break;
-            case 2:  m_internalFormat = GL_RG8;    m_format = GL_RG;    break;
-            case 3:  m_internalFormat = GL_RGB8;   m_format = GL_RGB;   break;
-            case 4:  m_internalFormat = GL_RGBA8;  m_format = GL_RGBA;  break;
-            default: m_internalFormat = GL_RGB8;   m_format = GL_RGB;   break;
+            case 1:  m_internalFormat = GL_R8;    m_format = GL_RED;                   break;
+            case 2:  m_internalFormat = GL_RG8;   m_format = GL_RG;                    break;
+            case 3:  m_internalFormat = GL_RGB8;  m_format = GL_RGB;                   break;
+            case 4:  m_internalFormat = GL_RGBA8; m_format = GL_RGBA;                  break;
+            default: m_internalFormat = GL_RGB8;  m_format = GL_RGB; noErrors = false; break;
         }
 
         Upload(data);
+
+        return noErrors;
     }
 
-    void Texture::Bind(uint32_t slot) const
+    void Texture::Bind(uint32_t slot) const noexcept
     {
 #if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
         GL_CALL(glad_glActiveTexture(GL_TEXTURE0 + slot));
@@ -98,26 +116,27 @@ namespace tml
 #endif
     }
 
-    void Texture::BindToImageSlot(uint32_t slot) const
+    void Texture::BindToImageSlot(uint32_t slot) const noexcept
     {
         GL_CALL(glad_glBindImageTexture(slot, m_id, 0, GL_FALSE, 0, GL_READ_WRITE, m_internalFormat));
     }
 
-    void Texture::SetMinMagFilter(Filter min, Filter mag)
+    void Texture::SetMinMagFilter(Filter min, Filter mag) noexcept
     {
         m_minFilter = min;
         m_magFilter = mag;
         Update();
     }
 
-    void Texture::SetClampMode(ClampMode mode)
+    void Texture::SetClampMode(ClampMode mode) noexcept
     {
         m_clampMode = mode;
         Update();
     }
 
-    void Texture::GetData(Image& image) const noexcept
+    Image Texture::GetData() const noexcept
     {
+        Image image;
         image.LoadFromMemory(m_width, m_height, m_bpp, nullptr);
         auto* imgData = image.GetData();
 
@@ -130,6 +149,8 @@ namespace tml
             frameBuffer.Bind();
             GL_CALL(glad_glReadPixels(0, 0, m_width, m_height, m_format, GL_UNSIGNED_BYTE, imgData));
         #endif
+
+        return image;
     }
 
     inline void Texture::Update() const noexcept

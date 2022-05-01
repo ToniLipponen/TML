@@ -27,6 +27,7 @@ namespace tml
     private:
         void Generate();
         void OnDraw(class Renderer*, Texture*) noexcept override;
+        static Font& GetDefaultFont() noexcept;
 
     private:
         std::shared_ptr<Font> m_font = nullptr;

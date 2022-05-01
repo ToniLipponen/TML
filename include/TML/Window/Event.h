@@ -1,4 +1,4 @@
-/** This file is partially based on Laurent Gomilas sf::Event. Specifically the Event class. */
+/** This file is partially based on Laurent Gomilas sf::Event. So here is his copyright & license. */
 
 ////////////////////////////////////////////////////////////
 //
@@ -48,10 +48,11 @@ namespace tml
         struct KeyEvent
         {
             int32_t code;     //!< Code of the key that has been pressed
-            bool alt;     //!< Is the Alt key pressed?
-            bool control; //!< Is the Control key pressed?
-            bool shift;   //!< Is the Shift key pressed?
-            bool system;  //!< Is the System key pressed?
+            int32_t value;    //!< Key value. tml::Keyboard::Key cast to an int.
+            bool alt;         //!< Is the Alt key pressed?
+            bool control;     //!< Is the Control key pressed?
+            bool shift;       //!< Is the Shift key pressed?
+            bool system;      //!< Is the System key pressed?
         };
 
         struct TextEvent
@@ -68,11 +69,18 @@ namespace tml
 
         struct MouseWheelScrollEvent
         {
-            float delta; //!< Vertical scroll offset.
+            float deltaX;    //!< Horizontal scroll offset.
+            float deltaY;    //!< Vertical scroll offset.
             int32_t x;       //!< X position of the mouse pointer, relative to the left of the owner window
             int32_t y;       //!< Y position of the mouse pointer, relative to the top of the owner window
         };
 
+        struct GamepadEvent
+        {
+            int32_t id;
+        };
+
+        /// Todo: This is stupid. Do something smarter.
         struct DragAndDropEvent
         {
             int32_t count;      //!< Number of dropped files
@@ -102,6 +110,8 @@ namespace tml
             MouseEntered,           //!< The mouse cursor entered the area of the window (no data)
             MouseLeft,              //!< The mouse cursor left the area of the window (no data)
             DragAndDrop,            //!< File or files dragged onto a window. (data in event.dragAndDrop)
+            GamepadConnected,       //!< Gamepad was connected. (data in event.gamepad)
+            GamepadDisconnected,    //!< Gamepad was disconnected. (data in event.gamepad)
         };
 
         EventType type = NullEvent;
@@ -114,6 +124,7 @@ namespace tml
             TextEvent             text;
             MouseButtonEvent      mouseButton;
             MouseWheelScrollEvent mouseWheelScroll;
+            GamepadEvent          gamepad;
             DragAndDropEvent      dragAndDrop;
         };
     };
@@ -122,10 +133,12 @@ namespace tml
     {
     private:
         EventSystem();
+
     public:
-        EventSystem(EventSystem&)           = delete;
-        EventSystem(EventSystem&&)          = delete;
-        void operator=(const EventSystem&)  = delete;
+        EventSystem(EventSystem&)                   = delete;
+        EventSystem(EventSystem&&)                  = delete;
+        EventSystem& operator=(const EventSystem&)  = delete;
+        EventSystem& operator=(EventSystem&&)       = delete;
         static EventSystem& GetInstance();
 
         bool Register(const void* handle) noexcept;          //!< Register new sender / emitter.
@@ -133,10 +146,10 @@ namespace tml
         bool PollEvents(const void*, Event& e) noexcept;     //!< Checks if there is events in the event queue.
         bool WaitEvents(const void*, Event& e) noexcept;     //!< Blocks until there is an event in the event queue.
         void PushEvent(const void*, Event& event) noexcept;  //!< Pushed new event to the event queue.
+        void PushGlobalEvent(Event& event) noexcept;         //!< Push an event to all event queues.
         bool PopEvent(const void*, Event& e) noexcept;       //!< Get event from event queue. Returns true if popped new event.
 
     private:
         std::map<const void*, std::queue<Event>> m_handles;
-        static EventSystem* m_instance;
     };
 }

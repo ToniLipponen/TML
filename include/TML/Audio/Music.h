@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "AudioType.h"
+#include <TML/System/String.h>
 
 namespace tml
 {
@@ -8,11 +9,11 @@ namespace tml
     {
     public:
         Music() = default;
-        explicit Music(const std::string &filename);
-        Music(const char* data, uint32_t bytes); //!< @brief Constructs music from raw file data. Data has to be available during playback.
+        explicit Music(const String &filename);
+        Music(const char* data, uint32_t bytes); //!< Constructs music from raw file data. Data has to be available during playback.
         ~Music();
-        bool LoadFromFile(const std::string& filename);
-        bool LoadFromData(const char* data, uint32_t bytes); //!< @brief Loads music from raw file data. Data has to be available during playback.
+        bool LoadFromFile(const String& filename);
+        bool LoadFromData(const char* data, uint32_t bytes); //!< Loads music from raw file data. Data has to be available during playback.
         void Stop() override;
     private:
         uint32_t ReadFrames(float* output, uint32_t frameCount) override;

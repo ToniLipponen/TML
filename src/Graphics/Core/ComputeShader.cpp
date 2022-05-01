@@ -63,22 +63,31 @@ namespace tml
         return true;
     }
 
-    void ComputeShader::ConnectBuffer(const std::string &name, uint32_t index, StorageBuffer& buffer)
+    void ComputeShader::ConnectBuffer(const std::string &name, uint32_t index, StorageBuffer& buffer) noexcept
     {
-        /// Maybe cache this at some point?
-        const uint32_t block_index = GL_CALL(glad_glGetProgramResourceIndex(m_id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
-        GL_CALL(glad_glShaderStorageBlockBinding(m_id, block_index, index));
+        const uint32_t blockIndex = GetResourceIndex(name);
+        GL_CALL(glad_glShaderStorageBlockBinding(m_id, blockIndex, index));
         buffer.BindBufferBase(index);
     }
 
-    void ComputeShader::Dispatch(uint32_t x, uint32_t y, uint32_t z)
+    void ComputeShader::Dispatch(uint32_t x, uint32_t y, uint32_t z) noexcept
     {
         GL_CALL(glad_glDispatchCompute(x,y,z));
     }
 
-    void ComputeShader::Wait()
+    void ComputeShader::Wait() noexcept
     {
         GL_CALL(glad_glMemoryBarrier(GL_ALL_BARRIER_BITS));
+    }
+
+    inline uint32_t ComputeShader::GetResourceIndex(const std::string& name) noexcept
+    {
+        if(m_resourceIndexCache.find(name) != m_resourceIndexCache.end())
+            return m_resourceIndexCache.at(name);
+
+        const uint32_t index = GL_CALL(glad_glGetProgramResourceIndex(m_id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
+        m_resourceIndexCache[name] = index;
+        return index;
     }
 }
 
@@ -105,19 +114,25 @@ namespace tml
         return false;
     }
 
-    void ComputeShader::ConnectBuffer(const std::string &name, uint32_t index, StorageBuffer& buffer)
+    void ComputeShader::ConnectBuffer(const std::string &name, uint32_t index, StorageBuffer& buffer) noexcept
     {
         Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
         exit(80085);
     }
 
-    void ComputeShader::Dispatch(uint32_t x, uint32_t y, uint32_t z)
+    void ComputeShader::Dispatch(uint32_t x, uint32_t y, uint32_t z) noexcept
     {
         Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
         exit(80085);
     }
 
-    void ComputeShader::Wait()
+    void ComputeShader::Wait() noexcept
+    {
+        Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+        exit(80085);
+    }
+
+    inline uint32_t ComputeShader::GetResourceIndex(const std::string& name) noexcept
     {
         Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
         exit(80085);

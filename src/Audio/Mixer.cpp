@@ -21,8 +21,6 @@
 
 namespace tml
 {
-    Mixer* Mixer::s_instance = nullptr;
-
     void MixerOnAudioCallback(void* device, void* pOutput, const void* pInput, ma_uint32 frameCount)
     {
         auto* maDevice = reinterpret_cast<ma_device*>(device);
@@ -32,7 +30,7 @@ namespace tml
         auto* pOutputF32 = static_cast<float*>(pOutput);
         if(!sounds.empty())
         {
-            for(auto sound : sounds)
+            for(auto& sound : sounds)
             {
                 if(sound.second->IsPlaying())
                 {
@@ -70,12 +68,17 @@ namespace tml
             Logger::ErrorMessage("Failed to initialize audio output device");
     }
 
+    Mixer::~Mixer()
+    {
+        auto* outputDevice = static_cast<ma_device*>(m_outputDevice);
+        ma_device_uninit(outputDevice);
+        delete outputDevice;
+    }
+
     Mixer& Mixer::GetInstance() noexcept
     {
-        if(s_instance == nullptr)
-            s_instance = new Mixer;
-
-        return *s_instance;
+        static Mixer instance;
+        return instance;
     }
 
     void Mixer::SetGain(float gain) noexcept

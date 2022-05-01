@@ -32,27 +32,27 @@ namespace tml
 
         Texture& operator=(const Texture& rhs) noexcept;
         Texture& operator=(Texture&& rhs) noexcept;
-        void LoadFromImage(const Image& image);
-        void LoadFromFile(const String& filename);
-        void LoadFromMemory(int32_t w, int32_t h, uint8_t bpp, const uint8_t* data);
+        bool LoadFromImage(const Image& image) noexcept;
+        bool LoadFromFile(const String& filename) noexcept;
+        bool LoadFromMemory(int32_t w, int32_t h, uint8_t bpp, const uint8_t* data) noexcept;
 
-        void Bind(uint32_t slot = 0) const;
-        void BindToImageSlot(uint32_t slot = 0) const;
-        void SetMinMagFilter(Filter min, Filter mag);
-        void SetClampMode(ClampMode mode);
+        void Bind(uint32_t slot = 0) const noexcept;
+        void BindToImageSlot(uint32_t slot = 0) const noexcept;
+        void SetMinMagFilter(Filter min, Filter mag) noexcept;
+        void SetClampMode(ClampMode mode) noexcept;
 
-        inline constexpr Filter     GetMinFilter()          const noexcept { return m_minFilter; }
-        inline constexpr Filter     GetMagFilter()          const noexcept { return m_magFilter; }
-        inline constexpr ClampMode  GetClampMode()          const noexcept { return m_clampMode; }
-        inline constexpr uint32_t   GetID()                 const noexcept { return m_id;        }
-        inline constexpr uint32_t   GetWidth()              const noexcept { return m_width;     }
-        inline constexpr uint32_t   GetHeight()             const noexcept { return m_height;    }
-        inline constexpr uint32_t   GetBpp()                const noexcept { return m_bpp;       }
-        void                        GetData(Image& image)   const noexcept;
+        inline constexpr Filter    GetMinFilter() const noexcept { return m_minFilter; }
+        inline constexpr Filter    GetMagFilter() const noexcept { return m_magFilter; }
+        inline constexpr ClampMode GetClampMode() const noexcept { return m_clampMode; }
+        inline constexpr uint32_t  GetID()        const noexcept { return m_id;        }
+        inline constexpr uint32_t  GetWidth()     const noexcept { return m_width;     }
+        inline constexpr uint32_t  GetHeight()    const noexcept { return m_height;    }
+        inline constexpr uint32_t  GetBpp()       const noexcept { return m_bpp;       }
+        Image                      GetData()      const noexcept;
         
     protected:
         inline void Update() const noexcept;
-        virtual inline void Upload(const void* data) const noexcept;
+        inline void Upload(const void* data) const noexcept;
         ClampMode m_clampMode = ClampToEdge;
         Filter m_minFilter = LinearMipmapLinear;
         Filter m_magFilter = Linear;

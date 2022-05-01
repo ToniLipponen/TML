@@ -116,12 +116,12 @@ namespace tml
 
     inline int32_t Shader::GetUniformLocation(const std::string& name) const noexcept
     {
-        if(m_uniform_cache.find(name) != m_uniform_cache.end())
-            return m_uniform_cache[name];
+        if(m_uniformCache.find(name) != m_uniformCache.end())
+            return m_uniformCache[name];
 
         int32_t loc = GL_CALL(glGetUniformLocation(m_id, name.c_str()));
         if(loc != -1)
-            m_uniform_cache[name] = loc;
+            m_uniformCache[name] = loc;
         return loc;
     }
 

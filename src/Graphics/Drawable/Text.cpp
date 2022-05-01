@@ -88,11 +88,11 @@ namespace tml
     {
         constexpr static float hOffset = 96 - 96.0 / 4.0;
 
-        if(!s_defaultFont)
-        {
-            s_defaultFont = std::make_unique<Font>();
-            s_defaultFont->LoadFromData(TML_DEFAULT_FONT_DATA);
-        }
+//        if(!s_defaultFont)
+//        {
+//            s_defaultFont = std::make_unique<Font>();
+//            s_defaultFont->LoadFromData(TML_DEFAULT_FONT_DATA);
+//        }
 
         m_dimensions = Vector2f{0, m_size.y};
         float x = 0, y = hOffset;
@@ -101,7 +101,7 @@ namespace tml
         m_vertexData.clear();
         m_indexData.clear();
         const uint32_t hex = m_color.Hex();
-        Font* font = m_font ? m_font.get() : s_defaultFont.get();
+        Font& font = m_font ? *m_font : GetDefaultFont();
 
         for(auto c : m_string)
         {
@@ -129,7 +129,7 @@ namespace tml
                 default:
                     stbtt_aligned_quad q{};
 
-                    font->GetAlignedQuad(&q, (int)c - 32, x, y);
+                    font.GetAlignedQuad(&q, (int)c - 32, x, y);
                     NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
 
                     m_vertexData.push_back({{q.x0, q.y0}, {q.s0, q.t0}, hex, Vertex::TEXT});
@@ -163,6 +163,20 @@ namespace tml
             Generate();
             m_updated = false;
         }
-        renderer->PushVertexData(m_vertexData, m_indexData, m_font ? m_font->m_texture : s_defaultFont->m_texture);
+        renderer->PushVertexData(m_vertexData, m_indexData, m_font ? m_font->m_texture : GetDefaultFont().m_texture);
+    }
+
+    Font& Text::GetDefaultFont() noexcept
+    {
+        static Font defaultFont;
+        static bool defaultFontInitialized = false;
+
+        if(!defaultFontInitialized)
+        {
+            defaultFont.LoadFromData(TML_DEFAULT_FONT_DATA);
+            defaultFontInitialized = true;
+        }
+
+        return defaultFont;
     }
 }

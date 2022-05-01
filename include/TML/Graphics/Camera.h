@@ -14,7 +14,7 @@ namespace tml
         void Rotate(float degrees);
 
         void SetPosition(const Vector2f& position);
-        void SetZoom(float zoomLevel); /// 1.0 is normal. Bigger value is more zoom.
+        void SetZoom(float zoomLevel); //!< 1.0 is normal. Bigger value is more zoom.
         void SetRotation(float degrees);
 
         Vector2f GetPosition() const noexcept;

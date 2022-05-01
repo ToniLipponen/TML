@@ -10,7 +10,7 @@ namespace tml
         ~FrameBuffer();
         void Bind() const noexcept;
         void Unbind() const noexcept;
-        bool AttachTexture(const Texture& texture) const;
+        bool AttachTexture(const Texture& texture) const noexcept;
 
     private:
         uint32_t m_id;

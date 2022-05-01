@@ -28,7 +28,7 @@ namespace tml
         GL_CALL(glad_glBindFramebuffer(GL_FRAMEBUFFER, 0));
     }
 
-    bool FrameBuffer::AttachTexture(const Texture &texture) const
+    bool FrameBuffer::AttachTexture(const Texture &texture) const noexcept
     {
 #if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
         Bind();

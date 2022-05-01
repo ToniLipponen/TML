@@ -49,10 +49,11 @@ namespace tml
         void UniformMat4x2fv(const std::string&, uint32_t count, bool transpose, const float *value) const noexcept;
         void UniformMat4x3fv(const std::string&, uint32_t count, bool transpose, const float *value) const noexcept;
 
-    private:
-        inline int32_t GetUniformLocation(const std::string& name) const noexcept;
-        mutable std::unordered_map<std::string, int32_t> m_uniform_cache;
     protected:
+        inline int32_t GetUniformLocation(const std::string& name) const noexcept;
+
+    protected:
+        mutable std::unordered_map<std::string, int32_t> m_uniformCache;
         mutable uint32_t m_id = 0;
     };
 };

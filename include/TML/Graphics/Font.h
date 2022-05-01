@@ -12,8 +12,8 @@ namespace tml
         ~Font();
         Font& operator=(const Font& rhs);
 
-        void LoadFromFile(const String& filename);
-        void LoadFromData(const uint8_t *data);
+        bool LoadFromFile(const String& filename);
+        bool LoadFromData(const uint8_t *data);
         friend class Text;
         friend class Renderer;
 

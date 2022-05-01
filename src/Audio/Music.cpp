@@ -6,7 +6,7 @@
 
 namespace tml
 {
-    Music::Music(const std::string &filename)
+    Music::Music(const String &filename)
     {
         LoadFromFile(filename);
     }
@@ -24,7 +24,7 @@ namespace tml
         delete decoder;
     }
 
-    bool Music::LoadFromFile(const std::string &filename)
+    bool Music::LoadFromFile(const String &filename)
     {
         m_state = Stopped;
         Mixer::GetInstance().RemoveSound(m_id);
@@ -38,10 +38,8 @@ namespace tml
         m_valid = (result == MA_SUCCESS);
 
         if(!m_valid)
-        {
-            tml::Logger::ErrorMessage("Failed to load sound file -> %s", filename.c_str());
             return false;
-        }
+
         m_frameCount = ma_decoder_get_length_in_pcm_frames(decoder) * decoder->outputChannels;
         m_rate = decoder->outputSampleRate;
         m_channels = decoder->outputChannels;
@@ -52,6 +50,7 @@ namespace tml
     {
         m_state = Stopped;
         Mixer::GetInstance().RemoveSound(m_id);
+
         if(!m_decoder)
             m_decoder = new ma_decoder;
 
@@ -61,10 +60,8 @@ namespace tml
         m_valid = (result == MA_SUCCESS);
 
         if(!m_valid)
-        {
-            tml::Logger::ErrorMessage("Failed to load sound from memory.");
             return false;
-        }
+
         m_frameCount = ma_decoder_get_length_in_pcm_frames(decoder) * decoder->outputChannels;
         m_rate = decoder->outputSampleRate;
         m_channels = decoder->outputChannels;
@@ -75,6 +72,7 @@ namespace tml
     {
         if(m_valid)
             ma_decoder_seek_to_pcm_frame((ma_decoder*)m_decoder, 0);
+
         m_state = Stopped;
         AudioType::Stop();
     }
