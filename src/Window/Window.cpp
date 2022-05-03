@@ -7,7 +7,6 @@
 #include "../Headers/Logo.h" /// Logo data
 #include "GLContext/GLContext.h"
 
-void DragAndDropCallback(GLFWwindow* window, int count, const char* files[]);
 void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void CharCallback(GLFWwindow* window, unsigned int code);
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -321,7 +320,6 @@ namespace tml
     {
         auto* handle = static_cast<GLFWwindow*>(m_handle);
         glfwSetWindowSizeCallback(handle, WindowResizeCallback);
-        glfwSetDropCallback(handle, DragAndDropCallback);
         glfwSetCharCallback(handle, CharCallback);
         glfwSetKeyCallback(handle, KeyCallback);
         glfwSetMouseButtonCallback(handle, MouseButtonCallback);
@@ -388,24 +386,6 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
     event.mouseButton.button = button;
     event.mouseButton.x = x;
     event.mouseButton.y = y;
-    tml::EventSystem::GetInstance().PushEvent(window, event);
-}
-
-void DragAndDropCallback(GLFWwindow* window, int count, const char** files)
-{
-    Event event{};
-    event.type = Event::DragAndDrop;
-    event.dragAndDrop.count = count;
-    event.dragAndDrop.paths = new char*[count];
-    for(int i = 0; i < count; i++)
-    {
-        const auto str = tml::String(files[i]);
-        const auto len = str.size();
-
-        event.dragAndDrop.paths[i] = new char[len+1]; /// Using new here
-        event.dragAndDrop.paths[i][len] = 0;
-        std::memcpy(event.dragAndDrop.paths[i], str.data(), len);
-    }
     tml::EventSystem::GetInstance().PushEvent(window, event);
 }
 

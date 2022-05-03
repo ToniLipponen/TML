@@ -10,6 +10,7 @@
 #include <TML/System/Image.h>
 #include <TML/System/File.h>
 #include <cstring>
+#include <algorithm>
 
 namespace tml
 {
@@ -111,8 +112,11 @@ namespace tml
         return returnValue;
     }
 
-    void Image::LoadFromMemory(int32_t w, int32_t h, int32_t Bpp, const uint8_t* data) noexcept
+    bool Image::LoadFromMemory(int32_t w, int32_t h, int32_t Bpp, const uint8_t* data) noexcept
     {
+        if(w == 0 || h == 0 || Bpp == 0 || Bpp > 4)
+            return false;
+
         if((m_width * m_height) != (w * h) || m_Bpp != Bpp)
         {
             delete[] m_data;
@@ -128,6 +132,7 @@ namespace tml
         m_width = w;
         m_height = h;
         m_Bpp = Bpp;
+        return true;
     }
 
     bool Image::LoadFromData(const uint8_t *data, uint32_t dataSize) noexcept
@@ -220,23 +225,23 @@ namespace tml
         return true;
     }
 
-    void Image::SetFlipOnLoad(bool flip)
+    void Image::SetFlipOnLoad(bool flip) noexcept
     {
         m_flipOnRead = flip;
     }
 
-    void Image::SetFlipOnWrite(bool flip)
+    void Image::SetFlipOnWrite(bool flip) noexcept
     {
         m_flipOnWrite = flip;
     }
 
-    bool Image::LoadSvg(const String& filename, int32_t requestedWidth, int32_t requestedHeight)
+    bool Image::LoadSvg(const String& filename, int32_t requestedWidth, int32_t requestedHeight) noexcept
     {
         auto data = InFile::GetString(filename);
         return LoadSvg(reinterpret_cast<const uint8_t *>(data.data()), static_cast<uint32_t>(data.size()), requestedWidth, requestedHeight);
     }
 
-    bool Image::LoadSvg(const uint8_t* data, uint32_t dataSize, int32_t requestedWidth, int32_t requestedHeight)
+    bool Image::LoadSvg(const uint8_t* data, uint32_t dataSize, int32_t requestedWidth, int32_t requestedHeight) noexcept
     {
         auto document = lunasvg::Document::loadFromData(reinterpret_cast<const char*>(data), dataSize);
 
@@ -253,6 +258,9 @@ namespace tml
 
     Image::ImageType Image::GetTypeFromFilename(const String &filename) noexcept
     {
+        if(filename.empty()) //!< Empty string
+            return Image::None;
+
         int64_t pos;
 
         for(pos = static_cast<int64_t>(filename.length()) - 1; pos >= 0; --pos)
@@ -265,7 +273,8 @@ namespace tml
             return Image::None;
 
         const auto len = filename.length() - pos;
-        const auto str = filename.substr(pos, len);
+        auto str = filename.substr(pos, len).cpp_str();
+        std::transform(str.begin(), str.end(), str.begin(), ::tolower);
 
         if(str == ".png")
             return Image::Png;

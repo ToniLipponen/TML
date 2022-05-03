@@ -7,7 +7,7 @@ namespace tml
     {
     public:
         Camera();
-        Camera(const tml::Vector2f& pos, float zoom = 1.0f, float rotation = 0.0f);
+        explicit Camera(const tml::Vector2f& pos, float zoom = 1.0f, float rotation = 0.0f);
 
         void Move(const Vector2f& offset);
         void Zoom(float amount);

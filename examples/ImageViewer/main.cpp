@@ -19,7 +19,7 @@
  */
 
 /**
- * @Usage Very simple image viewer application. You can either drag and drop images into the window, or copy and paste them with CTRL + V.
+ * @Usage Very simple image viewer application. You can import images by pasting them in the window with CTRL + V.
  * You can zoom in and out with mouse wheel. Press R to reset view. Press F to toggle filtering.
  * This demo might be a bit messy. If you want, you can copy this and make something a bit more polished out of it.
  */
@@ -62,9 +62,11 @@ int main(int argc, char** argv)
 
     if(argc > 1)
     {
-        image.LoadFromFile(std::string(argv[1]));
-        window.SetTitle(std::string(argv[1]) + " - " + std::to_string(int(image.GetSize().x)) + "x" + std::to_string(int(image.GetSize().y)));
-        imageSize = image.GetSize();
+        if(image.LoadFromFile(std::string(argv[1])))
+        {
+            window.SetTitle(std::string(argv[1]) + " - " + std::to_string(int(image.GetSize().x)) + "x" + std::to_string(int(image.GetSize().y)));
+            imageSize = image.GetSize();
+        }
     }
 
     window.SetClearColor(0x444444ff);
@@ -100,24 +102,6 @@ int main(int argc, char** argv)
                     if(click)
                         cam.SetPosition((oldCamPos - (Vector2f(windowEvent.pos.x, windowEvent.pos.y) - beginPos) / cam.GetZoom()));
                     break;
-
-                case Event::DragAndDrop:
-                {
-                    String fileName(windowEvent.dragAndDrop.paths[0]);
-                    if(image.LoadFromFile(fileName))
-                    {
-                        window.SetTitle(fileName.cpp_str() + " - " + std::to_string(int(image.GetSize().x)) + "x" + std::to_string(int(image.GetSize().y)));
-                        imageSize = image.GetSize();
-                    }
-
-                    for(int i = 0; i < windowEvent.dragAndDrop.count; i++)
-                        delete[] windowEvent.dragAndDrop.paths[i];
-
-                    delete[] windowEvent.dragAndDrop.paths;
-
-                    cam.SetPosition({0, 0});
-                    cam.SetZoom(1);
-                } break;
 
                 case Event::KeyPressed:
                     if(windowEvent.key.value == Keyboard::KEY_V && windowEvent.key.control)

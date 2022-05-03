@@ -6,12 +6,13 @@ https://user-images.githubusercontent.com/86045205/154943359-aea8c605-587c-428c-
 
 # Controls
 
-| Button | Action                    |
-|--------|---------------------------|
-| CTRL+V | Open image from clipboard |
-| R      | Reset view                |
-| F      | Toggle filtering          |
-| Mouse left| Move image|
+| Button      | Action                    |
+|-------------|---------------------------|
+| CTRL+V      | Open image from clipboard |
+| R           | Reset view                |
+| F           | Toggle filtering          |
+| Mouse left  | Move image                |
+| Mouse wheel | Zoom in / out        |
 
 # License
 Copyright (C) 2022 Toni Lipponen

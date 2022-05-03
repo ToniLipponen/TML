@@ -32,7 +32,7 @@ namespace tml
          *  @param h Height in pixels.
          *  @param Bpp Bytes per pixel.
          *  @param data Pointer to pixel data. */
-        void LoadFromMemory(int32_t w, int32_t h, int32_t Bpp, const uint8_t* data) noexcept;
+        bool LoadFromMemory(int32_t w, int32_t h, int32_t Bpp, const uint8_t* data) noexcept;
 
         /** @brief Creates image from raw file data in memory.
          *  @returns true if successful, or false if unsuccessful. */
@@ -46,13 +46,13 @@ namespace tml
          *  @returns true if successful, or false if unsuccessful. */
         bool Resize(int32_t requestedWidth = 0, int32_t requestedHeight = 0) noexcept;
         bool FlipVertically() noexcept;
-        void SetFlipOnLoad(bool flip);
-        void SetFlipOnWrite(bool flip);
+        void SetFlipOnLoad(bool flip) noexcept;
+        void SetFlipOnWrite(bool flip) noexcept;
 
     private:
         enum ImageType { None, Jpg, Png, Bmp, Tga, Pic, Pnm, Svg };
-        bool LoadSvg(const String& filename, int32_t requestedWidth = 0, int32_t requestedHeight = 0);
-        bool LoadSvg(const uint8_t* data, uint32_t dataSize, int32_t requestedWidth = 0, int32_t requestedHeight = 0);
+        bool LoadSvg(const String& filename, int32_t requestedWidth = 0, int32_t requestedHeight = 0) noexcept;
+        bool LoadSvg(const uint8_t* data, uint32_t dataSize, int32_t requestedWidth = 0, int32_t requestedHeight = 0) noexcept;
         static ImageType GetTypeFromFilename(const String& filename) noexcept;
 
     private:

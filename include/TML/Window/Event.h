@@ -80,13 +80,6 @@ namespace tml
             int32_t id;
         };
 
-        /// Todo: This is stupid. Do something smarter.
-        struct DragAndDropEvent
-        {
-            int32_t count;      //!< Number of dropped files
-            char** paths;   //!< File paths in UTF-8 strings (memory needs to be freed manually)
-        };
-
         enum EventType
         {
             NullEvent,
@@ -96,8 +89,8 @@ namespace tml
             WindowMaximized,        //!< The window was maximized (no data)
             WindowRestored,         //!< The window was restored (no data)
             WindowMoved,            //!< The window was moved (data in event.pos)
-            InterfaceResized,       //!< tml::Interface component is resized (data in event.size)
-            InterfaceMoved,         //!< tml::Interface component is moved (data in event.pos)
+            InterfaceResized,       //!< Not used right now.
+            InterfaceMoved,         //!< Not used right now.
             LostFocus,              //!< The window lost the focus (no data)
             GainedFocus,            //!< The window gained the focus (no data)
             TextEntered,            //!< A character was entered (data in event.text)
@@ -109,7 +102,6 @@ namespace tml
             MouseMoved,             //!< The mouse cursor moved (data in event.pos)
             MouseEntered,           //!< The mouse cursor entered the area of the window (no data)
             MouseLeft,              //!< The mouse cursor left the area of the window (no data)
-            DragAndDrop,            //!< File or files dragged onto a window. (data in event.dragAndDrop)
             GamepadConnected,       //!< Gamepad was connected. (data in event.gamepad)
             GamepadDisconnected,    //!< Gamepad was disconnected. (data in event.gamepad)
         };
@@ -125,7 +117,6 @@ namespace tml
             MouseButtonEvent      mouseButton;
             MouseWheelScrollEvent mouseWheelScroll;
             GamepadEvent          gamepad;
-            DragAndDropEvent      dragAndDrop;
         };
     };
 
