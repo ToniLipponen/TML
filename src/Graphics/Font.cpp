@@ -43,7 +43,19 @@ namespace tml
         return *this;
     }
 
-    bool Font::LoadFromFile(const String& filename)
+    Font& Font::operator=(Font&& rhs) noexcept
+    {
+        if(&rhs == this)
+            return *this;
+
+        delete[] ((stbtt_packedchar*)m_cdata);
+        std::swap(m_cdata, rhs.m_cdata);
+        m_texture = std::move(rhs.m_texture);
+        m_kerningMap = std::move(rhs.m_kerningMap);
+        return *this;
+    }
+
+    bool Font::LoadFromFile(const String& filename) noexcept
     {
         std::vector<char> buffer;
         InFile file;
@@ -54,7 +66,7 @@ namespace tml
         return LoadFromData(reinterpret_cast<const uint8_t *>(buffer.data()));
     }
 
-    bool Font::LoadFromData(const uint8_t* data)
+    bool Font::LoadFromData(const uint8_t* data) noexcept
     {
         if(!data)
         {
@@ -81,11 +93,52 @@ namespace tml
         stbtt_PackEnd(&context);
 
         m_texture.LoadFromMemory(ATLAS_SIZE, ATLAS_SIZE, 1, bitmap.get());
-        return true;
+
+        return MakeKerningTable(data);
     }
 
     void Font::GetAlignedQuad(void *output, int codePoint, float& x, float& y)
     {
         stbtt_GetPackedQuad(static_cast<const stbtt_packedchar*>(m_cdata), 4096, 4096, codePoint, &x, &y, static_cast<stbtt_aligned_quad*>(output), 0);
+    }
+
+    float Font::GetKerning(const std::pair<CodePoint, CodePoint>& pair) const noexcept
+    {
+        if(m_kerningMap.find(pair) != m_kerningMap.end())
+        {
+            return static_cast<float>(m_kerningMap.at(pair));
+        }
+
+        return 0;
+    }
+
+    float Font::GetKerning(CodePoint a, CodePoint b) const noexcept
+    {
+        const std::pair<int, int> pair = {a,b};
+
+        if(m_kerningMap.find(pair) != m_kerningMap.end())
+        {
+            return static_cast<float>(m_kerningMap.at(pair));
+        }
+
+        return 0;
+    }
+
+    bool Font::MakeKerningTable(const uint8_t* data, int offset) noexcept
+    {
+        stbtt_fontinfo fontInfo{};
+        stbtt_InitFont(&fontInfo, data, offset);
+        const int tableLength = stbtt_GetKerningTableLength(&fontInfo);
+
+        std::unique_ptr<stbtt_kerningentry[]> kerningTable(new stbtt_kerningentry[tableLength]);
+        const int readLength = stbtt_GetKerningTable(&fontInfo, kerningTable.get(), tableLength);
+
+        for(int i = 0; i < readLength; i++)
+        {
+            std::pair<int,int> pair = {kerningTable[i].glyph1, kerningTable[i].glyph2};
+            m_kerningMap[pair] = kerningTable[i].advance;
+        }
+
+        return true; //!< Currently just returning true here, because the kerning table is optional anyway.
     }
 }

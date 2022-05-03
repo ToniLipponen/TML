@@ -10,16 +10,24 @@ struct stbtt_aligned_quad
     float x1,y1,s1,t1; // bottom-right
 };
 
+#define TAB_SIZE 4
+
 namespace tml
 {
-    std::unique_ptr<Font> Text::s_defaultFont = nullptr;
-
     Text::Text()
-    : m_font(nullptr), m_string(""), m_lineSpacing(0), m_kerning(0), m_dimensions(0)
+    : m_leading(0), m_kerning(0), m_dimensions(0), m_font(nullptr), m_string("")
     {
         m_color = Color{255,255,255,255};
         m_pos   = Vector2f{0,0};
         m_size  = Vector2f{32,32};
+    }
+
+    Text::Text(String string, const Vector2f& pos, float size, const Color& color)
+    : m_leading(0), m_kerning(0), m_dimensions(0), m_font(nullptr), m_string(std::move(string))
+    {
+        m_color = color;
+        m_pos   = pos;
+        m_size  = Vector2f{size, size};
     }
 
     void Text::SetSize(float s) noexcept
@@ -52,22 +60,36 @@ namespace tml
         }
     }
 
-    void Text::SetSpacing(float s) noexcept
+    void Text::SetLeading(float leading) noexcept
     {
-        if(m_lineSpacing != s)
+        if(m_leading != leading)
         {
             m_updated = true;
-            m_lineSpacing = s;
+            m_leading = leading;
         }
     }
 
-    void Text::SetKerning(float s) noexcept
+    void Text::SetTracking(float tracking) noexcept
     {
-        if(m_kerning != s)
+        if(m_tracking != tracking)
         {
             m_updated = true;
-            m_kerning = s;
+            m_tracking = tracking;
         }
+    }
+
+    void Text::SetKerning(float kerning) noexcept
+    {
+        if(m_kerning != kerning)
+        {
+            m_updated = true;
+            m_kerning = kerning;
+        }
+    }
+
+    const String& Text::GetString() const noexcept
+    {
+        return m_string;
     }
 
     Vector2f Text::GetDimensions() noexcept
@@ -86,26 +108,25 @@ namespace tml
 
     void Text::Generate()
     {
-        constexpr static float hOffset = 96 - 96.0 / 4.0;
-
-//        if(!s_defaultFont)
-//        {
-//            s_defaultFont = std::make_unique<Font>();
-//            s_defaultFont->LoadFromData(TML_DEFAULT_FONT_DATA);
-//        }
-
         m_dimensions = Vector2f{0, m_size.y};
-        float x = 0, y = hOffset;
-        float width = 0, height = 0;
-        uint32_t count = 0;
+
+        float x    = 0;
+        float y    = 96.0f - 96.0f / 4.0f;
+        float ypos = 0;
+        float xpos = 0;
+
         m_vertexData.clear();
         m_indexData.clear();
+
+        uint32_t count = 0;
         const uint32_t hex = m_color.Hex();
         Font& font = m_font ? *m_font : GetDefaultFont();
 
+        char32_t previousChar = 0;
+
         for(auto c : m_string)
         {
-            if(Math::InRange<int32_t>(c, 0, 8) || Math::InRange<int32_t>(c, 14, 31))
+            if(Math::InRange<int32_t>((int)c, 0, 8) || Math::InRange<int32_t>((int)c, 14, 31))
                 continue;
 
             switch(c)
@@ -115,22 +136,29 @@ namespace tml
                     break;
                 case '\r':
                 case '\n':
-                    m_dimensions.x = Math::Max(width, m_dimensions.x);
-                    m_dimensions.y = Math::Max(height+m_size.x+m_lineSpacing, m_dimensions.y);
-                    y += hOffset + m_lineSpacing;
+                {
+                    m_dimensions.y += m_size.x + m_leading;
+                    ypos += m_size.x + m_leading;
+                    xpos = 0;
                     x = 0;
-                    width = 0;
-                    break;
+                } break;
 
                 case '\t':
-                    x += m_size.x * 3 + m_kerning;
+                    x += m_size.x * TAB_SIZE + m_tracking;
                     break;
 
                 default:
+                {
                     stbtt_aligned_quad q{};
 
+                    const float kerning = m_kerning * font.GetKerning((int)previousChar, (int)c) * (m_size.y / 96);
                     font.GetAlignedQuad(&q, (int)c - 32, x, y);
                     NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
+
+                    q.x0 += kerning + xpos;
+                    q.x1 += kerning + xpos;
+                    q.y0 += ypos;
+                    q.y1 += ypos;
 
                     m_vertexData.push_back({{q.x0, q.y0}, {q.s0, q.t0}, hex, Vertex::TEXT});
                     m_vertexData.push_back({{q.x1, q.y0}, {q.s1, q.t0}, hex, Vertex::TEXT});
@@ -146,14 +174,13 @@ namespace tml
                     m_indexData.push_back(count + 2);
 
                     count += 4;
-                    width = q.x1 - m_pos.x;
-                    height = q.y1 - m_pos.y;
-                    x += m_kerning;
-                    break;
+                    xpos += m_tracking;
+                    m_dimensions.x = Math::Max(q.x1 - m_pos.x, m_dimensions.x);
+                } break;
             }
+
+            previousChar = c;
         }
-        m_dimensions.x = Math::Max(width, m_dimensions.x);
-        m_dimensions.y = Math::Max(height, m_dimensions.y);
     }
 
     void Text::OnDraw(class Renderer* renderer, Texture*) noexcept
