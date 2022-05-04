@@ -1,6 +1,7 @@
 #pragma once
 #include <TML/System/Math/Vector2.h>
 #include <TML/Graphics/Core/Texture.h>
+#include <TML/Export.h>
 #include <unordered_map>
 #include <map>
 
@@ -19,7 +20,7 @@ namespace std
 
 namespace tml
 {
-    class Font
+    class TML_API Font
     {
     public:
         Font();

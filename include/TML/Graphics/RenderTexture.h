@@ -1,10 +1,11 @@
 #pragma once
 #include <TML/Graphics/Core/Texture.h>
 #include <TML/Graphics/RenderTarget.h>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class RenderTexture : public RenderTarget
+    class TML_API RenderTexture : public RenderTarget
     {
     public:
         RenderTexture();

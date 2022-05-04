@@ -1,9 +1,10 @@
 #pragma once
 #include <cstdint>
+#include <TML/Export.h>
 
 namespace tml
 {
-    struct Color
+    struct TML_API Color
     {
         Color() = default;
         constexpr Color(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b), a(255) {}
@@ -53,14 +54,21 @@ namespace tml
         static const Color Red;
         static const Color Green;
         static const Color Blue;
-
         static const Color Yellow;
         static const Color Magenta;
         static const Color Cyan;
-
         static const Color Black;
         static const Color White;
         static const Color Transparent;
     };
-}
 
+    inline constexpr Color Color::Red         = Color(0xff0000ff);
+    inline constexpr Color Color::Green       = Color(0x00ff00ff);
+    inline constexpr Color Color::Blue        = Color(0x0000ffff);
+    inline constexpr Color Color::Yellow      = Color(0xffff00ff);
+    inline constexpr Color Color::Magenta     = Color(0xff00ffff);
+    inline constexpr Color Color::Cyan        = Color(0x00ffffff);
+    inline constexpr Color Color::Black       = Color(0x000000ff);
+    inline constexpr Color Color::White       = Color(0xffffffff);
+    inline constexpr Color Color::Transparent = Color(0x00000000);
+}

@@ -1,9 +1,10 @@
 #pragma once
 #include <TML/Graphics/Drawable/Drawable.h>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class Line : public Drawable
+    class TML_API Line : public Drawable
     {
     public:
         Line();

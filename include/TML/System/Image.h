@@ -1,10 +1,11 @@
 #pragma once
 #include <cstdint>
 #include <TML/System/String.h>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class Image
+    class TML_API Image
     {
     public:
         Image() noexcept;

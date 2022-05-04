@@ -5,10 +5,11 @@
 #include <TML/System/Image.h>
 #include <TML/System/Math/Vector2.h>
 #include <TML/System/String.h>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class Window
+    class TML_API Window
     {
     public:
         enum Settings : uint32_t
@@ -36,8 +37,8 @@ namespace tml
         Window& operator=(const Window&) = delete;
         Window& operator=(Window&&) = delete;
 
-        virtual ~Window();
-        virtual void Display();
+        virtual ~Window() noexcept;
+        virtual void Display() noexcept;
 
         bool Create(int32_t w, int32_t h, const String& title, uint32_t settings = None) noexcept;
         void Close() noexcept; //!< Destroys the window.
@@ -79,7 +80,7 @@ namespace tml
 
     private:
         void HandleWindowEvents(const Event& e) noexcept;
-        void SetCallbacks();
+        void SetCallbacks() noexcept;
 
     protected:
         Vector2i m_size, m_pos;

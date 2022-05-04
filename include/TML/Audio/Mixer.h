@@ -3,10 +3,11 @@
 #include "Music.h"
 #include <map>
 #include <memory>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class Mixer
+    class TML_API Mixer
     {
     private:
         Mixer();

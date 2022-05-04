@@ -13,7 +13,7 @@ namespace tml
         Vector2f size;
     };
 
-    class Sprite : public Drawable
+    class TML_API Sprite : public Drawable
     {
     public:
         Sprite();

@@ -24,7 +24,9 @@ namespace tml
                 GL_CALL(glad_glVertexArrayAttribIFormat(m_id, i, lo.at(i).elements, lo.at(i).dataType, offset));
             }
             else
+            {
                 GL_CALL(glad_glVertexArrayAttribFormat(m_id, i, lo.at(i).elements, GL_FLOAT, GL_FALSE, offset));
+            }
             GL_CALL(glad_glVertexArrayAttribBinding(m_id, i, 0));
             offset += lo.at(i).elements * lo.at(i).size;
         }
@@ -58,7 +60,9 @@ namespace tml
                 GL_CALL(glad_glVertexArrayAttribIFormat(m_id, i, lo.at(i).elements, lo.at(i).dataType, offset));
             }
             else
+            {
                 GL_CALL(glad_glVertexArrayAttribFormat(m_id, i, lo.at(i).dataType, GL_FLOAT, GL_FALSE, offset));
+            }
             GL_CALL(glad_glVertexArrayAttribBinding(m_id, i, 0));
             offset += lo.at(i).elements * lo.at(i).size;
         }
@@ -78,7 +82,9 @@ namespace tml
                 GL_CALL(glad_glVertexArrayAttribIFormat(m_id, i, lo.at(i).elements, lo.at(i).dataType, offset));
             }
             else
+            {
                 GL_CALL(glad_glVertexArrayAttribFormat(m_id, i, lo.at(i).elements, GL_FLOAT, GL_FALSE, offset));
+            }
             GL_CALL(glad_glVertexArrayAttribBinding(m_id, i, 0));
             offset += lo.at(i).elements * lo.at(i).size;
         }

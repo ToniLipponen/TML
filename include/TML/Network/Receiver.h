@@ -1,11 +1,12 @@
 #pragma once
 #include "Socket.h"
+#include <TML/Export.h>
 
 namespace tml
 {
     namespace Net
     {
-        class Receiver : public Socket
+        class TML_API Receiver : public Socket
         {
         public:
             Receiver();
