@@ -1,5 +1,6 @@
 #pragma once
 #include <TML/System/Math/Vector2.h>
+#include <TML/Export.h>
 
 namespace tml
 {
@@ -128,15 +129,15 @@ namespace tml
             KEY_RIGHT_SUPER = 347,
             KEY_MENU = 348
         };
-        bool IsKeyPressed(Key key);
-        bool IsKeyDown(Key key);
-    };
+        TML_API bool IsKeyPressed(Key key);
+        TML_API bool IsKeyDown(Key key);
+    }
 
     namespace Mouse
     {
-        enum Button {Left, Right, Middle, Four, Five, Six, Seven, Last};
+        enum Button { Left, Right, Middle, Four, Five, Six, Seven, Last };
 
-        Vector2d GetPosition();
-        bool ButtonDown(Button button);
-    };
+        TML_API Vector2d GetPosition();
+        TML_API bool ButtonDown(Button button);
+    }
 }

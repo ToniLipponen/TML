@@ -2,12 +2,13 @@
 #include <TML/Graphics/Core/Buffers.h>
 #include <TML/Graphics/Core/Shader.h>
 
-#include <glm/glm/glm.hpp>
+//#include <glm/glm/glm.hpp>
 #include <glm/glm/gtc/matrix_transform.hpp>
 
-#include "../Headers/GLHeader.h"
-#include "../Headers/Shaders.h"
-#include "../Headers/MappedVector.h"
+#include <GLHeader.h>
+#include <Shaders.h>
+#include <MappedVector.h>
+#include <_Assert.h>
 
 #ifdef PLATFORM_WINDOWS
     #undef DrawText
@@ -34,14 +35,24 @@ namespace tml
 
     Renderer::Renderer()
     {
+        TML_ASSERT(gladLoaderLoadGL(), "Failed to load OpenGL functions");
+
+#if !defined(TML_USE_GLES) && !defined(TML_NO_GL_DEBUGGING)
+        GL_CALL(glad_glEnable(GL_DEBUG_OUTPUT));
+        GL_CALL(glad_glDebugMessageCallback(GLMessageCallback, nullptr));
+#endif
+
         GL_CALL(glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureCount));
+
         m_maxTextureCount = Math::Min(m_maxTextureCount, 32);
 
-        m_vao           = new VertexArray();
+        m_vao           = new VertexArray;
         m_vertexVector  = new VertexVector(s_maxVertexCount);
         m_indexVector   = new IndexVector(s_maxIndexCount);
-        m_layout        = new BufferLayout();
-        m_shader        = new Shader();
+        m_layout        = new BufferLayout;
+        m_shader        = new Shader;
+        m_text          = new Text;
+        m_circleTexture = new Texture;
 
         m_vao->Bind();
         m_layout->Push(2, 4, BufferLayout::VERTEX_FLOAT);
@@ -53,22 +64,22 @@ namespace tml
         m_shader->Bind();
 
         Image circleImage;
-        circleImage.LoadFromMemory(4096, 4096, 1, nullptr);
-        MakeCircle(circleImage, 4096);
-        m_circleTexture.LoadFromImage(circleImage);
+        circleImage.LoadFromMemory(2048, 2048, 1, nullptr);
+        MakeCircle(circleImage, 2048);
+        m_circleTexture->LoadFromImage(circleImage);
 
-        GL_CALL(glEnable(GL_BLEND));
-        GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-        GL_CALL(glBlendEquation(GL_FUNC_ADD));
+        GL_CALL(glad_glEnable(GL_BLEND));
+        GL_CALL(glad_glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+        GL_CALL(glad_glBlendEquation(GL_FUNC_ADD));
     }
 
     Renderer::~Renderer()
     {
-        delete m_vao;
-        delete m_vertexVector;
-        delete m_indexVector;
-        delete m_layout;
-        delete m_shader;
+//        delete m_vao;
+//        delete m_vertexVector;
+//        delete m_indexVector;
+//        delete m_layout;
+//        delete m_shader;
     }
 
     Renderer& Renderer::GetInstance() noexcept
@@ -163,7 +174,7 @@ namespace tml
 
     void Renderer::Draw(Drawable& d) noexcept
     {
-        d.OnDraw(this, &m_circleTexture);
+        d.OnDraw(this, m_circleTexture);
     }
 
     void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, float thickness, Color color, bool rounded) noexcept
@@ -203,7 +214,7 @@ namespace tml
     void Renderer::DrawRect(const Vector2f& pos, const Vector2f& dimensions, const Color& color, float roundness, float rotation) noexcept
     {
         if(roundness < 1.f) // If roundness is too low, just draw a single quad
-            PushQuad(pos, dimensions, color, m_circleTexture, Vertex::COLOR, rotation);
+            PushQuad(pos, dimensions, color, *m_circleTexture, Vertex::COLOR, rotation);
         else
         {
             roundness = Math::Clamp<float>(roundness, 0, Math::Min(dimensions.y, dimensions.x) / 2);
@@ -217,7 +228,7 @@ namespace tml
             auto ry = Vector2f{0.f, roundness};
 
             auto hex = color.Hex();
-            const uint32_t slot = PushTexture(m_circleTexture);
+            const uint32_t slot = PushTexture(*m_circleTexture);
             std::vector<Vertex> cornerVertices;
             std::vector<uint32_t> cornerIndices = {
                      0, 1, 2,    1, 3, 2,
@@ -269,14 +280,14 @@ namespace tml
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3+size,                cos_r, sin_r), {0.5f,1.0f}, hex, typeAndTex});
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3+Vector2f(0, size.y), cos_r, sin_r), {0.0f,1.0f}, hex, typeAndTex});
 
-            PushQuad(pos+ry, dimensions-ry-ry, color, m_circleTexture, Vertex::COLOR, rotation);
+            PushQuad(pos+ry, dimensions-ry-ry, color, *m_circleTexture, Vertex::COLOR, rotation);
             PushVertexData(cornerVertices, cornerIndices);
         }
     }
 
     void Renderer::DrawCircle(const Vector2f& pos, float radius, const Color& color) noexcept
     {
-        PushQuad(pos - Vector2f{radius}, {radius * 2}, color, m_circleTexture, Vertex::TEXT);
+        PushQuad(pos - Vector2f{radius}, {radius * 2}, color, *m_circleTexture, Vertex::TEXT);
     }
 
     void Renderer::DrawBezier(const Vector2f& a, const Vector2f& cp1, const Vector2f& cp2, const Vector2f& b, float thickness,
@@ -332,11 +343,11 @@ namespace tml
 
     void Renderer::DrawText(const String& text, const Vector2f& pos, float size, const Color& color) noexcept
     {
-        m_text.SetString(text);
-        m_text.SetSize(size);
-        m_text.SetColor(color);
-        m_text.SetPosition(pos);
-        Draw(m_text);
+        m_text->SetString(text);
+        m_text->SetSize(size);
+        m_text->SetColor(color);
+        m_text->SetPosition(pos);
+        Draw(*m_text);
     }
 
     void Renderer::PushVertexData(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices) noexcept
@@ -463,7 +474,6 @@ namespace tml
         m_vertexVector->Bind();
         m_indexVector->Bind();
 
-//        GL_CALL(glad_glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_indexVector->size())));
         GL_CALL(glad_glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indexVector->size()), GL_UNSIGNED_INT, nullptr));
         BeginBatch();
     }

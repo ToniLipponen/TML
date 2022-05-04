@@ -1,7 +1,7 @@
 #include <TML/Graphics/RenderTexture.h>
 #include <TML/Graphics/Core/FrameBuffer.h>
 #include <iostream>
-#include "glad/gl.h"
+#include <glad/include/glad/gl.h>
 
 namespace tml
 {

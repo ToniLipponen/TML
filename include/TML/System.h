@@ -3,4 +3,3 @@
 #include <TML/System/Clock.h>
 #include <TML/System/Logger.h>
 #include <TML/System/Math.h>
-#include <TML/System/Image.h>

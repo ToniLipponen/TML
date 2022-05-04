@@ -1,10 +1,11 @@
 #pragma once
 #include <TML/System/Math/Vector2.h>
+#include <TML/Export.h>
 #include <vector>
 
 namespace tml
 {
-    struct Ray
+    struct TML_API Ray
     {
         struct Intersection
         {

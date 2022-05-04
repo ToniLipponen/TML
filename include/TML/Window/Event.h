@@ -28,6 +28,7 @@
 #include <cstdint>
 #include <queue>
 #include <map>
+#include <TML/Export.h>
 
 namespace tml
 {
@@ -120,7 +121,7 @@ namespace tml
         };
     };
 
-    class EventSystem
+    class TML_API EventSystem
     {
     private:
         EventSystem();

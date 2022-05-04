@@ -1,4 +1,4 @@
-#include "../../../Headers/GLHeader.h"
+#include <GLHeader.h>
 #include <TML/Graphics/Core/Buffers.h>
 
 #if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)

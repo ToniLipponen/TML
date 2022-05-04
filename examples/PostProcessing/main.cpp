@@ -22,7 +22,7 @@ void main(void)
 
 int main()
 {
-    RenderWindow window(800, 600, "PostProcessing");
+    RenderWindow window(800, 600, "Post-processing");
 
     RenderTexture renderTexture;
     renderTexture.SetClearColor(Color::White);

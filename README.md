@@ -11,7 +11,7 @@ TML is a simple library for making games and applications. It provides interface
 - Compute shaders through OpenGL 4.5
 - No external dependencies
 - Modular design
-- Written in C++14
+- Written in C++17
 - OpenGL 4.5 and OpenGL ES 3.1 backends
 
 # Modules

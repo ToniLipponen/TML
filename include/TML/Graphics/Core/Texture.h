@@ -1,10 +1,11 @@
 #pragma once
+#include <TML/Export.h>
 #include <TML/System/Math/Vector2.h>
 #include <TML/System/Image.h>
 
 namespace tml
 {
-    class Texture
+    class TML_API Texture
     {
     public:
         enum ClampMode

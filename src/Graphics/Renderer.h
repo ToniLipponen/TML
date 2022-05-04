@@ -99,9 +99,9 @@ namespace tml
         float   m_scale[16]{};
         float   m_clearColor[4]{};
 
-        TexRect m_viewport;
-        Text    m_text;
-        Texture m_circleTexture;
+        TexRect  m_viewport;
+        Text*    m_text;
+        Texture* m_circleTexture;
 
         constexpr static uint32_t s_maxVertexCount = 10000;
         constexpr static uint32_t s_maxIndexCount = s_maxVertexCount * 4;

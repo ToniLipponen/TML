@@ -2,10 +2,11 @@
 #include "AudioType.h"
 #include "AudioBuffer.h"
 #include <TML/System/String.h>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class Sound : public AudioType
+    class TML_API Sound : public AudioType
     {
     public:
         Sound() = default;

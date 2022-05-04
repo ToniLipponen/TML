@@ -44,12 +44,12 @@ struct Scene
 
 int main()
 {
-    RenderWindow window(800, 600, "Ray casting", Window::VSync | Window::Resizeable | Window::Antialias);
+    RenderWindow window(800, 600, "Ray casting", Window::Resizeable | Window::Antialias);
     const Vector2f windowSize2 = window.GetSize() / 2;
 
     Scene scene;
-    scene.rects.emplace_back(Rectangle(0,0,window.GetWidth(), window.GetHeight()));
-    scene.rects.emplace_back(Rectangle(100,100,100,100));
+    scene.rects.emplace_back(Rectangle(0, 0, window.GetWidth(), window.GetHeight()));
+    scene.rects.emplace_back(Rectangle(100, 100, 100, 100));
     scene.circles.emplace_back(Circle(windowSize2, 200.f));
 
     Clock clock;

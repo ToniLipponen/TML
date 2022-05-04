@@ -2,10 +2,12 @@
 #include <cstdint>
 #include <unordered_map>
 #include <functional>
+#include <TML/Export.h>
+
 
 namespace tml
 {
-    class AudioType
+    class TML_API AudioType
     {
     public:
         enum State { Stopped, Playing, Paused, Ended };

@@ -1,8 +1,9 @@
 #pragma once
+#include <TML/Export.h>
 
 namespace tml
 {
-    class GLContext
+    class TML_API GLContext
     {
     private:
         GLContext();

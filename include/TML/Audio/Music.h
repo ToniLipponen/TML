@@ -2,10 +2,11 @@
 #include <string>
 #include "AudioType.h"
 #include <TML/System/String.h>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class Music : public AudioType
+    class TML_API Music : public AudioType
     {
     public:
         Music() = default;

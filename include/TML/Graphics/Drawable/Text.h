@@ -6,7 +6,7 @@
 
 namespace tml
 {
-    class Text : public Drawable
+    class TML_API Text : public Drawable
     {
     public:
         Text();

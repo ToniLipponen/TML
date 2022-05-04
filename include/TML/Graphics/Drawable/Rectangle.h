@@ -3,7 +3,7 @@
 
 namespace tml
 {
-    class Rectangle : public Drawable
+    class TML_API Rectangle : public Drawable
     {
     public:
         Rectangle();

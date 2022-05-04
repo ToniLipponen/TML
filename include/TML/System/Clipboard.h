@@ -1,20 +1,21 @@
 #pragma once
 #include <TML/System/String.h>
-#include "Image.h"
+#include <TML/System/Image.h>
+#include <TML/Export.h>
 
 namespace tml
 {
     namespace Clipboard
     {
-        bool IsEmpty();
-        bool HasImage();
-        bool HasText();
+        TML_API bool IsEmpty();
+        TML_API bool HasImage();
+        TML_API bool HasText();
 
-        void Clear();
-        bool GetString(String& string);
-        bool GetImage(Image& image);
+        TML_API void Clear();
+        TML_API bool GetString(String& string);
+        TML_API bool GetImage(Image& image);
 
-        void SetString(const String& string);
-        void SetImage(const Image& image);
+        TML_API void SetString(const String& string);
+        TML_API void SetImage(const Image& image);
     }
 }

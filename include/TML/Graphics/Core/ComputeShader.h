@@ -2,10 +2,11 @@
 #include "Shader.h"
 #include "Buffers.h"
 #include <TML/System/String.h>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class ComputeShader : public Shader
+    class TML_API ComputeShader : public Shader
     {
     public:
         ComputeShader();
