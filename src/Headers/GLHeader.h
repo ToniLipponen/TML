@@ -1,8 +1,8 @@
 #pragma once
 #include <TML/System/Platform.h>
-#include <glad/gl.h>
+#include <glad/include/glad/gl.h>
 
-#define TML_NO_GL_DEBUGGING
+
 #ifndef TML_NO_GL_DEBUGGING
 #include <cassert>
     #define GL_CALL(x) x; assert(CheckGLError() == 0)

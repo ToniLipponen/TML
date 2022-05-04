@@ -1,6 +1,5 @@
 #include "GLContext.h"
 #include "_Assert.h"
-#include "GLHeader.h"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>

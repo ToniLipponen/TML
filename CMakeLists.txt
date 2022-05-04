@@ -5,7 +5,6 @@ set(TML_API_VERSION 1.0.0)
 
 project(tml VERSION ${TML_API_VERSION})
 
-option(TML_BUILD_STATIC "Build TML as a static library" no)
 option(TML_DEBUG_OPENGL_CALLS "Applies error checking around opengl function calls." yes)
 option(TML_ASSERT "Applies asserts around important functions." yes)
 option(TML_BUILD_EXAMPLES "Builds some example programs." yes)
@@ -28,6 +27,7 @@ set(CMAKE_CXX_STANDARD 17)
 # Set output directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 #set(CMAKE_COMPILE_PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/pdb)
 
 # SSE3
@@ -39,11 +39,17 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
     endif()
 endif()
 
-if(TML_BUILD_STATIC)
+if(NOT BUILD_SHARED_LIBS)
+    message(STATUS "Building static library")
     add_compile_definitions(TML_STATIC)
     set(TML_LIBRARY_TYPE STATIC)
 else()
-    add_compile_definitions(TML_EXPORTING)
+    message(STATUS "Building shared library")
+
+    if(WIN32)
+        add_compile_definitions(TML_EXPORTING)
+    endif()
+
     set(TML_LIBRARY_TYPE SHARED)
 endif()
 
@@ -79,12 +85,10 @@ add_subdirectory(src/Window)
 
 add_library(tml src/TOKEN_SOURCE_FILE.cpp ${HEADER_FILES})
 target_link_libraries(tml tml-audio tml-graphics tml-network tml-system tml-window)
-target_compile_features(tml PUBLIC cxx_std_17)
 
 if(UNIX)
-    set(CMAKE_INSTALL_PREFIX /usr/)
-    install(TARGETS tml-audio tml-graphics tml-window tml-system tml-network DESTINATION /usr/lib)
-    install(DIRECTORY include/TML DESTINATION /usr/include)
+    install(TARGETS tml-audio tml-graphics tml-window tml-system tml-network DESTINATION /usr/local/lib)
+    install(DIRECTORY include/TML DESTINATION /usr/local/include)
 endif()
 
 if(TML_BUILD_EXAMPLES)
