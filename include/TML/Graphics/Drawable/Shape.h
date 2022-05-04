@@ -3,7 +3,7 @@
 
 namespace tml
 {
-    class Shape : public Drawable
+    class TML_API Shape : public Drawable
     {
     public:
         struct ShapePoint { Vector2f pos; Color color;};

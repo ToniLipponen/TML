@@ -195,15 +195,15 @@ namespace tml
 
     Font& Text::GetDefaultFont() noexcept
     {
-        static Font defaultFont;
+        static Font* defaultFont = new Font;
         static bool defaultFontInitialized = false;
 
         if(!defaultFontInitialized)
         {
-            defaultFont.LoadFromData(TML_DEFAULT_FONT_DATA);
+            defaultFont->LoadFromData(TML_DEFAULT_FONT_DATA);
             defaultFontInitialized = true;
         }
 
-        return defaultFont;
+        return *defaultFont;
     }
 }

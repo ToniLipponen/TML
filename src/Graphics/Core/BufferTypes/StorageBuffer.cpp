@@ -1,5 +1,5 @@
 #include <TML/Graphics/Core/Buffers.h>
-#include "../../../Headers/GLHeader.h"
+#include <GLHeader.h>
 #include <cstring>
 
 #ifndef TML_USE_GLES

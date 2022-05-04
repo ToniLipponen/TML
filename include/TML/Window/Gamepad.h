@@ -1,5 +1,6 @@
 #pragma once
 #include <TML/System/Math/Vector2.h>
+#include <TML/Export.h>
 
 namespace tml
 {
@@ -86,10 +87,10 @@ namespace tml
         enum Joystick { LeftJoystick, RightJoystick };
         enum Trigger  { LeftTrigger,  RightTrigger  };
 
-        bool IsGamepadConnected(GamepadEnum gamepad);
-        Vector2f GetAxisValue(GamepadEnum gamepad, Joystick joystick);
-        float GetTriggerValue(GamepadEnum gamepad, Trigger trigger);
-        bool IsButtonPressed(GamepadEnum gamepad, Gamepad::Button button);
-        bool IsButtonDown(GamepadEnum gamepad, Gamepad::Button button);
+        TML_API bool IsGamepadConnected(GamepadEnum gamepad);
+        TML_API Vector2f GetAxisValue(GamepadEnum gamepad, Joystick joystick);
+        TML_API float GetTriggerValue(GamepadEnum gamepad, Trigger trigger);
+        TML_API bool IsButtonPressed(GamepadEnum gamepad, Gamepad::Button button);
+        TML_API bool IsButtonDown(GamepadEnum gamepad, Gamepad::Button button);
     }
 }

@@ -1,10 +1,11 @@
 #pragma once
 #include <TML/System/Math/Vector2.h>
 #include <TML/System/Math.h>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class Transformable
+    class TML_API Transformable
     {
     public:
         inline Vector2f GetPosition()   const noexcept { return m_pos;      }

@@ -1,9 +1,10 @@
 #pragma once
 #include <TML/Graphics/Core/Texture.h>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class FrameBuffer
+    class TML_API FrameBuffer
     {
     public:
         FrameBuffer();

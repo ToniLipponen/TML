@@ -1,9 +1,10 @@
 #pragma once
 #include <TML/System/Math/Vector2.h>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class Camera
+    class TML_API Camera
     {
     public:
         Camera();

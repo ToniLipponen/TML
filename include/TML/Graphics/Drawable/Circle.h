@@ -4,7 +4,7 @@
 
 namespace tml
 {
-    class Circle : public Drawable
+    class TML_API Circle : public Drawable
     {
     public:
         Circle();

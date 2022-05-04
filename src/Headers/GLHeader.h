@@ -1,15 +1,7 @@
 #pragma once
 #include <TML/System/Platform.h>
+#include <glad/include/glad/gl.h>
 
-#ifdef PLATFORM_WINDOWS
-    #include <glad/gl.h>
-#else
-    #ifdef TML_USE_GLES
-        #include <glad/gles2.h>
-    #else
-        #include <glad/gl.h>
-    #endif
-#endif
 
 #ifndef TML_NO_GL_DEBUGGING
 #include <cassert>
@@ -19,4 +11,4 @@
 #endif
 
 int CheckGLError();
-void GLAPIENTRY  GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* user_param);
+void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* user_param);

@@ -36,12 +36,12 @@ namespace tml
             Logger::ErrorMessage("Failed to create a window");
     }
 
-    Window::~Window()
+    Window::~Window() noexcept
     {
         Close();
     }
 
-    void Window::Display()
+    void Window::Display() noexcept
     {
         /// Swap buffers if this window is still open and there is an opengl context associated with this window.
         if(IsOpen() && m_hasGLContext)
@@ -90,6 +90,7 @@ namespace tml
 
         if((settings & Settings::VSync) != 0)
             glfwSwapInterval(1);
+        glfwSwapInterval(1);
 
         /** Set window icon to TML-logo **/
         Image image(LOGO_DATA.data(), static_cast<int>(LOGO_DATA.size()));
@@ -109,8 +110,11 @@ namespace tml
     void Window::Close() noexcept
     {
         tml::EventSystem::GetInstance().Remove(m_handle);
+        SetActive(false);
         glfwDestroyWindow(static_cast<GLFWwindow*>(m_handle));
         m_handle = nullptr;
+
+        glfwMakeContextCurrent((GLFWwindow*)GLContext::GetInstance().GetContextHandle());
     }
 
     bool Window::IsOpen() const noexcept
@@ -316,7 +320,7 @@ namespace tml
         }
     }
 
-    void Window::SetCallbacks()
+    void Window::SetCallbacks() noexcept
     {
         auto* handle = static_cast<GLFWwindow*>(m_handle);
         glfwSetWindowSizeCallback(handle, WindowResizeCallback);

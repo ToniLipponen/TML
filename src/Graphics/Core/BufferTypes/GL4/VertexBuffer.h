@@ -19,6 +19,7 @@ namespace tml
     VertexBuffer::~VertexBuffer() noexcept
     {
         GL_CALL(glad_glDeleteBuffers(1, &m_id));
+        m_id = 0;
     }
 
     void VertexBuffer::Bind() noexcept
@@ -51,7 +52,9 @@ namespace tml
         }
 
         if(m_mappedPtr)
+        {
             GL_CALL(glad_glUnmapNamedBuffer(m_id));
+        }
 
         GL_CALL(glad_glNamedBufferData(m_id, m_capacity, data, BUFFER_USAGE_FLAG));
         m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, BUFFER_MAP_FLAGS));

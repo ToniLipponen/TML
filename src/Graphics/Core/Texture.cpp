@@ -1,7 +1,6 @@
 #include <TML/Graphics/Core/Texture.h>
 #include <TML/Graphics/Core/FrameBuffer.h>
-#include "../../Headers/GLHeader.h"
-#include "../../Window/GLContext/GLContext.h"
+#include <GLHeader.h>
 
 namespace tml
 {
@@ -24,10 +23,7 @@ namespace tml
 
     Texture::~Texture()
     {
-        if(glad_glDeleteTextures)
-        {
-            GL_CALL(glad_glDeleteTextures(1, &m_id));
-        }
+        GL_CALL(glad_glDeleteTextures(1, &m_id));
     }
 
     Texture& Texture::operator=(const Texture& rhs) noexcept
@@ -77,11 +73,11 @@ namespace tml
          */
         GL_CALL(glad_glDeleteTextures(1, &m_id));
 
-        #ifdef TML_USE_GLES
+#if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
             GL_CALL(glad_glGenTextures(1, &m_id));
-        #else
+#else
             GL_CALL(glad_glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
-        #endif
+#endif
 
         bool noErrors = true;
 
@@ -140,15 +136,15 @@ namespace tml
         image.LoadFromMemory(m_width, m_height, m_bpp, nullptr);
         auto* imgData = image.GetData();
 
-        #ifndef TML_USE_GLES
-            GL_CALL(glad_glGetTextureImage(m_id, 0, m_format, GL_UNSIGNED_BYTE, m_width*m_height*m_bpp, imgData));
-        #else
+#if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
             Bind();
             FrameBuffer frameBuffer;
             frameBuffer.AttachTexture((*this));
             frameBuffer.Bind();
             GL_CALL(glad_glReadPixels(0, 0, m_width, m_height, m_format, GL_UNSIGNED_BYTE, imgData));
-        #endif
+#else
+            GL_CALL(glad_glGetTextureImage(m_id, 0, m_format, GL_UNSIGNED_BYTE, m_width*m_height*m_bpp, imgData));
+#endif
 
         return image;
     }
@@ -158,7 +154,7 @@ namespace tml
         if(m_id == 0)
             return;
 
-#ifdef TML_USE_GLES
+#if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
         GL_CALL(glad_glBindTexture(GL_TEXTURE_2D, m_id));
         GL_CALL(glad_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
         GL_CALL(glad_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
@@ -183,7 +179,7 @@ namespace tml
 
         if(m_width > 0 && m_height > 0)
         {
-#ifdef TML_USE_GLES
+#if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
             GL_CALL(glad_glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_width, m_height, 0, m_format, GL_UNSIGNED_BYTE, data));
             GL_CALL(glad_glGenerateMipmap(GL_TEXTURE_2D));
 #else

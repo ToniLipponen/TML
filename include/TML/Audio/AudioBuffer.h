@@ -1,10 +1,11 @@
 #pragma once
 #include <vector>
 #include <TML/System/String.h>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class AudioBuffer
+    class TML_API AudioBuffer
     {
     public:
         AudioBuffer() = default;

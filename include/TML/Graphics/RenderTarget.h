@@ -2,10 +2,11 @@
 #include <TML/Graphics/Camera.h>
 #include <TML/Graphics/Drawable/Drawable.h>
 #include <TML/System/String.h>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class RenderTarget
+    class TML_API RenderTarget
     {
     public:
         RenderTarget();

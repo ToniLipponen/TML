@@ -2,12 +2,13 @@
 #include "Socket.h"
 #include <string>
 #include <map>
+#include <TML/Export.h>
 
 namespace tml
 {
     namespace Net
     {
-        class HttpRequest
+        class TML_API HttpRequest
         {
         public:
             enum Method { GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH };

@@ -41,7 +41,7 @@ namespace tml
             GLFWgamepadstate state{};
             glfwGetGamepadState(gamepad, &state);
 
-            const auto returnValue = state.buttons[button] == GLFW_PRESS & s_buttonStates[gamepad][button] != GLFW_PRESS;
+            const auto returnValue = state.buttons[button] == (GLFW_PRESS & s_buttonStates[gamepad][button]) != GLFW_PRESS;
             s_buttonStates[gamepad][button] = state.buttons[button];
             return returnValue;
         }

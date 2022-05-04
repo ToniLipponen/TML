@@ -1,4 +1,5 @@
-#include <TML/TML.h>
+#include <TML/Graphics.h>
+#include <TML/Audio.h>
 using namespace tml;
 
 int main()

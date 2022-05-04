@@ -6,7 +6,7 @@
 
 namespace tml
 {
-    class Drawable : public Transformable
+    class TML_API Drawable : public Transformable
     {
     public:
         constexpr const Color& GetColor() const noexcept

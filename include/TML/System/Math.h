@@ -1,5 +1,6 @@
 #pragma once
 #include <TML/System/Math/Vector2.h>
+#include <TML/Export.h>
 #include <cmath>
 
 namespace tml
@@ -7,13 +8,13 @@ namespace tml
     namespace Math
     {
         /** @brief Converts from degrees to radians. */
-        inline constexpr double DegToRad(double x) noexcept
+        TML_API inline constexpr double DegToRad(double x) noexcept
         {
             return x * 0.01745329252;
         }
 
         /** @brief Converts from radians to degrees. */
-        inline constexpr double RadToDeg(double x) noexcept
+        TML_API inline constexpr double RadToDeg(double x) noexcept
         {
             return x * 57.295779513;
         }
@@ -23,7 +24,7 @@ namespace tml
          *  @param p The point you wish to rotate.
          *  @param r Angle of rotation in degrees. */
         template<typename T>
-        inline Vector2<T> Rotate(const Vector2<T> &origin, Vector2<T> p, double r) noexcept
+        TML_API inline Vector2<T> Rotate(const Vector2<T> &origin, Vector2<T> p, double r) noexcept
         {
             r = DegToRad(r);
             p -= origin;
@@ -39,7 +40,7 @@ namespace tml
          *  @param cos_r Cosine of rotation angle.
          *  @param sin_r Sine of rotation angle. */
         template<typename T>
-        inline constexpr Vector2<T> Rotate(const Vector2<T>& origin, Vector2<T> p, float cos_r, float sin_r) noexcept
+        TML_API inline constexpr Vector2<T> Rotate(const Vector2<T>& origin, Vector2<T> p, float cos_r, float sin_r) noexcept
         {
             p -= origin;
             return {origin.x + p.x * cos_r - p.y * sin_r,
@@ -48,7 +49,7 @@ namespace tml
 
         /** @brief Returns value clamped between min and max. */
         template<typename T>
-        inline constexpr T Clamp(T value, T min, T max) noexcept
+        TML_API inline constexpr T Clamp(T value, T min, T max) noexcept
         {
             if(value > max)
                 return max;
@@ -59,7 +60,7 @@ namespace tml
 
         /** @brief Returns the bigger of the two values. */
         template<typename T>
-        inline constexpr T Max(T a, T b) noexcept
+        TML_API inline constexpr T Max(T a, T b) noexcept
         {
             if(b < a)
                 return a;
@@ -68,7 +69,7 @@ namespace tml
 
         /** @brief Returns the smaller of the two values. */
         template<typename T>
-        inline constexpr T Min(T a, T b) noexcept
+        TML_API inline constexpr T Min(T a, T b) noexcept
         {
             if(b > a)
                 return a;
@@ -76,14 +77,14 @@ namespace tml
         }
 
         /** @brief Returns 1 if x is more than edge, otherwise returns 0. */
-        inline constexpr double Step(double edge, double x) noexcept
+        TML_API inline constexpr double Step(double edge, double x) noexcept
         {
             if(x < edge)
                 return 0;
             return 1;
         }
 
-        inline constexpr double SmoothStep(double edge0, double edge1, double x) noexcept
+        TML_API inline constexpr double SmoothStep(double edge0, double edge1, double x) noexcept
         {
             const auto t = Clamp<double>((x - edge0) / (edge1 - edge0), 0.0, 1.0);
             return t * t * (3.0 - 2.0 * t);
@@ -91,19 +92,19 @@ namespace tml
 
         /** @brief Linear interpolation. */
         template<typename T>
-        inline constexpr T Lerp(const T &a, const T &b, double m) noexcept
+        TML_API inline constexpr T Lerp(const T &a, const T &b, double m) noexcept
         {
             return a + ((b - a) * m);
         }
 
         template<typename T>
-        inline constexpr T Map(T value, T min1, T max1, T min2, T max2) noexcept
+        TML_API inline constexpr T Map(T value, T min1, T max1, T min2, T max2) noexcept
         {
             return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
         }
 
         template<typename T>
-        inline constexpr T Quadratic(const T &p0, const T &p1, const T &p2, const double t) noexcept
+        TML_API inline constexpr T Quadratic(const T &p0, const T &p1, const T &p2, const double t) noexcept
         {
             return Lerp(
                     Lerp(p0, p1, t),
@@ -112,7 +113,7 @@ namespace tml
         }
 
         template<typename T>
-        inline constexpr T Cubic(const T &p0, const T &p1, const T &p2, const T &p3, const double t) noexcept
+        TML_API inline constexpr T Cubic(const T &p0, const T &p1, const T &p2, const T &p3, const double t) noexcept
         {
             return Lerp(
                     Quadratic(p0, p1, p2, t),
@@ -122,13 +123,13 @@ namespace tml
 
         /** @brief Returns the distance between two points. */
         template<typename T>
-        inline double Distance(const Vector2<T>& a, const Vector2<T>& b) noexcept
+        TML_API inline double Distance(const Vector2<T>& a, const Vector2<T>& b) noexcept
         {
             return std::sqrt(std::pow(b.x - a.x, 2) + std::pow(b.y - a.y, 2));
         }
 
         /** @brief Turns an angle in degrees to a direction vector. */
-        inline Vector2f AngleToHeading(double degrees) noexcept
+        TML_API inline Vector2f AngleToHeading(double degrees) noexcept
         {
             return Vector2f(std::cos(DegToRad(degrees)), std::sin(DegToRad(degrees))).Normalized();
         }
@@ -137,14 +138,14 @@ namespace tml
          *  @param v Direction vector.
          *  @return Angle in radians. */
         template<typename T>
-        inline double HeadingToAngle(const Vector2<T>& v) noexcept
+        TML_API inline double HeadingToAngle(const Vector2<T>& v) noexcept
         {
             return -M_PI_2 - atan2(static_cast<double>(v.x), static_cast<double>(v.y));
         }
 
         /// @brief Checks whether a value is withing given range
         template<typename T>
-        inline constexpr bool InRange(const T& value, const T& min, const T& max) noexcept
+        TML_API inline constexpr bool InRange(const T& value, const T& min, const T& max) noexcept
         {
             return (value >= min && value <= max);
         }
@@ -154,7 +155,7 @@ namespace tml
          *  @param pos The position of the rectangle.
          *  @param size The size of the rectangle.
          *  @param rotation The rotation of the rectangle. */
-        inline bool PointInRect(const Vector2f& point, const Vector2f& pos, const Vector2f& size, float rotation) noexcept
+        TML_API inline bool PointInRect(const Vector2f& point, const Vector2f& pos, const Vector2f& size, float rotation) noexcept
         {
             const auto rp = Rotate(pos + (size * 0.5), point, -rotation);
             return (InRange(rp.x, pos.x, pos.x + size.x) && InRange(rp.y, pos.y, pos.y + size.y));
@@ -166,7 +167,7 @@ namespace tml
          *  @param size The size of the rectangle.
          *  @param rotation The rotation of the rectangle.
          *  @param origin The origin point for the rotation. (relative to the position of the rectangle) */
-        inline bool PointInRect(const Vector2f& point, const Vector2f& pos, const Vector2f& size, float rotation, const Vector2f& origin) noexcept
+        TML_API inline bool PointInRect(const Vector2f& point, const Vector2f& pos, const Vector2f& size, float rotation, const Vector2f& origin) noexcept
         {
             const auto rp = Rotate(pos + origin, point, -rotation);
             return (InRange(rp.x, pos.x, pos.x + size.x) && InRange(rp.y, pos.y, pos.y + size.y));
@@ -176,14 +177,14 @@ namespace tml
          *  @param point The point.
          *  @param pos The center of the circle.
          *  @param radius The radius of the circle. */
-        inline bool PointInCircle(const Vector2f& point, const Vector2f& pos, float radius) noexcept
+        TML_API inline bool PointInCircle(const Vector2f& point, const Vector2f& pos, float radius) noexcept
         {
             return (Distance(point, pos) <= radius);
         }
 
         /** @brief Normalizes a vector. */
         template<typename T>
-        inline constexpr Vector2<T> Normalize(const Vector2<T>& v) noexcept
+        TML_API inline constexpr Vector2<T> Normalize(const Vector2<T>& v) noexcept
         {
             return v.Normalized();
         }

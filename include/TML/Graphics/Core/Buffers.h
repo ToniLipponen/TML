@@ -2,10 +2,11 @@
 #include <cstdint>
 #include <utility>
 #include <vector>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class VertexBuffer
+    class TML_API VertexBuffer
     {
     public:
         VertexBuffer() noexcept;
@@ -29,7 +30,7 @@ namespace tml
         void* m_mappedPtr = nullptr;
     };
 
-    class IndexBuffer
+    class TML_API IndexBuffer
     {
     public:
         IndexBuffer() noexcept;
@@ -94,7 +95,7 @@ namespace tml
         uint32_t m_stride;
     };
 
-    class VertexArray
+    class TML_API VertexArray
     {
     public:
         VertexArray() noexcept;
@@ -110,7 +111,7 @@ namespace tml
         uint32_t m_id, m_vertexCount;
     };
 
-    class StorageBuffer /// Shader Storage Buffer
+    class TML_API StorageBuffer /// Shader Storage Buffer
     {
     public:
         StorageBuffer() noexcept;

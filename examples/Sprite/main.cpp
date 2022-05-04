@@ -1,5 +1,4 @@
-#include <TML/TML.h>
-
+#include <TML/Graphics.h>
 using namespace tml;
 
 int main()

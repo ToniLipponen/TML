@@ -1,10 +1,11 @@
 #pragma once
 #include <unordered_map>
 #include <string>
+#include <TML/Export.h>
 
 namespace tml
 {
-    class Shader
+    class TML_API Shader
     {
     public:
         Shader();

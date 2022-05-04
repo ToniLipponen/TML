@@ -2,12 +2,13 @@
 #include <TML/System/Platform.h>
 #include <string>
 #include <cstdint>
+#include <TML/Export.h>
 
 namespace tml
 {
     namespace Net
     {
-        class Socket
+        class TML_API Socket
         {
         public:
             Socket();
