@@ -7,7 +7,7 @@ namespace tml
     namespace Net
     {
         template <typename T>
-        class Queue
+        class TML_API Queue
         {
         public:
             Queue() = default;

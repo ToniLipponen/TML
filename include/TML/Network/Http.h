@@ -33,7 +33,7 @@ namespace tml
             std::string m_body;
         };
 
-        class HttpResponse
+        class TML_API HttpResponse
         {
         public:
             enum StatusCode : uint32_t
@@ -133,7 +133,7 @@ namespace tml
             std::map<std::string, std::string> m_properties;
         };
 
-        class HttpHost
+        class TML_API HttpHost
         {
         public:
             HttpHost(std::string address, uint32_t port);
