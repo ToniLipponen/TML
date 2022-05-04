@@ -44,11 +44,8 @@ namespace tml
 
     GLContext& GLContext::GetInstance() noexcept
     {
-        static GLContext glContext1;
-        return glContext1;
-
-        static auto* glContext = new GLContext; //!< This is a memory leak. This is by design atm.
-        return *glContext;
+        static GLContext glContext;
+        return glContext;
     }
 
     void* GLContext::GetContextHandle() const noexcept
