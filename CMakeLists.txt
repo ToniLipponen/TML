@@ -63,11 +63,11 @@ if (TML_DONT_USE_DSA)
 endif()
 
 file(GLOB_RECURSE HEADERS_FILES include/TML/*.h)
-include_directories(include external src/Headers)
+include_directories(include external src/Headers external/glm-0.9.9.8/glm)
 
 # Add external libraries
-add_subdirectory(external/glm)
-add_subdirectory(external/glfw/)
+add_subdirectory(external/glm-0.9.9.8/glm/glm)
+add_subdirectory(external/glfw-3.3.7)
 add_subdirectory(external/Clip)
 add_subdirectory(external/lunasvg)
 add_subdirectory(external/glad)

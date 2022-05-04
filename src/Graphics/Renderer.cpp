@@ -1,9 +1,7 @@
 #include "Renderer.h"
 #include <TML/Graphics/Core/Buffers.h>
 #include <TML/Graphics/Core/Shader.h>
-
-//#include <glm/glm/glm.hpp>
-#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <GLHeader.h>
 #include <Shaders.h>

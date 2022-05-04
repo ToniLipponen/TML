@@ -1,7 +1,5 @@
 #include <TML/Graphics/RenderTarget.h>
 #include "Renderer.h"
-#include <glm/glm/glm.hpp>
-#include <glm/glm/gtc/matrix_transform.hpp>
 
 namespace tml
 {
