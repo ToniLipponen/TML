@@ -18,16 +18,17 @@ namespace tml
             Fullscreen           = (1 <<  0), //!< Make the window fullscreen. If you want to use the monitors resolution, use the UseMonitorResolution setting.
             Resizeable           = (1 <<  1), //!< Make the window resizeable.
             Maximized            = (1 <<  2), //!< Make the window maximized.
-            VSync                = (1 <<  3), //!< Use vertical synchronization. (Note: Might not work on Microsoft Windows™ with non-fullscreen windows).
+            VSync                = (1 <<  3), //!< Use vertical synchronization.
             Antialias            = (1 <<  4), //!< Enable antialiasing.
             NoTopBar             = (1 <<  5), //!< Make a window with no top bar / title bar.
-            LimitAspect          = (1 <<  6), //!< Limit the window aspect ratio to the aspect ratio of width and height.
-            LimitSize            = (1 <<  7), //!< Set the minimum size of the window to user supplied width and height.
-            Hidden               = (1 <<  8), //!< Make the window hidden.
-            Transparent          = (1 <<  9), //!< Make the window transparent. (Note: Might not be supported on all platforms).
-            AlwaysOnTop          = (1 << 10), //!< Keep the window above other windows.
-            UseMonitorResolution = (1 << 11), //!< Use the primary monitors size instead of user supplied width and height.
-            NoClient             = (1 << 12), //!< Dont create an OpenGL context.
+            LimitAspect          = (1 <<  6), //!< Limit the window aspect ratio to the aspect ratio of width & height.
+            LimitMinimumSize     = (1 <<  7), //!< Set the minimum size of the window to user supplied width & height.
+            LimitMaximumSize     = (1 <<  8), //!< Set the maximum size of the window to use supplied width & height.
+            Hidden               = (1 <<  9), //!< Make the window hidden.
+            Transparent          = (1 << 10), //!< Make the window transparent. (Note: Might not be supported on all platforms).
+            AlwaysOnTop          = (1 << 11), //!< Keep the window above other windows.
+            UseMonitorResolution = (1 << 12), //!< Use the primary monitors size instead of user supplied width & height.
+            NoClient             = (1 << 13), //!< Dont create an OpenGL context.
         };
     public:
         Window();
@@ -43,7 +44,7 @@ namespace tml
         bool Create(int32_t w, int32_t h, const String& title, uint32_t settings = None) noexcept;
         void Close() noexcept; //!< Destroys the window.
         bool IsOpen() const noexcept;
-        
+
         const void* GetHandle() const noexcept;
         int32_t GetWidth() const noexcept;
         int32_t GetHeight() const noexcept;

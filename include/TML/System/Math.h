@@ -40,9 +40,10 @@ namespace tml
          *  @param cos_r Cosine of rotation angle.
          *  @param sin_r Sine of rotation angle. */
         template<typename T>
-        TML_API inline constexpr Vector2<T> Rotate(const Vector2<T>& origin, Vector2<T> p, float cos_r, float sin_r) noexcept
+        TML_API inline constexpr Vector2<T> Rotate(const Vector2<T>& origin, const Vector2<T>& point, float cos_r, float sin_r) noexcept
         {
-            p -= origin;
+            const auto p = point - origin;
+
             return {origin.x + p.x * cos_r - p.y * sin_r,
                     origin.y + p.x * sin_r + p.y * cos_r};
         }

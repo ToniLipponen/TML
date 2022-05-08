@@ -178,12 +178,13 @@ namespace tml
     void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, float thickness, Color color, bool rounded) noexcept
     {
         uint32_t currentElements = m_vertexVector->size();
+
         if(currentElements >= s_maxVertexCount - 4)
         {
             EndBatch();
             currentElements = 0;
         }
-        // dx and dy for normals
+
         const float dx = b.x - a.x;
         const float dy = b.y - a.y;
         const auto dirA = (Vector2f(-dy, dx).Normalized() * thickness * 0.5);
@@ -211,24 +212,25 @@ namespace tml
 
     void Renderer::DrawRect(const Vector2f& pos, const Vector2f& dimensions, const Color& color, float roundness, float rotation) noexcept
     {
-        if(roundness < 1.f) // If roundness is too low, just draw a single quad
+        if(roundness < 1.f)
+        {
             PushQuad(pos, dimensions, color, *m_circleTexture, Vertex::COLOR, rotation);
+        }
         else
         {
             roundness = Math::Clamp<float>(roundness, 0, Math::Min(dimensions.y, dimensions.x) / 2);
 
             /// Todo: Take origin as an argument.
-            const Vector2f origin = (pos + pos + dimensions) * 0.5f;
+            const Vector2f origin = pos + dimensions * 0.5f;
 
-            auto w = Vector2f{dimensions.x, 0.f};
-            auto h = Vector2f{0.f, dimensions.y};
-            auto rx = Vector2f{roundness, 0.f};
-            auto ry = Vector2f{0.f, roundness};
+            const auto w = Vector2f{dimensions.x, 0.f};
+            const auto h = Vector2f{0.f, dimensions.y};
+            const auto rx = Vector2f{roundness, 0.f};
+            const auto ry = Vector2f{0.f, roundness};
 
-            auto hex = color.Hex();
+            const auto hex = color.Hex();
             const uint32_t slot = PushTexture(*m_circleTexture);
-            std::vector<Vertex> cornerVertices;
-            std::vector<uint32_t> cornerIndices = {
+            static const std::vector<uint32_t> cornerIndices = {
                      0, 1, 2,    1, 3, 2,
                      4, 5, 6,    5, 7, 6,
                      8, 9,10,    9,11,10,
@@ -241,6 +243,10 @@ namespace tml
             const float sin_r = std::sin(Math::DegToRad(rotation));
 
             uint32_t typeAndTex = slot | Vertex::TEXT;
+
+            static std::vector<Vertex> cornerVertices;
+            cornerVertices.clear();
+            
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos,       cos_r, sin_r), {0.0f,0.0f}, hex, typeAndTex});
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+rx,    cos_r, sin_r), {0.5f,0.0f}, hex, typeAndTex});
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+ry,    cos_r, sin_r), {0.0f,0.5f}, hex, typeAndTex});
@@ -261,18 +267,18 @@ namespace tml
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+h,       cos_r, sin_r), {0.0f,1.0f}, hex, typeAndTex});
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos+h+rx,    cos_r, sin_r), {0.5f,1.0f}, hex, typeAndTex});
 
-
             typeAndTex = slot | Vertex::COLOR;
+
             // top rect
-            auto pos2 = pos + rx;
-            auto size = w+ry-rx-rx;
+            const auto pos2 = pos + rx;
+            const auto size = w+ry-rx-rx;
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2,                     cos_r, sin_r), {0.0f,0.5f}, hex, typeAndTex});
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2+Vector2f(size.x, 0), cos_r, sin_r), {0.5f,0.5f}, hex, typeAndTex});
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2+size,                cos_r, sin_r), {0.5f,1.0f}, hex, typeAndTex});
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos2+Vector2f(0, size.y), cos_r, sin_r), {0.0f,1.0f}, hex, typeAndTex});
 
             // bottom rect
-            auto pos3 = pos + Vector2f(0,dimensions.y) + rx - ry;
+            const auto pos3 = pos + Vector2f(0,dimensions.y) + rx - ry;
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3,                     cos_r, sin_r), {0.0f,0.5f}, hex, typeAndTex});
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3+Vector2f(size.x, 0), cos_r, sin_r), {0.5f,0.5f}, hex, typeAndTex});
             cornerVertices.push_back(Vertex{Math::Rotate(origin, pos3+size,                cos_r, sin_r), {0.5f,1.0f}, hex, typeAndTex});

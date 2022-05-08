@@ -26,6 +26,9 @@ namespace tml
 #endif
         glfwWindowHint(GLFW_VISIBLE, 0);
 
+#if defined(PLATFORM_UNIX)
+        glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
+#endif
         /// Create the actual context.
         m_contextHandle = glfwCreateWindow(640, 480, "", nullptr, nullptr);
 
@@ -33,12 +36,13 @@ namespace tml
         TML_ASSERT(m_contextHandle, "Failed to create an OpenGL context");
 
         glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_contextHandle));
+        glfwSwapInterval(-1);
     }
 
     GLContext::~GLContext()
     {
-//        glfwDestroyWindow(static_cast<GLFWwindow*>(m_contextHandle));
-//        glfwTerminate();
+        glfwDestroyWindow(static_cast<GLFWwindow*>(m_contextHandle));
+        glfwTerminate();
     }
 
     GLContext& GLContext::GetInstance() noexcept

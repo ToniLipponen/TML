@@ -30,14 +30,13 @@ namespace tml
 
     void Rectangle::OnDraw(Renderer *renderer, Texture* circle) noexcept
     {
-        // This is a mess.
         if(m_updated)
         {
-            auto hex = m_color.Hex();
-            auto w = Vector2f{m_size.x, 0.f};
-            auto h = Vector2f{0.f, m_size.y};
-            auto rx = Vector2f{m_roundness, 0.f};
-            auto ry = Vector2f{0.f, m_roundness};
+            const auto hex = m_color.Hex();
+            const auto w = Vector2f{m_size.x, 0.f};
+            const auto h = Vector2f{0.f, m_size.y};
+            const auto rx = Vector2f{m_roundness, 0.f};
+            const auto ry = Vector2f{0.f, m_roundness};
             m_vertexData.clear();
             m_indexData.clear();
 
@@ -95,15 +94,15 @@ namespace tml
                 m_vertexData.push_back(Vertex{Math::Rotate(origin, m_pos + h + rx, cos_r, sin_r), {0.5f, 1.0f}, hex, Vertex::TEXT});
 
                 // top rect
-                auto pos2 = m_pos + rx;
-                auto size = w+ry-rx-rx;
+                const auto pos2 = m_pos + rx;
+                const auto size = w+ry-rx-rx;
                 m_vertexData.push_back(Vertex{Math::Rotate(origin, pos2, cos_r, sin_r), {0.0f, 0.5f}, hex, Vertex::COLOR});
                 m_vertexData.push_back(Vertex{Math::Rotate(origin, pos2 + Vector2f(size.x, 0), cos_r, sin_r), {0.5f, 0.5f}, hex, Vertex::COLOR});
                 m_vertexData.push_back(Vertex{Math::Rotate(origin, pos2 + size, cos_r, sin_r), {0.5f, 1.0f}, hex, Vertex::COLOR});
                 m_vertexData.push_back(Vertex{Math::Rotate(origin, pos2 + Vector2f(0, size.y), cos_r, sin_r), {0.0f, 1.0f}, hex, Vertex::COLOR});
 
                 // bottom rect
-                auto pos3 = m_pos + Vector2f(0,m_size.y) + rx - ry;
+                const auto pos3 = m_pos + Vector2f(0,m_size.y) + rx - ry;
                 m_vertexData.push_back(Vertex{Math::Rotate(origin, pos3, cos_r, sin_r), {0.0f, 0.5f}, hex, Vertex::COLOR});
                 m_vertexData.push_back(Vertex{Math::Rotate(origin, pos3 + Vector2f(size.x, 0), cos_r, sin_r), {0.5f, 0.5f}, hex, Vertex::COLOR});
                 m_vertexData.push_back(Vertex{Math::Rotate(origin, pos3 + size, cos_r, sin_r), {0.5f, 1.0f}, hex, Vertex::COLOR});

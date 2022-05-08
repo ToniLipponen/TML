@@ -4,6 +4,7 @@ using namespace tml;
 int main()
 {
     RenderWindow window(800, 600, "Circle");
+
     while(window.IsOpen())
     {
         Event event{};

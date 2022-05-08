@@ -87,21 +87,35 @@ namespace tml
 
         auto handle = static_cast<GLFWwindow*>(m_handle);
         glfwMakeContextCurrent(handle);
-
-        if((settings & Settings::VSync) != 0)
-            glfwSwapInterval(1);
-        glfwSwapInterval(1);
+        glfwSwapInterval(-1);
 
         /** Set window icon to TML-logo **/
         Image image(LOGO_DATA.data(), static_cast<int>(LOGO_DATA.size()));
         SetIcon(image);
 
-        if((settings & Settings::LimitAspect) != 0)
-            SetAspectRatio(w,h);
-        if(settings & LimitSize)
-            SetSizeLimits(w, h, 8192, 8192);
-        else
-            SetSizeLimits(100, 100, 8192, 8192);
+        /** Set window limits **/
+        {
+            int minimumWidth = 100, minimumHeight = 100, maximumWidth = 8192, maximumHeight = 8192;
+
+            if(settings & Settings::LimitAspect)
+            {
+                SetAspectRatio(w,h);
+            }
+
+            if(settings & LimitMinimumSize)
+            {
+                minimumWidth  = w;
+                minimumHeight = h;
+            }
+
+            if(settings & LimitMaximumSize)
+            {
+                maximumWidth  = w;
+                maximumHeight = h;
+            }
+
+            SetSizeLimits(minimumWidth, minimumHeight, maximumWidth, maximumHeight);
+        }
 
         SetCallbacks();
         return true;
@@ -208,10 +222,7 @@ namespace tml
             m_cursor = nullptr;
         }
 
-        GLFWimage img;
-        img.width = image.GetWidth();
-        img.height = image.GetHeight();
-        img.pixels = image.GetData();
+        const GLFWimage img = { image.GetWidth(), image.GetHeight(), image.GetData() };
 
         m_cursor = glfwCreateCursor(&img, 0, 0);
         glfwSetCursor(static_cast<GLFWwindow*>(m_handle), static_cast<GLFWcursor*>(m_cursor));
