@@ -26,7 +26,7 @@ namespace tml
 #endif
         glfwWindowHint(GLFW_VISIBLE, 0);
 
-#if defined(PLATFORM_UNIX)
+#if defined(TML_PLATFORM_UNIX)
         glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
 #endif
         /// Create the actual context.

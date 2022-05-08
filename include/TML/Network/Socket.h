@@ -24,9 +24,9 @@ namespace tml
             static std::string IpFromHostname(const std::string& hostname);
         protected:
             uint32_t m_port = 0;
-#if defined(PLATFORM_UNIX) || defined(PLATFORM_LINUX)
+#if defined(TML_PLATFORM_UNIX)
             int32_t m_fd;
-#elif defined(PLATFORM_WINDOWS)
+#elif defined(TML_PLATFORM_WINDOWS)
             uint64_t m_fd;
 #endif
         };

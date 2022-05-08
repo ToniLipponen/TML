@@ -6,7 +6,7 @@ namespace tml
 {
     namespace Logger
     {
-        #ifdef PLATFORM_WINDOWS
+        #ifdef TML_PLATFORM_WINDOWS
             template<typename... Args> static void Message(const std::string& msg, Args... args) noexcept
             {
                 std::printf("[Message]: ");

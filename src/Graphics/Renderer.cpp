@@ -8,7 +8,7 @@
 #include <MappedVector.h>
 #include <_Assert.h>
 
-#ifdef PLATFORM_WINDOWS
+#ifdef TML_PLATFORM_WINDOWS
     #undef DrawText
 #endif
 

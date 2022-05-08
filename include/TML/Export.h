@@ -4,7 +4,7 @@
 #ifdef TML_STATIC
     #define TML_API
 #else
-    #if defined(PLATFORM_WINDOWS)
+    #if defined(TML_PLATFORM_WINDOWS)
         #if defined(TML_EXPORTING)
             #define TML_API __declspec(dllexport)
         #else
@@ -16,7 +16,6 @@
     #endif
 
     #else //!< Unix platforms
-        /// I'm not sure this is even needed
         #define TML_API __attribute__ ((__visibility__ ("default")))
     #endif
 #endif

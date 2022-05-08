@@ -1,7 +1,7 @@
 #include <TML/System/Platform.h>
 
-#if defined(PLATFORM_UNIX) || defined(PLATFORM_LINUX)
+#if defined(TML_PLATFORM_UNIX)
     #include "Unix/Receiver_Impl.h"
-#elif defined(PLATFORM_WINDOWS)
+#elif defined(TML_PLATFORM_WINDOWS)
     #include "Win32/Receiver_Impl.h"
 #endif
