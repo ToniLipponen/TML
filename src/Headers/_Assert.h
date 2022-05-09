@@ -1,9 +1,10 @@
 #pragma once
 #include <cstdint>
 
+#include "TML/System/Logger.h"
+
 #ifndef TML_NO_DEBUGGING
 	#include <cassert>
-    #include "TML/System/Logger.h"
 	#ifndef TML_ASSERT
 		#define TML_ASSERT(expr, msg) if(!(expr)){ \
             tml::Logger::ErrorMessage("%s", msg);\

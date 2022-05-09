@@ -107,5 +107,7 @@ namespace tml
         constexpr static uint32_t s_maxIndexCount = s_maxVertexCount * 4;
         int32_t m_maxTextureCount = 8;
         std::vector<uint32_t> m_textures;
+        std::vector<Vertex> m_vertexData;
+        std::vector<uint32_t> m_indexData;
     };
 }

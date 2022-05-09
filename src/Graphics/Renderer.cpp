@@ -50,6 +50,8 @@ namespace tml
         m_shader        = new Shader;
         m_text          = new Text;
         m_circleTexture = new Texture;
+        m_vertexData.reserve(s_maxVertexCount);
+        m_indexData.reserve(s_maxIndexCount);
 
         m_vao->Bind();
         m_layout->Push(2, 4, BufferLayout::VERTEX_FLOAT);
@@ -176,7 +178,7 @@ namespace tml
 
     void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, float thickness, Color color, bool rounded) noexcept
     {
-        uint32_t currentElements = m_vertexBuffer->VertexCount();
+        uint32_t currentElements = m_vertexData.size();
 
         if(currentElements >= s_maxVertexCount - 4)
         {
@@ -189,26 +191,17 @@ namespace tml
         const auto dirA = (Vector2f(-dy, dx).Normalized() * thickness * 0.5);
         const auto dirB = (Vector2f(dy, -dx).Normalized() * thickness * 0.5);
 
-        const Vertex vertexBuffer[] =
-        {
-            Vertex{(dirA + a), {0, 0}, color.Hex(), Vertex::COLOR},
-            Vertex{(dirB + a), {0, 0}, color.Hex(), Vertex::COLOR},
-            Vertex{(dirA + b), {0, 0}, color.Hex(), Vertex::COLOR},
-            Vertex{(dirB + b), {0, 0}, color.Hex(), Vertex::COLOR}
-        };
+        m_vertexData.push_back(Vertex{(dirA + a), {0, 0}, color.Hex(), Vertex::COLOR});
+        m_vertexData.push_back(Vertex{(dirB + a), {0, 0}, color.Hex(), Vertex::COLOR});
+        m_vertexData.push_back(Vertex{(dirA + b), {0, 0}, color.Hex(), Vertex::COLOR});
+        m_vertexData.push_back(Vertex{(dirB + b), {0, 0}, color.Hex(), Vertex::COLOR});
 
-        const uint32_t indexBuffer[] =
-        {
-            currentElements + 0,
-            currentElements + 1,
-            currentElements + 2,
-            currentElements + 1,
-            currentElements + 3,
-            currentElements + 2
-        };
-
-        m_vertexBuffer->PushData(vertexBuffer, sizeof(Vertex), 4);
-        m_indexBuffer->PushData(indexBuffer, 6);
+        m_indexData.push_back(currentElements + 0);
+        m_indexData.push_back(currentElements + 1);
+        m_indexData.push_back(currentElements + 2);
+        m_indexData.push_back(currentElements + 1);
+        m_indexData.push_back(currentElements + 3);
+        m_indexData.push_back(currentElements + 2);
 
         if(rounded) /// Doesn't work well with translucent colors. Might do something to fix this in some point. TODO
         {
@@ -363,20 +356,16 @@ namespace tml
 
     void Renderer::PushVertexData(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices) noexcept
     {
-        if(s_maxVertexCount <= m_vertexBuffer->VertexCount() + vertices.size())
+        if(s_maxVertexCount <= m_vertexData.size() + vertices.size())
         {
             EndBatch();
         }
 
-        auto _indices = indices;
+        const auto size = m_vertexData.size();
+        m_vertexData.insert(std::end(m_vertexData), std::begin(vertices), end(vertices));
 
-        const auto size = m_vertexBuffer->VertexCount();
-        m_vertexBuffer->PushData(vertices.data(), sizeof(Vertex), vertices.size());
-
-        for(auto& i : _indices)
-            i += size;
-
-        m_indexBuffer->PushData(_indices.data(), _indices.size());
+        for(const auto i : indices)
+            m_indexData.push_back(i + size);
     }
 
     void Renderer::PushVertexData(std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const Texture& tex) noexcept
@@ -427,14 +416,14 @@ namespace tml
                             const Vector2f& tl,
                             const Vector2f& br) noexcept
     {
-        uint32_t currentElements = m_vertexBuffer->VertexCount();
+        uint32_t currentElements = m_vertexData.size();
         if(currentElements >= s_maxVertexCount)
             EndBatch();
 
         const uint32_t tex = PushTexture(texture);
         const uint32_t hex = col.Hex();
 
-        currentElements = m_vertexBuffer->VertexCount();
+        currentElements = m_vertexData.size();
 
         const uint32_t typeAndTex = tex | type;
         if(rotation != 0)
@@ -444,50 +433,38 @@ namespace tml
             const float cos_r = std::cos(Math::DegToRad(rotation));
             const float sin_r = std::sin(Math::DegToRad(rotation));
 
-            const Vertex buffer[] =
-            {
-                Vertex{Math::Rotate(origin, pos, cos_r, sin_r), tl, hex, typeAndTex},
-                Vertex{Math::Rotate(origin, pos + Vector2f{size.x, 0.f}, cos_r, sin_r), {br.x, tl.y}, hex, typeAndTex},
-                Vertex{Math::Rotate(origin, pos + Vector2f{0.f, size.y}, cos_r, sin_r), {tl.x, br.y}, hex, typeAndTex},
-                Vertex{Math::Rotate(origin, pos + size, cos_r, sin_r), br, hex, typeAndTex}
-            };
-            m_vertexBuffer->PushData(buffer, sizeof(Vertex), 4);
+            m_vertexData.push_back({Math::Rotate(origin, pos, cos_r, sin_r), tl, hex, typeAndTex});
+            m_vertexData.push_back({Math::Rotate(origin, pos + Vector2f{size.x, 0.f}, cos_r, sin_r), {br.x, tl.y}, hex, typeAndTex});
+            m_vertexData.push_back({Math::Rotate(origin, pos + Vector2f{0.f, size.y}, cos_r, sin_r), {tl.x, br.y}, hex, typeAndTex});
+            m_vertexData.push_back({Math::Rotate(origin, pos + size, cos_r, sin_r), br, hex, typeAndTex});
         }
         else
         {
-            const Vertex buffer[] =
-            {
-                Vertex{pos, tl, hex, typeAndTex},
-                Vertex{pos + Vector2f{size.x, 0.f}, {br.x, tl.y}, hex, typeAndTex},
-                Vertex{pos + Vector2f{0.f, size.y}, {tl.x, br.y}, hex, typeAndTex},
-                Vertex{pos + size, br, hex, typeAndTex}
-            };
-            m_vertexBuffer->PushData(buffer, sizeof(Vertex), 4);
+            m_vertexData.push_back({pos, tl, hex, typeAndTex});
+            m_vertexData.push_back({pos + Vector2f{size.x, 0.f}, {br.x, tl.y}, hex, typeAndTex});
+            m_vertexData.push_back({pos + Vector2f{0.f, size.y}, {tl.x, br.y}, hex, typeAndTex});
+            m_vertexData.push_back({pos + size, br, hex, typeAndTex});
         }
 
-        const uint32_t buffer[6] =
-        {
-            currentElements + 0,
-            currentElements + 1,
-            currentElements + 2,
-            currentElements + 1,
-            currentElements + 3,
-            currentElements + 2
-        };
+        m_indexData.push_back(currentElements + 0);
+        m_indexData.push_back(currentElements + 1);
+        m_indexData.push_back(currentElements + 2);
 
-        m_indexBuffer->PushData(buffer, 6);
+        m_indexData.push_back(currentElements + 1);
+        m_indexData.push_back(currentElements + 3);
+        m_indexData.push_back(currentElements + 2);
     }
 
     void Renderer::BeginBatch() noexcept
     {
         m_textures.clear();
-        m_vertexBuffer->BufferData(nullptr, sizeof(Vertex), s_maxVertexCount);
-        m_indexBuffer->BufferData(nullptr, s_maxIndexCount);
+        m_vertexData.clear();
+        m_indexData.clear();
     }
 
     void Renderer::EndBatch() noexcept
     {
-        if(m_vertexBuffer->VertexCount() == 0)
+        if(m_vertexData.empty())
             return;
 
         m_shader->Bind();
@@ -499,6 +476,9 @@ namespace tml
         m_shader->UniformMat4fv("uView",  1, false, m_view);
         m_shader->UniformMat4fv("uProj",  1, false, m_proj);
         m_shader->UniformMat4fv("uScale", 1, false, m_scale);
+
+        m_vertexBuffer->BufferData(m_vertexData.data(), sizeof(Vertex), m_vertexData.size());
+        m_indexBuffer->BufferData(m_indexData.data(), m_indexData.size());
 
         m_vao->BufferData(*m_vertexBuffer, *m_indexBuffer, *m_layout);
         m_vao->Bind();

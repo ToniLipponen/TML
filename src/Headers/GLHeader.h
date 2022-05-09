@@ -2,7 +2,6 @@
 #include <TML/System/Platform.h>
 #include <glad/include/glad/gl.h>
 
-
 #ifndef TML_NO_GL_DEBUGGING
 #include <cassert>
     #define GL_CALL(x) x; assert(CheckGLError() == 0)

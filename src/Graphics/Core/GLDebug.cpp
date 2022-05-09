@@ -1,5 +1,7 @@
 #include "../../Headers/_Assert.h"
 #include "../../Headers/GLHeader.h"
+#include <iostream>
+#include <TML/System/Logger.h>
 
 int CheckGLError()
 {
