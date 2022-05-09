@@ -89,8 +89,8 @@ namespace tml
 
     protected:
         class VertexArray*  m_vao          = nullptr;
-        class VertexVector* m_vertexVector = nullptr;
-        class IndexVector*  m_indexVector  = nullptr;
+        class VertexBuffer* m_vertexBuffer = nullptr;
+        class IndexBuffer*  m_indexBuffer  = nullptr;
         class Shader*       m_shader       = nullptr;
         class BufferLayout* m_layout       = nullptr;
 

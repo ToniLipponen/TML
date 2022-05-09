@@ -24,11 +24,7 @@ namespace tml
 
     void VertexBuffer::Bind() noexcept
     {
-        if(m_mappedPtr)
-        {
-            GL_CALL(glad_glUnmapNamedBuffer(m_id));
-            m_mappedPtr = nullptr;
-        }
+
     }
 
     void VertexBuffer::Unbind() const noexcept
@@ -51,24 +47,14 @@ namespace tml
             m_dataSize = 0;
         }
 
-        if(m_mappedPtr)
-        {
-            GL_CALL(glad_glUnmapNamedBuffer(m_id));
-        }
-
         GL_CALL(glad_glNamedBufferData(m_id, m_capacity, data, BUFFER_USAGE_FLAG));
-        m_mappedPtr = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, m_capacity, BUFFER_MAP_FLAGS));
     }
 
     void VertexBuffer::PushData(const void* data, uint32_t vertexSize, uint32_t vertexCount) noexcept
     {
-        if(m_mappedPtr)
-        {
-            const uint32_t size = vertexSize * vertexCount;
-            auto dest = ((uint8_t*) m_mappedPtr) + m_dataSize;
-            std::memcpy(dest, data, size);
-            m_dataSize += size;
-            m_vertexCount += vertexCount;
-        }
+        const uint32_t size = vertexSize * vertexCount;
+        GL_CALL(glad_glNamedBufferSubData(m_id, m_dataSize, size, data));
+        m_dataSize += size;
+        m_vertexCount += vertexCount;
     }
 }

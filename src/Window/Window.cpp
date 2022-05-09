@@ -87,7 +87,7 @@ namespace tml
 
         auto handle = static_cast<GLFWwindow*>(m_handle);
         glfwMakeContextCurrent(handle);
-        glfwSwapInterval(-1);
+        glfwSwapInterval(0);
 
         /** Set window icon to TML-logo **/
         Image image(LOGO_DATA.data(), static_cast<int>(LOGO_DATA.size()));

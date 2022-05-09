@@ -36,13 +36,12 @@ namespace tml
         TML_ASSERT(m_contextHandle, "Failed to create an OpenGL context");
 
         glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_contextHandle));
-        glfwSwapInterval(-1);
+        glfwSwapInterval(0);
     }
 
     GLContext::~GLContext()
     {
-        glfwDestroyWindow(static_cast<GLFWwindow*>(m_contextHandle));
-        glfwTerminate();
+
     }
 
     GLContext& GLContext::GetInstance() noexcept
