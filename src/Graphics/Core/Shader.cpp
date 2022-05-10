@@ -1,26 +1,7 @@
 #include <TML/Graphics/Core/Shader.h>
 #include "../../Headers/_Assert.h"
 #include "../../Headers/GLHeader.h"
-#include <fstream>
-#include <iostream>
-
-inline std::string ReadFile(const std::string& filename) noexcept
-{
-    std::ifstream file(filename, std::ios::binary);
-    if(!file.is_open())
-    {
-        tml::Logger::ErrorMessage("Could not open shader -> %s", filename.c_str());
-        return "";
-    }
-    std::string line, fileContents;
-    fileContents.reserve(1024);
-
-    while(std::getline(file, line))
-        fileContents += line + "\n";
-
-    file.close();
-    return fileContents;
-}
+#include <TML/System/File.h>
 
 namespace tml
 {
@@ -47,8 +28,8 @@ namespace tml
 
     void Shader::LoadFromFile(const std::string& vs, const std::string& fs) const noexcept
     {
-        std::string vert = ReadFile(vs);
-        std::string frag = ReadFile(fs);
+        std::string vert = File::GetString(vs);
+        std::string frag = File::GetString(fs);
         LoadFromString(vert, frag);
     }
 
@@ -79,7 +60,7 @@ namespace tml
             char vertex_message[1024];
             int32_t vertex_message_len = 0;
             GL_CALL(glad_glGetShaderInfoLog(_vs, 1024, &vertex_message_len, vertex_message));
-            tml::Logger::ErrorMessage("Vertex shader error at %s", vertex_message);
+            std::printf("[Error]: Vertex shader error: %s\n", vertex_message);
         }
 
         if(fragment_status != GL_TRUE)
@@ -87,7 +68,7 @@ namespace tml
             char fragment_message[1024];
             int32_t fragment_message_len = 0;
             GL_CALL(glad_glGetShaderInfoLog(_fs, 1024, &fragment_message_len, fragment_message));
-            tml::Logger::ErrorMessage("Fragment shader error at %s", fragment_message);
+            std::printf("[Error]: Fragment shader error: %s\n", fragment_message);
         }
 
         GL_CALL(glad_glAttachShader(m_id, _vs));
@@ -102,10 +83,10 @@ namespace tml
         GL_CALL(glGetProgramiv(m_id, GL_VALIDATE_STATUS, &validationStatus));
 
         if(linkStatus != GL_TRUE)
-            Logger::ErrorMessage("Failed to link shader program");
+            std::puts("[Error]: Failed to link shader program");
 
         if(validationStatus != GL_TRUE)
-            Logger::ErrorMessage("Failed to validate shader program");
+            std::puts("[Error]: Failed to validate shader program");
 
         GL_CALL(glad_glDetachShader(m_id, _vs));
         GL_CALL(glad_glDetachShader(m_id, _fs));
@@ -119,9 +100,11 @@ namespace tml
         if(m_uniformCache.find(name) != m_uniformCache.end())
             return m_uniformCache[name];
 
-        int32_t loc = GL_CALL(glGetUniformLocation(m_id, name.c_str()));
+        const int32_t loc = GL_CALL(glGetUniformLocation(m_id, name.c_str()));
+
         if(loc != -1)
             m_uniformCache[name] = loc;
+
         return loc;
     }
 

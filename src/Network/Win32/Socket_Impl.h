@@ -1,8 +1,6 @@
 /// Windows sockets implementation
 
 #include <TML/Network/Socket.h>
-#include <TML/System/Logger.h>
-
 #include "NetworkContext.h"
 
 namespace tml
@@ -32,20 +30,16 @@ namespace tml
 
             int iResult = getaddrinfo(address.c_str(), std::to_string(port).c_str(), &hints, &result);
 
+            /// Failed to get host address info
             if(iResult != 0)
-            {
-                Logger::ErrorMessage("Failed to get host address info");
                 return false;
-            }
 
             for(ptr = result; ptr != nullptr; ptr = ptr->ai_next)
             {
                 m_fd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+
                 if (m_fd == INVALID_SOCKET)
-                {
-                    Logger::ErrorMessage("Invalid socket");
                     return false;
-                }
 
                 iResult = connect(m_fd, ptr->ai_addr, ptr->ai_addrlen);
                 
@@ -62,10 +56,7 @@ namespace tml
             freeaddrinfo(result);
 
             if(m_fd == INVALID_SOCKET)
-            {
-                Logger::ErrorMessage("Failed to connect to host");
                 return false;
-            }
 
             return true;
         }
@@ -83,21 +74,22 @@ namespace tml
         bool Socket::Send(const void *data, uint64_t size) const
         {
             auto result = send(m_fd, reinterpret_cast<const char*>(data), static_cast<int>(size), 0);
+
             if(result == SOCKET_ERROR)
             {
-                Logger::ErrorMessage("Failed to send data");
                 closesocket(m_fd);
                 return false;
             }
+
             return true;
         }
 
         bool Socket::Receive(void *data, uint64_t size, uint64_t &received) const
         {
             int64_t bytes = recv(m_fd, reinterpret_cast<char *>(data), static_cast<int>(size), 0);
+
             if(bytes < 0)
             {
-                Logger::ErrorMessage("Failed to receive data");
                 received = 0;
                 return false;
             }
@@ -106,6 +98,7 @@ namespace tml
                 received = 0;
                 return false;
             }
+
             received = bytes;
             return true;
         }

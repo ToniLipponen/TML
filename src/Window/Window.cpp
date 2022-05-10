@@ -32,8 +32,7 @@ namespace tml
     Window::Window(int32_t w, int32_t h, const String& title, uint32_t settings)
     : m_handle(nullptr)
     {
-        if(!Create(w, h, title, settings))
-            Logger::ErrorMessage("Failed to create a window");
+        TML_ASSERT(Create(w, h, title, settings), "Failed to create a window");
     }
 
     Window::~Window() noexcept

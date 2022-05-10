@@ -57,13 +57,12 @@ namespace tml
 
     bool Font::LoadFromFile(const String& filename) noexcept
     {
-        std::vector<char> buffer;
-        InFile file;
-        if(!file.Open(filename))
+        std::vector<char> data;
+
+        if(!File::GetBytes(filename.cpp_str(), data))
             return false;
 
-        file.GetBytes(buffer);
-        return LoadFromData(reinterpret_cast<const uint8_t *>(buffer.data()));
+        return LoadFromData(reinterpret_cast<const uint8_t *>(data.data()));
     }
 
     bool Font::LoadFromData(const uint8_t* data) noexcept

@@ -65,7 +65,7 @@ namespace tml
         if(result == MA_SUCCESS)
             ma_device_start(outputDevice);
         else
-            Logger::ErrorMessage("Failed to initialize audio output device");
+            std::puts("[Error]: Failed to initialize audio output device");
     }
 
     Mixer::~Mixer()
