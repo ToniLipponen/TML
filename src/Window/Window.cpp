@@ -84,8 +84,7 @@ namespace tml
         m_size = {w, h};
         m_pos  = {0,0};
 
-        auto handle = static_cast<GLFWwindow*>(m_handle);
-        glfwMakeContextCurrent(handle);
+        SetActive();
         glfwSwapInterval(0);
 
         /** Set window icon to TML-logo **/
@@ -126,8 +125,6 @@ namespace tml
         SetActive(false);
         glfwDestroyWindow(static_cast<GLFWwindow*>(m_handle));
         m_handle = nullptr;
-
-        glfwMakeContextCurrent((GLFWwindow*)GLContext::GetInstance().GetContextHandle());
     }
 
     bool Window::IsOpen() const noexcept
@@ -294,7 +291,7 @@ namespace tml
     {
         if(!active)
             glfwMakeContextCurrent(nullptr);
-        else if(m_handle != glfwGetCurrentContext())
+        else if(m_handle != glfwGetCurrentContext() && m_hasGLContext)
             glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_handle));
     }
 
