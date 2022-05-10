@@ -50,6 +50,8 @@ namespace tml
         m_shader        = new Shader;
         m_text          = new Text;
         m_circleTexture = new Texture;
+
+        m_textures.reserve(m_maxTextureCount);
         m_vertexData.reserve(s_maxVertexCount);
         m_indexData.reserve(s_maxIndexCount);
 
@@ -178,13 +180,12 @@ namespace tml
 
     void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, float thickness, Color color, bool rounded) noexcept
     {
-        uint32_t currentElements = m_vertexData.size();
-
-        if(currentElements >= s_maxVertexCount - 4)
+        if(CheckLimits(12, 18, 1))
         {
             EndBatch();
-            currentElements = 0;
         }
+
+        const uint32_t currentElements = m_vertexData.size();
 
         const float dx = b.x - a.x;
         const float dy = b.y - a.y;
@@ -298,11 +299,13 @@ namespace tml
                               const Color& color, bool rounded, float step) noexcept
     {
         Vector2f begin = a;
-        for(float i = 0; i < 1.f; i += step)
+
+        for(float i = 0; i < 1;)
         {
             const Vector2f end = Math::Cubic(a,cp1,cp2,b,i);
             DrawLine(begin, end, thickness, color, rounded);
             begin = end;
+            i += step;
         }
     }
 
@@ -310,8 +313,8 @@ namespace tml
                               const Color& color, bool rounded, float step) noexcept
     {
         Vector2f begin = a;
-        float i = 0;
-        while(i < 1)
+
+        for(float i = 0; i < 1;)
         {
             const Vector2f end = Math::Quadratic(a,cp,b,i);
             DrawLine(begin, end, thickness, color, rounded);
@@ -356,7 +359,7 @@ namespace tml
 
     void Renderer::PushVertexData(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices) noexcept
     {
-        if(s_maxVertexCount <= m_vertexData.size() + vertices.size())
+        if(CheckLimits(vertices.size(), indices.size(), 0))
         {
             EndBatch();
         }
@@ -381,7 +384,7 @@ namespace tml
     /// Finds a parking spot for the texture.
     uint32_t Renderer::PushTexture(const Texture &texture) noexcept
     {
-        if(m_textures.size() >= (size_t)m_maxTextureCount)
+        if(CheckLimits(0, 0, 1))
             EndBatch();
 
         bool alreadyInMTextures = false;
@@ -416,14 +419,13 @@ namespace tml
                             const Vector2f& tl,
                             const Vector2f& br) noexcept
     {
-        uint32_t currentElements = m_vertexData.size();
-        if(currentElements >= s_maxVertexCount)
+        if(CheckLimits(4, 6, 1))
             EndBatch();
 
         const uint32_t tex = PushTexture(texture);
         const uint32_t hex = col.Hex();
 
-        currentElements = m_vertexData.size();
+        uint32_t currentElements = m_vertexData.size();
 
         const uint32_t typeAndTex = tex | type;
         if(rotation != 0)
@@ -487,5 +489,12 @@ namespace tml
 
         GL_CALL(glad_glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indexBuffer->Elements()), GL_UNSIGNED_INT, nullptr));
         BeginBatch();
+    }
+
+    inline bool Renderer::CheckLimits(uint32_t vertexCount, uint32_t indexCount, uint32_t textureCount) const noexcept
+    {
+        return (m_vertexData.size() + vertexCount)  > s_maxVertexCount ||
+               (m_indexData.size()  + indexCount)   > s_maxIndexCount  ||
+               (m_textures.size()   + textureCount) > m_maxTextureCount;
     }
 }

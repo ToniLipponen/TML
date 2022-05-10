@@ -88,6 +88,9 @@ namespace tml
         void BeginBatch() noexcept;
 
     protected:
+        inline bool CheckLimits(uint32_t vertexCount, uint32_t indexCount, uint32_t textureCount) const noexcept;
+
+    protected:
         class VertexArray*  m_vao          = nullptr;
         class VertexBuffer* m_vertexBuffer = nullptr;
         class IndexBuffer*  m_indexBuffer  = nullptr;
@@ -105,6 +108,7 @@ namespace tml
 
         constexpr static uint32_t s_maxVertexCount = 10000;
         constexpr static uint32_t s_maxIndexCount = s_maxVertexCount * 4;
+
         int32_t m_maxTextureCount = 8;
         std::vector<uint32_t> m_textures;
         std::vector<Vertex> m_vertexData;
