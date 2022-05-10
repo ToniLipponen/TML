@@ -1,196 +1,121 @@
 #pragma once
-#include <TML/System/Platform.h>
-#include <TML/System/String.h>
-#include <TML/System/Logger.h>
-
-#include <vector>
+#include <string>
 #include <fstream>
+#include <filesystem>
+#include <vector>
 
-namespace tml
+namespace tml::File
 {
-    class FileBase
+    inline bool Exists(const std::string& filename) noexcept
     {
-    public:
-        FileBase() = default;
+        return std::filesystem::exists(filename);
+    }
 
-        virtual ~FileBase()
-        {
-            m_stream.close();
-        }
-
-        void Close()
-        {
-            m_stream.close();
-        }
-
-        virtual bool Open(const String& filename) = 0;
-
-        static bool FileExists(const String& filename)
-        {
-            std::ifstream file(filename.c_str());
-            const bool exists = file.is_open();
-            file.close();
-            return exists;
-        }
-
-        uint32_t FileSize() const noexcept
-        {
-            return m_dataLen;
-        }
-
-        static int64_t FileSize(const String &filename)
-        {
-            std::ifstream file(filename.c_str());
-            if (!file.is_open() || file.fail())
-                return 0;
-
-            file.seekg(0, std::iostream::end);
-            int64_t size = file.tellg();
-            file.close();
-            return size;
-        }
-    protected:
-        int64_t m_dataLen = 0;
-        bool m_isValid = false;
-        std::fstream m_stream;
-    };
-
-    class InFile : public FileBase
+    inline std::vector<char> GetBytes(const std::string& filename) noexcept
     {
-    public:
-        InFile() = default;
-
-        explicit InFile(const String& filename)
+        if(std::filesystem::exists(filename))
         {
-            m_stream.open(filename.c_str(), std::ios::ate | std::ios::in | std::ios::binary);
-            if (!m_stream.is_open() || m_stream.fail())
-            {
-                m_isValid = false;
-            }
+            std::ifstream file(filename, std::ios::binary | std::ios::ate);
+            const auto fileLength = file.tellg();
+            file.seekg(std::ios::beg);
 
-            m_isValid = true;
-            m_dataLen = m_stream.tellg();
-            m_stream.seekg(0, std::iostream::beg);
+            std::vector<char> data(fileLength, 0);
+            file.read(&data[0], fileLength);
+
+            return data;
         }
 
-        bool Open(const String& filename) override
+        return {};
+    }
+
+    inline bool GetBytes(const std::string& filename, std::vector<char>& output) noexcept
+    {
+        if(std::filesystem::exists(filename))
         {
-            m_stream.clear();
-            m_stream.open(filename.c_str(), std::ios::ate | std::ios::in | std::ios::binary);
+            std::ifstream file(filename, std::ios::binary | std::ios::ate);
+            const auto fileLength = file.tellg();
+            file.seekg(std::ios::beg);
 
-            if (!m_stream.is_open() || m_stream.fail())
-            {
-                m_isValid = false;
-                return false;
-            }
+            std::vector<char> data(fileLength, 0);
+            file.read(&data[0], fileLength);
+            output = std::move(data);
 
-            m_isValid = true;
-            m_dataLen = m_stream.tellg();
-            m_stream.seekg(0, std::iostream::beg);
             return true;
         }
 
-        void GetBytes(std::vector<char>& dest) noexcept
-        {
-            if(m_isValid)
-            {
-                dest.reserve(m_dataLen);
-                m_stream.read(dest.data(), m_dataLen);
-            }
-        }
+        return false;
+    }
 
-        void Read(void* dest, size_t bytes) noexcept
-        {
-            m_stream.read((char*)dest, bytes);
-        }
-
-        /// @brief Reads every line of the file into a vector.
-        std::vector<std::string> GetLines() noexcept
-        {
-            if (m_isValid)
-            {
-                std::vector<std::string> lines;
-                std::string line;
-                while (std::getline(m_stream, line))
-                    lines.push_back(line);
-
-                return lines;
-            }
-            return {};
-        }
-
-        /// @brief Reads the entire file to a string and returns it.
-        String GetString() noexcept
-        {
-            if (m_isValid)
-            {
-                std::string str(m_dataLen, 0);
-                Read(&str[0], m_dataLen);
-                return str;
-            }
-            else
-                return "";
-        }
-
-        /// @brief Opens a file and reads its contents to a string and returns it.
-        static std::string GetString(const String &filename)
-        {
-            std::ifstream file(filename.c_str(), std::ios::ate);
-
-            if (file.is_open())
-            {
-                const auto size = file.tellg();
-                file.seekg(0, std::ios::beg);
-                std::string str(size, 0);
-                file.read(&str[0], size);
-                return str;
-            }
-            else
-                return "";
-        }
-    };
-
-    class OutFile : public FileBase
+    inline std::string GetString(const std::string& filename) noexcept
     {
-    public:
-        OutFile() = default;
-
-        /// @brief Opens an output file.
-        /// @returns true if successful, otherwise returns false.
-        bool Open(const String& filename) override
+        if(std::filesystem::exists(filename))
         {
-            m_stream.clear();
-            m_stream.open(filename.c_str(), std::ios::out);
-            if (!m_stream.is_open() || m_stream.fail())
+            std::string lines, line;
+            std::ifstream file(filename);
+
+            while(std::getline(file, line))
             {
-                m_isValid = false;
-                return false;
+                lines.append("\n" + line);
             }
 
-            m_isValid = true;
+            return lines;
+        }
+
+        return "";
+    }
+
+    inline bool GetString(const std::string& filename, std::string& output) noexcept
+    {
+        if(std::filesystem::exists(filename))
+        {
+            std::string line;
+            std::ifstream file(filename);
+
+            while(std::getline(file, line))
+            {
+                output.append("\n" + line);
+            }
+
             return true;
         }
 
-        /// @brief Appends string to the file.
-        void Write(const String& string)
+        return false;
+    }
+
+    inline std::vector<std::string> GetLines(const std::string& filename) noexcept
+    {
+        if(std::filesystem::exists(filename))
         {
-            if(m_stream.is_open() && m_stream.good())
+            std::vector<std::string> lines;
+            std::string line;
+            std::ifstream file(filename);
+
+            while(std::getline(file, line))
             {
-                m_stream.write(string.c_str(), string.size());
-                m_dataLen += string.size();
+                lines.push_back(line);
             }
+
+            return lines;
         }
 
-        /// @brief Appends n amount of byte to the file.
-        /// @param data pointer to data you want to append.
-        /// @param n the size of data in bytes.
-        void Write(const char* data, size_t n)
+        return {};
+    }
+
+    inline bool GetLines(const std::string& filename, std::vector<std::string>& output) noexcept
+    {
+        if(std::filesystem::exists(filename))
         {
-            if(data && m_stream.is_open() && m_stream.good())
+            std::string line;
+            std::ifstream file(filename);
+
+            while(std::getline(file, line))
             {
-                m_stream.write(data, n);
-                m_dataLen += n;
+                output.push_back(line);
             }
+
+            return true;
         }
-    };
+
+        return false;
+    }
 }

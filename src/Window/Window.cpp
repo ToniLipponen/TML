@@ -32,8 +32,7 @@ namespace tml
     Window::Window(int32_t w, int32_t h, const String& title, uint32_t settings)
     : m_handle(nullptr)
     {
-        if(!Create(w, h, title, settings))
-            Logger::ErrorMessage("Failed to create a window");
+        TML_ASSERT(Create(w, h, title, settings), "Failed to create a window");
     }
 
     Window::~Window() noexcept
@@ -87,7 +86,7 @@ namespace tml
 
         auto handle = static_cast<GLFWwindow*>(m_handle);
         glfwMakeContextCurrent(handle);
-        glfwSwapInterval(-1);
+        glfwSwapInterval(0);
 
         /** Set window icon to TML-logo **/
         Image image(LOGO_DATA.data(), static_cast<int>(LOGO_DATA.size()));

@@ -1,5 +1,5 @@
-#include "../../Headers/_Assert.h"
 #include "../../Headers/GLHeader.h"
+#include <cstdio>
 
 int CheckGLError()
 {
@@ -9,15 +9,16 @@ int CheckGLError()
 
     switch(e)
     {
-        case 1280: tml::Logger::ErrorMessage("GL_INVALID_ENUM");                 break;
-        case 1281: tml::Logger::ErrorMessage("GL_INVALID_VALUE");                break;
-        case 1282: tml::Logger::ErrorMessage("GL_INVALID_OPERATION");            break;
-        case 1283: tml::Logger::ErrorMessage("GL_STACK_OVERFLOW");               break;
-        case 1284: tml::Logger::ErrorMessage("GL_STACK_UNDERFLOW");              break;
-        case 1285: tml::Logger::ErrorMessage("GL_OUT_OF_MEMORY");                break;
-        case 1286: tml::Logger::ErrorMessage("GL_INVALID_FRAMEBUFFER_OPERATION");break;
-        default:                                                                      break;
+        case 1280: std::printf("[Error]: GL_INVALID_ENUM");                 break;
+        case 1281: std::printf("[Error]: GL_INVALID_VALUE");                break;
+        case 1282: std::printf("[Error]: GL_INVALID_OPERATION");            break;
+        case 1283: std::printf("[Error]: GL_STACK_OVERFLOW");               break;
+        case 1284: std::printf("[Error]: GL_STACK_UNDERFLOW");              break;
+        case 1285: std::printf("[Error]: GL_OUT_OF_MEMORY");                break;
+        case 1286: std::printf("[Error]: GL_INVALID_FRAMEBUFFER_OPERATION");break;
+        default:                                                            break;
     }
+
     return 1;
 }
 
@@ -65,6 +66,6 @@ void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum 
         }
     }();
 
-    std::cout << src_str << ", " << type_str << ", " << severity_str << ", " << id << ": " << message << "\n";
+    std::printf("[Error]: %s, %s, %s, %d, %s\n", src_str, type_str, severity_str, id, message);
 }
 #endif

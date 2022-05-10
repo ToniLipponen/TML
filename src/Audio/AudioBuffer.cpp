@@ -1,8 +1,7 @@
 #include <TML/Audio/AudioBuffer.h>
-#include <TML/System/Logger.h>
-#include <TML/System/File.h>
 #include <TML/System/Math.h>
 #include <miniaudio/miniaudio.h>
+#include <fstream>
 
 namespace tml
 {
@@ -57,10 +56,7 @@ namespace tml
         ma_result result = ma_decoder_init_memory(data, bytes, &config, &decoder);
 
         if(result != MA_SUCCESS)
-        {
-            Logger::ErrorMessage("Could not load audio");
             return false;
-        }
 
         size_t sampleCount = ma_decoder_get_length_in_pcm_frames(&decoder) * decoder.outputChannels;
 
