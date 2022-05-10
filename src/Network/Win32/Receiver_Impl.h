@@ -1,5 +1,4 @@
 #include <TML/Network/Receiver.h>
-#include <TML/System/Logger.h>
 #include "NetworkContext.h"
 
 namespace tml

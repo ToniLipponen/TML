@@ -1,5 +1,5 @@
 #include "NetworkContext.h"
-#include <TML/System/Logger.h>
+#include <cstdio>
 
 bool WinNetContext::s_initialized = false;
 
@@ -9,7 +9,7 @@ void WinNetContext::Create()
     {
         WSADATA wsaData;
         if(WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
-            tml::Logger::ErrorMessage("WSAStartup failed");
+            std::puts("[Error]: WSAStartup failed");
         else
             s_initialized = true;
     }
