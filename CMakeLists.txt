@@ -85,8 +85,8 @@ add_library(tml src/TOKEN_SOURCE_FILE.cpp ${HEADER_FILES})
 target_link_libraries(tml tml-audio tml-graphics tml-network tml-system tml-window)
 
 if(UNIX)
-    install(TARGETS tml-audio tml-graphics tml-window tml-system tml-network DESTINATION /usr/local/lib)
-    install(DIRECTORY include/TML DESTINATION /usr/local/include)
+    install(TARGETS tml-audio tml-graphics tml-window tml-system tml-network DESTINATION /usr/lib)
+    install(DIRECTORY include/TML DESTINATION /usr/include)
 endif()
 
 if(TML_BUILD_EXAMPLES)

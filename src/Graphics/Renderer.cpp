@@ -424,10 +424,9 @@ namespace tml
 
         const uint32_t tex = PushTexture(texture);
         const uint32_t hex = col.Hex();
-
-        uint32_t currentElements = m_vertexData.size();
-
         const uint32_t typeAndTex = tex | type;
+        const uint32_t currentElements = m_vertexData.size();
+
         if(rotation != 0)
         {
             const Vector2f origin = (pos + pos + size) * 0.5f;

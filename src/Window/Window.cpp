@@ -58,7 +58,7 @@ namespace tml
         else
         {
             glContextHandle = static_cast<GLFWwindow*>(GLContext::GetInstance().GetContextHandle());
-            m_hasGLContext = (glContextHandle != nullptr); //!< If glContext handle is nullptr, a context was not created.
+            m_hasGLContext = (glContextHandle != nullptr); //!< If glContextHandle is nullptr, a context was not created.
         }
 
         glfwWindowHint(GLFW_DECORATED,                 (settings & Settings::NoTopBar)     == 0);
@@ -74,15 +74,23 @@ namespace tml
         auto* monitor = (settings & Settings::Fullscreen) ? primaryMonitor : nullptr;
 
         if(settings & Settings::UseMonitorResolution)
-            glfwGetMonitorWorkarea(primaryMonitor, nullptr, nullptr, &w, &h);
+        {
+            int workAreaW, workAreaH, workAreaX, workAreaY, posX, posY;
 
-        /// Create the actual window
-        m_handle = glfwCreateWindow(w, h, title.c_str(), monitor, glContextHandle);
+            glfwGetMonitorPos(primaryMonitor, &posX, &posY);
+            glfwGetMonitorWorkarea(primaryMonitor, &workAreaX, &workAreaY, &workAreaW, &workAreaH);
+
+            m_size = Vector2i(workAreaW + workAreaX - posX, workAreaH + workAreaY - posY);
+            m_handle = glfwCreateWindow(m_size.x, m_size.y, title.c_str(), monitor, glContextHandle);
+        }
+        else
+        {
+            m_handle = glfwCreateWindow(w, h, title.c_str(), monitor, glContextHandle);
+            m_size = {w, h};
+        }
+
         if(m_handle == nullptr)
             return false;
-
-        m_size = {w, h};
-        m_pos  = {0,0};
 
         SetActive();
         glfwSwapInterval(0);
@@ -116,6 +124,7 @@ namespace tml
         }
 
         SetCallbacks();
+        glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &m_pos.x, &m_pos.y);
         return true;
     }
 
