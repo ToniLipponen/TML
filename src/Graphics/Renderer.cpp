@@ -418,7 +418,6 @@ namespace tml
         const uint32_t typeAndTex = tex | type;
         const uint32_t currentElements = m_vertexData.size();
 
-        std::array<Vertex, 4> vertices;
         if(rotation != 0)
         {
             const Vector2f origin = (pos + pos + size) * 0.5f;
