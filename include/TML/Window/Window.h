@@ -75,7 +75,7 @@ namespace tml
         void Minimize() const noexcept;
         void Maximize() const noexcept;
         void Restore() const noexcept;
-        void SetFullscreen(bool fullscreen, const Monitor& monitor = Monitor::GetPrimaryMonitor()) noexcept;
+        void SetFullscreen(bool fullscreen, const MonitorManager::Monitor& monitor = MonitorManager::GetPrimaryMonitor()) noexcept;
         void SetActive(bool active = true) const noexcept;
         void SetVisible(bool visible = true) const noexcept;
         void Show() const noexcept;
