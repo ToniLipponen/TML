@@ -3,7 +3,7 @@
 #include <TML/System/Math/Vector2.h>
 #include <TML/Export.h>
 
-namespace tml::MonitorManager
+namespace tml
 {
     class TML_API Monitor
     {
@@ -20,8 +20,8 @@ namespace tml::MonitorManager
         [[nodiscard]] float GetGamma() const noexcept;
         void SetGamma(float gamma) noexcept;
 
-        friend std::vector<Monitor> GetMonitors() noexcept;
-        friend Monitor GetPrimaryMonitor() noexcept;
+        friend TML_API std::vector<Monitor> GetMonitors() noexcept;
+        friend TML_API Monitor GetPrimaryMonitor() noexcept;
         
     private:
         void* m_handle = nullptr;

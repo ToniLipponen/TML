@@ -1,4 +1,7 @@
 #include "GLContext.h"
+#ifdef NDEBUG
+    #undef NDEBUG
+#endif
 #include "_Assert.h"
 
 #define GLFW_INCLUDE_NONE
@@ -37,8 +40,8 @@ namespace tml
         /// Create the actual context.
         m_contextHandle = glfwCreateWindow(640, 480, "", nullptr, nullptr);
 
-        /// Check that the context was created successfully.
-        TML_ASSERT(m_contextHandle, "Failed to create an OpenGL context");
+        if(!m_contextHandle)
+            exit(1);
 
         glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_contextHandle));
     }
