@@ -1,6 +1,7 @@
 #include <TML/Graphics/Core/ComputeShader.h>
 #include <TML/System/File.h>
 #include "../../Headers/GLHeader.h"
+#include <iostream>
 
 #ifndef TML_USE_GLES
 namespace tml
@@ -94,45 +95,45 @@ namespace tml
 {
     ComputeShader::ComputeShader()
     {
-        Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+        std::cerr << "[Error]: Compute shaders are not supported on OpenGL ES." << std::endl;
         exit(80085);
     }
 
     bool ComputeShader::LoadFromFile(const String &filename) noexcept
     {
-        Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+        std::cerr << "[Error]: Compute shaders are not supported on OpenGL ES." << std::endl;
         exit(80085);
         return false;
     }
 
     bool ComputeShader::LoadFromString(const String &source) noexcept
     {
-        Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+        std::cerr << "[Error]: Compute shaders are not supported on OpenGL ES." << std::endl;
         exit(80085);
         return false;
     }
 
     void ComputeShader::ConnectBuffer(const std::string &name, uint32_t index, StorageBuffer& buffer) noexcept
     {
-        Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+        std::cerr << "[Error]: Compute shaders are not supported on OpenGL ES." << std::endl;
         exit(80085);
     }
 
     void ComputeShader::Dispatch(uint32_t x, uint32_t y, uint32_t z) noexcept
     {
-        Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+        std::cerr << "[Error]: Compute shaders are not supported on OpenGL ES." << std::endl;
         exit(80085);
     }
 
     void ComputeShader::Wait() noexcept
     {
-        Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+        std::cerr << "[Error]: Compute shaders are not supported on OpenGL ES." << std::endl;
         exit(80085);
     }
 
     inline uint32_t ComputeShader::GetResourceIndex(const std::string& name) noexcept
     {
-        Logger::ErrorMessage("Compute shaders are not supported on OpenGL ES.");
+        std::cerr << "[Error]: Compute shaders are not supported on OpenGL ES." << std::endl;
         exit(80085);
     }
 }
