@@ -22,6 +22,7 @@ namespace tml::MonitorManager
 
         friend std::vector<Monitor> GetMonitors() noexcept;
         friend Monitor GetPrimaryMonitor() noexcept;
+        
     private:
         void* m_handle = nullptr;
         String m_monitorName;
@@ -34,6 +35,6 @@ namespace tml::MonitorManager
         float m_gamma = 1;
     };
 
-    std::vector<Monitor> GetMonitors() noexcept;
-    Monitor GetPrimaryMonitor() noexcept;
+    TML_API std::vector<Monitor> GetMonitors() noexcept;
+    TML_API Monitor GetPrimaryMonitor() noexcept;
 }

@@ -102,6 +102,7 @@ namespace tml::MonitorManager
     Monitor GetPrimaryMonitor() noexcept
     {
         const auto monitors = GetMonitors();
+
         if(monitors.empty())
             return {}; //!< Error: No monitors found.
 
