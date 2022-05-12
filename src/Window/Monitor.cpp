@@ -4,7 +4,7 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-namespace tml
+namespace tml::MonitorManager
 {
     void* Monitor::GetHandle() const noexcept
     {
@@ -46,7 +46,16 @@ namespace tml
         return m_gamma;
     }
 
-    std::vector<Monitor> Monitor::GetMonitors() noexcept
+    void Monitor::SetGamma(float gamma) noexcept
+    {
+        if(m_handle)
+        {
+            m_gamma = gamma;
+            glfwSetGamma(static_cast<GLFWmonitor*>(m_handle), gamma);
+        }
+    }
+
+    std::vector<Monitor> GetMonitors() noexcept
     {
         glfwInit();
         int monitorCount = 0;
@@ -90,21 +99,12 @@ namespace tml
         return monitorsVector;
     }
 
-    Monitor Monitor::GetPrimaryMonitor() noexcept
+    Monitor GetPrimaryMonitor() noexcept
     {
         const auto monitors = GetMonitors();
         if(monitors.empty())
             return {}; //!< Error: No monitors found.
 
         return monitors.at(0);
-    }
-
-    void Monitor::SetGamma(float gamma) noexcept
-    {
-        if(m_handle)
-        {
-            m_gamma = gamma;
-            glfwSetGamma(static_cast<GLFWmonitor*>(m_handle), gamma);
-        }
     }
 }

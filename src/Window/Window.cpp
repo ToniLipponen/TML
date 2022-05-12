@@ -274,7 +274,7 @@ namespace tml
         glfwRestoreWindow(static_cast<GLFWwindow*>(m_handle));
     }
 
-    void Window::SetFullscreen(bool full, const Monitor& monitor) noexcept
+    void Window::SetFullscreen(bool full, const MonitorManager::Monitor& monitor) noexcept
     {
         if(full)
         {
