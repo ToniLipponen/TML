@@ -56,7 +56,6 @@ namespace tml
                        float thickness,  const Color& color, bool rounded = true, float step = 0.01f) noexcept;
         void DrawBezier(const Vector2f& a, const Vector2f& cp, const Vector2f& b, float thickness,
                                const Color& color, bool rounded = true, float step = 0.01f) noexcept;
-
         void DrawGrid(const Vector2f& top_left, const Vector2f& size, uint32_t rows, uint32_t columns,
                      const Color& color, float thickness = 1.f, bool rounded = false) noexcept;
 

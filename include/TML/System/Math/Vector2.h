@@ -256,7 +256,8 @@ namespace tml
     template<typename R>
     constexpr Vector2<T> &Vector2<T>::operator=(const R rhs) noexcept
     {
-        return (*this = {static_cast<T>(rhs)});
+        *this = {static_cast<T>(rhs)};
+        return *this;
     }
 
     template<typename T>

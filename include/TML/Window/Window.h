@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <TML/Window/Input.h>
 #include <TML/Window/Event.h>
+#include <TML/Window/Cursor.h>
+#include <TML/Window/Monitor.h>
 #include <TML/System/Image.h>
 #include <TML/System/Math/Vector2.h>
 #include <TML/System/String.h>
@@ -42,7 +44,7 @@ namespace tml
         virtual void Display() noexcept;
 
         bool Create(int32_t w, int32_t h, const String& title, uint32_t settings = None) noexcept;
-        void Close() noexcept; //!< Destroys the window.
+        void Close() noexcept;
         bool IsOpen() const noexcept;
 
         const void* GetHandle() const noexcept;
@@ -60,7 +62,7 @@ namespace tml
         void SetSize(uint32_t width, uint32_t height) noexcept;
         void SetTitle(const String& title) noexcept;
         void SetIcon(const Image& image) const noexcept;
-        void SetCursor(const Image& image) noexcept;
+        void SetCursor(const Cursor& cursor) noexcept;
         void ResetCursor() noexcept;
         void HideCursor() noexcept;
         void ShowCursor() noexcept;
@@ -73,7 +75,7 @@ namespace tml
         void Minimize() const noexcept;
         void Maximize() const noexcept;
         void Restore() const noexcept;
-        void SetFullscreen(bool fullscreen, int32_t w = -1, int32_t h = -1) noexcept;
+        void SetFullscreen(bool fullscreen, const Monitor& monitor = Monitor::GetPrimaryMonitor()) noexcept;
         void SetActive(bool active = true) const noexcept;
         void SetVisible(bool visible = true) const noexcept;
         void Show() const noexcept;
@@ -86,7 +88,6 @@ namespace tml
     protected:
         Vector2i m_size, m_pos;
         void* m_handle = nullptr;
-        void* m_cursor = nullptr;
         bool m_hasGLContext = false;
     };
 }

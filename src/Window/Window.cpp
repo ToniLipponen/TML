@@ -219,23 +219,13 @@ namespace tml
         glfwSetWindowIcon(static_cast<GLFWwindow*>(m_handle), 1, &img);
     }
 
-    void Window::SetCursor(const Image& image) noexcept
+    void Window::SetCursor(const Cursor& cursor) noexcept
     {
-        if(m_cursor)
-        {
-            glfwDestroyCursor(static_cast<GLFWcursor*>(m_cursor));
-            m_cursor = nullptr;
-        }
-
-        const GLFWimage img = { image.GetWidth(), image.GetHeight(), image.GetData() };
-
-        m_cursor = glfwCreateCursor(&img, 0, 0);
-        glfwSetCursor(static_cast<GLFWwindow*>(m_handle), static_cast<GLFWcursor*>(m_cursor));
+        glfwSetCursor(static_cast<GLFWwindow*>(m_handle), static_cast<GLFWcursor*>(cursor.GetHandle()));
     }
 
     void Window::ResetCursor() noexcept
     {
-        glfwDestroyCursor(static_cast<GLFWcursor*>(m_cursor));
         glfwSetCursor(static_cast<GLFWwindow*>(m_handle), nullptr);
     }
 
@@ -284,16 +274,30 @@ namespace tml
         glfwRestoreWindow(static_cast<GLFWwindow*>(m_handle));
     }
 
-    void Window::SetFullscreen(bool full, int32_t user_w, int32_t user_h) noexcept
+    void Window::SetFullscreen(bool full, const Monitor& monitor) noexcept
     {
-        int w = 0, h = 0, x = 0, y = 0;
-        auto monitor = glfwGetPrimaryMonitor();
-        glfwGetMonitorWorkarea(monitor, &x, &y, &w, &h);
-
-        w = (user_w > 0) ? Math::Min<int32_t>(user_w, w) : w;
-        h = (user_h > 0) ? Math::Min<int32_t>(user_h, h) : h;
-
-        glfwSetWindowMonitor(static_cast<GLFWwindow*>(m_handle), full ? monitor : nullptr, x, y, w, h, GLFW_DONT_CARE);
+        if(full)
+        {
+            const auto size = monitor.GetSize();
+            const auto monitorHandle = static_cast<GLFWmonitor*>(monitor.GetHandle());
+            glfwSetWindowMonitor(static_cast<GLFWwindow*>(m_handle),
+                                 monitorHandle,
+                                 0,
+                                 0,
+                                 size.x,
+                                 size.y,
+                                 GLFW_DONT_CARE);
+        }
+        else
+        {
+            glfwSetWindowMonitor(static_cast<GLFWwindow*>(m_handle),
+                                 nullptr,
+                                 m_pos.x,
+                                 m_pos.y,
+                                 m_size.x,
+                                 m_size.y,
+                                 GLFW_DONT_CARE);
+        }
     }
 
     void Window::SetActive(bool active) const noexcept
