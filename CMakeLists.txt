@@ -14,7 +14,7 @@ option(TML_DEBUG_OPENGL_CALLS "Applies error checking around OpenGL function cal
 option(TML_ASSERT "Applies asserts around important functions." yes)
 option(TML_BUILD_EXAMPLES "Builds some example programs." yes)
 option(TML_USE_GLES "Use OpenGL ES 3.1 instead of OpenGL 4.5." no)
-option(TML_DONT_USE_DSA "Use non-DSA functions for OpenGL 4.5." no)
+option(TML_DONT_USE_DSA "Use non-DSA functions for OpenGL 4.5." yes)
 
 # Set some glfw options
 set(GLFW_LIBRARY_TYPE OBJECT)
@@ -59,7 +59,7 @@ if(NOT TML_DEBUG_OPENGL_CALLS)
     add_compile_definitions(TML_NO_GL_DEBUGGING=1)
 endif()
 if(TML_USE_GLES)
-    add_compile_definitions(TML_USE_GLES=1)
+    add_compile_definitions(TML_USE_GLES GLAD_GLES2)
 endif()
 if (TML_DONT_USE_DSA)
     add_compile_definitions(TML_DONT_USE_DSA=1)

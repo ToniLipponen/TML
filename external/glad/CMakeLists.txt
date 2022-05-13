@@ -3,4 +3,4 @@ project(glad)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 include_directories(include)
-add_library(glad OBJECT src/gl.c)
+add_library(glad OBJECT src/gl.c src/egl.c)

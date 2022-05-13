@@ -3,7 +3,6 @@
 #include "../../Headers/GLHeader.h"
 #include <iostream>
 
-#ifndef TML_USE_GLES
 namespace tml
 {
     ComputeShader::ComputeShader() = default;
@@ -64,8 +63,6 @@ namespace tml
 
     void ComputeShader::ConnectBuffer(const std::string &name, uint32_t index, StorageBuffer& buffer) noexcept
     {
-        const uint32_t blockIndex = GetResourceIndex(name);
-        GL_CALL(glad_glShaderStorageBlockBinding(m_id, blockIndex, index));
         buffer.BindBufferBase(index);
     }
 
@@ -76,11 +73,12 @@ namespace tml
 
     void ComputeShader::Wait() noexcept
     {
-        GL_CALL(glad_glMemoryBarrier(GL_ALL_BARRIER_BITS));
+        GL_CALL(glad_glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT));
     }
 
     inline uint32_t ComputeShader::GetResourceIndex(const std::string& name) noexcept
     {
+        /** I quess this is not needed **/
         if(m_resourceIndexCache.find(name) != m_resourceIndexCache.end())
             return m_resourceIndexCache.at(name);
 
@@ -89,52 +87,3 @@ namespace tml
         return index;
     }
 }
-
-#else
-namespace tml
-{
-    ComputeShader::ComputeShader()
-    {
-        std::cerr << "[Error]: Compute shaders are not supported on OpenGL ES." << std::endl;
-        exit(80085);
-    }
-
-    bool ComputeShader::LoadFromFile(const String &filename) noexcept
-    {
-        std::cerr << "[Error]: Compute shaders are not supported on OpenGL ES." << std::endl;
-        exit(80085);
-        return false;
-    }
-
-    bool ComputeShader::LoadFromString(const String &source) noexcept
-    {
-        std::cerr << "[Error]: Compute shaders are not supported on OpenGL ES." << std::endl;
-        exit(80085);
-        return false;
-    }
-
-    void ComputeShader::ConnectBuffer(const std::string &name, uint32_t index, StorageBuffer& buffer) noexcept
-    {
-        std::cerr << "[Error]: Compute shaders are not supported on OpenGL ES." << std::endl;
-        exit(80085);
-    }
-
-    void ComputeShader::Dispatch(uint32_t x, uint32_t y, uint32_t z) noexcept
-    {
-        std::cerr << "[Error]: Compute shaders are not supported on OpenGL ES." << std::endl;
-        exit(80085);
-    }
-
-    void ComputeShader::Wait() noexcept
-    {
-        std::cerr << "[Error]: Compute shaders are not supported on OpenGL ES." << std::endl;
-        exit(80085);
-    }
-
-    inline uint32_t ComputeShader::GetResourceIndex(const std::string& name) noexcept
-    {
-        std::cerr << "[Error]: Compute shaders are not supported on OpenGL ES." << std::endl;
-        exit(80085);
-    }
-}
-#endif
