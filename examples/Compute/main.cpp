@@ -9,7 +9,7 @@ struct PhysicsCircle
 };
 
 const char* shaderSrc = R"END(
-#version 430 core
+#version 450 core
 
 layout( local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
@@ -36,11 +36,11 @@ void main (void)
     vec2 momentum = balls[i].momentum;
 
     if(mouseDown)
-        balls[i].momentum -= ((balls[i].pos - mousePos) / (dist*dist)) * 50;
+        balls[i].momentum -= ((balls[i].pos - mousePos) / (dist*dist)) * 50.0;
     else
-        balls[i].momentum += ((balls[i].pos - mousePos) / (dist*dist)) * 50;
+        balls[i].momentum += ((balls[i].pos - mousePos) / (dist*dist)) * 50.0;
 
-    if(balls[i].pos.x - r < 0)
+    if(balls[i].pos.x - r < 0.0)
     {
         balls[i].momentum.x = -momentum.x * 0.9;
         balls[i].pos.x = r;
@@ -50,7 +50,7 @@ void main (void)
         balls[i].momentum.x = -momentum.x * 0.9;
         balls[i].pos.x = screenSize.x - r;
     }
-    if(balls[i].pos.y - r < 0)
+    if(balls[i].pos.y - r < 0.0)
     {
         balls[i].momentum.y = -momentum.y * 0.9;
         balls[i].pos.y = r;
@@ -112,8 +112,8 @@ int main()
         shader.Bind();
 
         /// Update storage buffer & connect it to the compute shader.
-        shaderData.BufferData(circles.data(), circles.size() * sizeof(PhysicsCircle));
-        shader.ConnectBuffer("myBuffer", 1, shaderData);
+        shaderData.UpdateData(circles.data(), circles.size() * sizeof(PhysicsCircle));
+        shader.ConnectBuffer("myBuffer", 0, shaderData);
 
         /// Set uniforms.
         shader.Uniform1f("delta", delta);

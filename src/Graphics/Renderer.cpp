@@ -3,6 +3,9 @@
 #include <TML/Graphics/Core/Shader.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+
 #include <GLHeader.h>
 #include <Shaders.h>
 #include <_Assert.h>
@@ -32,12 +35,17 @@ namespace tml
 
     Renderer::Renderer()
     {
+#ifndef TML_USE_GLES
         TML_ASSERT(gladLoaderLoadGL(), "Failed to load OpenGL functions");
+#else
+        TML_ASSERT(gladLoadGLES2(glfwGetProcAddress), "Failed to load OpenGL ES functions");
+#endif
 
 #if !defined(TML_USE_GLES) && !defined(TML_NO_GL_DEBUGGING)
         GL_CALL(glad_glEnable(GL_DEBUG_OUTPUT));
         GL_CALL(glad_glDebugMessageCallback(GLMessageCallback, nullptr));
 #endif
+        printf("%s\n", glad_glGetString(GL_VERSION));
 
         GL_CALL(glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureCount));
 

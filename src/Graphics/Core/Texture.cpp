@@ -180,7 +180,8 @@ namespace tml
         if(m_width > 0 && m_height > 0)
         {
 #if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
-            GL_CALL(glad_glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_width, m_height, 0, m_format, GL_UNSIGNED_BYTE, data));
+            GL_CALL(glad_glTexStorage2D(GL_TEXTURE_2D, 8, m_internalFormat, m_width, m_height));
+            GL_CALL(glad_glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, m_format, GL_UNSIGNED_BYTE, data));
             GL_CALL(glad_glGenerateMipmap(GL_TEXTURE_2D));
 #else
             GL_CALL(glad_glTextureStorage2D(m_id, 8, m_internalFormat, m_width, m_height));
