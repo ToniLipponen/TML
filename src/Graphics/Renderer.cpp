@@ -36,7 +36,7 @@ namespace tml
     Renderer::Renderer()
     {
 #ifndef TML_USE_GLES
-        TML_ASSERT(gladLoadGL(glfwGetProcAddress), "Failed to load OpenGL functions");
+        TML_ASSERT(gladLoaderLoadGL(), "Failed to load OpenGL functions");
 #else
         TML_ASSERT(gladLoadGLES2(glfwGetProcAddress), "Failed to load OpenGL ES functions");
 #endif
