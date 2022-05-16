@@ -29,8 +29,6 @@ namespace tml
         GL_CALL(glad_glEnable(GL_DEBUG_OUTPUT));
         GL_CALL(glad_glDebugMessageCallback(GLMessageCallback, nullptr));
 #endif
-        printf("%s\n", glad_glGetString(GL_VERSION));
-
         GL_CALL(glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureCount));
 
         m_maxTextureCount = Math::Min(m_maxTextureCount, 32);
