@@ -1,5 +1,5 @@
 #include <TML/Graphics/Drawable/Text.h>
-#include "../Renderer.h"
+#include <TML/Graphics/RenderTarget.h>
 #include <TML/System/Math.h>
 #include <TML/Graphics/Font.h>
 #include "../../Headers/Font.h" //!< Default font data.
@@ -98,6 +98,11 @@ namespace tml
         return m_dimensions;
     }
 
+    Vector2f Text::GetCenter() noexcept
+    {
+        return GetDimensions() / 2;
+    }
+
     inline constexpr void NormalizeQuad(stbtt_aligned_quad& q, double s, double x, double y) noexcept
     {
         q.x1 = float((q.x1 * (s / 96.0)) + x);
@@ -110,10 +115,12 @@ namespace tml
     {
         m_dimensions = Vector2f{0, m_size.y};
 
+        const auto offset = m_applyOriginToPosition ? m_origin * -1 : Vector2f();
+
         float x    = 0;
         float y    = 96.0f - 96.0f / 4.0f;
-        float ypos = 0;
-        float xpos = 0;
+        float yPos = 0;
+        float xPos = 0;
 
         m_vertexData.clear();
         m_indexData.clear();
@@ -138,8 +145,8 @@ namespace tml
                 case '\n':
                 {
                     m_dimensions.y += m_size.x + m_leading;
-                    ypos += m_size.x + m_leading;
-                    xpos = 0;
+                    yPos += m_size.x + m_leading;
+                    xPos = 0;
                     x = 0;
                 } break;
 
@@ -155,10 +162,10 @@ namespace tml
                     font.GetAlignedQuad(&q, (int)c - 32, x, y);
                     NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
 
-                    q.x0 += kerning + xpos;
-                    q.x1 += kerning + xpos;
-                    q.y0 += ypos;
-                    q.y1 += ypos;
+                    q.x0 += kerning + xPos;
+                    q.x1 += kerning + xPos;
+                    q.y0 += yPos;
+                    q.y1 += yPos;
 
                     m_vertexData.push_back({{q.x0, q.y0}, {q.s0, q.t0}, hex, Vertex::TEXT});
                     m_vertexData.push_back({{q.x1, q.y0}, {q.s1, q.t0}, hex, Vertex::TEXT});
@@ -174,16 +181,25 @@ namespace tml
                     m_indexData.push_back(count + 2);
 
                     count += 4;
-                    xpos += m_tracking;
+                    xPos += m_tracking;
                     m_dimensions.x = Math::Max(q.x1 - m_pos.x, m_dimensions.x);
                 } break;
             }
 
             previousChar = c;
         }
+
+        const auto origin = m_pos + m_origin;
+        const auto cos_r = static_cast<float>(std::cos(Math::DegToRad(m_rotation)));
+        const auto sin_r = static_cast<float>(std::sin(Math::DegToRad(m_rotation)));
+
+        for(auto& i : m_vertexData)
+        {
+            i.pos = offset + Math::Rotate(origin, i.pos, cos_r, sin_r);
+        }
     }
 
-    void Text::OnDraw(class Renderer* renderer, Texture*) noexcept
+    void Text::OnDraw(RenderTarget* renderer, Texture* circleTexture) noexcept
     {
         if(m_updated)
         {

@@ -28,7 +28,7 @@ namespace tml
         const std::shared_ptr<Texture>& GetTexture() const noexcept;
 
     protected:
-        void OnDraw(class Renderer*, Texture*) noexcept override;
+        void OnDraw(class RenderTarget*, class Texture*) noexcept override;
 
     private:
         TexRect m_rect;

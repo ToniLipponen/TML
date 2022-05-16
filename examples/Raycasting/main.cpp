@@ -2,17 +2,21 @@
 #include <TML/System/Clock.h>
 
 using namespace tml;
-struct Scene
-{
-    std::vector<Rectangle> rects;
-    std::vector<Circle> circles;
 
-    void Raycast(const Vector2f& pos, RenderWindow& window)
+struct Scene : public Drawable
+{
+    void SetRayPosition(const Vector2f& pos)
     {
-        Ray ray(pos, 0);
-        Shape shape;
-        shape.AddPoint(pos, Color::White);
-        const float max = sqrt(pow(window.GetWidth(), 2) + pow(window.GetHeight(), 2));
+        ray.position = pos;
+    }
+
+    void OnDraw(RenderTarget* renderTarget, Texture*) noexcept override
+    {
+        const auto window = dynamic_cast<RenderWindow*>(renderTarget);
+
+        shape.ClearPoints();
+        shape.AddPoint(ShapePoint{ray.position, Color::White});
+        const float max = sqrt(pow(window->GetWidth(), 2) + pow(window->GetHeight(), 2));
 
         for(float i = 0; i <= 360.1f;)
         {
@@ -35,11 +39,16 @@ struct Scene
                 }
             }
 
-            shape.AddPoint(pos + ray.direction * nearest, Color::White * Math::Map<float>(nearest, 0, max, 1, 0));
+            shape.AddPoint(ShapePoint{ray.position + ray.direction * nearest, Color::White * Math::Map<float>(nearest, 0, max, 1, 0)});
             i += 0.1f;
         }
-        window.Draw(shape);
+        window->Draw(shape);
     }
+
+    std::vector<Rectangle> rects;
+    std::vector<Circle> circles;
+    Shape shape;
+    Ray ray;
 };
 
 int main()
@@ -54,7 +63,6 @@ int main()
 
     Clock clock;
     double delta = 0;
-    Vector2f mousePos;
 
     while(window.IsOpen())
     {
@@ -68,7 +76,7 @@ int main()
                     window.Close();
                     break;
                 case tml::Event::MouseMoved:
-                    mousePos = Vector2f(event.pos.x, event.pos.y);
+                    scene.SetRayPosition(Vector2f(event.pos.x, event.pos.y));
                     break;
                 case tml::Event::WindowResized:
                     scene.rects.at(0) = Rectangle(0,0, event.size.w, event.size.h);
@@ -80,9 +88,9 @@ int main()
         scene.rects.at(1).Rotate(delta * 100.0);
 
         window.Clear();
-            window.DrawCircle(windowSize2, 200.f, 0x007700ff);
-            window.DrawRect({100, 100}, {100, 100}, 0x770000ff,0, scene.rects.at(1).GetRotation());
-            scene.Raycast(mousePos, window);
+        window.DrawCircle(windowSize2, 200.f, 0x007700ff);
+        window.DrawRect({100, 100}, {100, 100}, 0x770000ff, 0, scene.rects.at(1).GetRotation(), {50,50});
+        window.Draw(scene);
         window.Display();
 
         delta = clock.Reset();

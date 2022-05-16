@@ -13,7 +13,8 @@ namespace tml
         float GetCornerRadius() const noexcept { return m_roundness; }
 
     protected:
-        void OnDraw(class Renderer* renderer, class Texture*) noexcept override;
+        void OnDraw(class RenderTarget*, class Texture*) noexcept override;
+
     protected:
         float m_roundness = 0;
     };

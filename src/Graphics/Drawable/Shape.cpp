@@ -1,21 +1,27 @@
 #include <TML/Graphics/Drawable/Shape.h>
-#include "../Renderer.h"
+#include <TML/Graphics/RenderTarget.h>
 #include <TML/System/Math.h>
+
+#include <utility>
 
 namespace tml
 {
-    uint32_t Shape::AddPoint(const Vector2f& position) noexcept
+    Shape::Shape(std::vector<ShapePoint> points) noexcept
+    : m_points(std::move(points))
     {
-        m_points.push_back({position, m_color});
         m_updated = true;
-        return m_points.size();
     }
 
-    uint32_t Shape::AddPoint(const Vector2f& position, const Color& color) noexcept
+    Shape::Shape(std::vector<ShapePoint> points, const Texture& texture) noexcept
+    : m_points(std::move(points)), m_texture(std::make_shared<Texture>())
     {
-        m_points.push_back({position, color});
-        m_updated = true;
-        return m_points.size();
+        *m_texture = texture;
+    }
+
+    Shape::Shape(std::vector<ShapePoint> points, std::shared_ptr<Texture> texture) noexcept
+    : m_points(std::move(points)), m_texture(std::move(texture))
+    {
+
     }
 
     uint32_t Shape::AddPoint(const ShapePoint& point) noexcept
@@ -25,29 +31,7 @@ namespace tml
         return m_points.size();
     }
 
-    bool Shape::SetPoint(uint32_t index, const Vector2f& position) noexcept
-    {
-        if(index < GetPointCount())
-        {
-            m_points[index] = {position, m_color};
-            m_updated = true;
-            return true;
-        }
-        return false;
-    }
-
-    bool Shape::SetPoint(uint32_t index, const Vector2f& position, const Color& color) noexcept
-    {
-        if(index < GetPointCount())
-        {
-            m_points[index] = {position, color};
-            m_updated = true;
-            return true;
-        }
-        return false;
-    }
-
-    bool Shape::SetPoint(uint32_t index, const ShapePoint& point)
+    bool Shape::SetPoint(uint32_t index, const ShapePoint& point) noexcept
     {
         if(index < GetPointCount())
         {
@@ -55,6 +39,7 @@ namespace tml
             m_updated = true;
             return true;
         }
+
         return false;
     }
 
@@ -66,6 +51,7 @@ namespace tml
             m_updated = true;
             return true;
         }
+
         return false;
     }
 
@@ -77,7 +63,37 @@ namespace tml
             m_updated = true;
             return true;
         }
+
         return false;
+    }
+
+    void Shape::SetColor(const Color &color) noexcept
+    {
+        m_color = color;
+
+        for(auto& i : m_points)
+            i.color = color;
+    }
+
+    void Shape::SetTexture(const Texture& texture) noexcept
+    {
+        m_texture = std::make_shared<Texture>();
+        *m_texture = texture;
+    }
+
+    void Shape::SetTexture(const std::shared_ptr<Texture>& texture) noexcept
+    {
+        m_texture = texture;
+    }
+
+    Vector2f Shape::GetCenter() noexcept
+    {
+        Vector2f position;
+
+        for(auto& i : m_points)
+            position = position + i.pos;
+
+        return m_pos + position / m_points.size() - (m_applyOriginToPosition ? m_origin : Vector2f());
     }
 
     uint32_t Shape::GetPointCount() const noexcept
@@ -85,25 +101,34 @@ namespace tml
         return m_points.size();
     }
 
-    void Shape::OnDraw(class Renderer* renderer, class Texture *) noexcept
+    void Shape::OnDraw(RenderTarget* renderer, Texture* circleTexture) noexcept
     {
         if(m_updated)
         {
             m_vertexData.clear();
             m_indexData.clear();
 
+            const auto cos_r = static_cast<float>(std::cos(Math::DegToRad(m_rotation)));
+            const auto sin_r = static_cast<float>(std::sin(Math::DegToRad(m_rotation)));
+            const auto offset = m_applyOriginToPosition ? m_origin * -1 : Vector2f{0, 0};
+
             if(m_rotation == 0)
             {
                 for(auto& i : m_points)
                 {
-                    m_vertexData.push_back(Vertex{i.pos+m_pos, {0, 0}, i.color.Hex(), Vertex::COLOR});
+                    m_vertexData.push_back(Vertex{offset + i.pos + m_pos, i.uv, i.color.Hex(), Vertex::COLOR});
                 }
             }
             else
             {
                 for(auto& i : m_points)
                 {
-                    m_vertexData.push_back(Vertex{Math::Rotate(m_pos + m_origin, i.pos+m_pos, cos_r, sin_r), {0, 0}, i.color.Hex(), Vertex::COLOR});
+                    m_vertexData.push_back(Vertex{
+                        Math::Rotate(m_pos + m_origin, i.pos+m_pos, cos_r, sin_r) + offset,
+                        i.uv,
+                        i.color.Hex(),
+                        Vertex::COLOR}
+                   );
                 }
             }
 
@@ -116,8 +141,13 @@ namespace tml
                 m_indexData.push_back(i+1);
                 m_indexData.push_back(i+2);
             }
+
             m_updated = false;
         }
-        renderer->PushVertexData(m_vertexData, m_indexData);
+
+        if(m_texture)
+            renderer->PushVertexData(m_vertexData, m_indexData, *m_texture);
+        else
+            renderer->PushVertexData(m_vertexData, m_indexData);
     }
 }

@@ -16,22 +16,6 @@
 
 namespace tml
 {
-    static constexpr void MakeCircle(Image& image, uint32_t resolution) noexcept
-    {
-        auto* buffer = image.GetData();
-        const auto radius = resolution / 2.0;
-        const auto center = Vector2f(radius);
-
-        for(uint32_t i = 0; i < resolution; ++i)
-        {
-            for(uint32_t j = 0; j < resolution; ++j)
-            {
-                const double dist = Math::Distance(Vector2f(j, i), center);
-                const double d = dist / radius;
-                buffer[i * resolution + j] = static_cast<unsigned char>(Math::SmoothStep(0.0, 0.002, 1.0 - d) * 255.0);
-            }
-        }
-    }
 
     Renderer::Renderer()
     {
@@ -56,8 +40,6 @@ namespace tml
         m_indexBuffer   = new IndexBuffer;
         m_layout        = new BufferLayout;
         m_shader        = new Shader;
-        m_text          = new Text;
-        m_circleTexture = new Texture;
 
         m_textures.reserve(m_maxTextureCount);
         m_vertexData.reserve(s_maxVertexCount);
@@ -72,10 +54,6 @@ namespace tml
         m_shader->LoadFromString(VERTEX_STRING, FRAGMENT_STRING);
         m_shader->Bind();
 
-        Image circleImage;
-        circleImage.LoadFromMemory(2048, 2048, 1, nullptr);
-        MakeCircle(circleImage, 2048);
-        m_circleTexture->LoadFromImage(circleImage);
 
         GL_CALL(glad_glEnable(GL_BLEND));
         GL_CALL(glad_glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -181,190 +159,6 @@ namespace tml
         GL_CALL(glad_glClearBufferfv(GL_COLOR, 0, color));
     }
 
-    void Renderer::Draw(Drawable& d) noexcept
-    {
-        d.OnDraw(this, m_circleTexture);
-    }
-
-    void Renderer::DrawLine(const Vector2f &a, const Vector2f &b, float thickness, Color color, bool rounded) noexcept
-    {
-        if(CheckLimits(12, 18, 1))
-        {
-            EndBatch();
-        }
-
-        const uint32_t currentElements = m_vertexData.size();
-
-        const float dx = b.x - a.x;
-        const float dy = b.y - a.y;
-        const auto dirA = (Vector2f(-dy, dx).Normalized() * thickness * 0.5);
-        const auto dirB = (Vector2f(dy, -dx).Normalized() * thickness * 0.5);
-
-        m_vertexData.push_back(Vertex{(dirA + a), {0, 0}, color.Hex(), Vertex::COLOR});
-        m_vertexData.push_back(Vertex{(dirB + a), {0, 0}, color.Hex(), Vertex::COLOR});
-        m_vertexData.push_back(Vertex{(dirA + b), {0, 0}, color.Hex(), Vertex::COLOR});
-        m_vertexData.push_back(Vertex{(dirB + b), {0, 0}, color.Hex(), Vertex::COLOR});
-
-        m_indexData.push_back(currentElements + 0);
-        m_indexData.push_back(currentElements + 1);
-        m_indexData.push_back(currentElements + 2);
-        m_indexData.push_back(currentElements + 1);
-        m_indexData.push_back(currentElements + 3);
-        m_indexData.push_back(currentElements + 2);
-
-        if(rounded) /// Doesn't work well with translucent colors. Might do something to fix this in some point. TODO
-        {
-            Renderer::DrawCircle(a, thickness * 0.5f, color);
-            Renderer::DrawCircle(b, thickness * 0.5f, color);
-        }
-    }
-
-    void Renderer::DrawRect(const Vector2f& pos, const Vector2f& dimensions, const Color& color, float roundness, float rotation) noexcept
-    {
-        if(roundness < 1.f)
-        {
-            PushQuad(pos, dimensions, color, *m_circleTexture, Vertex::COLOR, rotation);
-        }
-        else
-        {
-            roundness = Math::Clamp<float>(roundness, 0, Math::Min(dimensions.y, dimensions.x) / 2);
-
-            /// Todo: Take origin as an argument.
-            const Vector2f origin = pos + dimensions * 0.5f;
-
-            const auto w = Vector2f{dimensions.x, 0.f};
-            const auto h = Vector2f{0.f, dimensions.y};
-            const auto rx = Vector2f{roundness, 0.f};
-            const auto ry = Vector2f{0.f, roundness};
-
-            const auto hex = color.Hex();
-            const uint32_t slot = PushTexture(*m_circleTexture);
-            static const std::vector<uint32_t> cornerIndices = {
-                     0, 1, 2,    1, 3, 2,
-                     4, 5, 6,    5, 7, 6,
-                     8, 9,10,    9,11,10,
-                    12,13,14,   13,15,14,
-                    16,17,18,   16,19,18,
-                    20,21,22,   20,23,22
-            };
-
-            const float cos_r = std::cos(Math::DegToRad(rotation));
-            const float sin_r = std::sin(Math::DegToRad(rotation));
-
-            uint32_t typeAndTex = slot | Vertex::TEXT;
-
-            static std::vector<Vertex> cornerVertices;
-            cornerVertices.clear();
-            
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos,       cos_r, sin_r), {0.0f,0.0f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+rx,    cos_r, sin_r), {0.5f,0.0f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+ry,    cos_r, sin_r), {0.0f,0.5f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+rx+ry, cos_r, sin_r), {0.5f,0.5f}, hex, typeAndTex});
-
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+w-rx,   cos_r, sin_r), {0.5f,0.0f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+w,      cos_r, sin_r), {1.0f,0.0f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+w-rx+ry,cos_r, sin_r), {0.5f,0.5f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+w+ry,   cos_r, sin_r), {1.0f,0.5f}, hex, typeAndTex});
-
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+w+h-rx-ry, cos_r, sin_r), {0.5f,0.5f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+w+h-ry,    cos_r, sin_r), {1.0f,0.5f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+w+h-rx,    cos_r, sin_r), {0.5f,1.0f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+w+h,       cos_r, sin_r), {1.0f,1.0f}, hex, typeAndTex});
-
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+h-ry,    cos_r, sin_r), {0.0f,0.5f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+h+rx-ry, cos_r, sin_r), {0.5f,0.5f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+h,       cos_r, sin_r), {0.0f,1.0f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos+h+rx,    cos_r, sin_r), {0.5f,1.0f}, hex, typeAndTex});
-
-            typeAndTex = slot | Vertex::COLOR;
-
-            // top rect
-            const auto pos2 = pos + rx;
-            const auto size = w+ry-rx-rx;
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos2,                     cos_r, sin_r), {0.0f,0.5f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos2+Vector2f(size.x, 0), cos_r, sin_r), {0.5f,0.5f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos2+size,                cos_r, sin_r), {0.5f,1.0f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos2+Vector2f(0, size.y), cos_r, sin_r), {0.0f,1.0f}, hex, typeAndTex});
-
-            // bottom rect
-            const auto pos3 = pos + Vector2f(0,dimensions.y) + rx - ry;
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos3,                     cos_r, sin_r), {0.0f,0.5f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos3+Vector2f(size.x, 0), cos_r, sin_r), {0.5f,0.5f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos3+size,                cos_r, sin_r), {0.5f,1.0f}, hex, typeAndTex});
-            cornerVertices.emplace_back(Vertex{Math::Rotate(origin, pos3+Vector2f(0, size.y), cos_r, sin_r), {0.0f,1.0f}, hex, typeAndTex});
-
-            PushQuad(pos+ry, dimensions-ry-ry, color, *m_circleTexture, Vertex::COLOR, rotation);
-            PushVertexData(cornerVertices, cornerIndices);
-        }
-    }
-
-    void Renderer::DrawCircle(const Vector2f& pos, float radius, const Color& color) noexcept
-    {
-        PushQuad(pos - Vector2f{radius}, {radius * 2}, color, *m_circleTexture, Vertex::TEXT);
-    }
-
-    void Renderer::DrawBezier(const Vector2f& a, const Vector2f& cp1, const Vector2f& cp2, const Vector2f& b, float thickness,
-                              const Color& color, bool rounded, float step) noexcept
-    {
-        Vector2f begin = a;
-
-        for(float i = 0; i < 1;)
-        {
-            const Vector2f end = Math::Cubic(a,cp1,cp2,b,i);
-            DrawLine(begin, end, thickness, color, rounded);
-            begin = end;
-            i += step;
-        }
-    }
-
-    void Renderer::DrawBezier(const Vector2f& a, const Vector2f& cp, const Vector2f& b, float thickness,
-                              const Color& color, bool rounded, float step) noexcept
-    {
-        Vector2f begin = a;
-
-        for(float i = 0; i < 1;)
-        {
-            const Vector2f end = Math::Quadratic(a,cp,b,i);
-            DrawLine(begin, end, thickness, color, rounded);
-            begin = end;
-            i += step;
-        }
-    }
-
-    void Renderer::DrawGrid(const Vector2f& top_left, const Vector2f& size, uint32_t rows, uint32_t columns, const Color& color,
-                            float thickness, bool rounded) noexcept
-    {
-        for(uint32_t i = 0; i <= rows; ++i)
-        {
-            DrawLine(top_left + Vector2f{0.f,    (size.y / rows) * i},
-                     top_left + Vector2f{size.x, (size.y / rows) * i}, thickness, color, ((i == 0) || (i == rows)) && rounded);
-        }
-        for(uint32_t i = 0; i <= columns; ++i)
-        {
-            DrawLine(top_left + Vector2f{(size.x / columns) * i, 0.f},
-                     top_left + Vector2f{(size.x / columns) * i, size.y}, thickness, color, false);
-        }
-    }
-
-    void Renderer::DrawTexture(const Texture& tex, const Vector2f& pos, const Vector2f& size) noexcept
-    {
-        PushQuad(pos, size, Color::Transparent, tex, Vertex::TEXTURE);
-    }
-
-    void Renderer::DrawTextureRect(const Texture& tex, const Vector2f& pos, const Vector2f& size, float rotation, const Vector2f& tl, const Vector2f& br) noexcept
-    {
-        PushQuad(pos, size, Color::Transparent, tex, Vertex::TEXTURE, rotation, tl, br);
-    }
-
-    void Renderer::DrawText(const String& text, const Vector2f& pos, float size, const Color& color) noexcept
-    {
-        m_text->SetString(text);
-        m_text->SetSize(size);
-        m_text->SetColor(color);
-        m_text->SetPosition(pos);
-        Draw(*m_text);
-    }
-
     void Renderer::PushVertexData(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices) noexcept
     {
         if(CheckLimits(vertices.size(), indices.size(), 0))
@@ -404,7 +198,7 @@ namespace tml
         texture.Bind(index);
 
         if(iterator == end)
-            m_textures.emplace_back(id);
+            m_textures.push_back(id);
 
         return index;
     }
@@ -487,6 +281,13 @@ namespace tml
 
         GL_CALL(glad_glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indexBuffer->Elements()), GL_UNSIGNED_INT, nullptr));
         BeginBatch();
+    }
+
+    void Renderer::GetOpenGLVersion(int &major, int &minor) const noexcept
+    {
+        major = minor = 0;
+        glad_glGetIntegerv(GL_MAJOR_VERSION, &major);
+        glad_glGetIntegerv(GL_MINOR_VERSION, &minor);
     }
 
     inline bool Renderer::CheckLimits(uint32_t vertexCount, uint32_t indexCount, uint32_t textureCount) const noexcept

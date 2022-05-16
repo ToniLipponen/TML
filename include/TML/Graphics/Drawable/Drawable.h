@@ -14,16 +14,17 @@ namespace tml
             return m_color;
         }
 
-        void SetColor(const Color &c) noexcept
+        virtual void SetColor(const Color &c) noexcept
         {
             m_color = c;
             m_updated = true;
         }
 
-        friend class Renderer;
+        friend class RenderTarget;
 
     protected:
-        virtual void OnDraw(class Renderer* renderer, class Texture*) noexcept = 0;
+        virtual void OnDraw(class RenderTarget*, class Texture*) noexcept = 0;
+
         Color m_color = Color::White;
         std::vector<Vertex> m_vertexData;
         std::vector<uint32_t> m_indexData;

@@ -17,6 +17,6 @@ namespace tml
         Vector2f SetSize(float,float)       noexcept = delete;
 
     private:
-        void OnDraw(class Renderer* renderer, class Texture*) noexcept override;
+        void OnDraw(class RenderTarget*, class Texture*) noexcept override;
     };
 }

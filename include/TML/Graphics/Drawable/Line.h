@@ -12,9 +12,16 @@ namespace tml
 
         void SetPointA(const Vector2f& point) noexcept;
         void SetPointB(const Vector2f& point) noexcept;
+        void SetThickness(float thickness) noexcept;
+        void SetRounded(bool rounded) noexcept;
+        Vector2f GetCenter() noexcept override {return (a + b) / 2; }
+        void SetSize(const Vector2f&) = delete;
+
     private:
-        void OnDraw(class Renderer*, Texture*) noexcept override;
+        void OnDraw(class RenderTarget*, class Texture*) noexcept override;
+
     private:
         Vector2f a, b;
+        bool m_rounded = false;
     };
 }

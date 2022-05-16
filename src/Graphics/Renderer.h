@@ -43,28 +43,6 @@ namespace tml
 
         void Clear(float color[4]) noexcept;
 
-        void Draw(Drawable& drawable) noexcept;
-
-        void DrawLine(const Vector2f& a, const Vector2f& b, float thickness, Color color, bool rounded = true) noexcept;
-
-        void DrawRect(const Vector2f& pos, const Vector2f& dimensions, const Color& color, float roundness = 0.0f,
-                     float rotation = 0.0f) noexcept;
-
-        void DrawCircle(const Vector2f& pos, float radius, const Color& color) noexcept;
-
-        void DrawBezier(const Vector2f& a, const Vector2f& cp1, const Vector2f& cp2, const Vector2f& b,
-                       float thickness,  const Color& color, bool rounded = true, float step = 0.01f) noexcept;
-        void DrawBezier(const Vector2f& a, const Vector2f& cp, const Vector2f& b, float thickness,
-                               const Color& color, bool rounded = true, float step = 0.01f) noexcept;
-        void DrawGrid(const Vector2f& top_left, const Vector2f& size, uint32_t rows, uint32_t columns,
-                     const Color& color, float thickness = 1.f, bool rounded = false) noexcept;
-
-        void DrawTexture(const Texture& tex, const Vector2f& pos, const Vector2f& size) noexcept;
-
-        void DrawTextureRect(const Texture& tex, const Vector2f& pos, const Vector2f& size, float rotation, const Vector2f& tl, const Vector2f& br) noexcept;
-
-        void DrawText(const String& text, const Vector2f& pos, float size, const Color& color = Color::White) noexcept;
-
         void PushVertexData(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices) noexcept;
 
         void PushVertexData(std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const Texture& texture) noexcept;
@@ -86,6 +64,8 @@ namespace tml
 
         void BeginBatch() noexcept;
 
+        void GetOpenGLVersion(int& major, int& minor) const noexcept;
+
     protected:
         inline bool CheckLimits(uint32_t vertexCount, uint32_t indexCount, uint32_t textureCount) const noexcept;
 
@@ -102,8 +82,6 @@ namespace tml
         float   m_clearColor[4]{};
 
         TexRect  m_viewport;
-        Text*    m_text;
-        Texture* m_circleTexture;
 
         constexpr static uint32_t s_maxVertexCount = 10000;
         constexpr static uint32_t s_maxIndexCount = s_maxVertexCount * 4;

@@ -11,6 +11,7 @@ namespace tml
     public:
         Text();
         explicit Text(String string, const Vector2f& pos = {0,0}, float size = 30, const Color& color = Color::White);
+
         void SetSize(float s) noexcept;
         void SetString(const String& string) noexcept;
         void SetFont(const Font& font) noexcept;
@@ -20,15 +21,14 @@ namespace tml
         void SetKerning(float kerning) noexcept;   //!< Kerning is the horizontal spacing between different characters defined by the font.
         const String& GetString() const noexcept;
         Vector2f GetDimensions() noexcept;
-        
-        void Rotate(float)                       = delete;
-        void SetRotation(float)                  = delete;
+        Vector2f GetCenter() noexcept override;
+
+        void SetSize(const Vector2f&) = delete;
         const Vector2f& GetSize(const Vector2f&) = delete;
-        constexpr float GetRotation()            = delete;
 
     private:
         void Generate();
-        void OnDraw(class Renderer*, Texture*) noexcept override;
+        void OnDraw(class RenderTarget* renderer, class Texture*) noexcept override;
         static Font& GetDefaultFont() noexcept;
 
     private:

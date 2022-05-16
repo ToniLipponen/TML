@@ -3,10 +3,39 @@
 
 namespace tml
 {
+    static constexpr void MakeCircle(Image& image, uint32_t resolution) noexcept
+    {
+        auto* buffer = image.GetData();
+        const auto radius = resolution / 2.0;
+        const auto center = Vector2f(radius);
+
+        for(uint32_t i = 0; i < resolution; ++i)
+        {
+            for(uint32_t j = 0; j < resolution; ++j)
+            {
+                const double dist = Math::Distance(Vector2f(j, i), center);
+                const double d = dist / radius;
+                buffer[i * resolution + j] = static_cast<unsigned char>(Math::SmoothStep(0.0, 0.002, 1.0 - d) * 255.0);
+            }
+        }
+    }
+
+    std::unique_ptr<Texture> RenderTarget::s_circleTexture = nullptr;
+
     RenderTarget::RenderTarget()
     : m_renderer(Renderer::GetInstance())
     {
+        m_renderer.GetOpenGLVersion(m_version.major, m_version.minor);
 
+        if(!s_circleTexture)
+        {
+            Image circleImage;
+            circleImage.LoadFromMemory(2048, 2048, 1, nullptr);
+            MakeCircle(circleImage, 2048);
+
+            s_circleTexture = std::make_unique<Texture>();
+            s_circleTexture->LoadFromImage(circleImage);
+        }
     }
 
     Vector2f RenderTarget::WorldToScreen(const Vector2f& point, const Camera& camera) const noexcept
@@ -65,58 +94,106 @@ namespace tml
 
     void RenderTarget::Draw(Drawable& drawable) noexcept
     {
-        m_renderer.Draw(drawable);
+        drawable.OnDraw(this, s_circleTexture.get());
     }
 
-    void RenderTarget::DrawLine(const Vector2f &a, const Vector2f &b, float thickness, Color color,
-                                bool rounded) noexcept
+    void RenderTarget::DrawLine(const Vector2f &a, const Vector2f &b, float thickness, Color color, bool rounded) noexcept
     {
-        m_renderer.DrawLine(a, b, thickness, color, rounded);
+        static Line line;
+        line.SetPointA(a);
+        line.SetPointB(b);
+        line.SetThickness(thickness);
+        line.SetColor(color);
+        line.SetRounded(rounded);
+
+        Draw(line);
     }
 
     void RenderTarget::DrawRect(const Vector2f &pos, const Vector2f &dimensions, const Color &color, float roundness,
-                                float rotation) noexcept
+                                float rotation, const Vector2f& origin, bool applyOriginToPos) noexcept
     {
-        m_renderer.DrawRect(pos, dimensions, color, roundness, rotation);
+        static Rectangle rectangle;
+        rectangle.SetPosition(pos);
+        rectangle.SetSize(dimensions);
+        rectangle.SetColor(color);
+        rectangle.SetCornerRadius(roundness);
+        rectangle.SetRotation(rotation);
+        rectangle.SetOrigin(origin);
+        rectangle.ApplyOriginToPosition(applyOriginToPos);
+
+        Draw(rectangle);
     }
 
     void RenderTarget::DrawCircle(const Vector2f &pos, float radius, const Color &color) noexcept
     {
-        m_renderer.DrawCircle(pos, radius, color);
+        PushQuad(pos-Vector2f(radius), Vector2f(radius*2), color, *s_circleTexture, Vertex::TEXT);
     }
 
     void RenderTarget::DrawBezier(const Vector2f &a, const Vector2f &cp1, const Vector2f& cp2, const Vector2f &b, float thickness,
                                   const Color &color, bool rounded, float step) noexcept
     {
-        m_renderer.DrawBezier(a, cp1, cp2, b, thickness, color, rounded, step);
+        Vector2f begin = a;
+
+        for(float i = 0; i < 1;)
+        {
+            const Vector2f end = Math::Cubic(a,cp1,cp2,b,i);
+            DrawLine(begin, end, thickness, color, rounded);
+            begin = end;
+            i += step;
+        }
     }
 
     void RenderTarget::DrawBezier(const Vector2f &a, const Vector2f &cp, const Vector2f &b, float thickness,
                                   const Color &color, bool rounded, float step) noexcept
     {
-        m_renderer.DrawBezier(a, cp, b, thickness, color, rounded, step);
+        Vector2f begin = a;
+
+        for(float i = 0; i < 1;)
+        {
+            const Vector2f end = Math::Quadratic(a,cp,b,i);
+            DrawLine(begin, end, thickness, color, rounded);
+            begin = end;
+            i += step;
+        }
     }
 
     void RenderTarget::DrawGrid(const Vector2f &top_left, const Vector2f &size, uint32_t rows, uint32_t columns,
                                 const Color &color, float thickness, bool rounded) noexcept
     {
-        m_renderer.DrawGrid(top_left, size, rows, columns, color, thickness, rounded);
+        /** This is to prevent holes in corners when rounded == false and thickness > 1; */
+        const auto offset = rounded ? 0 : thickness;
+
+        for(uint32_t i = 0; i <= rows; ++i)
+        {
+            DrawLine(top_left + Vector2f{-offset,    (size.y / rows) * i},
+                     top_left + Vector2f{offset + size.x, (size.y / rows) * i}, thickness, color, false);
+        }
+        for(uint32_t i = 0; i <= columns; ++i)
+        {
+            DrawLine(top_left + Vector2f{(size.x / columns) * i, 0.f},
+                     top_left + Vector2f{(size.x / columns) * i, size.y}, thickness, color, rounded && (i == 0 || i == columns));
+        }
     }
 
     void RenderTarget::DrawTexture(const Texture& tex, const Vector2f& pos, const Vector2f& size) noexcept
     {
-        m_renderer.DrawTexture(tex, pos, size);
+        PushQuad(pos, size, Color::Transparent, tex, Vertex::TEXTURE);
     }
 
     void RenderTarget::DrawTextureRect(const Texture& tex, const Vector2f& pos, const Vector2f& size, float rotation,
                                        const Vector2f& tl, const Vector2f& br) noexcept
     {
-        m_renderer.DrawTextureRect(tex, pos, size, rotation, tl, br);
+        PushQuad(pos, size, Color::Transparent, tex, Vertex::TEXTURE, rotation, tl, br);
     }
 
-    void RenderTarget::DrawText(const String& text, const Vector2f& pos, float size, const Color& color) noexcept
+    void RenderTarget::DrawText(const String& string, const Vector2f& pos, float size, const Color& color) noexcept
     {
-        m_renderer.DrawText(text, pos, size, color);
+        static Text text;
+        text.SetString(string);
+        text.SetSize(size);
+        text.SetColor(color);
+        text.SetPosition(pos);
+        Draw(text);
     }
 
     void RenderTarget::PushVertexData(const std::vector<Vertex> &vertices,

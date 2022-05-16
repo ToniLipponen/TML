@@ -1,6 +1,5 @@
 R"END(
-
-#version 310 es
+#version 300 es
 layout (location = 0) in vec2 Pos;
 layout (location = 1) in vec2 UV;
 layout (location = 2) in uint Color;
@@ -8,8 +7,8 @@ layout (location = 3) in uint TypeAndTex;
 
 out vec4  vColor;
 out vec2  vUV;
-out flat uint  vTexID;
-out flat uint  vType;
+flat out uint  vTexID;
+flat out uint  vType;
 
 uniform vec2 uViewSize;
 uniform mat4 uView;

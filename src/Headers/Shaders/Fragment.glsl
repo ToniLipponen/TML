@@ -1,5 +1,5 @@
 R"END(
-#version 310 es
+#version 300 es
 in mediump vec4 vColor;
 in mediump vec2 vUV;
 flat in uint vTexID;
