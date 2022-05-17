@@ -1,8 +1,5 @@
 #include <TML/Interface/BaseComponent.h>
-<<<<<<< HEAD
-=======
-#include <TML/Graphics/Renderer.h>
->>>>>>> 612e14f (Experimental GUI branch.)
+#include <TML/Graphics/RenderTarget.h>
 #include <TML/System/Clock.h>
 #include <string>
 #include <algorithm>
@@ -341,11 +338,7 @@ namespace tml
             ProcessEvents(event, delta);
         }
 
-<<<<<<< HEAD
         void BaseComponent::Draw(RenderTarget &renderer)
-=======
-        void BaseComponent::Draw(Renderer& renderer)
->>>>>>> 612e14f (Experimental GUI branch.)
         {
             pDraw(renderer);
             for(auto* i : m_processStack)

@@ -1,11 +1,20 @@
 cmake_minimum_required(VERSION 3.0)
-project(tml)
 
-option(TML_DEBUG_OPENGL_CALLS "Applies error checking around opengl function calls." no)
+# Set TML version
+set(TML_API_VERSION_MAJOR 1)
+set(TML_API_VERSION_MINOR 0)
+set(TML_API_VERSION_PATCH 0)
+set(TML_API_VERSION ${TML_API_VERSION_MAJOR}.${TML_API_VERSION_MINOR}.${TML_API_VERSION_PATCH})
+
+project(tml VERSION ${TML_API_VERSION})
+
+# TML options
+option(TML_BUILD_STATIC "Build TML as a static library" no)
+option(TML_DEBUG_OPENGL_CALLS "Applies error checking around OpenGL function calls." yes)
 option(TML_ASSERT "Applies asserts around important functions." yes)
 option(TML_BUILD_EXAMPLES "Builds some example programs." yes)
 option(TML_USE_GLES "Use OpenGL ES 3.1 instead of OpenGL 4.5." no)
-option(TML_DONT_USE_DSA "Use non-DSA functions for OpenGL 4.5." no)
+option(TML_DONT_USE_DSA "Use non-DSA functions for OpenGL 4.5." yes)
 
 # Set some glfw options
 set(GLFW_LIBRARY_TYPE OBJECT)
@@ -18,21 +27,32 @@ if(UNIX)
 endif()
 
 # Set C++ standard
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
+
+set(BUILD_SHARED_LIBS no)
 
 # Set output directory
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
-# set(TML_API_VERSION 1.0.0)
+if(UNIX)
+    set(CMAKE_INSTALL_PREFIX "/usr" CACHE STRING " " FORCE )
+endif()
+message(STATUS "TML: Version ${TML_API_VERSION}")
 
-# SSE3
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
-    if(UNIX)
-        add_compile_options(-msse3 -Wall)
-    elseif(WIN32)
-        # Add some options here
+if(TML_BUILD_STATIC)
+    message(STATUS "TML: Building static library")
+    add_compile_definitions(TML_STATIC)
+    set(TML_LIBRARY_TYPE STATIC)
+else()
+    message(STATUS "TML: Building shared library")
+
+    if(WIN32)
+        add_compile_definitions(TML_EXPORTING)
     endif()
+
+    set(TML_LIBRARY_TYPE SHARED)
 endif()
 
 if(NOT TML_ASSERT)
@@ -42,34 +62,33 @@ if(NOT TML_DEBUG_OPENGL_CALLS)
     add_compile_definitions(TML_NO_GL_DEBUGGING=1)
 endif()
 if(TML_USE_GLES)
-    add_compile_definitions(TML_USE_GLES=1)
+    add_compile_definitions(TML_USE_GLES GLAD_GLES2)
 endif()
 if (TML_DONT_USE_DSA)
     add_compile_definitions(TML_DONT_USE_DSA=1)
 endif()
 
 file(GLOB_RECURSE HEADERS_FILES include/TML/*.h)
-include_directories(include external)
+include_directories(include external src/Headers external/glm-0.9.9.8/)
 
 # Add external libraries
-add_subdirectory(external/glm)
-add_subdirectory(external/glfw/)
+add_subdirectory(external/glfw-3.3.7)
 add_subdirectory(external/Clip)
 add_subdirectory(external/lunasvg)
+add_subdirectory(external/glad)
 
 # Add modules
 add_subdirectory(src/Audio)
 add_subdirectory(src/Graphics)
-add_subdirectory(src/Interface)
 add_subdirectory(src/Network)
 add_subdirectory(src/System)
 add_subdirectory(src/Window)
+add_subdirectory(src/Interface)
 
 add_library(tml src/TOKEN_SOURCE_FILE.cpp ${HEADER_FILES})
-target_link_libraries(tml tml-audio tml-graphics tml-interface tml-network tml-system tml-window)
+target_link_libraries(tml tml-audio tml-interface tml-graphics tml-network tml-system tml-window)
 
 if(UNIX)
-    set(CMAKE_INSTALL_PREFIX /usr/)
     install(TARGETS tml-audio tml-interface tml-graphics tml-window tml-system tml-network DESTINATION /usr/lib)
     install(DIRECTORY include/TML DESTINATION /usr/include)
 endif()
