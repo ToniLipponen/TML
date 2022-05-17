@@ -11,7 +11,7 @@ namespace tml
         public:
             TextInput(int32_t x, int32_t y, uint32_t width, uint32_t height = 30);
             void SetValue(const std::string& string);
-            inline constexpr const String& GetValue() const noexcept { return m_text.GetString(); }
+            inline const String& GetValue() const noexcept { return m_text.GetString(); }
         private:
             void InitListeners();
             void pDraw(RenderTarget& renderTarget) override;

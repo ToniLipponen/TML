@@ -1,5 +1,4 @@
 #include <TML/Interface/Components/Listbox.h>
-#include <TML/System/Logger.h>
 
 namespace tml
 {
@@ -48,9 +47,9 @@ namespace tml
             {
                 if(m_state.MouseOver)
                 {
-                    if(e.mouseWheelScroll.delta > 0.0)
+                    if(e.mouseWheelScroll.deltaY > 0.0)
                         m_scrollbar->SetValue(m_scrollbar->GetValue() - 1);
-                    else if(e.mouseWheelScroll.delta < 0.0)
+                    else if(e.mouseWheelScroll.deltaY < 0.0)
                         m_scrollbar->SetValue(m_scrollbar->GetValue() + 1);
 
                     e = Event{};

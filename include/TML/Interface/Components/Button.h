@@ -15,7 +15,7 @@ namespace tml
             void SetText(const std::string& str);
             void SetTextSize(float s) { m_text.SetSize(s);}
             void SetTextColor(const Color& color){ m_text.SetColor(color); }
-            inline constexpr const String& GetText() const noexcept { return m_text.GetString(); }
+            inline const String& GetText() const noexcept { return m_text.GetString(); }
         private:
             void pDraw(RenderTarget& renderTarget) override;
             Text m_text;

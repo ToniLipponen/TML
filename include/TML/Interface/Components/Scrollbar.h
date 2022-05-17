@@ -14,12 +14,9 @@ namespace tml
             Vector2i GetRange() noexcept { return Vector2i(m_min, m_max); }
             int32_t GetValue() const noexcept { return int32_t(m_value); }
             void SetValue(uint32_t value);
+
         private:
-<<<<<<< HEAD
             void pDraw(RenderTarget& renderTarget) override;
-=======
-            void pDraw(Renderer &renderer) override;
->>>>>>> 612e14f (Experimental GUI branch.)
 
             int32_t m_value = 0;
             uint32_t m_max = 1;
