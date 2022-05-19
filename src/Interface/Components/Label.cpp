@@ -29,9 +29,9 @@ namespace tml
             return Math::PointInRect(p, m_pos, m_size, 0);
         }
 
-        void Label::pDraw(Renderer &window)
+        void Label::pDraw(RenderTarget& target)
         {
-            window.Draw(m_text);
+            target.Draw(m_text);
         }
     }
 }

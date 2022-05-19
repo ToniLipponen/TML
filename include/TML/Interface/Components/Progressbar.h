@@ -1,21 +1,18 @@
 #pragma once
 #include <TML/Interface/BaseComponent.h>
 
-namespace tml
+namespace tml::Interface
 {
-    namespace Interface
+    class TML_API Progressbar : public BaseComponent
     {
-        class Progressbar : public BaseComponent
-        {
-        public:
-            Progressbar(int32_t x, int32_t y, uint32_t w, uint32_t h = 30);
-            float GetValue() const noexcept;
-            void SetValue(float value) noexcept;
-            void SetTextColor(const Color& color) noexcept;
-        private:
-            void pDraw(Renderer &renderer) override;
-            float m_value = 0;
-            Text m_text;
-        };
-    }
+    public:
+        Progressbar(int32_t x, int32_t y, uint32_t w, uint32_t h = 30);
+        float GetValue() const noexcept;
+        void SetValue(float value) noexcept;
+        void SetTextColor(const Color& color) noexcept;
+    private:
+        void pDraw(RenderTarget& renderer) override;
+        float m_value = 0;
+        Text m_text;
+    };
 }

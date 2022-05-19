@@ -2,16 +2,13 @@
 #include <TML/Interface/BaseComponent.h>
 #include <TML/Interface/Layouts/HorizontalLayout.h>
 
-namespace tml
+namespace tml::Interface
 {
-    namespace Interface
+    class TML_API Menubar : public HorizontalLayout
     {
-        class Menubar : public HorizontalLayout
-        {
-        public:
-            explicit Menubar(RenderWindow& window);
-        private:
-            void pDraw(Renderer &renderer) override;
-        };
-    }
+    public:
+        explicit Menubar(RenderWindow& window);
+    private:
+        void pDraw(RenderTarget& renderer) override;
+    };
 }

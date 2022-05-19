@@ -1,16 +1,13 @@
 #pragma once
 #include <TML/Interface/BaseComponent.h>
 
-namespace tml
+namespace tml::Interface
 {
-    namespace Interface
+    class TML_API Spacer : public BaseComponent
     {
-        class Spacer : public BaseComponent
-        {
-        public:
-            Spacer();
-        private:
-            void pDraw(Renderer &renderer) override {}
-        };
-    }
+    public:
+        Spacer();
+    private:
+        void pDraw(RenderTarget& renderer) override {}
+    };
 }

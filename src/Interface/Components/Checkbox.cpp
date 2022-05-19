@@ -20,12 +20,12 @@ namespace tml
             });
         }
 
-        void Checkbox::pDraw(Renderer &window)
+        void Checkbox::pDraw(RenderTarget& target)
         {
-            window.DrawRect(m_pos, m_size, m_pColor);
-            window.DrawGrid(m_pos, m_size, 1, 1, m_sColor);
+            target.DrawRect(m_pos, m_size, m_pColor);
+            target.DrawGrid(m_pos, m_size, 1, 1, m_sColor);
             if(m_value)
-                window.DrawRect(static_cast<Vector2f>(m_pos) + static_cast<Vector2f>(m_size) * 0.2f, static_cast<Vector2f>(m_size) * 0.6f, m_activeColor);
+                target.DrawRect(static_cast<Vector2f>(m_pos) + static_cast<Vector2f>(m_size) * 0.2f, static_cast<Vector2f>(m_size) * 0.6f, m_activeColor);
         }
     }
 }

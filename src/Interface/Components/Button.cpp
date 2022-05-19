@@ -74,12 +74,12 @@ void Button::SetText(const std::string &str)
     m_text.SetString(str);
 }
 
-void Button::pDraw(Renderer &window)
+void Button::pDraw(RenderTarget& target)
 {
-    window.DrawRect(m_pos, m_size, m_state.Focused || m_state.MouseOver ? m_activeColor : m_sColor, m_roundness);
-    window.DrawRect(m_pos + Vector2f(1,1), m_size - Vector2f(2,2), m_state.MouseDown > -1 ? m_activeColor : m_pColor, m_roundness);
+    target.DrawRect(m_pos, m_size, m_state.Focused || m_state.MouseOver ? m_activeColor : m_sColor, m_roundness);
+    target.DrawRect(m_pos + Vector2f(1,1), m_size - Vector2f(2,2), m_state.MouseDown > -1 ? m_activeColor : m_pColor, m_roundness);
 
-    window.SetBounds(m_pos, m_size);
-    window.Draw(m_text);
-    window.ResetBounds();
+    target.SetBounds(m_pos, m_size);
+    target.Draw(m_text);
+    target.ResetBounds();
 }
