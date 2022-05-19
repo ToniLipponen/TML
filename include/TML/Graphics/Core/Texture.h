@@ -25,11 +25,12 @@ namespace tml
             NearestMipmapLinear     = 0x2702,
             LinearMipmapLinear      = 0x2703,
         };
+
     public:
-        Texture();
+        Texture() noexcept;
         Texture(const Texture&) = delete;
         Texture(Texture&& rhs) noexcept;
-        ~Texture();
+        ~Texture() noexcept;
 
         Texture& operator=(const Texture& rhs) noexcept;
         Texture& operator=(Texture&& rhs) noexcept;

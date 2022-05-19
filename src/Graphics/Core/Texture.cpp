@@ -4,7 +4,7 @@
 
 namespace tml
 {
-    Texture::Texture()
+    Texture::Texture() noexcept
     : m_id(0), m_width(0), m_height(0), m_bpp(0), m_internalFormat(0), m_format(0)
     {
 
@@ -21,9 +21,10 @@ namespace tml
         rhs.m_id = 0;
     }
 
-    Texture::~Texture()
+    Texture::~Texture() noexcept
     {
-        GL_CALL(glad_glDeleteTextures(1, &m_id));
+        /// Todo: Figure out why this causes access violation on application exit on Windows.
+        GL_CALL(glad_glDeleteTextures(1, &m_id)); 
     }
 
     Texture& Texture::operator=(const Texture& rhs) noexcept
@@ -68,21 +69,15 @@ namespace tml
 
     bool Texture::LoadFromMemory(int32_t w, int32_t h, uint8_t bpp, const uint8_t* data) noexcept
     {
-        /**
-         *  Delete the old texture handle, and create a new one.
-         */
         GL_CALL(glad_glDeleteTextures(1, &m_id));
 
 #if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
-            GL_CALL(glad_glGenTextures(1, &m_id));
+        GL_CALL(glad_glGenTextures(1, &m_id));
 #else
-            GL_CALL(glad_glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
+        GL_CALL(glad_glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
 #endif
 
-        bool noErrors = true;
-
-        if(m_id == 0)
-            noErrors = false;
+        bool noErrors = m_id == 0;
 
         m_width 	= w;
         m_height 	= h;
