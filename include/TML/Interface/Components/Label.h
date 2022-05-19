@@ -13,7 +13,7 @@ namespace tml
             void SetValue(std::string str);
             virtual bool ContainsPoint(const Vector2i& p) override;
         private:
-            virtual void pDraw(Renderer &renderer) override;
+            virtual void pDraw(RenderTarget& renderer) override;
             Text m_text;
         };
     }

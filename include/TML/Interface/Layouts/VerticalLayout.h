@@ -2,19 +2,16 @@
 #include <TML/Interface/BaseComponent.h>
 #include <TML/Interface/Layout.h>
 
-namespace tml
+namespace tml::Interface
 {
-    namespace Interface
+    class TML_API VerticalLayout : public BaseComponent, public Layout
     {
-        class VerticalLayout : public BaseComponent, public Layout
-        {
-        public:
-            VerticalLayout(int32_t x, int32_t y, uint32_t w, uint32_t h);
+    public:
+        VerticalLayout(int32_t x, int32_t y, uint32_t w, uint32_t h);
 
-        private:
-            void pDraw(Renderer& renderer) override {};
-            void ScaleChildren();
-            void AlignChildren();
-        };
-    }
+    private:
+        void pDraw(RenderTarget& target) override {};
+        void ScaleChildren();
+        void AlignChildren();
+    };
 }
