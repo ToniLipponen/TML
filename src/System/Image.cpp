@@ -42,7 +42,7 @@ namespace tml
     : m_width(image.m_width), m_height(image.m_height), m_Bpp(image.m_Bpp), m_data(new uint8_t[m_width*m_height*m_Bpp])
     {
         if(image.m_data)
-            std::memcpy(m_data, image.m_data, m_width*m_height*m_Bpp);
+            std::memcpy(m_data, image.m_data, m_width * m_height * static_cast<size_t>(m_Bpp));
     }
 
     Image::Image(Image&& image) noexcept
@@ -68,7 +68,7 @@ namespace tml
         delete[] m_data;
         m_data = new uint8_t[m_width * m_height * m_Bpp];
         if(rhs.m_data)
-            std::memcpy(m_data, rhs.m_data, m_width * m_height * m_Bpp);
+            std::memcpy(m_data, rhs.m_data, m_width * m_height * static_cast<size_t>(m_Bpp));
         return *this;
     }
 
@@ -120,11 +120,11 @@ namespace tml
         if((m_width * m_height) != (w * h) || m_Bpp != Bpp)
         {
             delete[] m_data;
-            m_data = new uint8_t[w*h*Bpp];
+            m_data = new uint8_t[w * h * static_cast<size_t>(Bpp)];
         }
 
         if(data)
-            memcpy(m_data, data, w*h*Bpp);
+            memcpy(m_data, data, w * h * static_cast<size_t>(Bpp));
 
         if(m_flipOnRead)
             FlipVertically();
@@ -207,7 +207,7 @@ namespace tml
         if(m_data == nullptr)
             return false;
 
-        const size_t rowLen = m_width * m_Bpp;
+        const size_t rowLen = m_width * static_cast<size_t>(m_Bpp);
         const size_t height2 = m_height / 2;
         auto* row = new uint8_t[rowLen];
 

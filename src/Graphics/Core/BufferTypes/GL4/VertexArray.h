@@ -16,9 +16,11 @@ namespace tml
         auto& lo = layout.GetData();
         uint32_t offset = 0;
         GL_CALL(glad_glVertexArrayVertexBuffer(m_id, 0, vb.m_id, 0, layout.GetStride()));
+
         for(uint64_t i = 0; i < lo.size(); i++)
         {
             GL_CALL(glad_glEnableVertexArrayAttrib(m_id, i));
+
             if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
             {
                 GL_CALL(glad_glVertexArrayAttribIFormat(m_id, i, lo.at(i).elements, lo.at(i).dataType, offset));
@@ -27,6 +29,7 @@ namespace tml
             {
                 GL_CALL(glad_glVertexArrayAttribFormat(m_id, i, lo.at(i).elements, GL_FLOAT, GL_FALSE, offset));
             }
+
             GL_CALL(glad_glVertexArrayAttribBinding(m_id, i, 0));
             offset += lo.at(i).elements * lo.at(i).size;
         }

@@ -37,10 +37,11 @@ namespace tml
     void VertexArray::BufferData(VertexBuffer& vb, BufferLayout& layout) noexcept
     {
         auto& lo = layout.GetData();
-        uint64_t offset = 0;
+        uint32_t offset = 0;
 
         Bind();
         vb.Bind();
+
         for(int i = 0; i < lo.size(); i++)
         {
             GL_CALL(glEnableVertexAttribArray(i));
@@ -50,6 +51,7 @@ namespace tml
                 glVertexAttribPointer(i, lo.at(i).elements, lo.at(i).dataType, 0, layout.GetStride(), (const void*)offset);
             offset += lo.at(i).elements * lo.at(i).size;
         }
+
         Unbind();
         vb.Unbind();
     }
@@ -57,11 +59,12 @@ namespace tml
     void VertexArray::BufferData(VertexBuffer& vb, IndexBuffer& ib, BufferLayout& layout) noexcept
     {
         auto& lo = layout.GetData();
-        uint64_t offset = 0;
+        uint32_t offset = 0;
 
         Bind();
         vb.Bind();
         ib.Bind();
+
         for(int i = 0; i < lo.size(); i++)
         {
             GL_CALL(glEnableVertexAttribArray(i));
@@ -71,6 +74,7 @@ namespace tml
                 glVertexAttribPointer(i, lo.at(i).elements, lo.at(i).dataType, 0, layout.GetStride(), (const void*)offset);
             offset += lo.at(i).elements * lo.at(i).size;
         }
+
         Unbind();
     }
 }

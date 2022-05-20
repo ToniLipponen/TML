@@ -36,26 +36,34 @@ namespace tml
         Intersection rayIntersection;
 
         Vector2f L = pos - position;
-        float tca = L.Dot(direction);
+        const double tca = L.Dot(direction);
 //        if(tca < 0.0f)
 //            return rayIntersection;
 
-        float d2 = L.Dot(L) - tca * tca;
+        const auto d2 = static_cast<float>(L.Dot(L) - tca * tca);
+
         if(d2 > r*r)
             return rayIntersection;
 
-        float thc = sqrt((r*r) - d2);
-        float t0 = tca - thc;
-        float t1 = tca + thc;
+        float thc = std::sqrt((r*r) - d2);
+        auto t0 = static_cast<float>(tca - thc);
+        auto t1 = static_cast<float>(tca + thc);
 
         if(t0 > t1)
+        {
             std::swap(t0, t1);
+        }
+
         if(t0 < 0 )
         {
             t0 = t1;
+
             if(t0 < 0)
+            {
                 return rayIntersection;
+            }
         }
+
         float t = t0;
         const Vector2f hitPosition = position + (direction * t);
         rayIntersection.intersects = true;
@@ -77,8 +85,11 @@ namespace tml
         const float y4 = position.y + direction.y;
 
         const float den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 -x4);
+
         if(den == 0)
+        {
             return rayIntersection;
+        }
 
         const float t =  ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
         const float u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
@@ -89,12 +100,14 @@ namespace tml
             rayIntersection.intersects = true;
             rayIntersection.points.push_back({hitPosition, static_cast<float>(Math::Distance(position, hitPosition))});
         }
+
         return rayIntersection;
     }
 
     Ray::Intersection Ray::IntersectsShape(const std::vector<Vector2f>& points) const noexcept
     {
         Ray::Intersection intersection, rayIntersection;
+
         for(size_t i = 0; i < points.size(); i++)
         {
             intersection = IntersectsLine(points.at(i), points.at((i+1) % (points.size())));
