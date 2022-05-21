@@ -6,6 +6,7 @@
 #include "../Headers/_Assert.h"
 #include "../Headers/Logo.h" /// Logo data
 #include "GLContext/GLContext.h"
+#include "Drop/DropManager.h"
 
 void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void CharCallback(GLFWwindow* window, unsigned int code);
@@ -20,6 +21,7 @@ void WindowMinimizeCallback(GLFWwindow* window, int minimized);
 void CursorPosCallback(GLFWwindow* window, double x, double y);
 void WindowMoveCallback(GLFWwindow* window, int x, int y);
 void GamepadCallback(int jid, int event);
+void DropCallback(GLFWwindow* window, int pathCount, const char** paths);
 
 namespace tml
 {
@@ -169,6 +171,21 @@ namespace tml
         return m_pos.y;
     }
 
+    Vector2i Window::GetSize() const noexcept
+    {
+        return m_size;
+    }
+
+    Vector2i Window::GetPosition() const noexcept
+    {
+        return m_pos;
+    }
+
+    std::vector<String> Window::GetDroppedFiles() const noexcept
+    {
+        return DropManager::GetInstance().Get(m_handle);
+    }
+
     bool Window::PollEvents(Event& e) noexcept
     {
         const auto returnValue = EventSystem::GetInstance().PollEvents(m_handle, e);
@@ -181,16 +198,6 @@ namespace tml
         const auto returnValue = EventSystem::GetInstance().WaitEvents(m_handle, e);
         HandleWindowEvents(e);
         return returnValue;
-    }
-
-    Vector2i Window::GetPosition() const noexcept
-    {
-        return m_pos;
-    }
-
-    Vector2i Window::GetSize() const noexcept
-    {
-        return m_size;
     }
 
     void Window::SetPosition(int32_t x, int32_t y) noexcept
@@ -356,6 +363,7 @@ namespace tml
         glfwSetCursorPosCallback(handle, CursorPosCallback);
         glfwSetWindowPosCallback(handle, WindowMoveCallback);
         glfwSetJoystickCallback(GamepadCallback);
+        glfwSetDropCallback(handle, DropCallback);
         tml::EventSystem::GetInstance().Register(handle);
     }
 }
@@ -479,4 +487,19 @@ void GamepadCallback(int jid, int glfwEvent)
     event.type = glfwEvent == GLFW_CONNECTED ? Event::GamepadConnected : Event::GamepadDisconnected;
     event.gamepad.id = jid;
     tml::EventSystem::GetInstance().PushGlobalEvent(event);
+}
+
+void DropCallback(GLFWwindow* window, int pathCount, const char** paths)
+{
+    std::vector<tml::String> pathsVector;
+
+    for(int i = 0; i < pathCount; i++)
+    {
+        pathsVector.emplace_back(paths[i]);
+    }
+
+    tml::Event event{};
+    event.type = tml::Event::Drop;
+    tml::EventSystem::GetInstance().PushEvent(window, event);
+    tml::DropManager::GetInstance().Set(window, pathsVector);
 }

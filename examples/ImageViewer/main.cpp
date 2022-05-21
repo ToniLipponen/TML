@@ -20,6 +20,7 @@
 
 /**
  * @Usage Very simple image viewer application. You can import images by pasting them in the window with CTRL + V.
+ * Or just drag and dropping them in the window.
  * You can zoom in and out with mouse wheel. Press R to reset view. Press F to toggle filtering.
  * This demo might be a bit messy. If you want, you can copy this and make something a bit more polished out of it.
  */
@@ -92,6 +93,7 @@ int main(int argc, char** argv)
                         oldCamPos = cam.GetPosition();
                     }
                     break;
+
                 case Event::MouseButtonReleased:
                     if(windowEvent.mouseButton.button == Mouse::Left)
                         click = false;
@@ -104,6 +106,7 @@ int main(int argc, char** argv)
                     break;
 
                 case Event::KeyPressed:
+                {
                     if(windowEvent.key.value == Keyboard::KEY_V && windowEvent.key.control)
                     {
                         if(!Clipboard::IsEmpty())
@@ -140,22 +143,43 @@ int main(int argc, char** argv)
                     }
                     else if(windowEvent.key.value == Keyboard::KEY_F)
                         image.SetInterpolation(filter = !filter);
-
-                    break;
+                } break;
 
                 case Event::MouseWheelScrolled:
+                {
                     cam.Zoom(windowEvent.mouseWheelScroll.deltaY * cam.GetZoom() / 5);
                     if(cam.GetZoom() < 0.1)
                         cam.SetZoom(0.1);
-                    break;
+                } break;
 
                 case Event::WindowResized:
                     cam.SetPosition({0, 0});
                     break;
+
                 case Event::Closed:
                     window.Close();
                     break;
-                default:break;
+
+                case Event::Drop:
+                {
+                    std::vector<String> paths = window.GetDroppedFiles();
+                    if(!paths.empty())
+                    {
+                        Image img;
+                        String str = paths.at(0);
+
+                        if(img.LoadFromFile(str))
+                        {
+                            img.FlipVertically();
+                            image.LoadFromImage(img);
+                            imageSize = image.GetSize();
+                            window.SetTitle(str.cpp_str() + " - " + std::to_string(img.GetWidth()) + " x " + std::to_string(img.GetHeight()));
+                        }
+                    }
+                } break;
+
+                default:
+                    break;
             }
 
             scaleImage();

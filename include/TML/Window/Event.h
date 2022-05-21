@@ -105,6 +105,7 @@ namespace tml
             MouseLeft,              //!< The mouse cursor left the area of the window (no data)
             GamepadConnected,       //!< Gamepad was connected. (data in event.gamepad)
             GamepadDisconnected,    //!< Gamepad was disconnected. (data in event.gamepad)
+            Drop                    //!< A file was drag and dropped onto a window. (no data). Get the dropped file paths using Window::GetDroppedFiles().
         };
 
         EventType type = NullEvent;

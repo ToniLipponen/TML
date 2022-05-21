@@ -16,8 +16,8 @@ namespace tml
         void Unbind() const noexcept;
         void BufferData(const void *data, uint32_t vertexSize, uint32_t numOfVertices) noexcept;
         void PushData(const void *data, uint32_t vertexSize, uint32_t numOfVertices) noexcept;
-        constexpr uint32_t DataSize() const noexcept { return m_dataSize; }
-        constexpr uint32_t VertexCount() const noexcept { return m_vertexCount; }
+        inline constexpr uint32_t DataSize() const noexcept { return m_dataSize; }
+        inline constexpr uint32_t VertexCount() const noexcept { return m_vertexCount; }
 
     public:
         friend class VertexArray;
@@ -27,7 +27,6 @@ namespace tml
 
     protected:
         uint32_t m_dataSize, m_vertexCount, m_capacity;
-        void* m_mappedPtr = nullptr;
     };
 
     class TML_API IndexBuffer
@@ -51,7 +50,6 @@ namespace tml
     protected:
         mutable uint32_t m_elements;
         uint32_t m_capacity;
-        void* m_mappedPtr = nullptr;
     };
 
     class BufferLayout
@@ -105,7 +103,7 @@ namespace tml
         void Unbind() const noexcept;
         void BufferData(VertexBuffer &vb, BufferLayout &layout) noexcept;
         void BufferData(VertexBuffer &vb, IndexBuffer &ib, BufferLayout &layout) noexcept;
-        constexpr uint32_t VertexCount() const noexcept { return m_vertexCount; }
+        inline constexpr uint32_t VertexCount() const noexcept { return m_vertexCount; }
 
     private:
         uint32_t m_id, m_vertexCount;

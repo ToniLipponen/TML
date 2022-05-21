@@ -54,6 +54,7 @@ namespace tml
         int32_t GetY() const noexcept;
         Vector2i GetSize() const noexcept;
         Vector2i GetPosition() const noexcept;
+        std::vector<String> GetDroppedFiles() const noexcept;
 
         bool PollEvents(Event& e) noexcept;
         bool WaitEvents(Event& e) noexcept;
