@@ -1,11 +1,13 @@
 <h2>Contributing</h2>
 
-If you find something you could improve, fix or would like to see added to this project, you can help by contributing some code.
-Any contribution to this project is going to be have to be the same license as the project itself (Zlib license). 
-You can add a license/copyright notice to any of the files you have added to this project.
+If you find something you could improve, fix or would like to see added to this project, you can help by contributing some.
+Any contribution to this project should have the same license as the project itself (Zlib license). 
+You can add a license / copyright notice to any of the files you have added to this project.
 
 <h3>License template:</h3>
-<b>
+
+___
+```
 Copyright (C) 2021 [insert your name here]
 
 This software is provided 'as-is', without any express or implied
@@ -25,7 +27,8 @@ freely, subject to the following restrictions:
  misrepresented as being the original software.
 
 3. This notice may not be removed or altered from any source distribution.
-</b>
+```
+___
 
 <h2>Guidelines</h2>
 
@@ -72,7 +75,7 @@ namespace SomeNamespace
         int ShortFunction() const { return m_memberVariable; }
     private:
         int m_memberVariable;
-        int s_staticVariable;
+        static int s_staticVariable;
     };
 }
 ```
