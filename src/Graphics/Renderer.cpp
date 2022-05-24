@@ -106,7 +106,8 @@ namespace tml
         const auto zoom = camera.GetZoom();
 
         glm::mat4 view = glm::mat4(1.0f);
-        view = glm::rotate(view, camera.GetRotation(), glm::vec3(0.f, 0.f, 1.f));
+        const float radians = static_cast<float>(tml::Math::DegToRad(camera.GetRotation()));
+        view = glm::rotate(view, radians, glm::vec3(0.f, 0.f, 1.f));
         view = glm::scale(view, glm::vec3(zoom, zoom, 0));
         view = glm::translate(view, glm::vec3(-pos.x, -pos.y, 0));
 
