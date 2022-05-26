@@ -93,11 +93,28 @@ namespace tml
     void Sound::SetBuffer(const AudioBuffer& buffer) noexcept
     {
         m_buffer = std::make_shared<AudioBuffer>(buffer);
+        m_valid = !m_buffer->GetData().empty();
+        m_frameCount = m_buffer->GetData().size();
+        m_framesRead = 0;
+        m_channels = m_buffer->m_channels;
+        m_rate = m_buffer->m_rate;
     }
 
     void Sound::SetBuffer(const std::shared_ptr<AudioBuffer>& buffer) noexcept
     {
         m_buffer = buffer;
+
+        if(buffer == nullptr)
+        {
+            m_valid = false;
+            return;
+        }
+
+        m_valid = !m_buffer->GetData().empty();
+        m_frameCount = m_buffer->GetData().size();
+        m_framesRead = 0;
+        m_channels = m_buffer->m_channels;
+        m_rate = m_buffer->m_rate;
     }
 
     uint32_t Sound::ReadFrames(float *output, uint32_t frameCount)
