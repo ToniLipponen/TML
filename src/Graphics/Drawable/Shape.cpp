@@ -72,7 +72,9 @@ namespace tml
         m_color = color;
 
         for(auto& i : m_points)
+        {
             i.color = color;
+        }
     }
 
     void Shape::SetTexture(const Texture& texture) noexcept
@@ -91,7 +93,9 @@ namespace tml
         Vector2f position;
 
         for(auto& i : m_points)
+        {
             position = position + i.pos;
+        }
 
         return m_pos + position / m_points.size() - (m_applyOriginToPosition ? m_origin : Vector2f());
     }
@@ -146,8 +150,12 @@ namespace tml
         }
 
         if(m_texture)
+        {
             renderer->PushVertexData(m_vertexData, m_indexData, *m_texture);
+        }
         else
+        {
             renderer->PushVertexData(m_vertexData, m_indexData);
+        }
     }
 }

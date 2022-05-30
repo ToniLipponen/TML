@@ -82,7 +82,9 @@ namespace tml
         void* p = GL_CALL(glad_glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, bytes, GL_MAP_WRITE_BIT));
 
         if(p && data)
+        {
             std::memcpy(p, data, bytes);
+        }
 
         GL_CALL(glad_glUnmapBuffer(GL_SHADER_STORAGE_BUFFER));
     }
@@ -93,7 +95,9 @@ namespace tml
         void* p = GL_CALL(glad_glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, bytes, GL_MAP_READ_BIT));
 
         if(p && data)
+        {
             std::memcpy(data, p, bytes);
+        }
 
         GL_CALL(glad_glUnmapBuffer(GL_SHADER_STORAGE_BUFFER));
     }

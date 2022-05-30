@@ -26,6 +26,7 @@ namespace tml::Net
     {
         struct sockaddr_in sockAddress{};
         auto result = inet_pton(AF_INET, address.c_str(), &sockAddress.sin_addr);
+
         if(result == 0)
         {
             auto ipAddress = IpFromHostname(address);
@@ -33,7 +34,9 @@ namespace tml::Net
 
             /// Invalid address
             if(result != 1)
+            {
                 return false;
+            }
         }
 
         sockAddress.sin_family = AF_INET;
@@ -48,6 +51,7 @@ namespace tml::Net
             m_fd = 0;
             return false;
         }
+
         return true;
     }
 
@@ -86,12 +90,16 @@ namespace tml::Net
         struct in_addr **addr_list;
 
         if((he = gethostbyname(hostname.c_str())) == nullptr)
+        {
             return "";
+        }
 
         addr_list = (struct in_addr **) he->h_addr_list;
 
         for(int i = 0; addr_list[i] != nullptr; i++)
+        {
             return inet_ntoa(*addr_list[i]);
+        }
 
         return "";
     }

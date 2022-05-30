@@ -34,6 +34,7 @@ namespace tml::Net
             m_socket.Receive(&buffer[0], 512, received);
             response.append(buffer, received);
         }
+
         return response;
     }
 }

@@ -125,7 +125,9 @@ namespace tml
     bool Image::LoadFromMemory(int32_t w, int32_t h, int32_t Bpp, const uint8_t* data) noexcept
     {
         if(w == 0 || h == 0 || Bpp == 0 || Bpp > 4)
+        {
             return false;
+        }
 
         if((m_width * m_height) != (w * h) || m_Bpp != Bpp)
         {
@@ -134,10 +136,14 @@ namespace tml
         }
 
         if(data)
+        {
             memcpy(m_data, data, static_cast<size_t>(w) * h * Bpp);
+        }
 
         if(m_flipOnRead)
+        {
             FlipVertically();
+        }
 
         m_width = w;
         m_height = h;
@@ -153,10 +159,14 @@ namespace tml
         bool returnValue = m_data != nullptr;
 
         if(!returnValue)
+        {
             returnValue = LoadSvg(data, dataSize);
+        }
 
         if(m_flipOnRead)
+        {
             FlipVertically();
+        }
 
         return returnValue;
     }
@@ -193,15 +203,21 @@ namespace tml
 
     bool Image::Resize(int32_t requestedWidth, int32_t requestedHeight) noexcept
     {
-        if(m_data == nullptr || m_width == 0 || m_height == 0 ||
-        (requestedWidth == m_width && requestedHeight == m_height) || (requestedWidth == 0 && requestedHeight == 0))
+        if(m_data == nullptr || m_width == 0 || m_height == 0
+        || (requestedWidth == m_width && requestedHeight == m_height)
+        || (requestedWidth == 0 && requestedHeight == 0))
+        {
             return false;
+        }
 
         if(requestedWidth == 0)
+        {
             requestedWidth = requestedHeight * m_height / m_width;
-
+        }
         else if(requestedHeight == 0)
+        {
             requestedHeight = requestedWidth * m_width / m_height;
+        }
 
         auto* newData = new uint8_t[requestedWidth * requestedHeight * m_Bpp];
         stbir_resize_uint8(m_data, m_width, m_height, 0, newData, requestedWidth, requestedHeight, 0, m_Bpp);

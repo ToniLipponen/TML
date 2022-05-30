@@ -28,8 +28,11 @@ namespace tml
     {
         m_state = Stopped;
         Mixer::GetInstance().RemoveSound(m_id);
+
         if(!m_decoder)
+        {
             m_decoder = new ma_decoder;
+        }
 
         static ma_decoder_config config = ma_decoder_config_init(ma_format_f32, 2, 48000);
 
@@ -38,7 +41,9 @@ namespace tml
         m_valid = (result == MA_SUCCESS);
 
         if(!m_valid)
+        {
             return false;
+        }
 
         m_frameCount = ma_decoder_get_length_in_pcm_frames(decoder) * decoder->outputChannels;
         m_rate = decoder->outputSampleRate;
@@ -52,7 +57,9 @@ namespace tml
         Mixer::GetInstance().RemoveSound(m_id);
 
         if(!m_decoder)
+        {
             m_decoder = new ma_decoder;
+        }
 
         static ma_decoder_config config = ma_decoder_config_init(ma_format_f32, 2, 48000);
         auto* decoder = reinterpret_cast<ma_decoder*>(m_decoder);
@@ -60,7 +67,9 @@ namespace tml
         m_valid = (result == MA_SUCCESS);
 
         if(!m_valid)
+        {
             return false;
+        }
 
         m_frameCount = ma_decoder_get_length_in_pcm_frames(decoder) * decoder->outputChannels;
         m_rate = decoder->outputSampleRate;
@@ -71,7 +80,9 @@ namespace tml
     void Music::Stop()
     {
         if(m_valid)
+        {
             ma_decoder_seek_to_pcm_frame((ma_decoder*)m_decoder, 0);
+        }
 
         m_state = Stopped;
         AudioType::Stop();
@@ -90,20 +101,30 @@ namespace tml
             uint32_t framesReadThisIteration;
             uint32_t totalFramesRemaining = frameCount - totalFramesRead;
             uint32_t framesToReadThisIteration = tempCapInFrames;
+
             if(framesToReadThisIteration > totalFramesRemaining)
+            {
                 framesToReadThisIteration = totalFramesRemaining;
+            }
 
             framesReadThisIteration = (uint32_t)ma_decoder_read_pcm_frames(decoder, temp, framesToReadThisIteration);
+
             if(framesReadThisIteration == 0)
+            {
                 break;
+            }
 
             for(iSample = 0; iSample < framesReadThisIteration * decoder->outputChannels; ++iSample)
+            {
                 output[totalFramesRead * decoder->outputChannels + iSample] += temp[iSample] * m_volume;
+            }
 
             totalFramesRead += framesReadThisIteration;
 
             if(framesReadThisIteration < framesToReadThisIteration)
+            {
                 break;
+            }
         }
 
         m_framesRead += totalFramesRead * m_channels;
@@ -111,9 +132,13 @@ namespace tml
         for(uint32_t i = 0; i < totalFramesRead * m_channels; i += 2)
         {
             if(m_balance > 0)
+            {
                 output[i] *= 1 - fabsf(m_balance);
+            }
             else
+            {
                 output[i+1] *= 1 - fabsf(m_balance);
+            }
         }
 
         return totalFramesRead;

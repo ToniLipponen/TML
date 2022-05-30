@@ -30,7 +30,9 @@ namespace tml
     bool EventSystem::PollEvents(const void* handle, Event& event) noexcept
     {
         if(m_handles.find(handle) == m_handles.end())
+        {
             return false;
+        }
 
         glfwPollEvents();
         return PopEvent(handle, event);
@@ -39,11 +41,15 @@ namespace tml
     bool EventSystem::WaitEvents(const void* handle, Event& e) noexcept
     {
         if(m_handles.find(handle) == m_handles.end())
+        {
             return false;
+        }
 
         /// Poll events until there is an event.
         while(!PollEvents(handle, e))
+        {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
 
         return true;
     }
@@ -51,20 +57,27 @@ namespace tml
     void EventSystem::PushEvent(const void* handle, Event &event) noexcept
     {
         if(m_handles.find(handle) != m_handles.end())
+        {
             m_handles.at(handle).push(event);
+        }
     }
 
     void EventSystem::PushGlobalEvent(Event& event) noexcept
     {
         for(auto& queue : m_handles)
+        {
             queue.second.push(event);
+        }
     }
 
     bool EventSystem::PopEvent(const void* handle, Event& e) noexcept
     {
         auto& queue = m_handles.at(handle);
+
         if(queue.empty())
+        {
             return false;
+        }
 
         e = queue.front();
         queue.pop();

@@ -45,10 +45,16 @@ namespace tml
         for(int i = 0; i < lo.size(); i++)
         {
             GL_CALL(glEnableVertexAttribArray(i));
+
             if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
+            {
                 glVertexAttribIPointer(i, lo.at(i).elements, lo.at(i).dataType, layout.GetStride(), (const void*)offset);
+            }
             else
+            {
                 glVertexAttribPointer(i, lo.at(i).elements, lo.at(i).dataType, 0, layout.GetStride(), (const void*)offset);
+            }
+
             offset += lo.at(i).elements * lo.at(i).size;
         }
 
@@ -68,10 +74,16 @@ namespace tml
         for(int i = 0; i < lo.size(); i++)
         {
             GL_CALL(glEnableVertexAttribArray(i));
+
             if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
+            {
                 glVertexAttribIPointer(i, lo.at(i).elements, lo.at(i).dataType, layout.GetStride(), (const void*)offset);
+            }
             else
+            {
                 glVertexAttribPointer(i, lo.at(i).elements, lo.at(i).dataType, 0, layout.GetStride(), (const void*)offset);
+            }
+
             offset += lo.at(i).elements * lo.at(i).size;
         }
 

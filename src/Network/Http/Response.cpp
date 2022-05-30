@@ -33,18 +33,23 @@ namespace tml
             {
                 return m_properties.at(property);
             }
+
             return "";
         }
 
         void HttpResponse::SetContent(const std::string &content)
         {
             if(content.empty())
+            {
                 return;
+            }
+
             std::vector<std::string> lines;
             const auto header = content.substr(0, content.find("\r\n\r\n"));
             m_body = content.substr(content.find("\r\n\r\n")+4, content.size());
 
             size_t pos = 0;
+
             while(pos < header.size())
             {
                 auto lineEnd = header.find_first_of("\r\n", pos);

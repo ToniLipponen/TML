@@ -147,7 +147,9 @@ namespace tml
     inline void Texture::Update() const noexcept
     {
         if(m_id == 0)
+        {
             return;
+        }
 
 #if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
         GL_CALL(glad_glBindTexture(GL_TEXTURE_2D, m_id));
@@ -168,7 +170,9 @@ namespace tml
     inline void Texture::Upload(const void* data) const noexcept
     {
         if(m_id == 0)
+        {
             return;
+        }
 
         Update();
 

@@ -120,8 +120,10 @@ namespace tml
                 m_vertexData.push_back(Vertex{offset + Math::Rotate(origin, m_pos - ry + Vector2f{0.f, m_size.y}, cos_r, sin_r),{0,0}, hex, Vertex::COLOR});
                 m_vertexData.push_back(Vertex{offset + Math::Rotate(origin, m_pos - ry + m_size, cos_r, sin_r),                 {0,0}, hex, Vertex::COLOR});
             }
+
             m_updated = false;
         }
+
         renderer->PushVertexData(m_vertexData, m_indexData, *circle);
     }
 }

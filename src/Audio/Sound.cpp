@@ -40,7 +40,9 @@ namespace tml
     Sound& Sound::operator=(const Sound& sound) noexcept
     {
         if(&sound == this)
+        {
             return *this;
+        }
 
         m_framesRead    = 0;
         m_buffer        = sound.m_buffer;
@@ -120,19 +122,27 @@ namespace tml
     uint32_t Sound::ReadFrames(float *output, uint32_t frameCount)
     {
         if(m_buffer == nullptr)
+        {
             return 0;
+        }
 
-        const uint32_t readFrames = Math::Clamp<uint32_t>(frameCount * m_channels, 0, m_frameCount - m_framesRead);
+        const auto readFrames = Math::Clamp<uint32_t>(frameCount * m_channels, 0, m_frameCount - m_framesRead);
 
         for(uint32_t i = 0; i < readFrames; ++i)
+        {
             output[i] += m_buffer->GetData()[m_framesRead + i] * m_volume;
+        }
 
         for(uint32_t i = 0; i < readFrames; i += 2)
         {
             if(m_balance > 0)
+            {
                 output[i] *= 1 - fabsf(m_balance);
+            }
             else
+            {
                 output[i+1] *= 1 - fabsf(m_balance);
+            }
         }
 
         m_framesRead += readFrames;

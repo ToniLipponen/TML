@@ -18,7 +18,9 @@ namespace tml
         Image image;
 
         if(!image.LoadFromFile(filename))
+        {
             return false;
+        }
 
         image.FlipVertically();
 
@@ -34,7 +36,9 @@ namespace tml
     bool Sprite::LoadFromImage(const Image& image) noexcept
     {
         if(image.GetData() == nullptr)
+        {
             return false;
+        }
 
         auto newTexture = std::make_shared<Texture>();
         newTexture->LoadFromImage(image);
@@ -53,7 +57,9 @@ namespace tml
         m_texture = texture;
 
         if(m_texture == nullptr)
+        {
             return false;
+        }
 
         m_size = Vector2f(m_texture->GetWidth(), m_texture->GetHeight());
         m_texSize = m_size;
@@ -120,10 +126,13 @@ namespace tml
                 m_vertexData.emplace_back(Vertex{m_pos - offset + Vector2f(0.f, m_size.y), {tl.x, tl.y}, 0x0, Vertex::TEXTURE});
                 m_vertexData.emplace_back(Vertex{m_pos - offset + m_size,                  {br.x, tl.y}, 0x0, Vertex::TEXTURE});
             }
+
             m_updated = false;
         }
 
         if(m_texture)
+        {
             renderer->PushVertexData(m_vertexData, m_indexData, *m_texture);
+        }
     }
 }

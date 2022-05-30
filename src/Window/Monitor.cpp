@@ -103,8 +103,11 @@ namespace tml
     {
         const auto monitors = GetMonitors();
 
+        /// No monitors found.
         if(monitors.empty())
-            return {}; //!< Error: No monitors found.
+        {
+            return {};
+        }
 
         return monitors.at(0);
     }

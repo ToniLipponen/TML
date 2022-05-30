@@ -19,7 +19,9 @@ namespace tml
     void RenderTexture::Create(int32_t width, int32_t height) noexcept
     {
         if(!m_frameBuffer)
+        {
             m_frameBuffer = new FrameBuffer();
+        }
 
         m_width = width;
         m_height = height;

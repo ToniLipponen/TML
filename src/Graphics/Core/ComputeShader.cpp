@@ -16,7 +16,9 @@ namespace tml
     bool ComputeShader::LoadFromString(const String &source) noexcept
     {
         if(m_id == 0)
+        {
             m_id = GL_CALL(glad_glCreateProgram());
+        }
 
         uint32_t shaderID = GL_CALL(glad_glCreateShader(GL_COMPUTE_SHADER));
 
@@ -76,11 +78,13 @@ namespace tml
         GL_CALL(glad_glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT));
     }
 
+    /** I quess this is not needed **/
     inline uint32_t ComputeShader::GetResourceIndex(const std::string& name) noexcept
     {
-        /** I quess this is not needed **/
         if(m_resourceIndexCache.find(name) != m_resourceIndexCache.end())
+        {
             return m_resourceIndexCache.at(name);
+        }
 
         const uint32_t index = GL_CALL(glad_glGetProgramResourceIndex(m_id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
         m_resourceIndexCache[name] = index;

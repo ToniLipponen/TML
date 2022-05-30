@@ -16,8 +16,11 @@ namespace tml::Net
         {
             m_port = port;
             auto result = Bind(); // Rebind.
+
             if(!result)
+            {
                 return false;
+            }
         }
         return listen(m_fd, 5) != -1;
     }
@@ -44,7 +47,9 @@ namespace tml::Net
 
         /// Failed to bind socket address
         if(result == -1)
+        {
             return false;
+        }
 
         return true;
     }

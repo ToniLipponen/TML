@@ -11,8 +11,11 @@ namespace tml
     bool Keyboard::IsKeyPressed(Key key)
     {
         auto context = glfwGetCurrentContext();
+
         if(!context)
+        {
             return false;
+        }
 
         return glfwGetKey(context, key) == GLFW_PRESS;
     }
@@ -20,8 +23,11 @@ namespace tml
     bool Keyboard::IsKeyDown(Key key)
     {
         auto context = glfwGetCurrentContext();
+
         if(!context)
+        {
             return false;
+        }
 
         auto state = glfwGetKey(context, key);
         return state == GLFW_REPEAT || state == GLFW_PRESS;
@@ -30,8 +36,11 @@ namespace tml
     Vector2d Mouse::GetPosition()
     {
         auto context = glfwGetCurrentContext();
+
         if(!context)
+        {
             return {0,0};
+        }
 
         Vector2d mousePos;
         glfwGetCursorPos(context, &mousePos.x, &mousePos.y);
@@ -41,8 +50,12 @@ namespace tml
     bool Mouse::ButtonDown(Button button)
     {
         auto context = glfwGetCurrentContext();
+
         if(!context)
+        {
             return false;
+        }
+
         return glfwGetMouseButton(context, button) == GLFW_PRESS;
     }
 }

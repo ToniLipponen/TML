@@ -66,6 +66,6 @@ void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum 
         }
     }();
 
-    std::printf("[Error]: %s, %s, %s, %d, %s\n", src_str, type_str, severity_str, id, message);
+    std::printf("[%s]: %s, %s, %d, %s\n", type_str, src_str,severity_str, id, message);
 }
 #endif

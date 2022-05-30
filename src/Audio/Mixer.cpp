@@ -26,8 +26,8 @@ namespace tml
         auto* maDevice = reinterpret_cast<ma_device*>(device);
         auto* mixer = reinterpret_cast<Mixer*>(maDevice->pUserData);
         auto& sounds = mixer->m_sounds;
-
         auto* pOutputF32 = static_cast<float*>(pOutput);
+
         if(!sounds.empty())
         {
             for(auto& sound : sounds)
@@ -35,16 +35,22 @@ namespace tml
                 if(sound.second->IsPlaying())
                 {
                     const uint32_t frames = sound.second->ReadFrames(pOutputF32, frameCount);
+
                     if(frames < frameCount)
                     {
                         sound.second->Stop();
                         if(sound.second->IsLooping())
+                        {
                             sound.second->Play();
+                        }
                     }
                 }
             }
+
             for(uint32_t i = 0; i < frameCount*2; ++i)
+            {
                 pOutputF32[i] *= maDevice->masterVolumeFactor;
+            }
         }
     }
 
@@ -62,10 +68,15 @@ namespace tml
         auto* outputDevice = static_cast<::ma_device*>(m_outputDevice);
         auto result = ma_device_init(nullptr, &config, outputDevice);
         outputDevice->masterVolumeFactor = 1;
+
         if(result == MA_SUCCESS)
+        {
             ma_device_start(outputDevice);
+        }
         else
+        {
             std::puts("[Error]: Failed to initialize audio output device");
+        }
     }
 
     Mixer::~Mixer()
@@ -94,7 +105,9 @@ namespace tml
     void Mixer::RemoveSound(uint64_t id) noexcept
     {
         if(m_sounds.find(id) != m_sounds.end())
+        {
             m_sounds.erase(id);
+        }
     }
 
     uint64_t Mixer::GetAudioID() noexcept

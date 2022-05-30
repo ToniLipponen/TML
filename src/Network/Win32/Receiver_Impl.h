@@ -13,8 +13,11 @@ namespace tml
             {
                 m_port = port;
                 auto result = Bind(); // Rebind.
+
                 if(!result)
+                {
                     return false;
+                }
             }
 
             if(listen(m_fd, 5) == SOCKET_ERROR)
@@ -50,7 +53,9 @@ namespace tml
             auto iResult = getaddrinfo(nullptr, std::to_string(m_port).c_str(), &hints, &result);
 
             if(iResult != 0)
+            {
                 return false;
+            }
 
             m_fd = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
 

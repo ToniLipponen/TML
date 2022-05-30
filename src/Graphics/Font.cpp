@@ -36,7 +36,9 @@ namespace tml
     Font& Font::operator=(const Font& rhs)
     {
         if(&rhs == this)
+        {
             return *this;
+        }
 
         std::memcpy(m_cdata, rhs.m_cdata, sizeof(stbtt_packedchar) * MAX_GLYPH_COUNT);
         m_texture = rhs.m_texture;
@@ -46,7 +48,9 @@ namespace tml
     Font& Font::operator=(Font&& rhs) noexcept
     {
         if(&rhs == this)
+        {
             return *this;
+        }
 
         delete[] ((stbtt_packedchar*)m_cdata);
         std::swap(m_cdata, rhs.m_cdata);
@@ -60,7 +64,9 @@ namespace tml
         std::vector<char> data;
 
         if(!File::GetBytes(filename.cpp_str(), data))
+        {
             return false;
+        }
 
         return LoadFromData(reinterpret_cast<const uint8_t *>(data.data()));
     }

@@ -56,7 +56,9 @@ namespace tml
         ma_result result = ma_decoder_init_memory(data, bytes, &config, &decoder);
 
         if(result != MA_SUCCESS)
+        {
             return false;
+        }
 
         size_t sampleCount = ma_decoder_get_length_in_pcm_frames(&decoder) * decoder.outputChannels;
 
@@ -73,7 +75,9 @@ namespace tml
     bool AudioBuffer::LoadFromMemory(const float *data, uint8_t channels, uint32_t rate, size_t sampleCount) noexcept
     {
         if(data == nullptr || channels < 1 || rate == 0)
+        {
             return false;
+        }
 
         Clear();
         m_data = std::vector<float>(data, data+sampleCount);

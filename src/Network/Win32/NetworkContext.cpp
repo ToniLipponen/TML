@@ -8,10 +8,15 @@ void WinNetContext::Create()
     if(!s_initialized)
     {
         WSADATA wsaData;
+
         if(WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+        {
             std::puts("[Error]: WSAStartup failed");
+        }
         else
+        {
             s_initialized = true;
+        }
     }
 }
 

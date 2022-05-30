@@ -46,12 +46,15 @@ namespace tml
     {
         /// Swap buffers if this window is still open and there is an opengl context associated with this window.
         if(IsOpen() && m_hasGLContext)
+        {
             glfwSwapBuffers(static_cast<GLFWwindow*>(m_handle));
+        }
     }
 
     bool Window::Create(int32_t w, int32_t h, const String& title, uint32_t settings) noexcept
     {
         GLFWwindow* glContextHandle = nullptr;
+
         if(settings & NoClient)
         {
             TML_ASSERT(glfwInit() == GLFW_TRUE, "Failed to initialize GLFW");
@@ -92,7 +95,9 @@ namespace tml
         }
 
         if(m_handle == nullptr)
+        {
             return false;
+        }
 
         SetActive();
         glfwSwapInterval(0);
@@ -141,8 +146,10 @@ namespace tml
     bool Window::IsOpen() const noexcept
     {
         if(m_handle)
+        {
             return !glfwWindowShouldClose(static_cast<GLFWwindow*>(m_handle));
-        
+        }
+
         return false;
     }
 
@@ -310,9 +317,13 @@ namespace tml
     void Window::SetActive(bool active) const noexcept
     {
         if(!active)
+        {
             glfwMakeContextCurrent(nullptr);
+        }
         else if(m_handle != glfwGetCurrentContext() && m_hasGLContext)
+        {
             glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_handle));
+        }
     }
 
     void Window::SetVisible(bool visible) const noexcept

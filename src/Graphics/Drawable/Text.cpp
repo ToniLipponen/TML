@@ -134,7 +134,9 @@ namespace tml
         for(auto c : m_string)
         {
             if(Math::InRange<int32_t>((int)c, 0, 8) || Math::InRange<int32_t>((int)c, 14, 31))
+            {
                 continue;
+            }
 
             switch(c)
             {
@@ -206,6 +208,7 @@ namespace tml
             Generate();
             m_updated = false;
         }
+
         renderer->PushVertexData(m_vertexData, m_indexData, m_font ? m_font->m_texture : GetDefaultFont().m_texture);
     }
 

@@ -30,18 +30,22 @@ namespace tml::Net
 
         /// Failed to get host address info
         if(iResult != 0)
+        {
             return false;
+        }
 
         for(ptr = result; ptr != nullptr; ptr = ptr->ai_next)
         {
             m_fd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
 
-            if (m_fd == INVALID_SOCKET)
+            if(m_fd == INVALID_SOCKET)
+            {
                 return false;
+            }
 
             iResult = connect(m_fd, ptr->ai_addr, ptr->ai_addrlen);
 
-            if (iResult == SOCKET_ERROR)
+            if(iResult == SOCKET_ERROR)
             {
                 closesocket(m_fd);
                 m_fd = INVALID_SOCKET;
@@ -54,7 +58,9 @@ namespace tml::Net
         freeaddrinfo(result);
 
         if(m_fd == INVALID_SOCKET)
+        {
             return false;
+        }
 
         return true;
     }

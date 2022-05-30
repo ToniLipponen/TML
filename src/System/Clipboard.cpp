@@ -27,6 +27,7 @@ namespace tml
             string = str;
             return true;
         }
+
         return false;
     }
 
@@ -42,8 +43,10 @@ namespace tml
                     4,
                     reinterpret_cast<const uint8_t*>(clipImage.data())
             );
+
             return true;
         }
+
         return false;
     }
 

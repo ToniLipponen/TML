@@ -83,10 +83,14 @@ namespace tml
         GL_CALL(glGetProgramiv(m_id, GL_VALIDATE_STATUS, &validationStatus));
 
         if(linkStatus != GL_TRUE)
+        {
             std::puts("[Error]: Failed to link shader program");
+        }
 
         if(validationStatus != GL_TRUE)
+        {
             std::puts("[Error]: Failed to validate shader program");
+        }
 
         GL_CALL(glad_glDetachShader(m_id, _vs));
         GL_CALL(glad_glDetachShader(m_id, _fs));
@@ -98,12 +102,16 @@ namespace tml
     inline int32_t Shader::GetUniformLocation(const std::string& name) const noexcept
     {
         if(m_uniformCache.find(name) != m_uniformCache.end())
+        {
             return m_uniformCache[name];
+        }
 
         const int32_t loc = GL_CALL(glGetUniformLocation(m_id, name.c_str()));
 
         if(loc != -1)
+        {
             m_uniformCache[name] = loc;
+        }
 
         return loc;
     }

@@ -19,10 +19,14 @@ namespace tml
         ResetCamera();
 
         if(m_autoResizeViewport)
+        {
             SetViewport({0,0}, m_size);
+        }
 
         if(m_autoResizeView)
+        {
             SetView({0,0}, m_size);
+        }
 
         RenderTarget::Clear();
     }

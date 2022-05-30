@@ -37,9 +37,13 @@ namespace tml
         const auto size = elements * 4;
 
         if(data)
+        {
             m_elements = elements;
+        }
         else
+        {
             m_elements = 0;
+        }
 
         GL_CALL(glad_glNamedBufferData(m_id, size, data, BUFFER_USAGE_FLAG));
     }

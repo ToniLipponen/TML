@@ -169,7 +169,9 @@ namespace tml
         m_vertexData.insert(std::end(m_vertexData), std::begin(vertices), end(vertices));
 
         for(const auto i : indices)
+        {
             m_indexData.push_back(i + size);
+        }
     }
 
     void Renderer::PushVertexData(std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const Texture& tex) noexcept
@@ -177,7 +179,9 @@ namespace tml
         const uint32_t slot = PushTexture(tex);
 
         for(Vertex& i : vertices)
+        {
             i.texAndType = slot | i.texAndType;
+        }
 
         PushVertexData(vertices, indices);
     }
@@ -186,7 +190,9 @@ namespace tml
     uint32_t Renderer::PushTexture(const Texture &texture) noexcept
     {
         if(CheckLimits(0, 0, 1))
+        {
             EndBatch();
+        }
 
         const auto id = texture.GetID();
         const auto begin = std::begin(m_textures);
@@ -197,7 +203,9 @@ namespace tml
         texture.Bind(index);
 
         if(iterator == end)
+        {
             m_textures.push_back(id);
+        }
 
         return index;
     }
@@ -212,7 +220,9 @@ namespace tml
                             const Vector2f& br) noexcept
     {
         if(CheckLimits(4, 6, 1))
+        {
             EndBatch();
+        }
 
         const uint32_t tex = PushTexture(texture);
         const uint32_t hex = col.Hex();
@@ -258,12 +268,16 @@ namespace tml
     void Renderer::EndBatch() noexcept
     {
         if(m_vertexData.empty())
+        {
             return;
+        }
 
         m_shader->Bind();
 
         for(int i = 0; i < static_cast<int>(m_textures.size()); ++i)
+        {
             m_shader->Uniform1i("uTexture" + std::to_string(i), i);
+        }
 
         m_shader->Uniform2f("uViewSize", m_viewport.size.x, m_viewport.size.y);
         m_shader->UniformMat4fv("uView",  1, false, m_view);

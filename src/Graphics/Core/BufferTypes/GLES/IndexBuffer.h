@@ -36,9 +36,13 @@ namespace tml
         m_capacity = elements;
 
         if(data)
+        {
             m_elements = elements;
+        }
         else
+        {
             m_elements = 0;
+        }
 
         Bind();
         GL_CALL(glad_glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements * 4, data, BUFFER_USAGE_FLAG));
