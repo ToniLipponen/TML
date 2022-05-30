@@ -93,4 +93,14 @@ namespace tml
     {
         m_data.clear();
     }
+
+    bool AudioBuffer::WriteToFile(const String &filename) const noexcept
+    {
+        ma_encoder encoder{};
+        ma_encoder_config config = ma_encoder_config_init(ma_resource_format_wav, ma_format_f32, 2, 48000);
+        ma_encoder_init_file(filename.c_str(), &config, &encoder);
+        ma_encoder_write_pcm_frames(&encoder, m_data.data(), m_data.size() / config.channels);
+        ma_encoder_uninit(&encoder);
+        return true; /// Just returning true for now.
+    }
 }

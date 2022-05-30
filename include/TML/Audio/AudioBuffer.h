@@ -24,6 +24,7 @@ namespace tml
         void Clear() noexcept;                                                //!< Clears samples.
         const std::vector<float>& GetData() const noexcept { return m_data; }
         std::vector<float>& GetData() noexcept { return m_data; }
+        bool WriteToFile(const String& filename) const noexcept;
         friend class Sound;
     private:
         std::vector<float> m_data;
