@@ -1,11 +1,11 @@
 #include <TML/Audio/AudioBuffer.h>
 #include <TML/System/Math.h>
+#include <TML/System/File.h>
 #include <miniaudio/miniaudio.h>
 #include <fstream>
 
 namespace tml
 {
-
     AudioBuffer::AudioBuffer(const String& filename)
     {
         LoadFromFile(filename);
@@ -37,16 +37,10 @@ namespace tml
     bool AudioBuffer::LoadFromFile(const String& filename) noexcept
     {
         std::ifstream file(filename.cpp_str(), std::ios::ate | std::ios::binary);
-        size_t len = file.tellg();
 
-        char* buffer = new char[len];
-        file.seekg(file.beg);
-        file.read(buffer, len);
-        file.close();
-
-        const auto returnValue = LoadFromData(buffer, len);
-        delete[] buffer;
-        return returnValue;
+        size_t length = 0;
+        auto data = File::GetBytes(filename.cpp_str(), length);
+        return LoadFromData(data.get(), length);
     }
 
     bool AudioBuffer::LoadFromData(const void *data, size_t bytes) noexcept
@@ -62,12 +56,10 @@ namespace tml
 
         size_t sampleCount = ma_decoder_get_length_in_pcm_frames(&decoder) * decoder.outputChannels;
 
-        auto* samples = new float[sampleCount];
-        ma_decoder_read_pcm_frames(&decoder, samples, sampleCount);
-        const auto returnResult = LoadFromMemory(samples, decoder.outputChannels, decoder.outputSampleRate, sampleCount);
-
+        std::unique_ptr<float[]> samples(new float[sampleCount]);
+        ma_decoder_read_pcm_frames(&decoder, samples.get(), sampleCount);
+        const auto returnResult = LoadFromMemory(samples.get(), decoder.outputChannels, decoder.outputSampleRate, sampleCount);
         ma_decoder_uninit(&decoder);
-        delete[] samples;
 
         return returnResult;
     }

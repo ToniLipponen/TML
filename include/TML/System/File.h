@@ -3,6 +3,7 @@
 #include <fstream>
 #include <filesystem>
 #include <vector>
+#include <memory>
 
 namespace tml::File
 {
@@ -44,6 +45,24 @@ namespace tml::File
         }
 
         return false;
+    }
+
+    inline std::unique_ptr<char[]> GetBytes(const std::string& filename, size_t& size) noexcept
+    {
+        if(std::filesystem::exists(filename))
+        {
+            std::ifstream file(filename, std::ios::binary | std::ios::ate);
+            size = file.tellg();
+            file.seekg(std::ios::beg);
+
+            std::unique_ptr<char[]> data(new char[size]);
+            file.read(data.get(), size);
+
+            return data;
+        }
+
+        size = 0;
+        return {};
     }
 
     inline std::string GetString(const std::string& filename) noexcept
