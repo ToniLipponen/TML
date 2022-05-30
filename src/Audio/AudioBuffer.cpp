@@ -2,7 +2,7 @@
 #include <TML/System/Math.h>
 #include <TML/System/File.h>
 #include <miniaudio/miniaudio.h>
-#include <fstream>
+#include "Converter.h"
 
 namespace tml
 {
@@ -51,6 +51,7 @@ namespace tml
 
         if(result != MA_SUCCESS)
         {
+            ma_decoder_uninit(&decoder);
             return false;
         }
 
@@ -71,8 +72,12 @@ namespace tml
             return false;
         }
 
-        Clear();
-        m_data = std::vector<float>(data, data+sampleCount);
+        m_data.clear();
+        m_data.resize(sampleCount * 2 / channels * 48000 / rate);
+
+        Converter converter(channels, static_cast<int>(rate), 2, 48000);
+        unsigned long long framesIn = sampleCount / channels, framesOut = m_data.size();
+        converter.Convert(m_data.data(), framesOut, data, framesIn);
         m_channels = channels;
         m_rate = rate;
         return true;
@@ -81,7 +86,6 @@ namespace tml
     void AudioBuffer::Append(const AudioBuffer& anotherBuffer) noexcept
     {
         auto& anotherData = anotherBuffer.m_data;
-        m_data.resize(m_data.size() + anotherBuffer.m_data.size());
         m_data.insert(m_data.end(), anotherData.begin(), anotherData.end());
     }
 

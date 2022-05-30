@@ -128,21 +128,13 @@ namespace tml
 
         const auto readFrames = Math::Clamp<uint32_t>(frameCount * m_channels, 0, m_frameCount - m_framesRead);
 
-        for(uint32_t i = 0; i < readFrames; ++i)
-        {
-            output[i] += m_buffer->GetData()[m_framesRead + i] * m_volume;
-        }
+        float left  = Math::Map<float>(m_balance, 1, 0, 0, 1);
+        float right = Math::Map<float>(m_balance, -1, 0, 0, 1);
 
         for(uint32_t i = 0; i < readFrames; i += 2)
         {
-            if(m_balance > 0)
-            {
-                output[i] *= 1 - fabsf(m_balance);
-            }
-            else
-            {
-                output[i+1] *= 1 - fabsf(m_balance);
-            }
+            output[i    ] += m_buffer->GetData()[m_framesRead + i    ] * m_volume * left;
+            output[i + 1] += m_buffer->GetData()[m_framesRead + i + 1] * m_volume * right;
         }
 
         m_framesRead += readFrames;

@@ -2,6 +2,7 @@
 #include <TML/Audio/Mixer.h>
 #include <miniaudio/miniaudio.h>
 #include <cmath>
+#include "TML/System/Math.h"
 
 namespace tml
 {
@@ -94,6 +95,9 @@ namespace tml
         uint32_t tempCapInFrames = (sizeof(temp) / sizeof(float)) / decoder->outputChannels;
         uint32_t totalFramesRead = 0;
 
+        float left  = Math::Map<float>(m_balance, 1, 0, 0, 1);
+        float right = Math::Map<float>(m_balance, -1, 0, 0, 1);
+
         while(totalFramesRead < frameCount)
         {
             uint32_t iSample;
@@ -113,9 +117,10 @@ namespace tml
                 break;
             }
 
-            for(iSample = 0; iSample < framesReadThisIteration * decoder->outputChannels; ++iSample)
+            for(iSample = 0; iSample < framesReadThisIteration * decoder->outputChannels; iSample += 2)
             {
-                output[totalFramesRead * decoder->outputChannels + iSample] += temp[iSample] * m_volume;
+                output[totalFramesRead * decoder->outputChannels + iSample    ] += temp[iSample    ] * m_volume * left;
+                output[totalFramesRead * decoder->outputChannels + iSample + 1] += temp[iSample + 1] * m_volume * right;
             }
 
             totalFramesRead += framesReadThisIteration;
@@ -127,19 +132,6 @@ namespace tml
         }
 
         m_framesRead += totalFramesRead * m_channels;
-
-        for(uint32_t i = 0; i < totalFramesRead * m_channels; i += 2)
-        {
-            if(m_balance > 0)
-            {
-                output[i] *= 1 - fabsf(m_balance);
-            }
-            else
-            {
-                output[i+1] *= 1 - fabsf(m_balance);
-            }
-        }
-
         return totalFramesRead;
     }
 }

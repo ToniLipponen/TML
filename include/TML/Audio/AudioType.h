@@ -4,7 +4,6 @@
 #include <functional>
 #include <TML/Export.h>
 
-
 namespace tml
 {
     class TML_API AudioType
@@ -26,9 +25,9 @@ namespace tml
         bool IsPlaying() const { return m_state == Playing; }
         bool IsLooping() const { return m_looping; }
         virtual uint32_t ReadFrames(float* output, uint32_t frameCount) = 0;
-        inline constexpr uint64_t GetLength() const noexcept { return m_frameCount; }
-        uint64_t GetLengthInSeconds() const noexcept;
-        double GetProgress() const noexcept;
+        virtual uint64_t GetLength() noexcept;
+        virtual uint64_t GetLengthInSeconds() noexcept;
+        virtual double GetProgress() const noexcept;
 
     protected:
         uint64_t m_framesRead;

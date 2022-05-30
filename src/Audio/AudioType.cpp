@@ -71,14 +71,19 @@ namespace tml
         m_balance = Math::Clamp<float>(balance, -1, 1);
     }
 
-    uint64_t AudioType::GetLengthInSeconds() const noexcept
+    uint64_t AudioType::GetLength() noexcept
+    {
+        return m_frameCount;
+    }
+
+    uint64_t AudioType::GetLengthInSeconds() noexcept
     {
         if((m_rate == 0) || (m_channels == 0))
         {
             return 0;
         }
 
-        return m_frameCount / m_rate / m_channels;
+        return GetLength() / m_rate / m_channels;
     }
 
     double AudioType::GetProgress() const noexcept
