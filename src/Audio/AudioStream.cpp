@@ -11,6 +11,16 @@ namespace tml
         m_looping = true;
     }
 
+    AudioStream& AudioStream::operator<<(AudioStream& rhs) noexcept
+    {
+        std::lock_guard<std::mutex> lockGuard1(m_mutex);
+        std::lock_guard<std::mutex> lockGuard2(rhs.m_mutex);
+
+        m_buffer.insert(m_buffer.end(), rhs.m_buffer.begin(), rhs.m_buffer.end());
+        rhs.m_buffer.clear();
+        return *this;
+    }
+
     AudioStream& AudioStream::operator<<(const AudioBuffer& rhs) noexcept
     {
         std::lock_guard<std::mutex> lockGuard(m_mutex);
@@ -20,7 +30,7 @@ namespace tml
         return *this;
     }
 
-    AudioBuffer& AudioStream::operator>>(AudioBuffer& rhs) noexcept
+    AudioStream& AudioStream::operator>>(AudioBuffer& rhs) noexcept
     {
         std::lock_guard<std::mutex> lockGuard(m_mutex);
 
@@ -28,13 +38,29 @@ namespace tml
         buffer.insert(buffer.end(), m_buffer.begin(), m_buffer.end());
         m_buffer.clear();
 
-        return rhs;
+        return *this;
+    }
+
+    AudioStream& AudioStream::operator>>(AudioStream& rhs) noexcept
+    {
+        std::lock_guard<std::mutex> lockGuard1(m_mutex);
+        std::lock_guard<std::mutex> lockGuard2(rhs.m_mutex);
+
+        rhs.m_buffer.insert(rhs.m_buffer.end(), m_buffer.begin(), m_buffer.end());
+        m_buffer.clear();
+        return *this;
     }
 
     uint64_t AudioStream::GetLength() noexcept
     {
         std::lock_guard<std::mutex> lockGuard(m_mutex);
         return m_buffer.size();
+    }
+
+    void AudioStream::Flush() noexcept
+    {
+        std::lock_guard<std::mutex> lockGuard(m_mutex);
+        m_buffer.clear();
     }
 
     uint32_t AudioStream::ReadFrames(float *output, uint32_t frameCount)

@@ -100,7 +100,7 @@ namespace tml
         }
 
         SetActive();
-        glfwSwapInterval(0);
+        glfwSwapInterval(static_cast<int>((settings & Settings::VSync) != 0));
 
         /** Set window icon to TML-logo **/
         Image image(LOGO_DATA.data(), static_cast<int>(LOGO_DATA.size()));

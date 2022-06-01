@@ -23,6 +23,7 @@ namespace tml
 {
     void MixerOnAudioCallback(void* device, void* pOutput, const void* pInput, ma_uint32 frameCount)
     {
+        (void)pInput;
         auto* maDevice = reinterpret_cast<ma_device*>(device);
         auto* mixer = reinterpret_cast<Mixer*>(maDevice->pUserData);
         auto& sounds = mixer->m_sounds;
@@ -82,6 +83,7 @@ namespace tml
     Mixer::~Mixer()
     {
         auto* outputDevice = static_cast<ma_device*>(m_outputDevice);
+        ma_device_stop(outputDevice);
         ma_device_uninit(outputDevice);
         delete outputDevice;
     }

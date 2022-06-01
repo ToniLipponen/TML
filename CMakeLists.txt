@@ -10,7 +10,7 @@ project(tml VERSION ${TML_API_VERSION})
 
 # TML options
 option(TML_BUILD_STATIC "Build TML as a static library" no)
-option(TML_DEBUG_OPENGL_CALLS "Applies error checking around OpenGL function calls." yes)
+option(TML_DEBUG_OPENGL_CALLS "Applies error checking around OpenGL function calls." no)
 option(TML_ASSERT "Applies asserts around important functions." yes)
 option(TML_BUILD_EXAMPLES "Builds some example programs." yes)
 option(TML_USE_GLES "Use OpenGL ES 3.1 instead of OpenGL 4.5." no)
@@ -22,14 +22,13 @@ set(GLFW_INSTALL no)
 set(GLFW_BUILD_DOCS no)
 set(GLFW_BUILD_TESTS no)
 set(GLFW_BUILD_EXAMPLES no)
+
 if(UNIX)
     set(GLFW_BUILD_X11 yes)
 endif()
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
-
-set(BUILD_SHARED_LIBS no)
 
 # Set output directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -85,7 +84,12 @@ add_subdirectory(src/System)
 add_subdirectory(src/Window)
 
 add_library(tml src/TOKEN_SOURCE_FILE.cpp ${HEADER_FILES})
-target_link_libraries(tml tml-audio tml-graphics tml-network tml-system tml-window)
+target_link_libraries(tml
+        tml-audio
+        tml-graphics
+        tml-network
+        tml-system
+        tml-window)
 
 if(UNIX)
     install(TARGETS tml-audio tml-graphics tml-window tml-system tml-network DESTINATION /usr/lib)
