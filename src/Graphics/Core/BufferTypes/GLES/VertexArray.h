@@ -12,10 +12,6 @@ namespace tml
     : m_id(0), m_vertexCount(vb.VertexCount())
     {
         GL_CALL(glGenVertexArrays(1, &m_id));
-
-        auto& lo = layout.GetData();
-        uint64_t offset = 0;
-
         BufferData(vb, layout);
     }
 
@@ -37,7 +33,7 @@ namespace tml
     void VertexArray::BufferData(VertexBuffer& vb, BufferLayout& layout) noexcept
     {
         auto& lo = layout.GetData();
-        uint32_t offset = 0;
+        uint64_t offset = 0;
 
         Bind();
         vb.Bind();
@@ -48,14 +44,26 @@ namespace tml
 
             if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
             {
-                glVertexAttribIPointer(i, lo.at(i).elements, lo.at(i).dataType, layout.GetStride(), (const void*)offset);
+                glVertexAttribIPointer(
+                        i,
+                        static_cast<int>(lo.at(i).elements),
+                        lo.at(i).dataType,
+                        static_cast<int>(layout.GetStride()),
+                        (const void*)offset
+                );
             }
             else
             {
-                glVertexAttribPointer(i, lo.at(i).elements, lo.at(i).dataType, 0, layout.GetStride(), (const void*)offset);
+                glVertexAttribPointer(
+                        i,
+                        static_cast<int>(lo.at(i).elements),
+                        lo.at(i).dataType,
+                        0,
+                        static_cast<int>(layout.GetStride()),
+                        (const void*)offset);
             }
 
-            offset += lo.at(i).elements * lo.at(i).size;
+            offset += static_cast<uint64_t>(lo.at(i).elements) * lo.at(i).size;
         }
 
         Unbind();
@@ -65,7 +73,7 @@ namespace tml
     void VertexArray::BufferData(VertexBuffer& vb, IndexBuffer& ib, BufferLayout& layout) noexcept
     {
         auto& lo = layout.GetData();
-        uint32_t offset = 0;
+        uint64_t offset = 0;
 
         Bind();
         vb.Bind();
@@ -77,14 +85,27 @@ namespace tml
 
             if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
             {
-                glVertexAttribIPointer(i, lo.at(i).elements, lo.at(i).dataType, layout.GetStride(), (const void*)offset);
+                glVertexAttribIPointer(
+                        i,
+                        static_cast<int>(lo.at(i).elements),
+                        lo.at(i).dataType,
+                        static_cast<int>(layout.GetStride()),
+                        (const void*)offset
+                );
             }
             else
             {
-                glVertexAttribPointer(i, lo.at(i).elements, lo.at(i).dataType, 0, layout.GetStride(), (const void*)offset);
+                glVertexAttribPointer(
+                        i,
+                        static_cast<int>(lo.at(i).elements),
+                        lo.at(i).dataType,
+                        0,
+                        static_cast<int>(layout.GetStride()),
+                        (const void*)offset
+                );
             }
 
-            offset += lo.at(i).elements * lo.at(i).size;
+            offset += static_cast<uint64_t>(lo.at(i).elements) * lo.at(i).size;
         }
 
         Unbind();
