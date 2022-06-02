@@ -13,11 +13,16 @@ namespace tml
         config.dataCallback     = [](ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount)
         {
             auto* stream = static_cast<AudioStream*>(pDevice->pUserData);
+            static AudioBuffer buffer;
 
-            *stream << AudioBuffer(static_cast<const float*>(pInput),
-                                  static_cast<uint8_t>(pDevice->capture.channels),
-                                  static_cast<uint32_t>(pDevice->sampleRate),
-                                  static_cast<size_t>(frameCount));
+            buffer.LoadFromMemory(
+                    static_cast<const float*>(pInput),
+                    static_cast<uint8_t>(pDevice->capture.channels),
+                    static_cast<uint32_t>(pDevice->sampleRate),
+                    static_cast<size_t>(frameCount)
+            );
+
+            *stream << buffer;
         };
 
         m_device = new ma_device;
