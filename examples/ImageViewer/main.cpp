@@ -70,7 +70,7 @@ int main(int argc, char** argv)
         }
     }
 
-    window.SetClearColor(0x444444ff);
+    window.SetClearColor(Color(0x444444ff));
     scaleImage();
     Vector2f beginPos = 0;
     Vector2f oldCamPos;

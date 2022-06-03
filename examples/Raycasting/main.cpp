@@ -15,8 +15,7 @@ struct Scene : public Drawable
         const auto window = dynamic_cast<RenderWindow*>(renderTarget);
 
         shape.ClearPoints();
-        shape.AddPoint(ShapePoint{ray.position, Color::White});
-        const float max = sqrt(pow(window->GetWidth(), 2) + pow(window->GetHeight(), 2));
+        shape.AddPoint(ShapePoint{ray.position, Color(255,255,255,200)});
 
         for(float i = 0; i <= 360.1f;)
         {
@@ -39,7 +38,7 @@ struct Scene : public Drawable
                 }
             }
 
-            shape.AddPoint(ShapePoint{ray.position + ray.direction * nearest, Color::White * Math::Map<float>(nearest, 0, max, 1, 0)});
+            shape.AddPoint(ShapePoint{ray.position + ray.direction * nearest, Color(255,255,255,200)});
             i += 0.1f;
         }
         window->Draw(shape);
@@ -88,8 +87,8 @@ int main()
         scene.rects.at(1).Rotate(delta * 100.0);
 
         window.Clear();
-        window.DrawCircle(windowSize2, 200.f, 0x007700ff);
-        window.DrawRect({100, 100}, {100, 100}, 0x770000ff, 0, scene.rects.at(1).GetRotation(), {50,50});
+        window.DrawCircle(windowSize2, 200.f, Color::Green);
+        window.DrawRect({100, 100}, {100, 100}, Color::Red, 0, scene.rects.at(1).GetRotation(), {50,50});
         window.Draw(scene);
         window.Display();
 
