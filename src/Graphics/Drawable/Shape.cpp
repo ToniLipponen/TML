@@ -105,7 +105,7 @@ namespace tml
         return m_points.size();
     }
 
-    void Shape::OnDraw(RenderTarget* renderer, Texture* circleTexture) noexcept
+    void Shape::OnDraw(RenderTarget* renderer, [[maybe_unused]] Texture* circleTexture) noexcept
     {
         if(m_updated)
         {

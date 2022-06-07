@@ -63,7 +63,7 @@ namespace tml
         return true;
     }
 
-    void ComputeShader::ConnectBuffer(const std::string &name, uint32_t index, StorageBuffer& buffer) noexcept
+    void ComputeShader::ConnectBuffer(uint32_t index, StorageBuffer& buffer) noexcept
     {
         buffer.BindBufferBase(index);
     }
@@ -76,18 +76,5 @@ namespace tml
     void ComputeShader::Wait() noexcept
     {
         GL_CALL(glad_glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT));
-    }
-
-    /** I quess this is not needed **/
-    inline uint32_t ComputeShader::GetResourceIndex(const std::string& name) noexcept
-    {
-        if(m_resourceIndexCache.find(name) != m_resourceIndexCache.end())
-        {
-            return m_resourceIndexCache.at(name);
-        }
-
-        const uint32_t index = GL_CALL(glad_glGetProgramResourceIndex(m_id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
-        m_resourceIndexCache[name] = index;
-        return index;
     }
 }

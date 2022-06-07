@@ -307,6 +307,6 @@ namespace tml
     {
         return (m_vertexData.size() + vertexCount)  > s_maxVertexCount ||
                (m_indexData.size()  + indexCount)   > s_maxIndexCount  ||
-               (m_textures.size()   + textureCount) > m_maxTextureCount;
+               (m_textures.size()   + textureCount) > static_cast<uint32_t>(m_maxTextureCount);
     }
 }

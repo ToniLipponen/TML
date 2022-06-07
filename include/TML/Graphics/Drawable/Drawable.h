@@ -9,7 +9,7 @@ namespace tml
     class TML_API Drawable : public Transformable
     {
     public:
-        constexpr const Color& GetColor() const noexcept
+        [[maybe_unused]] [[nodiscard]] constexpr const Color& GetColor() const noexcept
         {
             return m_color;
         }

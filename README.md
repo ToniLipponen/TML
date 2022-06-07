@@ -63,22 +63,25 @@ int main()
 ```
 
 # Contributing
-If you're interested in this project, you can help by testing, contributing code, reporting bugs or other issues, and suggesting new features or changes.
+If you're interested in this project, you can help by testing, contributing code, 
+reporting bugs or other issues, and suggesting new features or changes.
 
 # License
-This project is licensed under the [Zlib License](LICENSE). External libraries used by TML are also distributed under very permissive licenses (See below). This means you don't have to worry about licensing, when developing software using TML.
+This project is licensed under the [Zlib License](LICENSE). 
+External libraries used by TML are also distributed under very permissive licenses (See below). 
+This means you don't have to worry about licensing, when developing software using TML.
 
 # Credits
-|Author| Repo                                 |Library|License|
-|------|--------------------------------------|---|-------|
-|Sean Barret| https://github.com/nothings/stb      |stb libraries|Public Domain|
-|David Herberth| https://github.com/Dav1dde/glad      |glad|MIT|
-|glfw| https://github.com/glfw/glfw         |glfw|Zlib|
-|G-Truc| https://github.com/g-truc/glm        |glm|MIT|
-| David Reid                             | https://github.com/mackron/miniaudio |miniaudio|Public Domain|
-| David Capello                          | https://github.com/dacap/clip        |clip|MIT|
-| Nwutobo Samuel Ugochukwu               | https://github.com/sammycage/lunasvg |lunasvg|MIT|
-
+|Author| Repo                        | Library |License|
+|------|-----------------------------|-----|-------|
+|Sean Barret| https://github.com/nothings/stb | stb libraries |Public Domain|
+| David Reid | https://github.com/mackron/miniaudio | miniaudio |Public Domain|
+|glfw| https://github.com/glfw/glfw | glfw |Zlib|
+|David Herberth| https://github.com/Dav1dde/glad | glad |MIT|
+|G-Truc| https://github.com/g-truc/glm | glm |MIT|
+| David Capello | https://github.com/dacap/clip | clip |MIT|
+| Nwutobo Samuel Ugochukwu | https://github.com/sammycage/lunasvg | lunasvg |MIT|
+| Jakob Riedle | https://github.com/DuffsDevice/tiny-utf8 | tiny-utf8 | BSD-3-Clause|
 ### And a special thank you to JetBrains for providing me with a free license for CLion.
 # Contact
 You can contact me by email.

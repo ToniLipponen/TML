@@ -10,7 +10,7 @@ namespace tml
         config.capture.channels = 1;
         config.sampleRate       = 48000;
         config.pUserData        = &m_stream;
-        config.dataCallback     = [](ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount)
+        config.dataCallback     = [](ma_device* pDevice, [[maybe_unused]] void* pOutput, const void* pInput, ma_uint32 frameCount)
         {
             auto* stream = static_cast<AudioStream*>(pDevice->pUserData);
             static AudioBuffer buffer;

@@ -38,7 +38,7 @@ namespace tml
         Bind();
         vb.Bind();
 
-        for(int i = 0; i < lo.size(); i++)
+        for(std::size_t i = 0; i < lo.size(); i++)
         {
             GL_CALL(glEnableVertexAttribArray(i));
 
@@ -79,7 +79,7 @@ namespace tml
         vb.Bind();
         ib.Bind();
 
-        for(int i = 0; i < lo.size(); i++)
+        for(std::size_t i = 0; i < lo.size(); i++)
         {
             GL_CALL(glEnableVertexAttribArray(i));
 

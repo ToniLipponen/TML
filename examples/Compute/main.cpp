@@ -74,7 +74,7 @@ int main()
 
     constexpr static uint32_t CIRCLE_COUNT = 5000;
 
-    for(auto i = 0; i < CIRCLE_COUNT; i++)
+    for(uint32_t i = 0; i < CIRCLE_COUNT; i++)
     {
         PhysicsCircle pc;
         pc.pos = Vector2f(rand() % window.GetWidth(), rand() % window.GetHeight());
@@ -113,7 +113,7 @@ int main()
 
         /// Update storage buffer & connect it to the compute shader.
         shaderData.UpdateData(circles.data(), circles.size() * sizeof(PhysicsCircle));
-        shader.ConnectBuffer("myBuffer", 0, shaderData);
+        shader.ConnectBuffer(0, shaderData);
 
         /// Set uniforms.
         shader.Uniform1f("delta", delta);

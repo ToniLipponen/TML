@@ -41,7 +41,7 @@ namespace tml
         bool SetPoint(uint32_t index, const ShapePoint& point) noexcept;
         bool RemovePoint(uint32_t index) noexcept;
         bool ClearPoints() noexcept;
-        void SetColor(const Color& color) noexcept;
+        void SetColor(const Color& color) noexcept override;
         void SetTexture(const Texture& texture) noexcept;
         void SetTexture(const std::shared_ptr<Texture>& texture) noexcept;
 
@@ -52,7 +52,7 @@ namespace tml
         void OnDraw(class RenderTarget* renderer, class Texture* circleTexture) noexcept override;
 
     protected:
-        std::shared_ptr<Texture> m_texture = nullptr;
         std::vector<ShapePoint> m_points;
+        std::shared_ptr<Texture> m_texture = nullptr;
     };
 }

@@ -201,7 +201,7 @@ namespace tml
         }
     }
 
-    void Text::OnDraw(RenderTarget* renderer, Texture* circleTexture) noexcept
+    void Text::OnDraw(RenderTarget* renderer, [[maybe_unused]] Texture* circleTexture) noexcept
     {
         if(m_updated)
         {
