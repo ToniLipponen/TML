@@ -85,8 +85,8 @@ int main(int argc, char** argv)
         {
             switch(windowEvent.type)
             {
-                case Event::MouseButtonPressed:
-                    if(windowEvent.mouseButton.button == Mouse::Left && !click)
+                case EventType::MouseButtonPressed:
+                    if(windowEvent.mouseButton.button == Mouse::Button::Left && !click)
                     {
                         click = true;
                         beginPos = Mouse::GetPosition();
@@ -94,20 +94,20 @@ int main(int argc, char** argv)
                     }
                     break;
 
-                case Event::MouseButtonReleased:
-                    if(windowEvent.mouseButton.button == Mouse::Left)
+                case EventType::MouseButtonReleased:
+                    if(windowEvent.mouseButton.button == Mouse::Button::Left)
                         click = false;
 
                     break;
 
-                case Event::MouseMoved:
+                case EventType::MouseMoved:
                     if(click)
                         cam.SetPosition((oldCamPos - (Vector2f(windowEvent.pos.x, windowEvent.pos.y) - beginPos) / cam.GetZoom()));
                     break;
 
-                case Event::KeyPressed:
+                case EventType::KeyPressed:
                 {
-                    if(windowEvent.key.value == Keyboard::KEY_V && windowEvent.key.control)
+                    if(windowEvent.key.value == Keyboard::Key::V && windowEvent.key.control)
                     {
                         if(!Clipboard::IsEmpty())
                         {
@@ -136,31 +136,31 @@ int main(int argc, char** argv)
                             }
                         }
                     }
-                    else if(windowEvent.key.value == Keyboard::KEY_R)
+                    else if(windowEvent.key.value == Keyboard::Key::R)
                     {
                         cam.SetPosition({0, 0});
                         cam.SetZoom(1);
                     }
-                    else if(windowEvent.key.value == Keyboard::KEY_F)
+                    else if(windowEvent.key.value == Keyboard::Key::F)
                         image.SetInterpolation(filter = !filter);
                 } break;
 
-                case Event::MouseWheelScrolled:
+                case EventType::MouseWheelScrolled:
                 {
-                    cam.Zoom(windowEvent.mouseWheelScroll.deltaY * cam.GetZoom() / 5);
+                    cam.Zoom(windowEvent.mouseWheel.deltaY * cam.GetZoom() / 5);
                     if(cam.GetZoom() < 0.1)
                         cam.SetZoom(0.1);
                 } break;
 
-                case Event::WindowResized:
+                case EventType::WindowResized:
                     cam.SetPosition({0, 0});
                     break;
 
-                case Event::Closed:
+                case EventType::Closed:
                     window.Close();
                     break;
 
-                case Event::Drop:
+                case EventType::Drop:
                 {
                     std::vector<String> paths = window.GetDroppedFiles();
                     if(!paths.empty())

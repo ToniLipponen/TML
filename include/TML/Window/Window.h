@@ -32,9 +32,10 @@ namespace tml
             UseMonitorResolution = (1 << 12), //!< Use the primary monitors size instead of user supplied width & height.
             NoClient             = (1 << 13), //!< Dont create an OpenGL context.
         };
+
     public:
-        Window();
-        Window(int32_t width, int32_t height, const String& title, uint32_t settings = None);
+        Window() noexcept;
+        Window(int32_t width, int32_t height, const String& title, uint32_t settings = None) noexcept;
         Window(const Window &) = delete;
         Window(const Window&&) = delete;
         Window& operator=(const Window&) = delete;
@@ -45,16 +46,16 @@ namespace tml
 
         bool Create(int32_t w, int32_t h, const String& title, uint32_t settings = None) noexcept;
         void Close() noexcept;
-        bool IsOpen() const noexcept;
 
-        const void* GetHandle() const noexcept;
-        int32_t GetWidth() const noexcept;
-        int32_t GetHeight() const noexcept;
-        int32_t GetX() const noexcept;
-        int32_t GetY() const noexcept;
-        Vector2i GetSize() const noexcept;
-        Vector2i GetPosition() const noexcept;
-        std::vector<String> GetDroppedFiles() const noexcept;
+        [[nodiscard]] bool IsOpen() const noexcept;
+        [[nodiscard]] const void* GetHandle() const noexcept;
+        [[nodiscard]] int32_t GetWidth() const noexcept;
+        [[nodiscard]] int32_t GetHeight() const noexcept;
+        [[nodiscard]] int32_t GetX() const noexcept;
+        [[nodiscard]] int32_t GetY() const noexcept;
+        [[nodiscard]] Vector2i GetSize() const noexcept;
+        [[nodiscard]] Vector2i GetPosition() const noexcept;
+        [[nodiscard]] std::vector<String> GetDroppedFiles() const noexcept;
 
         bool PollEvents(Event& e) noexcept;
         bool WaitEvents(Event& e) noexcept;

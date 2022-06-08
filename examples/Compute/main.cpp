@@ -102,9 +102,9 @@ int main()
 
         while(window.PollEvents(event))
         {
-            if(event.type == tml::Event::Closed)
+            if(event.type == tml::EventType::Closed)
                 window.Close();
-            else if(event.type == tml::Event::MouseMoved)
+            else if(event.type == tml::EventType::MouseMoved)
                 mousePos = Vector2f(event.pos.x, event.pos.y);
         }
 
@@ -119,7 +119,7 @@ int main()
         shader.Uniform1f("delta", delta);
         shader.Uniform2f("screenSize", window.GetWidth(), window.GetHeight());
         shader.Uniform2f("mousePos", mousePos.x, mousePos.y);
-        shader.Uniform1i("mouseDown", Mouse::ButtonDown(Mouse::Left));
+        shader.Uniform1i("mouseDown", Mouse::ButtonDown(Mouse::Button::Left));
 
         /// Execute.
         shader.Dispatch(circles.size(), 1, 1);
@@ -141,7 +141,7 @@ int main()
         window.DrawText("FPS: " + std::to_string(int(1.0 / delta)), {0,0}, 30);
         window.DrawText("Circles: " + std::to_string(CIRCLE_COUNT), {0,30}, 30);
 
-        if(Mouse::ButtonDown(Mouse::Left))
+        if(Mouse::ButtonDown(Mouse::Button::Left))
             window.DrawText("Attracting", {0, 60}, 30, Color::Green);
         else
             window.DrawText("Repelling", {0, 60}, 30, Color::Red);

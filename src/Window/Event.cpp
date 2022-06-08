@@ -7,9 +7,9 @@
 
 namespace tml
 {
-    EventSystem::EventSystem() = default;
+    EventSystem::EventSystem() noexcept = default;
 
-    EventSystem& EventSystem::GetInstance()
+    EventSystem& EventSystem::GetInstance() noexcept
     {
         static EventSystem instance;
         return instance;

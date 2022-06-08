@@ -200,11 +200,10 @@ namespace tml
         const auto iterator = std::find(begin, end, id);
         const auto index = iterator - begin;
 
-        texture.Bind(index);
-
         if(iterator == end)
         {
             m_textures.push_back(id);
+            texture.Bind(index);
         }
 
         return index;

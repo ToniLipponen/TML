@@ -71,13 +71,13 @@ int main()
         {
             switch(event.type)
             {
-                case tml::Event::Closed:
+                case tml::EventType::Closed:
                     window.Close();
                     break;
-                case tml::Event::MouseMoved:
+                case tml::EventType::MouseMoved:
                     scene.SetRayPosition(Vector2f(event.pos.x, event.pos.y));
                     break;
-                case tml::Event::WindowResized:
+                case tml::EventType::WindowResized:
                     scene.rects.at(0) = Rectangle(0,0, event.size.w, event.size.h);
                     break;
                 default:break;

@@ -13,7 +13,7 @@ int main()
 
         while(window.PollEvents(event))
         {
-            if(event.type == tml::Event::Closed)
+            if(event.type == tml::EventType::Closed)
                 window.Close();
         }
 

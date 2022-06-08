@@ -44,7 +44,7 @@ int main()
         {
             switch(e.type)
             {
-                case tml::Event::Closed:
+                case tml::EventType::Closed:
                     window.Close();
                     break;
 

@@ -5,7 +5,7 @@
 
 namespace tml
 {
-    bool Keyboard::IsKeyPressed(Key key)
+    [[maybe_unused, nodiscard]] bool Keyboard::IsKeyPressed(Key key) noexcept
     {
         auto context = glfwGetCurrentContext();
 
@@ -14,10 +14,10 @@ namespace tml
             return false;
         }
 
-        return glfwGetKey(context, key) == GLFW_PRESS;
+        return glfwGetKey(context, static_cast<int>(key)) == GLFW_PRESS;
     }
 
-    bool Keyboard::IsKeyDown(Key key)
+    [[maybe_unused, nodiscard]] bool Keyboard::IsKeyDown(Key key) noexcept
     {
         auto context = glfwGetCurrentContext();
 
@@ -26,11 +26,11 @@ namespace tml
             return false;
         }
 
-        auto state = glfwGetKey(context, key);
+        auto state = glfwGetKey(context, static_cast<int>(key));
         return state == GLFW_REPEAT || state == GLFW_PRESS;
     }
 
-    Vector2d Mouse::GetPosition()
+    [[maybe_unused, nodiscard]] Vector2d Mouse::GetPosition() noexcept
     {
         auto context = glfwGetCurrentContext();
 
@@ -44,7 +44,7 @@ namespace tml
         return mousePos;
     }
 
-    bool Mouse::ButtonDown(Button button)
+    [[maybe_unused, nodiscard]] bool Mouse::ButtonDown(Button button) noexcept
     {
         auto context = glfwGetCurrentContext();
 
@@ -53,6 +53,6 @@ namespace tml
             return false;
         }
 
-        return glfwGetMouseButton(context, button) == GLFW_PRESS;
+        return glfwGetMouseButton(context, static_cast<int>(button)) == GLFW_PRESS;
     }
 }

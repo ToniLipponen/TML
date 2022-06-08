@@ -13,8 +13,9 @@ int main()
         /// This is because multiple events might be pushed to the event queue each frame.
         while(window.PollEvents(event))
         {
-            if(event.type == Event::Closed)
+            if(event.type == tml::EventType::Closed)
                 window.Close();
+
         }
 
         window.Clear();
