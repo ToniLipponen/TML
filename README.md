@@ -1,6 +1,8 @@
+
 ![Logo](https://user-images.githubusercontent.com/86045205/139578779-10c9f5cc-1185-4a45-a500-09b9c02be1ff.png)
 
 [![License: Zlib](https://img.shields.io/badge/License-Zlib-red.svg)](https://opensource.org/licenses/Zlib)
+
 [![Build on linux](https://github.com/ToniLipponen/TML/actions/workflows/build_linux.yml/badge.svg?branch=master)](https://github.com/ToniLipponen/TML/actions/workflows/build_linux.yml)
 [![Build on windows](https://github.com/ToniLipponen/TML/actions/workflows/build_windows.yml/badge.svg?branch=master)](https://github.com/ToniLipponen/TML/actions/workflows/build_windows.yml)
 
@@ -8,11 +10,11 @@ TML is a simple library for making games and applications. It provides interface
 
 # Notable features
 - 2D batch renderer, including sprite batching
-- Compute shaders through OpenGL 4.5
+- Compute shaders
 - No external dependencies
 - Modular design
 - Written in C++17
-- OpenGL 4.5 and OpenGL ES 3.1 backends
+- OpenGL 3.3 and up or OpenGL ES 3.0 and up
 
 # Modules
 - Audio
@@ -50,7 +52,7 @@ int main()
 
         while(window.PollEvents(event))
         {
-            if(event.type == Event::Closed)
+            if(event.type == EventType::Closed)
                 window.Close();
         }
 
@@ -68,8 +70,6 @@ reporting bugs or other issues, and suggesting new features or changes.
 
 # License
 This project is licensed under the [Zlib License](LICENSE). 
-External libraries used by TML are also distributed under very permissive licenses (See below). 
-This means you don't have to worry about licensing, when developing software using TML.
 
 # Credits
 |Author| Repo                        | Library |License|
