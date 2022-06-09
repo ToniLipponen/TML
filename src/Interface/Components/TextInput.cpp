@@ -3,22 +3,22 @@
 
 using namespace tml::Interface;
 
-TextInput::TextInput(int32_t x, int32_t y, uint32_t width, uint32_t height)
+TextInput::TextInput(int32_t x, int32_t y, uint32_t width, uint32_t height) noexcept
 {
     m_pos = Vector2i(x,y);
     m_size = Vector2i(width, height);
     m_text.SetColor(Color::Black);
     m_text.SetSize(height * 0.8f);
-    const Vector2i textSize = m_text.GetDimensions();
-    m_text.SetPosition(m_pos + Vector2i(Math::Clamp<float>(m_roundness, 0, m_size.y / 2), m_size.y / 2.f - textSize.y / 2.f));
     m_cursorPos = Math::Clamp<int>(m_pos.x + 2, m_pos.x, m_pos.x + m_size.x - 4);
 
-    m_hSizePolicy = Expand;
-    m_vSizePolicy = Fixed;
+    m_hSizePolicy = SizePolicy::Fixed;
+    m_vSizePolicy = SizePolicy::Fixed;
+    m_roundness = 8;
+    AlignText();
     InitListeners();
 }
 
-void TextInput::SetValue(const std::string &string)
+void TextInput::SetValue(const std::string &string) noexcept
 {
     m_value = string;
     m_text.SetString(string);
@@ -26,16 +26,35 @@ void TextInput::SetValue(const std::string &string)
     m_cursorPos = m_text.GetDimensions().x;
 }
 
-void TextInput::InitListeners()
+void TextInput::SetRoundness(float radius) noexcept
 {
-    static auto search_forwards = [&](){
+    m_roundness = radius;
+}
+
+const tml::String& TextInput::GetValue() const noexcept
+{
+    return m_text.GetString();
+}
+
+void TextInput::AlignText() noexcept
+{
+    const auto textSize = m_text.GetDimensions();
+    auto pos = GetPosition();
+    pos.y += m_size.y / 2 - textSize.y / 2;
+    pos.x += Math::Clamp<float>(m_roundness, 0, m_size.y / 2);
+    m_text.SetPosition(pos);
+}
+
+void TextInput::InitListeners() noexcept
+{
+    static auto search_forwards = [&]() noexcept -> size_t {
         size_t index = m_cursorIndex;
         for(;index < m_value.size()-1; index++)
             if(m_value.at(index) == ' ')
                 break;
         return index;
     };
-    static auto search_backwards = [&](){
+    static auto search_backwards = [&]() noexcept -> size_t {
         if(m_cursorIndex == 0)
             return (size_t)0;
 
@@ -50,12 +69,13 @@ void TextInput::InitListeners()
     {
         if(m_state.MouseOver)
         {
-            m_state.MouseDown = e.mouseButton.button;
+            m_state.MouseDown = static_cast<char>(e.mouseButton.button);
             e = Event{};
         }
         else
             UnFocus();
     });
+
     AddListener("Click", [&](BaseComponent* c, Event& e)
     {
         if(m_state.MouseOver)
@@ -67,39 +87,28 @@ void TextInput::InitListeners()
         else
             UnFocus();
     });
-//    AddListener("Update", [&](BaseComponent* c, Event& e)
-//    {
-//        if(m_state.Focused)
-//        {
-//            if((m_blinkTimer += e.update.delta) > 1.0)
-//            {
-//                m_showLine = !m_showLine;
-//                m_blinkTimer = 0;
-//            }
-//        }
-//    });
 
     AddListener("KeyPressed", [&](BaseComponent* c, Event& e)
     {
         if(m_state.Focused)
         {
-            switch(e.key.code)
+            switch(e.key.value)
             {
-                case Keyboard::KEY_LEFT:
+                case Keyboard::Key::LeftArrow:
                     if(e.key.control)
                         m_cursorIndex = search_backwards();
                     else
                         m_cursorIndex = Math::Clamp<int32_t>(--m_cursorIndex, 0, m_value.size());
                     break;
 
-                case Keyboard::KEY_RIGHT:
+                case Keyboard::Key::RightArrow:
                     if(e.key.control)
                         m_cursorIndex = search_forwards();
                     else
                         m_cursorIndex = Math::Clamp<int32_t>(++m_cursorIndex, 0, m_value.size());
                     break;
 
-                case Keyboard::KEY_BACKSPACE:
+                case Keyboard::Key::Backspace:
                     if(m_cursorIndex != 0)
                     {
                         if(e.key.control)
@@ -115,7 +124,7 @@ void TextInput::InitListeners()
                         }
                     }
                     break;
-                case Keyboard::KEY_DELETE:
+                case Keyboard::Key::Delete:
                     if(m_cursorIndex != m_value.size() - 1)
                     {
                         if(e.key.control)
@@ -129,7 +138,7 @@ void TextInput::InitListeners()
                         }
                     }
                     break;
-                case Keyboard::KEY_V:
+                case Keyboard::Key::V:
                     if(e.key.control)
                     {
                         String str;
@@ -143,9 +152,11 @@ void TextInput::InitListeners()
                 default:
                     break;
             }
+
             m_text.SetString(m_value.substr(0, m_cursorIndex));
             m_cursorPos = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
             m_text.SetString(m_value);
+            AlignText();
             e = Event{};
         }
     });
@@ -159,35 +170,35 @@ void TextInput::InitListeners()
             m_text.SetString(m_value.substr(0, m_cursorIndex));
             m_cursorPos = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
             m_text.SetString(m_value);
+            AlignText();
             e = Event{};
         }
     });
 
     AddListener("Moved", [&](BaseComponent* c, Event& e)
     {
-        m_text.SetPosition(e.pos.x, e.pos.y);
-        m_cursorPos = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
+        AlignText();
     });
 
     AddListener("Resized", [&](BaseComponent* c, Event& e)
     {
-        m_text.SetSize(e.size.h);
-        const Vector2i textSize = m_text.GetDimensions();
-        m_text.SetPosition(m_pos + Vector2i(0, m_size.y / 2.f - textSize.y / 2.f));
+        AlignText();
     });
 }
 
-void TextInput::pDraw(RenderTarget& target)
+void TextInput::pDraw(RenderTarget& target) noexcept
 {
-    /// Todo: Clean this up. What a mess.
     const auto clampedRounded = Math::Clamp<float>(m_roundness, 0, m_size.y / 2);
-    m_text.SetPosition(m_pos + Vector2i(Math::Clamp<float>(m_roundness, 0, m_size.y / 2), m_size.y / 2.f - m_size.y / 2.f));
     target.DrawRect(m_pos, m_size, m_state.MouseOver || m_state.MouseDown > -1 || m_state.Focused ? m_activeColor : m_sColor, clampedRounded);
     target.DrawRect(m_pos + Vector2f(1, 1), m_size - Vector2f(2, 2), m_pColor, clampedRounded);
 
     target.SetBounds(m_pos + Vector2f(clampedRounded, 0), m_size - Vector2f(clampedRounded * 2, 0));
     target.Draw(m_text);
+
     if(m_state.Focused)
+    {
         target.DrawLine({m_cursorPos + clampedRounded, m_pos.y + (m_size.y / 10.0f)}, {m_cursorPos + clampedRounded, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, Color::Black, 0);
+    }
+
     target.ResetBounds();
 }

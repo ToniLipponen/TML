@@ -3,14 +3,14 @@
 namespace tml::Interface
 {
     template<ComponentAxis axis>
-    Scrollbar<axis>::Scrollbar(int32_t x, int32_t y, uint32_t length, uint32_t thickness)
+    Scrollbar<axis>::Scrollbar(int32_t x, int32_t y, uint32_t length, uint32_t thickness) noexcept
     {
         m_pos = Vector2i(x,y);
-        if(axis == Horizontal)
+        if(axis == ComponentAxis::Horizontal)
             m_size = Vector2i(length, thickness);
         else
             m_size = Vector2i(thickness, length);
-        m_pColor = 0xccccccff;
+        m_pColor = Color(0xccccccff);
 
         AddListener("Click", [](BaseComponent*, Event& e) { e = {}; });
 
@@ -18,8 +18,8 @@ namespace tml::Interface
         {
             if(m_state.MouseOver)
             {
-                m_state.MouseDown = e.mouseButton.button;
-                if(axis == Horizontal)
+                m_state.MouseDown = static_cast<char>(e.mouseButton.button);
+                if(axis == ComponentAxis::Horizontal)
                     m_value = Math::Clamp<float>(float(e.mouseButton.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
                 else
                     m_value = m_max - Math::Clamp<float>(m_max - float((e.mouseButton.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
@@ -29,7 +29,7 @@ namespace tml::Interface
         {
             if(m_state.MouseDown != -1)
             {
-                if(axis == Horizontal)
+                if(axis == ComponentAxis::Horizontal)
                     m_value = Math::Clamp<float>(float(e.pos.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
                 else
                     m_value = m_max - Math::Clamp<float>(m_max - float((e.pos.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
@@ -38,15 +38,34 @@ namespace tml::Interface
     }
 
     template<ComponentAxis axis>
-    void Scrollbar<axis>::SetValue(uint32_t value)
+    void Scrollbar<axis>::SetRange(uint32_t min, uint32_t max) noexcept
+    {
+        m_min = min;
+        m_max = max;
+    }
+
+    template<ComponentAxis axis>
+    Vector2i Scrollbar<axis>::GetRange() const noexcept
+    {
+        return {m_min, m_max};
+    }
+
+    template<ComponentAxis axis>
+    int32_t Scrollbar<axis>::GetValue() const noexcept
+    {
+        return m_value;
+    }
+
+    template<ComponentAxis axis>
+    void Scrollbar<axis>::SetValue(uint32_t value) noexcept
     {
         m_value = Math::Clamp<int32_t>(value, m_min, m_max);
     }
 
     template<ComponentAxis axis>
-    void Scrollbar<axis>::pDraw(RenderTarget& target)
+    void Scrollbar<axis>::pDraw(RenderTarget& target) noexcept
     {
-        if(axis == Vertical)
+        if constexpr(axis == ComponentAxis::Vertical)
         {
             const float barSize = m_size.y / static_cast<float>(m_max);
             const auto barPos = Math::Min(m_pos.y + barSize * m_value, m_pos.y + m_size.y - barSize);
@@ -64,6 +83,6 @@ namespace tml::Interface
         }
     }
 
-    template class Scrollbar<Horizontal>;
-    template class Scrollbar<Vertical>;
+    template class Scrollbar<ComponentAxis::Horizontal>;
+    template class Scrollbar<ComponentAxis::Vertical>;
 }

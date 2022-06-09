@@ -7,14 +7,14 @@ namespace tml::Interface
     class TML_API NumericInput : public BaseComponent
     {
     public:
-        NumericInput(int32_t x, int32_t y, uint32_t w, uint32_t h, T value = 0);
-        void SetValue(T value);
-        T GetValue() const;
+        NumericInput(int32_t x, int32_t y, uint32_t w, uint32_t h, T value = 0) noexcept;
+        void SetValue(T value) noexcept;
+        T GetValue() const noexcept;
 
     private:
-        void Increment();
-        void Decrement();
-        virtual void pDraw(RenderTarget& target) override;
+        void Increment() noexcept;
+        void Decrement() noexcept;
+        void pDraw(RenderTarget& target) noexcept override;
         T m_value = 0;
         T m_increment = 1;
         std::string m_valueStr;

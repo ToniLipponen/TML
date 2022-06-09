@@ -7,8 +7,8 @@ namespace tml::Interface
     class TML_API Menubar : public HorizontalLayout
     {
     public:
-        explicit Menubar(RenderWindow& window);
+        explicit Menubar(RenderWindow& window) noexcept;
     private:
-        void pDraw(RenderTarget& renderer) override;
+        void pDraw(RenderTarget& renderer) noexcept override;
     };
 }

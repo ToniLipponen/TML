@@ -1,17 +1,16 @@
 #pragma once
 #include <TML/System/Math/Vector2.h>
+#include <TML/Export.h>
 
-namespace tml
+namespace tml::Interface
 {
-    namespace Interface
+    class TML_API Layout
     {
-        class Layout
-        {
-        public:
-            void SetPadding(const Vector2i& padding){ m_padding = padding; }
-            Vector2i GetPadding() const noexcept { return m_padding; }
-        protected:
-            Vector2i m_padding = {5, 5};
-        };
-    }
+    public:
+        void SetPadding(const Vector2i& padding) noexcept;
+        Vector2i GetPadding() const noexcept;
+
+    protected:
+        Vector2i m_padding = {5, 5};
+    };
 }

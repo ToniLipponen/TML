@@ -1,37 +1,35 @@
 #include <TML/Interface/Components/Label.h>
 
-namespace tml
+namespace tml::Interface
 {
-    namespace Interface
+    Label::Label(int32_t x, int32_t y, uint32_t s, std::string str) noexcept
     {
-        Label::Label(int32_t x, int32_t y, uint32_t s, std::string str)
-        {
-            m_pos.x = x;
-            m_pos.y = y;
-            m_text.SetString(str);
-            m_text.SetSize(s);
-            m_text.SetColor(Color::Black);
-            m_size = m_text.GetDimensions();
-            AddListener("Moved", [&](BaseComponent*, Event& e)
-            {
-                m_text.SetPosition(e.pos.x, e.pos.y);
-            });
-        }
+        m_pos.x = x;
+        m_pos.y = y;
+        m_text.SetString(str);
+        m_text.SetSize(s);
+        m_text.SetColor(Color::Black);
+        m_size = m_text.GetDimensions();
 
-        void Label::SetValue(std::string str)
+        AddListener("Moved", [&](BaseComponent*, Event& e) noexcept
         {
-            m_text.SetString(str);
-            m_size = m_text.GetDimensions();
-        }
+            m_text.SetPosition(m_pos);
+        });
+    }
 
-        bool Label::ContainsPoint(const Vector2i &p)
-        {
-            return Math::PointInRect(p, m_pos, m_size, 0);
-        }
+    void Label::SetValue(std::string str) noexcept
+    {
+        m_text.SetString(str);
+        m_size = m_text.GetDimensions();
+    }
 
-        void Label::pDraw(RenderTarget& target)
-        {
-            target.Draw(m_text);
-        }
+    bool Label::ContainsPoint(const Vector2i &p) noexcept
+    {
+        return Math::PointInRect(p, m_pos, m_size, 0);
+    }
+
+    void Label::pDraw(RenderTarget& target) noexcept
+    {
+        target.Draw(m_text);
     }
 }

@@ -19,6 +19,7 @@ TML is a simple library for making games and applications. It provides interface
 # Modules
 - Audio
 - Graphics
+- Interface
 - Network
 - System
 - Window

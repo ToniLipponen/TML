@@ -6,8 +6,9 @@ namespace tml::Interface
     class TML_API Spacer : public BaseComponent
     {
     public:
-        Spacer();
+        Spacer() noexcept;
+
     private:
-        void pDraw(RenderTarget& renderer) override {}
+        void pDraw(RenderTarget& renderer) noexcept override {}
     };
 }

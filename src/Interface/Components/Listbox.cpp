@@ -6,9 +6,9 @@ namespace tml::Interface
     {
         m_pos = Vector2i(x, y);
         m_size = Vector2i(width, height);
-        m_scrollbar = new Scrollbar<Vertical>(x + width - 21, y, height);
-        m_hSizePolicy = Expand;
-        m_vSizePolicy = Expand;
+        m_scrollbar = new Scrollbar<ComponentAxis::Vertical>(x + width - 21, y, height);
+        m_hSizePolicy = SizePolicy::Expand;
+        m_vSizePolicy = SizePolicy::Expand;
         AddChild(m_scrollbar);
         m_scrollbar->Disable();
 
@@ -36,7 +36,7 @@ namespace tml::Interface
             if(c->ContainsPoint({e.mouseButton.x, e.mouseButton.y}))
             {
                 Raise();
-                m_state.MouseDown = e.mouseButton.button;
+                m_state.MouseDown = static_cast<char>(e.mouseButton.button);
                 e = Event{};
             }
         });
@@ -45,9 +45,9 @@ namespace tml::Interface
         {
             if(m_state.MouseOver)
             {
-                if(e.mouseWheelScroll.deltaY > 0.0)
+                if(e.mouseWheel.deltaY > 0.0)
                     m_scrollbar->SetValue(m_scrollbar->GetValue() - 1);
-                else if(e.mouseWheelScroll.deltaY < 0.0)
+                else if(e.mouseWheel.deltaY < 0.0)
                     m_scrollbar->SetValue(m_scrollbar->GetValue() + 1);
 
                 e = Event{};

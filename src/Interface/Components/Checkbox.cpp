@@ -11,7 +11,7 @@ namespace tml
             m_value = checked;
             AddListener("MouseDown", [&](BaseComponent*, Event& e){
                 if(m_state.MouseOver)
-                    m_state.MouseDown = e.mouseButton.button;
+                    m_state.MouseDown = static_cast<char>(e.mouseButton.button);
             });
 
             AddListener("Click", [&](BaseComponent*, Event& e)

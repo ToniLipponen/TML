@@ -9,12 +9,12 @@
 
 namespace tml::Interface
 {
-    enum ComponentAxis { Horizontal, Vertical }; // For components that can be either horizontal or vertical, for example sliders and scrollbars.
+    enum class ComponentAxis { Horizontal, Vertical };
 
     class TML_API BaseComponent : public Drawable
     {
     public:
-        struct StateFlag
+        struct [[maybe_unused]] StateFlag
         {
             char MouseDown   = -1;
             bool MouseOver  = false;
@@ -25,8 +25,8 @@ namespace tml::Interface
             bool Movable    = false;
             bool Raise      = false;
         };
-        enum SizePolicy { Fixed, Expand, Clamp };
-        using UIFunc = std::function<void(BaseComponent*, Event&)>;
+        enum class SizePolicy { Fixed, Expand, Clamp };
+        using EventCallback = std::function<void(BaseComponent*, Event&)>;
 
     public:
         BaseComponent();
@@ -60,7 +60,7 @@ namespace tml::Interface
          * @WindowResized When a window returns a resize event.
          * @Any When an event occurs.
          */
-        void AddListener(const std::string& name, UIFunc callback);
+        void AddListener(const std::string& name, const EventCallback& callback);
         void AddChild(BaseComponent* component, const std::string& id = "");
         bool RemoveChild(const std::string& id);
         bool RemoveChild(BaseComponent* component);
@@ -88,7 +88,6 @@ namespace tml::Interface
         inline constexpr Vector2i GetSize() const { return m_size; }
         inline constexpr Vector2i GetOriginalSize() const { return m_originalSize; };
 
-
     protected:
         void ClearFocused();
         void AddToProcessStack(BaseComponent* component);
@@ -105,17 +104,15 @@ namespace tml::Interface
         Color m_sColor;
         Color m_activeColor;
 
-        SizePolicy m_hSizePolicy = Fixed; // Horizontal size policy.
-        SizePolicy m_vSizePolicy = Fixed; // Vertical size policy.
+        SizePolicy m_hSizePolicy = SizePolicy::Fixed; // Horizontal size policy.
+        SizePolicy m_vSizePolicy = SizePolicy::Fixed; // Vertical size policy.
 
         uint64_t m_hash = 0;
         std::string m_id;
-        std::vector<BaseComponent*> m_children;
+        std::vector<std::unique_ptr<BaseComponent>> m_children;
         std::deque<BaseComponent*> m_processStack;
-        std::unordered_map<std::string, std::vector<UIFunc>> m_listeners;
+        std::unordered_map<std::string, std::vector<EventCallback>> m_listeners;
         BaseComponent* m_parent;
         StateFlag m_state;
-
-        static std::hash<std::string> s_hash;
     };
 }

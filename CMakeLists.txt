@@ -79,6 +79,7 @@ add_subdirectory(external/glad)
 # Add modules
 add_subdirectory(src/Audio)
 add_subdirectory(src/Graphics)
+add_subdirectory(src/Interface)
 add_subdirectory(src/Network)
 add_subdirectory(src/System)
 add_subdirectory(src/Window)
@@ -87,6 +88,7 @@ add_library(tml src/TOKEN_SOURCE_FILE.cpp ${HEADER_FILES})
 target_link_libraries(tml
         tml-audio
         tml-graphics
+        tml-interface
         tml-network
         tml-system
         tml-window)

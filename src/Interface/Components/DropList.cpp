@@ -15,7 +15,7 @@ namespace tml
             AddListener("MouseDown", [&](BaseComponent*, Event& e){
                 if(m_state.MouseOver)
                 {
-                    m_state.MouseDown = e.mouseButton.button;
+                    m_state.MouseDown = static_cast<char>(e.mouseButton.button);
                     e = Event{};
                 }
                 else

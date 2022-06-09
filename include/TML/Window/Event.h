@@ -93,12 +93,12 @@ namespace tml
 
         struct KeyEvent
         {
-            int32_t code{};                //!< Code of the key that has been pressed
-            Keyboard::Key value{};         //!< The key in question.
-            [[maybe_unused]] bool alt{};   //!< Is the Alt key pressed?
-            bool control{};                //!< Is the Control key pressed?
-            bool shift{};                  //!< Is the Shift key pressed?
-            bool system{};                 //!< Is the System key pressed?
+            int32_t code{};         //!< Code of the key that has been pressed
+            Keyboard::Key value{};  //!< The key in question.
+            bool alt{};             //!< Is the Alt key pressed?
+            bool control{};         //!< Is the Control key pressed?
+            bool shift{};           //!< Is the Shift key pressed?
+            bool system{};          //!< Is the System key pressed?
         };
 
         struct TextEvent
@@ -115,7 +115,6 @@ namespace tml
 
         struct MouseWheelScrollEvent
         {
-            [[maybe_unused]]
             float deltaX{};    //!< Horizontal scroll offset.
             float deltaY{};    //!< Vertical scroll offset.
             int32_t x{};       //!< X position of the mouse pointer, relative to the left of the owner window

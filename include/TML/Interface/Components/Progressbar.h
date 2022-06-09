@@ -6,12 +6,13 @@ namespace tml::Interface
     class TML_API Progressbar : public BaseComponent
     {
     public:
-        Progressbar(int32_t x, int32_t y, uint32_t w, uint32_t h = 30);
+        Progressbar(int32_t x, int32_t y, uint32_t w, uint32_t h = 30) noexcept;
         float GetValue() const noexcept;
         void SetValue(float value) noexcept;
         void SetTextColor(const Color& color) noexcept;
+
     private:
-        void pDraw(RenderTarget& renderer) override;
+        void pDraw(RenderTarget& renderer) noexcept override;
         float m_value = 0;
         Text m_text;
     };

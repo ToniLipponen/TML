@@ -94,7 +94,9 @@ namespace tml
 
     Vector2f Text::GetDimensions() noexcept
     {
-        Generate();
+        if(m_updated)
+            Generate();
+
         return m_dimensions;
     }
 

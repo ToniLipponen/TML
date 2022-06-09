@@ -7,8 +7,6 @@
 
 namespace tml::Interface
 {
-    std::hash<std::string> BaseComponent::s_hash = std::hash<std::string>();
-
     BaseComponent::BaseComponent()
     : m_pColor(Color::White), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr)
     {
@@ -24,8 +22,6 @@ namespace tml::Interface
     BaseComponent::~BaseComponent()
     {
         RemoveFromProcessStack(this);
-        for(auto* child : m_children)
-            delete child;
     }
 
     void BaseComponent::Focus()
@@ -61,18 +57,26 @@ namespace tml::Interface
     bool BaseComponent::Enabled() const
     {
         if(!m_state.Enabled)
+        {
             return false;
+        }
+
         if(m_parent)
         {
             if(!m_parent->m_state.Enabled)
+            {
                 return false;
+            }
             else
+            {
                 return m_parent->Enabled();
+            }
         }
+
         return m_state.Enabled;
     }
 
-    void BaseComponent::AddListener(const std::string& name, UIFunc callback)
+    void BaseComponent::AddListener(const std::string& name, const EventCallback& callback)
     {
         m_listeners[name].push_back(callback);
     }
@@ -86,7 +90,7 @@ namespace tml::Interface
                 component->m_parent = this;
                 component->m_hash = 0;
                 component->m_id = name;
-                m_children.push_back(component);
+                m_children.emplace_back(component);
                 AddToProcessStack(component);
                 component->ForEachChild([](BaseComponent* c)
                 {
@@ -96,15 +100,16 @@ namespace tml::Interface
                         c2->AddToProcessStack(c2);
                         return false;
                     });
+
                     return false;
                 });
             }
             else
             {
                 component->m_parent = this;
-                component->m_hash = s_hash(name);
+                component->m_hash = std::hash<std::string>{}(name);
                 component->m_id = name;
-                m_children.push_back(component);
+                m_children.emplace_back(component);
                 AddToProcessStack(component);
                 component->ForEachChild([](BaseComponent* c)
                 {
@@ -140,10 +145,9 @@ namespace tml::Interface
         {
             for(size_t i = 0; i < m_children.size(); i++)
             {
-                if(m_children.at(i) == component)
+                if(m_children.at(i).get() == component)
                 {
                     m_children.erase(m_children.begin() + i);
-                    delete component;
                     Event e{};
                     CallUIFunc("ChildRemoved", e);
                     return true;
@@ -151,7 +155,7 @@ namespace tml::Interface
             }
         }
 
-        for(auto* i : m_children)
+        for(auto& i : m_children)
         {
             if(i->RemoveChild(component))
             {
@@ -166,7 +170,7 @@ namespace tml::Interface
 
     BaseComponent* BaseComponent::FindComponent(const std::string& name)
     {
-        const uint64_t hash = s_hash(name);
+        const uint64_t hash = std::hash<std::string>{}(name);
         return FindComponent(hash);
     }
 
@@ -175,14 +179,15 @@ namespace tml::Interface
         if(m_children.empty())
             return nullptr;
 
-        for(auto* i : m_children)
+        for(auto& i : m_children)
         {
             if(i->m_hash == hash)
-                return i;
+                return i.get();
         }
-        for(auto* i : m_children)
+        for(auto& i : m_children)
         {
             auto* component = i->FindComponent(hash);
+
             if(component)
                 return component;
         }
@@ -212,7 +217,7 @@ namespace tml::Interface
     {
         RemoveFromProcessStack(this);
         AddToProcessStack(this);
-        for(auto* i : m_children)
+        for(auto& i : m_children)
             i->Raise();
     }
 
@@ -220,11 +225,16 @@ namespace tml::Interface
     {
         if(!m_children.empty())
         {
-            for(int64_t i = m_children.size()-1; i >= 0; i--)
+            for(auto i = m_children.rbegin(); i != m_children.rend(); i++)
             {
-                if(function(m_children.at(i)))
+                if(function(i->get()))
                     break;
             }
+//            for(int64_t i = m_children.size()-1; i >= 0; i--)
+//            {
+//                if(function(m_children.at(i).get()))
+//                    break;
+//            }
         }
     }
 
@@ -234,9 +244,6 @@ namespace tml::Interface
         {
             m_pos = position;
             Event e{};
-            e.type = Event::InterfaceMoved;
-            e.pos.x = position.x;
-            e.pos.y = position.y;
             CallUIFunc("Moved", e);
         }
     }
@@ -245,56 +252,66 @@ namespace tml::Interface
     {
         m_size = size;
         Event e{};
-        e.type = Event::InterfaceResized;
-        e.size.w = size.x;
-        e.size.h = size.y;
         CallUIFunc("Resized", e);
     }
 
     void BaseComponent::ProcessEvents(Event& event, double dt)
     {
         CallUIFunc("Any", event);
+
         switch(event.type)
         {
-            case Event::EventType::MouseButtonPressed:
+            case EventType::MouseButtonPressed:
+            {
                 CallUIFunc("MouseDown", event);
-                break;
+            } break;
 
-            case Event::EventType::MouseButtonReleased:
+            case EventType::MouseButtonReleased:
+            {
                 if(m_state.MouseDown != -1 && m_state.MouseOver)
+                {
                     CallUIFunc("Click", event);
+                }
 
                 CallUIFunc("MouseUp", event);
                 m_state.MouseDown = -1;
-                break;
+            } break;
 
-            case Event::EventType::MouseMoved:
+            case EventType::MouseMoved:
             {
                 const bool oldMouseOver = m_state.MouseOver;
                 m_state.MouseOver = ContainsPoint({event.pos.x, event.pos.y});
                 CallUIFunc("MouseMoved", event);
+
                 if(m_state.MouseOver && !oldMouseOver)
+                {
                     CallUIFunc("MouseEnter", event);
+                }
                 else if(!m_state.MouseOver && oldMouseOver)
+                {
                     CallUIFunc("MouseExit", event);
-            }
-            break;
+                }
+            } break;
 
-            case Event::EventType::MouseWheelScrolled:
+            case EventType::MouseWheelScrolled:
+            {
                 CallUIFunc("MouseScroll", event);
-                break;
+            } break;
 
-            case Event::EventType::KeyPressed:
+            case EventType::KeyPressed:
+            {
                 CallUIFunc("KeyPressed", event);
-                break;
+            } break;
 
-            case Event::EventType::KeyReleased:
+            case EventType::KeyReleased:
+            {
                 CallUIFunc("KeyReleased", event);
-                break;
+            } break;
 
-            case Event::EventType::TextEntered:
+            case EventType::TextEntered:
+            {
                 CallUIFunc("TextEntered", event);
-                break;
+            } break;
 
             default:
                 break;
@@ -306,19 +323,24 @@ namespace tml::Interface
         static Clock clock;
         const double delta = clock.Reset();
 
-        if(event.type == Event::EventType::WindowResized)
+        if(event.type == EventType::WindowResized)
+        {
             CallUIFunc("WindowResized", event);
+        }
 
         if(!m_state.Enabled)
+        {
             return;
+        }
 
         if(!m_processStack.empty())
         {
             /// This needs to be done here & not in item->ProcessEvents(event, delta);
             /// Because this event should not be missed even if the component is disabled.
-            if(event.type == Event::EventType::WindowResized)
+            if(event.type == EventType::WindowResized)
             {
                 CallUIFunc("WindowResized", event);
+
                 for(int64_t i = m_processStack.size() - 1; i >= 0; --i)
                 {
                     auto* item = m_processStack.at(i);
@@ -329,10 +351,14 @@ namespace tml::Interface
             for(int64_t i = m_processStack.size() - 1; i >= 0; --i)
             {
                 auto* item = m_processStack.at(i);
+
                 if(item->Enabled())
+                {
                     item->ProcessEvents(event, delta);
+                }
             }
         }
+
         ProcessEvents(event, delta);
     }
 
@@ -353,8 +379,10 @@ namespace tml::Interface
             {
                 (*function)(this, event);
             }
+
             return true;
         }
+
         return false;
     }
 
@@ -363,11 +391,16 @@ namespace tml::Interface
         GetRoot()->ForEachChild([](BaseComponent* c)
         {
             if(c->Focused())
+            {
                 c->UnFocus();
+            }
+
             c->ForEachChild([](BaseComponent* c2)
             {
                 if(c2->Focused())
+                {
                     c2->UnFocus();
+                }
 
                 return false;
             });
@@ -378,7 +411,9 @@ namespace tml::Interface
     void BaseComponent::AddToProcessStack(BaseComponent* component)
     {
         if(component && component->GetRoot())
+        {
             component->GetRoot()->m_processStack.push_back(component);
+        }
     }
 
     void BaseComponent::RemoveFromProcessStack(BaseComponent* component)
@@ -406,7 +441,9 @@ namespace tml::Interface
         for(auto* i : m_processStack)
         {
             if(i->Enabled())
+            {
                 i->pDraw(*renderer);
+            }
         }
     }
 }

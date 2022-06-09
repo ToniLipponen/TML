@@ -1,14 +1,11 @@
 #include <TML/Interface/Components/Spacer.h>
 
-namespace tml
+namespace tml::Interface
 {
-    namespace Interface
+    Spacer::Spacer() noexcept
+    : BaseComponent()
     {
-        Spacer::Spacer()
-        : BaseComponent()
-        {
-            m_vSizePolicy = Expand;
-            m_hSizePolicy = Expand;
-        }
+        m_vSizePolicy = SizePolicy::Expand;
+        m_hSizePolicy = SizePolicy::Expand;
     }
 }
