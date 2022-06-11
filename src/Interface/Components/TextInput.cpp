@@ -11,7 +11,7 @@ TextInput::TextInput(int32_t x, int32_t y, uint32_t width, uint32_t height) noex
     m_text.SetSize(height * 0.8f);
     m_cursorPos = Math::Clamp<int>(m_pos.x + 2, m_pos.x, m_pos.x + m_size.x - 4);
 
-    m_hSizePolicy = SizePolicy::Fixed;
+    m_hSizePolicy = SizePolicy::Expand;
     m_vSizePolicy = SizePolicy::Fixed;
     m_roundness = 8;
     AlignText();
@@ -29,6 +29,11 @@ void TextInput::SetValue(const std::string &string) noexcept
 void TextInput::SetRoundness(float radius) noexcept
 {
     m_roundness = radius;
+}
+
+void TextInput::SetTextColor(const Color &color) noexcept
+{
+    m_text.SetColor(color);
 }
 
 const tml::String& TextInput::GetValue() const noexcept
@@ -184,18 +189,47 @@ void TextInput::InitListeners() noexcept
     {
         AlignText();
     });
+
+    AddListener("Drawn", [&](BaseComponent* c, Event& e)
+    {
+        if(m_state.Focused)
+        {
+            m_blinkTimer += e.update.delta;
+            if(m_blinkTimer > 1)
+            {
+                m_showLine = !m_showLine;
+                m_blinkTimer = 0;
+            }
+        }
+
+        if(m_state.MouseOver)
+        {
+            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * 3, 0, 1);
+        }
+        else
+        {
+            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * 1, 0, 1);
+        }
+
+        if(m_state.Focused)
+        {
+            m_borderAnimationProgress = 1;
+        }
+
+        m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);
+    });
 }
 
 void TextInput::pDraw(RenderTarget& target) noexcept
 {
     const auto clampedRounded = Math::Clamp<float>(m_roundness, 0, m_size.y / 2);
-    target.DrawRect(m_pos, m_size, m_state.MouseOver || m_state.MouseDown > -1 || m_state.Focused ? m_activeColor : m_sColor, clampedRounded);
+    target.DrawRect(m_pos, m_size, m_borderColor, clampedRounded);
     target.DrawRect(m_pos + Vector2f(1, 1), m_size - Vector2f(2, 2), m_pColor, clampedRounded);
 
     target.SetBounds(m_pos + Vector2f(clampedRounded, 0), m_size - Vector2f(clampedRounded * 2, 0));
     target.Draw(m_text);
 
-    if(m_state.Focused)
+    if(m_state.Focused && m_showLine)
     {
         target.DrawLine({m_cursorPos + clampedRounded, m_pos.y + (m_size.y / 10.0f)}, {m_cursorPos + clampedRounded, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, Color::Black, 0);
     }

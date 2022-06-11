@@ -1,32 +1,37 @@
 #include <TML/Interface/Components/Checkbox.h>
 
-namespace tml
+namespace tml::Interface
 {
-    namespace Interface
+    Checkbox::Checkbox(int32_t x, int32_t y, uint32_t size, bool checked) noexcept
     {
-        Checkbox::Checkbox(int32_t x, int32_t y, uint32_t size, bool checked)
-        {
-            m_pos = Vector2f(x,y);
-            m_size = Vector2f(size,size);
-            m_value = checked;
-            AddListener("MouseDown", [&](BaseComponent*, Event& e){
-                if(m_state.MouseOver)
-                    m_state.MouseDown = static_cast<char>(e.mouseButton.button);
-            });
+        m_pos = Vector2f(x,y);
+        m_size = Vector2f(size,size);
+        m_value = checked;
 
-            AddListener("Click", [&](BaseComponent*, Event& e)
+        AddListener("MouseDown", [&](BaseComponent*, Event& e)
+        {
+            if(m_state.MouseOver)
             {
-                m_value = !m_value;
-            });
-        }
+                m_state.MouseDown = static_cast<char>(e.mouseButton.button);
+            }
+        });
 
-        void Checkbox::pDraw(RenderTarget& target)
+        AddListener("Click", [&](BaseComponent*, Event& e)
         {
-            target.DrawRect(m_pos, m_size, m_pColor);
-            target.DrawGrid(m_pos, m_size, 1, 1, m_sColor);
-            if(m_value)
-                target.DrawRect(static_cast<Vector2f>(m_pos) + static_cast<Vector2f>(m_size) * 0.2f, static_cast<Vector2f>(m_size) * 0.6f, m_activeColor);
-        }
+            m_value = !m_value;
+        });
+    }
+
+    bool Checkbox::GetValue() const noexcept
+    {
+        return m_value;
+    }
+
+    void Checkbox::pDraw(RenderTarget& target) noexcept
+    {
+        target.DrawRect(m_pos, m_size, m_pColor);
+        target.DrawGrid(m_pos, m_size, 1, 1, m_sColor);
+        if(m_value)
+            target.DrawRect(static_cast<Vector2f>(m_pos) + static_cast<Vector2f>(m_size) * 0.2f, static_cast<Vector2f>(m_size) * 0.6f, m_activeColor);
     }
 }
-

@@ -104,7 +104,7 @@ namespace tml
 
     void Font::GetAlignedQuad(void *output, int codePoint, float& x, float& y)
     {
-        stbtt_GetPackedQuad(static_cast<const stbtt_packedchar*>(m_cdata), 4096, 4096, codePoint, &x, &y, static_cast<stbtt_aligned_quad*>(output), 0);
+        stbtt_GetPackedQuad(static_cast<const stbtt_packedchar*>(m_cdata), 4096, 4096, codePoint, &x, &y, static_cast<stbtt_aligned_quad*>(output), 1);
     }
 
     float Font::GetKerning(const std::pair<CodePoint, CodePoint>& pair) const noexcept

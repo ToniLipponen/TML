@@ -19,10 +19,12 @@ namespace tml::Interface
         void RemoveValue(uint32_t index);
         void Clear();
         friend class DropList;
+
     private:
         int32_t GetOverFlow() const noexcept; //!< Get count of items that do not fit int the visible area.
+
     protected:
-        void pDraw(RenderTarget& target) override;
+        void pDraw(RenderTarget& target) noexcept override;
         std::vector<String> m_values;
         Scrollbar<ComponentAxis::Vertical>* m_scrollbar = nullptr;
 

@@ -10,6 +10,7 @@ namespace tml::Interface
         TextInput(int32_t x, int32_t y, uint32_t width, uint32_t height = 30) noexcept;
         void SetValue(const std::string& string) noexcept;
         void SetRoundness(float radius) noexcept;
+        void SetTextColor(const Color& color) noexcept;
         const String& GetValue() const noexcept;
 
     protected:
@@ -25,5 +26,7 @@ namespace tml::Interface
         float m_cursorPos = 0;
         float m_roundness = 0;
         bool m_showLine = true;
+        double m_borderAnimationProgress = 0;
+        Color m_borderColor;
     };
 }

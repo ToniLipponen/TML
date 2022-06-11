@@ -189,11 +189,6 @@ namespace tml
     /// Finds a parking spot for the texture.
     uint32_t Renderer::PushTexture(const Texture &texture) noexcept
     {
-        if(CheckLimits(0, 0, 1))
-        {
-            EndBatch();
-        }
-
         const auto id = texture.GetID();
         const auto begin = std::begin(m_textures);
         const auto end = std::end(m_textures);
@@ -202,6 +197,11 @@ namespace tml
 
         if(iterator == end)
         {
+            if(CheckLimits(0, 0, 1))
+            {
+                EndBatch();
+            }
+
             m_textures.push_back(id);
             texture.Bind(index);
         }

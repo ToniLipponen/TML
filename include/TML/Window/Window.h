@@ -31,6 +31,7 @@ namespace tml
             AlwaysOnTop          = (1 << 11), //!< Keep the window above other windows.
             UseMonitorResolution = (1 << 12), //!< Use the primary monitors size instead of user supplied width & height.
             NoClient             = (1 << 13), //!< Dont create an OpenGL context.
+            Minimized            = (1 << 14),
         };
 
     public:

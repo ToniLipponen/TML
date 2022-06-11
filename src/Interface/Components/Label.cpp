@@ -2,11 +2,11 @@
 
 namespace tml::Interface
 {
-    Label::Label(int32_t x, int32_t y, uint32_t s, std::string str) noexcept
+    Label::Label(const std::string& labelText, uint32_t s, int32_t x, int32_t y) noexcept
     {
         m_pos.x = x;
         m_pos.y = y;
-        m_text.SetString(str);
+        m_text.SetString(labelText);
         m_text.SetSize(s);
         m_text.SetColor(Color::Black);
         m_size = m_text.GetDimensions();

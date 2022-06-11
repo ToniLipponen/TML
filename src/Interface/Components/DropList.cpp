@@ -48,7 +48,7 @@ namespace tml
 
         void DropList::SetListHeight(int height)
         {
-            m_listComponent->SetSize({m_size.x, height});
+            m_listComponent->SetSize(Vector2i(m_size.x, height));
         }
 
         String DropList::GetValue(uint32_t index)
@@ -71,11 +71,14 @@ namespace tml
             m_listComponent->Clear();
         }
 
-        void DropList::pDraw(RenderTarget& target)
+        void DropList::pDraw(RenderTarget& target) noexcept
         {
             String selected_value;
+
             if(m_listComponent)
+            {
                 selected_value = m_listComponent->GetSelectedValue();
+            }
 
             target.DrawRect(m_pos, m_size, m_pColor);
             target.SetBounds(m_pos, m_size);
@@ -83,9 +86,13 @@ namespace tml
             target.ResetBounds();
 
             if(m_state.Focused)
+            {
                 target.DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
+            }
             else
+            {
                 target.DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
+            }
         }
     }
 }

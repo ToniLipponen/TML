@@ -32,6 +32,39 @@ namespace tml::Interface
         });
     }
 
+    HorizontalLayout::HorizontalLayout(const std::vector<BaseComponent*>& components, int32_t x, int32_t y) noexcept
+    : BaseComponent(x,y,0,0)
+    {
+        m_hSizePolicy = SizePolicy::Expand;
+        m_vSizePolicy = SizePolicy::Fixed;
+        AddListener("ChildAdded", [&](BaseComponent* c, Event& e)
+        {
+            ScaleChildren();
+            AlignChildren();
+        });
+
+        AddListener("Resized", [&](BaseComponent* c, Event& e)
+        {
+            ScaleChildren();
+            AlignChildren();
+        });
+
+        AddListener("Moved", [&](BaseComponent* c, Event& e)
+        {
+            ScaleChildren();
+            AlignChildren();
+        });
+
+        int height = 0;
+        for(auto* i : components)
+        {
+            AddChild(i);
+            height = Math::Max<int>(height, i->GetSize().y);
+        }
+
+        SetSize(GetSize().x, height);
+    }
+
     void HorizontalLayout::ScaleChildren() noexcept
     {
         std::vector<BaseComponent*> expandThese;
@@ -63,7 +96,7 @@ namespace tml::Interface
                     if(itemSize.y > m_size.y)
                         item->SetSize({itemSize.x, m_size.y});
                     else if(itemSize.y < originalSize.y)
-                        item->SetSize({itemSize.x, Math::Min<int32_t>(originalSize.y, m_size.y)});
+                        item->SetSize(itemSize.x, Math::Min<int32_t>(originalSize.y, m_size.y));
                     break;
                 default:
                     break;
@@ -99,18 +132,11 @@ namespace tml::Interface
 
     void HorizontalLayout::AlignChildren() noexcept
     {
-        float offset = 0, width = 0, width2;
-
-        for(auto& item : m_children)
-        {
-            width += item->GetSize().x;
-        }
-
-        width += m_children.size() * 5;
+        float offset = 0;
 
         for(auto& i : m_children)
         {
-            i->SetPosition({static_cast<int>(m_pos.x + offset), m_pos.y});
+            i->SetPosition(m_pos.x + offset, m_pos.y);
             offset += i->GetSize().x + m_padding.x;
         }
     }

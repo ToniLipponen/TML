@@ -20,6 +20,7 @@ namespace tml::Interface
                 return (mousePos.x <= br.x && mousePos.y <= br.y
                      && mousePos.x >= tl.x && mousePos.y >= tl.y);
             };
+
             for(int i = 0; i < m_values.size(); i++)
             {
                 if(PointInRect(m_pos + Vector2i(0, i * 20), m_pos + Vector2i(m_size.x - 20, (i * 20) + 20)))
@@ -28,6 +29,7 @@ namespace tml::Interface
                     break;
                 }
             }
+
             e = Event{};
         });
 
@@ -159,7 +161,7 @@ namespace tml::Interface
         return Math::Max<int32_t>((valuesSize - m_size.y) / 20, 0);
     }
 
-    void Listbox::pDraw(RenderTarget& target)
+    void Listbox::pDraw(RenderTarget& target) noexcept
     {
         target.DrawRect(m_pos, m_size, m_pColor);
         target.SetBounds(m_pos, m_size);

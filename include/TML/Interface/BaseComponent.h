@@ -29,17 +29,17 @@ namespace tml::Interface
         using EventCallback = std::function<void(BaseComponent*, Event&)>;
 
     public:
-        BaseComponent();
-        BaseComponent(int32_t x, int32_t y, uint32_t w, uint32_t h);
-        virtual ~BaseComponent();
-        void Focus();
-        void UnFocus();
-        void Enable();
-        void Disable();
-        void ToggleEnabled();
-        StateFlag GetState() const noexcept { return m_state; }
-        bool Focused() const { return m_state.Focused; }
-        bool Enabled() const;
+        BaseComponent() noexcept;
+        BaseComponent(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept;
+        virtual ~BaseComponent() noexcept;
+        void Focus() noexcept;
+        void UnFocus() noexcept;
+        void Enable() noexcept;
+        void Disable() noexcept;
+        void ToggleEnabled() noexcept;
+        StateFlag GetState() const noexcept;
+        bool Focused() const noexcept;
+        bool Enabled() const noexcept;
 
         /**
          * @Click When mouse has been pressed and then released over the component.
@@ -58,47 +58,46 @@ namespace tml::Interface
          * @ChildAdded When a child gets added to the component.
          * @ChildRemoved When a child gets removed from the component.
          * @WindowResized When a window returns a resize event.
+         * @Updated
          * @Any When an event occurs.
          */
-        void AddListener(const std::string& name, const EventCallback& callback);
-        void AddChild(BaseComponent* component, const std::string& id = "");
-        bool RemoveChild(const std::string& id);
-        bool RemoveChild(BaseComponent* component);
-
-        BaseComponent* FindComponent(const std::string& id);    //!< DANGER! Returns nullptr if not found.
-        BaseComponent* FindComponent(uint64_t);                 //!< DANGER! Returns nullptr if not found.
-        BaseComponent* GetParent();                             //!< DANGER! Returns nullptr if the component doesn't have a parent.
-        BaseComponent* GetRoot();
-
-        constexpr inline uint64_t GetHash() const noexcept { return m_hash; }
-        constexpr inline const std::string& GetID() const noexcept { return m_id; }
+        void AddListener(const std::string& name, const EventCallback& callback) noexcept;
+        void AddChild(BaseComponent* component, const std::string& id = "") noexcept;
+        bool RemoveChild(const std::string& id) noexcept;
+        bool RemoveChild(BaseComponent* component) noexcept;
+        BaseComponent* FindComponent(const std::string& id) noexcept;    //!< DANGER! Returns nullptr if not found.
+        BaseComponent* FindComponent(uint64_t) noexcept;                 //!< DANGER! Returns nullptr if not found.
+        BaseComponent* GetParent() noexcept;                             //!< DANGER! Returns nullptr if the component doesn't have a parent.
+        BaseComponent* GetRoot() noexcept;
+        uint64_t GetHash() const noexcept;
+        const std::string& GetID() const noexcept;
         virtual bool ContainsPoint(const Vector2i& p);
-        void Update(Event& event);
-        inline SizePolicy GetHorizontalSizePolicy() const { return m_hSizePolicy; }
-        inline SizePolicy GetVerticalSizePolicy() const { return m_vSizePolicy; }
-        void SetSizePolicy(SizePolicy horizontal, SizePolicy vertical);
-        void SetPrimaryColor(const Color& color) { m_pColor = color; }
-        void SetSecondaryColor(const Color& color) { m_sColor = color; }
-        void SetActiveColor(const Color& color) { m_activeColor = color; }
-        void Raise();
-        void ForEachChild(const std::function<bool(BaseComponent* c)>& function);
-        void SetPosition(const Vector2i& position);
-        void SetSize(const Vector2i& size);
-        inline constexpr Vector2i GetPosition() const { return m_pos; }
-        inline constexpr Vector2i GetSize() const { return m_size; }
-        inline constexpr Vector2i GetOriginalSize() const { return m_originalSize; };
+        void Update(Event& event) noexcept;
+        SizePolicy GetHorizontalSizePolicy() const noexcept;
+        SizePolicy GetVerticalSizePolicy() const noexcept;
+        void SetSizePolicy(SizePolicy horizontal, SizePolicy vertical) noexcept;
+        void SetPrimaryColor(const Color& color) noexcept;
+        void SetSecondaryColor(const Color& color) noexcept;
+        void SetActiveColor(const Color& color) noexcept;
+        void Raise() noexcept;
+        void ForEachChild(const std::function<bool(BaseComponent* c)>& function) noexcept;
+        void SetPosition(const Vector2i& position) noexcept;
+        void SetPosition(int32_t x, int32_t y) noexcept;
+        void SetSize(const Vector2i& size) noexcept;
+        void SetSize(uint32_t width, uint32_t height) noexcept;
+        Vector2i GetOriginalSize() const noexcept;
 
     protected:
-        void ClearFocused();
-        void AddToProcessStack(BaseComponent* component);
-        void RemoveFromProcessStack(BaseComponent* component);
-        bool CallUIFunc(const std::string& name, Event& event);
-        void ProcessEvents(Event& event, double dt);
-        virtual void pDraw(RenderTarget& renderer) = 0;
+        void ClearFocused() noexcept;
+        void AddToProcessStack(BaseComponent* component) noexcept;
+        void RemoveFromProcessStack(BaseComponent* component) noexcept;
+        bool CallUIFunc(const std::string& name, Event& event) noexcept;
+        void ProcessEvents(Event& event, double dt) noexcept;
+        virtual void pDraw(RenderTarget& renderer) noexcept = 0;
         void OnDraw(RenderTarget* renderer, Texture*) noexcept final;
 
-        Vector2i m_pos;
-        Vector2i m_size;
+//        Vector2i m_pos;
+//        Vector2i m_size;
         Vector2i m_originalSize; //!< Layouts might resize a component, so the original size needs to be saved.
         Color m_pColor;
         Color m_sColor;
@@ -114,5 +113,8 @@ namespace tml::Interface
         std::unordered_map<std::string, std::vector<EventCallback>> m_listeners;
         BaseComponent* m_parent;
         StateFlag m_state;
+
+        /** Might be used in the future. */
+        [[maybe_unused]] static float s_scale;
     };
 }

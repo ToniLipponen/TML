@@ -126,6 +126,11 @@ namespace tml
             int32_t id{};
         };
 
+        struct Update
+        {
+            double delta{};
+        };
+
         EventType type = EventType::Null;
 
         union
@@ -137,6 +142,7 @@ namespace tml
             MouseButtonEvent      mouseButton;
             MouseWheelScrollEvent mouseWheel;
             GamepadEvent          gamepad;
+            Update                update;
         };
     };
 

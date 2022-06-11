@@ -2,24 +2,27 @@
 
 using namespace tml::Interface;
 
-Button::Button(const std::string& text, int32_t x, int32_t y, uint32_t w, uint32_t h, const EventCallback& onClick, bool expand)
+Button::Button(const std::string& text, uint32_t w, uint32_t h, int32_t x, int32_t y, const EventCallback& onClick, bool expand)
 : BaseComponent(x,y,w,h)
 {
-    m_hSizePolicy = expand ? SizePolicy::Expand : SizePolicy::Clamp;
-    m_vSizePolicy = SizePolicy::Clamp;
+    m_hSizePolicy = expand ? SizePolicy::Expand : SizePolicy::Fixed;
+    m_vSizePolicy = SizePolicy::Fixed;
     m_text.SetString(text);
     m_text.SetColor(Color::Black);
 
-    if(h == 0)
+    m_text.SetSize(static_cast<float>(h) * 0.6f);
+
+    if(w == 0)
     {
-        m_text.SetSize(20);
-        m_size = m_text.GetDimensions() + Vector2f(10, 0);
-        m_originalSize = m_size;
+        m_size.x = m_text.GetDimensions().x + 10;
+        m_size.y = h;
     }
     else
     {
-        m_text.SetSize(h*0.8f);
+        m_size = Vector2f(w, h);
     }
+
+    m_originalSize = m_size;
 
     const Vector2i textSize = m_text.GetDimensions();
     m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
@@ -65,9 +68,33 @@ Button::Button(const std::string& text, int32_t x, int32_t y, uint32_t w, uint32
 
     AddListener("Resized", [&](BaseComponent* c, Event& e)
     {
-        m_text.SetSize(static_cast<float>(m_size.y) * 0.8f);
+        m_text.SetSize(m_size.y * 0.6f);
         const Vector2i textSize = m_text.GetDimensions();
         m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
+    });
+
+    AddListener("Drawn", [&](BaseComponent* c, Event& e)
+    {
+        if(m_state.MouseOver)
+        {
+            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * 3, 0, 1);
+        }
+        else
+        {
+            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * 1, 0, 1);
+        }
+
+        if(m_state.MouseDown > -1)
+        {
+            m_bodyAnimationProgress = 1;
+        }
+        else
+        {
+            m_bodyAnimationProgress = Math::Clamp<double>(m_bodyAnimationProgress - e.update.delta * 3, 0, 1);
+        }
+
+        m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);
+        m_bodyColor = Math::Lerp(m_pColor, m_activeColor, m_bodyAnimationProgress);
     });
 }
 
@@ -81,13 +108,12 @@ void Button::SetText(const std::string &str)
     m_text.SetString(str);
 }
 
-void Button::pDraw(RenderTarget& target)
+void Button::pDraw(RenderTarget& target) noexcept
 {
-    target.DrawRect(m_pos, m_size, m_state.Focused || m_state.MouseOver ? m_activeColor : m_sColor, m_roundness);
-    target.DrawRect(m_pos + Vector2f(1,1), m_size - Vector2f(2,2), m_state.MouseDown > -1 ? m_activeColor : m_pColor, m_roundness);
+    target.DrawRect(m_pos, m_size, m_borderColor, m_roundness);
+    target.DrawRect(m_pos + Vector2f(1,1), m_size - Vector2f(2,2), m_bodyColor, m_roundness);
 
-//    target.SetBounds(m_pos, m_size);
+    target.SetBounds(m_pos, m_size);
     target.Draw(m_text);
-//    target.DrawText(m_text.GetString(), m_pos + (m_size / 2) - (m_text.GetDimensions() / 2), m_size.y*0.8, Color::Black);
-//    target.ResetBounds();
+    target.ResetBounds();
 }

@@ -18,7 +18,7 @@ namespace tml::Interface
         void Clear(); //!< Deletes every item in the list.
 
     private:
-        void pDraw(RenderTarget& target) override;
+        void pDraw(RenderTarget& target) noexcept override;
         Listbox* m_listComponent;
     };
 }

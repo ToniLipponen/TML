@@ -74,6 +74,7 @@ namespace tml
         glfwWindowHint(GLFW_FLOATING,                  (settings & Settings::AlwaysOnTop)  != 0);
         glfwWindowHint(GLFW_SAMPLES, static_cast<int>(((settings & Settings::Antialias) >> 4) * 8));
         glfwWindowHint(GLFW_DOUBLEBUFFER,              (settings & Settings::VSync)        != 0);
+        glfwWindowHint(GLFW_AUTO_ICONIFY,               (settings & Settings::Minimized)     != 0);
 
         auto* primaryMonitor = glfwGetPrimaryMonitor();
         auto* monitor = (settings & Settings::Fullscreen) ? primaryMonitor : nullptr;

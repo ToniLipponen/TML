@@ -8,7 +8,6 @@ namespace tml::Interface
         m_min = Math::Max<float>(min, 0);
         m_max = Math::Max<float>(max, 0);
         m_value = (m_min + m_max) / 2;
-        m_roundness = 0;
 
         if(axis == ComponentAxis::Horizontal)
         {
@@ -87,7 +86,6 @@ namespace tml::Interface
         {
             const auto x = Math::Max<float>(Math::Lerp<float>(0, m_size.x, m_value / m_max), m_roundness*2);
             target.DrawRect(m_pos + Vector2f(1, 1), Vector2f(x - 2 , m_size.y - 2), m_activeColor, m_roundness);
-            target.DrawRect({400, 400}, {200, 100}, Color::Green);
         }
         else
         {

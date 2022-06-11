@@ -3,28 +3,31 @@
 #include <TML/System/Clock.h>
 #include <string>
 #include <algorithm>
-#include <iostream>
 
 namespace tml::Interface
 {
-    BaseComponent::BaseComponent()
+    [[maybe_unused]] float BaseComponent::s_scale = 1.0f;
+
+    BaseComponent::BaseComponent() noexcept
     : m_pColor(Color::White), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr)
     {
         m_state.Enabled = true;
     }
 
-    BaseComponent::BaseComponent(int32_t x, int32_t y, uint32_t w, uint32_t h)
-    : m_pColor(Color::White), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_pos(x,y), m_size(w,h), m_originalSize(w,h), m_parent(nullptr)
+    BaseComponent::BaseComponent(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept
+    : m_pColor(Color::White), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_originalSize(w,h), m_parent(nullptr)
     {
+        m_pos = Vector2f(x,y);
+        m_size = Vector2f(w,h);
         m_state.Enabled = true;
     }
 
-    BaseComponent::~BaseComponent()
+    BaseComponent::~BaseComponent() noexcept
     {
         RemoveFromProcessStack(this);
     }
 
-    void BaseComponent::Focus()
+    void BaseComponent::Focus() noexcept
     {
         ClearFocused();
         m_state.Focused = true;
@@ -32,29 +35,39 @@ namespace tml::Interface
         CallUIFunc("GainedFocus", e);
     }
 
-    void BaseComponent::UnFocus()
+    void BaseComponent::UnFocus() noexcept
     {
         m_state.Focused = false;
         Event e{};
         CallUIFunc("LostFocus", e);
     }
 
-    void BaseComponent::Enable()
+    void BaseComponent::Enable() noexcept
     {
         m_state.Enabled = true;
     }
 
-    void BaseComponent::Disable()
+    void BaseComponent::Disable() noexcept
     {
         m_state.Enabled = false;
     }
 
-    void BaseComponent::ToggleEnabled()
+    void BaseComponent::ToggleEnabled() noexcept
     {
         m_state.Enabled = !m_state.Enabled;
     }
 
-    bool BaseComponent::Enabled() const
+    BaseComponent::StateFlag BaseComponent::GetState() const noexcept
+    {
+        return m_state;
+    }
+
+    bool BaseComponent::Focused() const noexcept
+    {
+        return m_state.Focused;
+    }
+
+    bool BaseComponent::Enabled() const noexcept
     {
         if(!m_state.Enabled)
         {
@@ -76,12 +89,12 @@ namespace tml::Interface
         return m_state.Enabled;
     }
 
-    void BaseComponent::AddListener(const std::string& name, const EventCallback& callback)
+    void BaseComponent::AddListener(const std::string& name, const EventCallback& callback) noexcept
     {
         m_listeners[name].push_back(callback);
     }
 
-    void BaseComponent::AddChild(BaseComponent* component, const std::string& name)
+    void BaseComponent::AddChild(BaseComponent* component, const std::string& name) noexcept
     {
         if(component)
         {
@@ -92,6 +105,7 @@ namespace tml::Interface
                 component->m_id = name;
                 m_children.emplace_back(component);
                 AddToProcessStack(component);
+
                 component->ForEachChild([](BaseComponent* c)
                 {
                     c->AddToProcessStack(c);
@@ -111,6 +125,7 @@ namespace tml::Interface
                 component->m_id = name;
                 m_children.emplace_back(component);
                 AddToProcessStack(component);
+
                 component->ForEachChild([](BaseComponent* c)
                 {
                     c->AddToProcessStack(c);
@@ -122,24 +137,30 @@ namespace tml::Interface
                     return false;
                 });
             }
+
             Event e{};
             CallUIFunc("ChildAdded", e);
         }
     }
 
-    bool BaseComponent::RemoveChild(const std::string& id)
+    bool BaseComponent::RemoveChild(const std::string& id) noexcept
     {
         auto* ptr = FindComponent(id);
+
         if(ptr == nullptr)
+        {
             return false;
+        }
 
         return RemoveChild(ptr);
     }
 
-    bool BaseComponent::RemoveChild(BaseComponent *component)
+    bool BaseComponent::RemoveChild(BaseComponent *component) noexcept
     {
         if(component == nullptr)
+        {
             return false;
+        }
 
         if(!m_children.empty())
         {
@@ -168,44 +189,58 @@ namespace tml::Interface
         return false;
     }
 
-    BaseComponent* BaseComponent::FindComponent(const std::string& name)
+    BaseComponent* BaseComponent::FindComponent(const std::string& name) noexcept
     {
         const uint64_t hash = std::hash<std::string>{}(name);
         return FindComponent(hash);
     }
 
-    BaseComponent* BaseComponent::FindComponent(uint64_t hash)
+    BaseComponent* BaseComponent::FindComponent(uint64_t hash) noexcept
     {
         if(m_children.empty())
+        {
             return nullptr;
+        }
 
         for(auto& i : m_children)
         {
             if(i->m_hash == hash)
+            {
                 return i.get();
+            }
         }
+
         for(auto& i : m_children)
         {
             auto* component = i->FindComponent(hash);
 
             if(component)
+            {
                 return component;
+            }
         }
+
         return nullptr;
     }
 
-    BaseComponent* BaseComponent::GetParent()
+    BaseComponent* BaseComponent::GetParent() noexcept
     {
-        if(m_parent)
-            return m_parent;
-        return nullptr;
+        return m_parent;
     }
 
-    BaseComponent* BaseComponent::GetRoot()
+    BaseComponent* BaseComponent::GetRoot() noexcept
     {
-        if(!m_parent)
-            return this;
-        return m_parent->GetRoot();
+        return m_parent ? m_parent->GetRoot() : this; //!< If has parent return m_parent->GetRoot else return self.
+    }
+
+    uint64_t BaseComponent::GetHash() const noexcept
+    {
+        return m_hash;
+    }
+
+    const std::string& BaseComponent::GetID() const noexcept
+    {
+        return m_id;
     }
 
     bool BaseComponent::ContainsPoint(const Vector2i& p)
@@ -213,49 +248,140 @@ namespace tml::Interface
         return Math::PointInRect(p, m_pos, m_size, 0);
     }
 
-    void BaseComponent::Raise()
+    void BaseComponent::Update(Event& event) noexcept
+    {
+        static Clock clock;
+        const double delta = clock.Reset();
+
+        if(event.type == EventType::WindowResized)
+        {
+            CallUIFunc("WindowResized", event);
+        }
+
+        if(!m_state.Enabled)
+        {
+            return;
+        }
+
+        if(!m_processStack.empty())
+        {
+            /// This needs to be done here & not in item->ProcessEvents(event, delta);
+            /// Because this event should not be missed even if the component is disabled.
+            if(event.type == EventType::WindowResized)
+            {
+                CallUIFunc("WindowResized", event);
+
+                for(int64_t i = m_processStack.size() - 1; i >= 0; --i)
+                {
+                    auto* item = m_processStack.at(i);
+                    item->CallUIFunc("WindowResized", event);
+                }
+            }
+
+            for(int64_t i = m_processStack.size() - 1; i >= 0; --i)
+            {
+                auto* item = m_processStack.at(i);
+
+                if(item->Enabled())
+                {
+                    item->ProcessEvents(event, delta);
+                }
+            }
+        }
+
+        ProcessEvents(event, delta);
+    }
+
+    BaseComponent::SizePolicy BaseComponent::GetHorizontalSizePolicy() const noexcept
+    {
+        return m_hSizePolicy;
+    }
+
+    BaseComponent::SizePolicy BaseComponent::GetVerticalSizePolicy() const noexcept
+    {
+        return m_vSizePolicy;
+    }
+
+    void BaseComponent::SetSizePolicy(SizePolicy horizontal, SizePolicy vertical) noexcept
+    {
+        m_hSizePolicy = horizontal;
+        m_vSizePolicy = vertical;
+    }
+
+    void BaseComponent::SetPrimaryColor(const Color& color) noexcept
+    {
+        m_pColor = color;
+    }
+
+    void BaseComponent::SetSecondaryColor(const Color& color) noexcept
+    {
+        m_sColor = color;
+    }
+
+    void BaseComponent::SetActiveColor(const Color& color) noexcept
+    {
+        m_activeColor = color;
+    }
+
+    void BaseComponent::Raise() noexcept
     {
         RemoveFromProcessStack(this);
         AddToProcessStack(this);
+
         for(auto& i : m_children)
+        {
             i->Raise();
+        }
     }
 
-    void BaseComponent::ForEachChild(const std::function<bool(BaseComponent *)> &function)
+    void BaseComponent::ForEachChild(const std::function<bool(BaseComponent *)> &function) noexcept
     {
         if(!m_children.empty())
         {
             for(auto i = m_children.rbegin(); i != m_children.rend(); i++)
             {
                 if(function(i->get()))
-                    break;
+                {
+                    return;
+                }
             }
-//            for(int64_t i = m_children.size()-1; i >= 0; i--)
-//            {
-//                if(function(m_children.at(i).get()))
-//                    break;
-//            }
         }
     }
 
-    void BaseComponent::SetPosition(const Vector2i &position)
+    void BaseComponent::SetPosition(const Vector2i &position) noexcept
     {
-        if(position != m_pos)
-        {
-            m_pos = position;
-            Event e{};
-            CallUIFunc("Moved", e);
-        }
+        m_pos = position;
+        Event e{};
+        CallUIFunc("Moved", e);
     }
 
-    void BaseComponent::SetSize(const Vector2i &size)
+    void BaseComponent::SetPosition(int32_t x, int32_t y) noexcept
+    {
+        m_pos = Vector2f(static_cast<float>(x), static_cast<float>(y));
+        Event e{};
+        CallUIFunc("Moved", e);
+    }
+
+    void BaseComponent::SetSize(const Vector2i &size) noexcept
     {
         m_size = size;
         Event e{};
         CallUIFunc("Resized", e);
     }
 
-    void BaseComponent::ProcessEvents(Event& event, double dt)
+    void BaseComponent::SetSize(uint32_t w, uint32_t h) noexcept
+    {
+        m_size = Vector2f(static_cast<float>(w), static_cast<float>(h));
+        Event e{};
+        CallUIFunc("Resized", e);
+    }
+
+    Vector2i BaseComponent::GetOriginalSize() const noexcept
+    {
+        return m_originalSize;
+    }
+
+    void BaseComponent::ProcessEvents(Event& event, double dt) noexcept
     {
         CallUIFunc("Any", event);
 
@@ -318,57 +444,7 @@ namespace tml::Interface
         }
     }
 
-    void BaseComponent::Update(Event& event)
-    {
-        static Clock clock;
-        const double delta = clock.Reset();
-
-        if(event.type == EventType::WindowResized)
-        {
-            CallUIFunc("WindowResized", event);
-        }
-
-        if(!m_state.Enabled)
-        {
-            return;
-        }
-
-        if(!m_processStack.empty())
-        {
-            /// This needs to be done here & not in item->ProcessEvents(event, delta);
-            /// Because this event should not be missed even if the component is disabled.
-            if(event.type == EventType::WindowResized)
-            {
-                CallUIFunc("WindowResized", event);
-
-                for(int64_t i = m_processStack.size() - 1; i >= 0; --i)
-                {
-                    auto* item = m_processStack.at(i);
-                    item->CallUIFunc("WindowResized", event);
-                }
-            }
-
-            for(int64_t i = m_processStack.size() - 1; i >= 0; --i)
-            {
-                auto* item = m_processStack.at(i);
-
-                if(item->Enabled())
-                {
-                    item->ProcessEvents(event, delta);
-                }
-            }
-        }
-
-        ProcessEvents(event, delta);
-    }
-
-    void BaseComponent::SetSizePolicy(SizePolicy horizontal, SizePolicy vertical)
-    {
-        m_hSizePolicy = horizontal;
-        m_vSizePolicy = vertical;
-    }
-
-    bool BaseComponent::CallUIFunc(const std::string& name, Event &event)
+    bool BaseComponent::CallUIFunc(const std::string& name, Event &event) noexcept
     {
         if(m_listeners.find(name) != m_listeners.end())
         {
@@ -386,7 +462,7 @@ namespace tml::Interface
         return false;
     }
 
-    void BaseComponent::ClearFocused()
+    void BaseComponent::ClearFocused() noexcept
     {
         GetRoot()->ForEachChild([](BaseComponent* c)
         {
@@ -408,7 +484,7 @@ namespace tml::Interface
         });
     }
 
-    void BaseComponent::AddToProcessStack(BaseComponent* component)
+    void BaseComponent::AddToProcessStack(BaseComponent* component) noexcept
     {
         if(component && component->GetRoot())
         {
@@ -416,11 +492,12 @@ namespace tml::Interface
         }
     }
 
-    void BaseComponent::RemoveFromProcessStack(BaseComponent* component)
+    void BaseComponent::RemoveFromProcessStack(BaseComponent* component) noexcept
     {
         if(component && component->GetRoot())
         {
             auto& processStack = component->GetRoot()->m_processStack;
+
             if(!processStack.empty())
             {
                 for(int64_t i = 0; i < processStack.size(); ++i)
@@ -437,12 +514,20 @@ namespace tml::Interface
 
     void BaseComponent::OnDraw(RenderTarget* renderer, Texture*) noexcept
     {
+        static Clock clock;
         pDraw(*renderer);
+
+        Event event{};
+        event.update.delta = clock.Reset();
+
+        CallUIFunc("Drawn", event);
+
         for(auto* i : m_processStack)
         {
             if(i->Enabled())
             {
                 i->pDraw(*renderer);
+                i->CallUIFunc("Drawn", event);
             }
         }
     }
