@@ -77,11 +77,11 @@ Button::Button(const std::string& text, uint32_t w, uint32_t h, int32_t x, int32
     {
         if(m_state.MouseOver)
         {
-            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * 3, 0, 1);
+            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * 5, 0, 1);
         }
         else
         {
-            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * 1, 0, 1);
+            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * 5, 0, 1);
         }
 
         if(m_state.MouseDown > -1)
@@ -90,7 +90,7 @@ Button::Button(const std::string& text, uint32_t w, uint32_t h, int32_t x, int32
         }
         else
         {
-            m_bodyAnimationProgress = Math::Clamp<double>(m_bodyAnimationProgress - e.update.delta * 3, 0, 1);
+            m_bodyAnimationProgress = Math::Clamp<double>(m_bodyAnimationProgress - e.update.delta * 5, 0, 1);
         }
 
         m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);

@@ -45,16 +45,30 @@ namespace tml::Interface
     void BaseComponent::Enable() noexcept
     {
         m_state.Enabled = true;
+        Event event{};
+        CallUIFunc("Enabled", event);
     }
 
     void BaseComponent::Disable() noexcept
     {
         m_state.Enabled = false;
+        Event event{};
+        CallUIFunc("Disabled", event);
     }
 
     void BaseComponent::ToggleEnabled() noexcept
     {
         m_state.Enabled = !m_state.Enabled;
+
+        Event event{};
+        if(m_state.Enabled)
+        {
+            CallUIFunc("Enabled", event);
+        }
+        else
+        {
+            CallUIFunc("Disabled", event);
+        }
     }
 
     BaseComponent::StateFlag BaseComponent::GetState() const noexcept

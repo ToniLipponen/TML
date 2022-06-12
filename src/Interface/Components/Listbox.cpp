@@ -76,6 +76,25 @@ namespace tml::Interface
                 m_scrollbar->Disable();
 
         });
+
+        AddListener("Drawn", [&](BaseComponent* c, Event& e)
+        {
+            if(m_state.MouseOver)
+            {
+                m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * 5, 0, 1);
+            }
+            else
+            {
+                m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * 5, 0, 1);
+            }
+
+            if(m_state.Focused)
+            {
+                m_borderAnimationProgress = 1;
+            }
+
+            m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);
+        });
     }
 
     void Listbox::AddValue(String value)
@@ -163,7 +182,9 @@ namespace tml::Interface
 
     void Listbox::pDraw(RenderTarget& target) noexcept
     {
-        target.DrawRect(m_pos, m_size, m_pColor);
+        target.DrawRect(m_pos, m_size, m_borderColor);
+        target.DrawRect(m_pos + Vector2f(1, 1), m_size - Vector2f(2, 2), m_pColor);
+
         target.SetBounds(m_pos, m_size);
         target.DrawRect(m_pos + Vector2f(0, (m_selectedIndex - m_scrollbar->GetValue()) * 20), Vector2f(m_size.x, 20.f), m_activeColor);
 
@@ -171,10 +192,7 @@ namespace tml::Interface
         {
             target.DrawText(m_values.at(i), m_pos + Vector2i(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20, Color::Black);
         }
+
         target.ResetBounds();
-        if(m_state.Focused)
-            target.DrawGrid(m_pos, m_size, 1, 1, m_activeColor, 1);
-        else
-            target.DrawGrid(m_pos, m_size, 1, 1, m_sColor, 1);
     }
 }

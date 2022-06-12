@@ -4,7 +4,7 @@
 #include <TML/Interface/Components/Slider.h>
 #include <TML/Interface/Components/TextInput.h>
 #include <TML/Interface/Components/Listbox.h>
-#include <TML/Interface/Components/DropList.h>
+#include <TML/Interface/Components/Combobox.h>
 #include <TML/Interface/Components/Label.h>
 #include <TML/Interface/Components/Progressbar.h>
 #include <TML/Interface/Components/Scrollbar.h>

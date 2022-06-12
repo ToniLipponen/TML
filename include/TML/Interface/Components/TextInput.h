@@ -8,10 +8,11 @@ namespace tml::Interface
     {
     public:
         TextInput(int32_t x, int32_t y, uint32_t width, uint32_t height = 30) noexcept;
-        void SetValue(const std::string& string) noexcept;
+        void SetValue(const String& string) noexcept;
         void SetRoundness(float radius) noexcept;
         void SetTextColor(const Color& color) noexcept;
         const String& GetValue() const noexcept;
+        void SetReadOnly(bool readOnly) noexcept;
 
     protected:
         void AlignText() noexcept;
@@ -26,6 +27,7 @@ namespace tml::Interface
         float m_cursorPos = 0;
         float m_roundness = 0;
         bool m_showLine = true;
+        bool m_readOnly = false;
         double m_borderAnimationProgress = 0;
         Color m_borderColor;
     };

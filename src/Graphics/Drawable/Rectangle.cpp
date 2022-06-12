@@ -32,7 +32,7 @@ namespace tml
     {
         if(m_updated)
         {
-            const auto clampedRoundness = Math::Clamp<float>(m_roundness, 0, Math::Max<float>(m_size.y, m_size.x) / 2);
+            const auto clampedRoundness = Math::Clamp<float>(m_roundness, 0, Math::Min<float>(m_size.y, m_size.x) / 2);
             const auto hex = m_color.Hex();
             const auto w = Vector2f{m_size.x, 0.f};
             const auto h = Vector2f{0.f, m_size.y};

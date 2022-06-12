@@ -18,7 +18,7 @@ TextInput::TextInput(int32_t x, int32_t y, uint32_t width, uint32_t height) noex
     InitListeners();
 }
 
-void TextInput::SetValue(const std::string &string) noexcept
+void TextInput::SetValue(const String& string) noexcept
 {
     m_value = string;
     m_text.SetString(string);
@@ -39,6 +39,11 @@ void TextInput::SetTextColor(const Color &color) noexcept
 const tml::String& TextInput::GetValue() const noexcept
 {
     return m_text.GetString();
+}
+
+void TextInput::SetReadOnly(bool readOnly) noexcept
+{
+    m_readOnly = readOnly;
 }
 
 void TextInput::AlignText() noexcept
@@ -95,7 +100,7 @@ void TextInput::InitListeners() noexcept
 
     AddListener("KeyPressed", [&](BaseComponent* c, Event& e)
     {
-        if(m_state.Focused)
+        if(m_state.Focused && !m_readOnly)
         {
             switch(e.key.value)
             {
@@ -168,7 +173,7 @@ void TextInput::InitListeners() noexcept
 
     AddListener("TextEntered", [&](BaseComponent* c, Event& e)
     {
-        if(m_state.Focused)
+        if(m_state.Focused && !m_readOnly)
         {
             m_value.insert(m_value.begin() + m_cursorIndex, e.text.unicode);
             m_cursorIndex++;
@@ -204,11 +209,11 @@ void TextInput::InitListeners() noexcept
 
         if(m_state.MouseOver)
         {
-            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * 3, 0, 1);
+            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * 5, 0, 1);
         }
         else
         {
-            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * 1, 0, 1);
+            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * 5, 0, 1);
         }
 
         if(m_state.Focused)
@@ -229,7 +234,7 @@ void TextInput::pDraw(RenderTarget& target) noexcept
     target.SetBounds(m_pos + Vector2f(clampedRounded, 0), m_size - Vector2f(clampedRounded * 2, 0));
     target.Draw(m_text);
 
-    if(m_state.Focused && m_showLine)
+    if(m_state.Focused && m_showLine && !m_readOnly)
     {
         target.DrawLine({m_cursorPos + clampedRounded, m_pos.y + (m_size.y / 10.0f)}, {m_cursorPos + clampedRounded, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, Color::Black, 0);
     }

@@ -59,6 +59,8 @@ namespace tml::Interface
          * @ChildRemoved When a child gets removed from the component.
          * @WindowResized When a window returns a resize event.
          * @Updated
+         * @Enabled
+         * @Disabled
          * @Any When an event occurs.
          */
         void AddListener(const std::string& name, const EventCallback& callback) noexcept;

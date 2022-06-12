@@ -18,7 +18,7 @@ namespace tml::Interface
         bool ContainsValue(const std::string& value) const;
         void RemoveValue(uint32_t index);
         void Clear();
-        friend class DropList;
+        friend class Combobox;
 
     private:
         int32_t GetOverFlow() const noexcept; //!< Get count of items that do not fit int the visible area.
@@ -30,5 +30,7 @@ namespace tml::Interface
 
         float m_scrollDist = 0.f;
         int32_t m_selectedIndex = -1;
+        double m_borderAnimationProgress = 0;
+        Color m_borderColor;
     };
 }

@@ -15,6 +15,8 @@ namespace tml::Interface
     private:
         void pDraw(RenderTarget& target) noexcept override;
         float m_min, m_max, m_value, m_roundness = 0;
+        Color m_borderColor, m_bodyColor;
+        double m_borderAnimationProgress = 0;
     };
 
     using VSlider = Slider<ComponentAxis::Vertical>;

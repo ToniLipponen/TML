@@ -57,6 +57,20 @@ namespace tml::Interface
                 }
             }
         });
+
+        AddListener("Drawn", [&](BaseComponent* c, Event& e)
+        {
+            if(m_state.MouseOver)
+            {
+                m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * 5, 0, 1);
+            }
+            else
+            {
+                m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * 5, 0, 1);
+            }
+
+            m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);
+        });
     }
 
     template<ComponentAxis axis>
@@ -80,7 +94,7 @@ namespace tml::Interface
     template<ComponentAxis axis>
     void Slider<axis>::pDraw(RenderTarget& target) noexcept
     {
-        target.DrawRect(m_pos, m_size, m_state.MouseOver || m_state.MouseDown > -1 ? m_activeColor : m_sColor, m_roundness);
+        target.DrawRect(m_pos, m_size, m_borderColor, m_roundness);
         target.DrawRect(m_pos + Vector2i(1, 1), m_size - Vector2i(2, 2), m_pColor, m_roundness);
 
         if constexpr(axis == ComponentAxis::Horizontal)
