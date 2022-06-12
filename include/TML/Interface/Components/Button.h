@@ -9,7 +9,6 @@ namespace tml::Interface
     public:
         explicit Button(const std::string& text, uint32_t w = 0, uint32_t h = 30, int32_t x = 0, int32_t y = 0,
                         const EventCallback& onClick = nullptr, bool expand = false);
-        void SetRoundness(float roundness);
         void SetText(const std::string& str);
         void SetTextSize(float s) noexcept;
         void SetTextColor(const Color& color) noexcept override;
@@ -18,7 +17,6 @@ namespace tml::Interface
     private:
         void pDraw(RenderTarget& renderer) noexcept override;
         Text m_text;
-        float m_roundness = 0;
         Color m_borderColor, m_bodyColor;
         double m_borderAnimationProgress = 0, m_bodyAnimationProgress = 0;
     };

@@ -25,26 +25,20 @@ int main()
     layout.AddChild(new HorizontalLayout({new Checkbox(0,0, 20), new Label("Option 4", 20, 100)}));
     layout.AddChild(new HSeparator);
 
-    layout.AddChild(new HorizontalLayout({new Label("Checkbox:", 20, 100), new Checkbox(0,0, 20)}));
-    layout.AddChild(new HorizontalLayout({new Label("Slider:", 20, 100), new HSlider(0,0,200)}));
-    layout.AddChild(new HorizontalLayout({new Label("TextInput:", 20, 100), new TextInput(0,0,200,20)}));
-    layout.AddChild(new HorizontalLayout({new Label("TextInput:", 20, 100), toggle = new ToggleSwitch}));
+    layout.AddChild(new HorizontalLayout({new Label("Checkbox:", 20, 150), new Checkbox(0,0, 20)}));
+    layout.AddChild(new HorizontalLayout({new Label("Slider:", 20, 150), new HSlider(0,0,200)}));
+    layout.AddChild(new HorizontalLayout({new Label("TextInput:", 20, 150), new TextInput(0,0,200,20)}));
+    layout.AddChild(new HorizontalLayout({new Label("ToggleSwitch:", 20, 150), toggle = new ToggleSwitch}));
     layout.AddChild(new TextInput(10,10,200,30));
     layout.AddChild(list = new Combobox(10, 10, 200, 20));
     layout.AddChild(new HSeparator);
-//    toggle->SetRoundness(0);
+    layout.AddChild(new HorizontalLayout({new VSlider(0,0,100),new VSlider(0,0,100)},0,0, 100));
 
     for(int i = 0; i < 10; i++)
-        list->AddValue("ListItem " + std::to_string(i));
-
-    layout.AddChild(closeButton = new Button("Close app"));
-
-    closeButton->SetRoundness(100);
-
-    closeButton->AddListener("Click", [&](BaseComponent*, Event&)
     {
-        window.Close();
-    });
+        list->AddValue("ListItem " + std::to_string(i));
+    }
+
     window.SetClearColor(Color::White);
 
     Clock clock;
@@ -62,8 +56,7 @@ int main()
 
         window.Clear();
         window.Draw(layout);
-        window.DrawText("Hello world", {12, 402}, 40, Color::Black);
-        window.DrawText("Hello world", {10, 400}, 40, Color::Green);
+        window.DrawText("FPS: " + std::to_string(int(1.0 / clock.Reset())), {10, 500}, 30, Color::Black);
         window.Display();
     }
     return 0;

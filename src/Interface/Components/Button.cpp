@@ -98,11 +98,6 @@ Button::Button(const std::string& text, uint32_t w, uint32_t h, int32_t x, int32
     });
 }
 
-void Button::SetRoundness(float roundness)
-{
-    m_roundness = roundness;
-}
-
 void Button::SetText(const std::string &str)
 {
     m_text.SetString(str);

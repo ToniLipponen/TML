@@ -10,7 +10,7 @@ namespace tml::Interface
         m_value = (m_min + m_max) / 2;
         m_roundness = thickness / 2;
 
-        if(axis == ComponentAxis::Horizontal)
+        if constexpr(axis == ComponentAxis::Horizontal)
         {
             m_pos = Vector2i(x,y);
             m_size = Vector2i(size, thickness);
@@ -20,7 +20,7 @@ namespace tml::Interface
         else
         {
             m_pos = Vector2i(x,y);
-            m_size = Vector2i(thickness, size);
+            m_size = Vector2i(static_cast<int>(thickness), static_cast<int>(size));
             m_vSizePolicy = SizePolicy::Expand;
             m_hSizePolicy = SizePolicy::Fixed;
         }
@@ -45,8 +45,17 @@ namespace tml::Interface
 
         AddListener("Click", [&](BaseComponent* c, Event& e)
         {
-            m_value = Math::Clamp(float(e.mouseButton.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
+            if constexpr(axis == ComponentAxis::Horizontal)
+            {
+                m_value = Math::Clamp(float(e.mouseButton.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
+            }
+            else
+            {
+                m_value = Math::Clamp(m_max - float((e.mouseButton.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
+            }
+
             m_targetValue = m_value;
+            e = {};
         });
 
         AddListener("MouseMoved", [&](BaseComponent* c, Event& e)
@@ -93,12 +102,6 @@ namespace tml::Interface
 
             m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);
         });
-    }
-
-    template<ComponentAxis axis>
-    void Slider<axis>::SetRoundness(float roundness) noexcept
-    {
-        m_roundness = roundness;
     }
 
     template<ComponentAxis axis>

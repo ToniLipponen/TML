@@ -32,8 +32,8 @@ namespace tml::Interface
         });
     }
 
-    HorizontalLayout::HorizontalLayout(const std::vector<BaseComponent*>& components, int32_t x, int32_t y) noexcept
-    : BaseComponent(x,y,0,0)
+    HorizontalLayout::HorizontalLayout(const std::vector<BaseComponent*>& components, int32_t x, int32_t y, uint32_t h) noexcept
+    : BaseComponent(x,y,0,h)
     {
         m_hSizePolicy = SizePolicy::Expand;
         m_vSizePolicy = SizePolicy::Fixed;
@@ -55,14 +55,27 @@ namespace tml::Interface
             AlignChildren();
         });
 
-        int height = 0;
-        for(auto* i : components)
+        if(h == 0)
         {
-            AddChild(i);
-            height = Math::Max<int>(height, i->GetSize().y);
+            int height = 0;
+
+            for(auto* i : components)
+            {
+                AddChild(i);
+                height = static_cast<int>(Math::Max<float>(height, i->GetSize().y));
+            }
+
+            SetSize(static_cast<int>(GetSize().x), height);
+        }
+        else
+        {
+            for(auto* i : components)
+            {
+                AddChild(i);
+            }
         }
 
-        SetSize(GetSize().x, height);
+        m_originalSize = m_size;
     }
 
     void HorizontalLayout::ScaleChildren() noexcept
