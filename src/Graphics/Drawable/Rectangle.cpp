@@ -32,11 +32,12 @@ namespace tml
     {
         if(m_updated)
         {
+            const auto clampedRoundness = Math::Clamp<float>(m_roundness, 0, Math::Max<float>(m_size.y, m_size.x) / 2);
             const auto hex = m_color.Hex();
             const auto w = Vector2f{m_size.x, 0.f};
             const auto h = Vector2f{0.f, m_size.y};
-            const auto rx = Vector2f{m_roundness, 0.f};
-            const auto ry = Vector2f{0.f, m_roundness};
+            const auto rx = Vector2f{clampedRoundness, 0.f};
+            const auto ry = Vector2f{0.f, clampedRoundness};
 
             const auto cos_r = static_cast<float>(std::cos(Math::DegToRad(m_rotation)));
             const auto sin_r = static_cast<float>(std::sin(Math::DegToRad(m_rotation)));
@@ -46,7 +47,7 @@ namespace tml
             m_vertexData.clear();
             m_indexData.clear();
 
-            if(m_roundness < 2)
+            if(m_roundness == 0)
             {
                 if(m_rotation != 0)
                 {

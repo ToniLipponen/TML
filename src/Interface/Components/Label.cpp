@@ -2,7 +2,7 @@
 
 namespace tml::Interface
 {
-    Label::Label(const std::string& labelText, uint32_t s, int32_t x, int32_t y) noexcept
+    Label::Label(const std::string& labelText, uint32_t s, uint32_t width, int32_t x, int32_t y) noexcept
     {
         m_pos.x = x;
         m_pos.y = y;
@@ -10,6 +10,11 @@ namespace tml::Interface
         m_text.SetSize(s);
         m_text.SetColor(Color::Black);
         m_size = m_text.GetDimensions();
+
+        if(width != 0)
+        {
+            m_size.x = width;
+        }
 
         AddListener("Moved", [&](BaseComponent*, Event& e) noexcept
         {

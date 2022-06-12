@@ -6,24 +6,20 @@ using namespace Interface;
 
 int main()
 {
-    RenderWindow window(800, 600, "Window", Window::Resizeable);
+    RenderWindow window(800, 600, "Window", Window::Resizeable | Window::Antialias);
 
     VerticalLayout layout(10, 10, 300, 400);
-    HSlider* slider;
     Button* closeButton;
+    layout.AddChild(new Label("Widgets",30));
+    layout.AddChild(new HSeparator);
+    layout.AddChild(new HorizontalLayout({new Label("Checkbox:", 20, 100), new Checkbox(0,0, 20)}));
+    layout.AddChild(new HorizontalLayout({new Label("Slider:", 20, 100), new HSlider(0,0,200)}));
+    layout.AddChild(new HorizontalLayout({new Label("TextInput:", 20, 100), new TextInput(0,0,200,20)}));
     layout.AddChild(new TextInput(10,10,200,30));
-    layout.AddChild(new HorizontalLayout({new Label("Slider: ",20), new Button("Button1"), new Button("Button2"), new Button("Another button")}));
-    layout.AddChild(new HorizontalLayout({new Label("Slider: ",20), slider = new HSlider(0, 0, 100, 20, 0, 100)}));
-    layout.AddChild(new HorizontalLayout({new Label("Input box: ",20), new TextInput(0,0,300,20)}));
-    layout.AddChild(closeButton = new Button("Close app"));
+    layout.AddChild(new HSeparator);
 
-    slider->AddListener("MouseMoved", [](BaseComponent* c, Event&)
-    {
-        if(c->GetState().MouseDown != -1)
-        {
-            std::cout << ((Slider<ComponentAxis::Horizontal>*)c)->GetValue() << "\n";
-        }
-    });
+
+    layout.AddChild(closeButton = new Button("Close app"));
 
     closeButton->SetRoundness(5);
 

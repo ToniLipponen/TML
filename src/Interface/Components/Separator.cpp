@@ -1,0 +1,32 @@
+#include <TML/Interface/Components/Separator.h>
+
+namespace tml::Interface
+{
+    template<ComponentAxis axis>
+    Separator<axis>::Separator(uint32_t thickness) noexcept
+    {
+        if(axis == ComponentAxis::Horizontal)
+        {
+            m_hSizePolicy = BaseComponent::SizePolicy::Expand;
+            m_vSizePolicy = BaseComponent::SizePolicy::Fixed;
+        }
+        else
+        {
+            m_hSizePolicy = BaseComponent::SizePolicy::Fixed;
+            m_vSizePolicy = BaseComponent::SizePolicy::Expand;
+        }
+
+        m_thickness = thickness;
+        m_size = {0, 0};
+        m_pColor = Color::Black;
+    }
+
+    template<ComponentAxis axis>
+    void Separator<axis>::pDraw(RenderTarget& renderer) noexcept
+    {
+        renderer.DrawLine(m_pos, m_pos + m_size, m_thickness, m_pColor);
+    }
+
+    template class Separator<ComponentAxis::Vertical>;
+    template class Separator<ComponentAxis::Horizontal>;
+}

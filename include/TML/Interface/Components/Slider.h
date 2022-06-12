@@ -16,6 +16,7 @@ namespace tml::Interface
         void pDraw(RenderTarget& target) noexcept override;
         float m_min, m_max, m_value, m_roundness = 0;
     };
+
     using VSlider = Slider<ComponentAxis::Vertical>;
     using HSlider = Slider<ComponentAxis::Horizontal>;
 }

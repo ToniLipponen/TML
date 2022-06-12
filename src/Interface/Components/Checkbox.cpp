@@ -20,6 +20,31 @@ namespace tml::Interface
         {
             m_value = !m_value;
         });
+
+
+        AddListener("Drawn", [&](BaseComponent* c, Event& e)
+        {
+            if(m_state.MouseOver)
+            {
+                m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * 3, 0, 1);
+            }
+            else
+            {
+                m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * 1, 0, 1);
+            }
+
+            if(m_value)
+            {
+                m_bodyAnimationProgress = Math::Clamp<double>(m_bodyAnimationProgress + e.update.delta * 3, 0, 1);
+            }
+            else
+            {
+                m_bodyAnimationProgress = Math::Clamp<double>(m_bodyAnimationProgress - e.update.delta * 1, 0, 1);
+            }
+
+            m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);
+            m_bodyColor = Math::Lerp(m_pColor, m_activeColor, m_bodyAnimationProgress);
+        });
     }
 
     bool Checkbox::GetValue() const noexcept
@@ -27,11 +52,15 @@ namespace tml::Interface
         return m_value;
     }
 
+    void Checkbox::SetRoundness(float radius) noexcept
+    {
+        m_roundness = radius;
+    }
+
     void Checkbox::pDraw(RenderTarget& target) noexcept
     {
-        target.DrawRect(m_pos, m_size, m_pColor);
-        target.DrawGrid(m_pos, m_size, 1, 1, m_sColor);
-        if(m_value)
-            target.DrawRect(static_cast<Vector2f>(m_pos) + static_cast<Vector2f>(m_size) * 0.2f, static_cast<Vector2f>(m_size) * 0.6f, m_activeColor);
+        target.DrawRect(m_pos, m_size, m_borderColor, m_roundness);
+        target.DrawRect(m_pos+Vector2i(1,1), m_size-Vector2i(2,2), m_pColor, m_roundness);
+        target.DrawRect(m_pos + m_size * 0.2f, m_size * 0.6f, m_bodyColor, m_roundness);
     }
 }

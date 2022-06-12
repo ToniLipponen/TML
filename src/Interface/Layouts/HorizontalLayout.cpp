@@ -70,6 +70,7 @@ namespace tml::Interface
         std::vector<BaseComponent*> expandThese;
         std::vector<BaseComponent*> clampThese;
         float fixedSize = 0, clampSize = 0;
+
         for(auto& item : m_children)
         {
             const auto itemSize = item->GetSize();
