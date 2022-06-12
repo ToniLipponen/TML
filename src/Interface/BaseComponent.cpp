@@ -7,6 +7,7 @@
 namespace tml::Interface
 {
     [[maybe_unused]] float BaseComponent::s_scale = 1.0f;
+    [[maybe_unused]] float BaseComponent::s_animationSpeed = 5.f;
 
     BaseComponent::BaseComponent() noexcept
     : m_pColor(Color::White), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr)
@@ -337,6 +338,16 @@ namespace tml::Interface
         m_activeColor = color;
     }
 
+    void BaseComponent::SetTextColor(const Color& color) noexcept
+    {
+        m_textColor = color;
+    }
+
+    void BaseComponent::SetRoundness(float radius) noexcept
+    {
+        m_roundness = radius;
+    }
+
     void BaseComponent::Raise() noexcept
     {
         RemoveFromProcessStack(this);
@@ -476,6 +487,11 @@ namespace tml::Interface
         return false;
     }
 
+    void BaseComponent::SetGlobalAnimationSpeed(double speed) noexcept
+    {
+        s_animationSpeed = speed;
+    }
+
     void BaseComponent::ClearFocused() noexcept
     {
         GetRoot()->ForEachChild([](BaseComponent* c)
@@ -529,11 +545,11 @@ namespace tml::Interface
     void BaseComponent::OnDraw(RenderTarget* renderer, Texture*) noexcept
     {
         static Clock clock;
-        pDraw(*renderer);
 
         Event event{};
         event.update.delta = clock.Reset();
 
+        pDraw(*renderer);
         CallUIFunc("Drawn", event);
 
         for(auto* i : m_processStack)

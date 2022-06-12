@@ -13,7 +13,7 @@ TextInput::TextInput(int32_t x, int32_t y, uint32_t width, uint32_t height) noex
 
     m_hSizePolicy = SizePolicy::Expand;
     m_vSizePolicy = SizePolicy::Fixed;
-    m_roundness = 8;
+//    m_roundness = 8;
     AlignText();
     InitListeners();
 }
@@ -24,11 +24,6 @@ void TextInput::SetValue(const String& string) noexcept
     m_text.SetString(string);
     m_cursorIndex = string.length();
     m_cursorPos = m_text.GetDimensions().x;
-}
-
-void TextInput::SetRoundness(float radius) noexcept
-{
-    m_roundness = radius;
 }
 
 void TextInput::SetTextColor(const Color &color) noexcept
@@ -209,11 +204,11 @@ void TextInput::InitListeners() noexcept
 
         if(m_state.MouseOver)
         {
-            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * 5, 0, 1);
+            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * s_animationSpeed, 0, 1);
         }
         else
         {
-            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * 5, 0, 1);
+            m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * s_animationSpeed, 0, 1);
         }
 
         if(m_state.Focused)

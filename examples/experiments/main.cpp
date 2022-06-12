@@ -6,11 +6,17 @@ using namespace Interface;
 
 int main()
 {
+#if 1
     RenderWindow window(800, 600, "Window", Window::Resizeable | Window::Antialias);
+#else
+    RenderWindow window(800, 600, "Window", Window::Resizeable);
+#endif
 
     VerticalLayout layout(10, 10, 300, 400);
+
     Button* closeButton;
     Combobox* list;
+    ToggleSwitch* toggle;
     layout.AddChild(new Label("Widgets",30));
     layout.AddChild(new HSeparator);
     layout.AddChild(new HorizontalLayout({new Checkbox(0,0, 20), new Label("Option 1", 20, 100)}));
@@ -22,9 +28,11 @@ int main()
     layout.AddChild(new HorizontalLayout({new Label("Checkbox:", 20, 100), new Checkbox(0,0, 20)}));
     layout.AddChild(new HorizontalLayout({new Label("Slider:", 20, 100), new HSlider(0,0,200)}));
     layout.AddChild(new HorizontalLayout({new Label("TextInput:", 20, 100), new TextInput(0,0,200,20)}));
+    layout.AddChild(new HorizontalLayout({new Label("TextInput:", 20, 100), toggle = new ToggleSwitch}));
     layout.AddChild(new TextInput(10,10,200,30));
     layout.AddChild(list = new Combobox(10, 10, 200, 20));
     layout.AddChild(new HSeparator);
+//    toggle->SetRoundness(0);
 
     for(int i = 0; i < 10; i++)
         list->AddValue("ListItem " + std::to_string(i));

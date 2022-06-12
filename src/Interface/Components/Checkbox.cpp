@@ -25,20 +25,20 @@ namespace tml::Interface
         {
             if(m_state.MouseOver)
             {
-                m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * 5, 0, 1);
+                m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * s_animationSpeed, 0, 1);
             }
             else
             {
-                m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * 5, 0, 1);
+                m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * s_animationSpeed, 0, 1);
             }
 
             if(m_value)
             {
-                m_bodyAnimationProgress = Math::Clamp<double>(m_bodyAnimationProgress + e.update.delta * 5, 0, 1);
+                m_bodyAnimationProgress = Math::Clamp<double>(m_bodyAnimationProgress + e.update.delta * s_animationSpeed, 0, 1);
             }
             else
             {
-                m_bodyAnimationProgress = Math::Clamp<double>(m_bodyAnimationProgress - e.update.delta * 5, 0, 1);
+                m_bodyAnimationProgress = Math::Clamp<double>(m_bodyAnimationProgress - e.update.delta * s_animationSpeed, 0, 1);
             }
 
             m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);

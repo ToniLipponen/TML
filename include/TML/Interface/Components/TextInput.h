@@ -9,8 +9,7 @@ namespace tml::Interface
     public:
         TextInput(int32_t x, int32_t y, uint32_t width, uint32_t height = 30) noexcept;
         void SetValue(const String& string) noexcept;
-        void SetRoundness(float radius) noexcept;
-        void SetTextColor(const Color& color) noexcept;
+        void SetTextColor(const Color& color) noexcept override;
         const String& GetValue() const noexcept;
         void SetReadOnly(bool readOnly) noexcept;
 
@@ -25,7 +24,7 @@ namespace tml::Interface
         int32_t m_cursorIndex = 0;
         double m_blinkTimer = 0;
         float m_cursorPos = 0;
-        float m_roundness = 0;
+        float m_roundness = 100;
         bool m_showLine = true;
         bool m_readOnly = false;
         double m_borderAnimationProgress = 0;

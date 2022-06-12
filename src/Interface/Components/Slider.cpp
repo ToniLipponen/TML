@@ -43,6 +43,12 @@ namespace tml::Interface
             }
         });
 
+        AddListener("Click", [&](BaseComponent* c, Event& e)
+        {
+            m_value = Math::Clamp(float(e.mouseButton.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
+            m_targetValue = m_value;
+        });
+
         AddListener("MouseMoved", [&](BaseComponent* c, Event& e)
         {
             if(m_state.MouseDown != -1)
@@ -55,6 +61,8 @@ namespace tml::Interface
                 {
                     m_value = Math::Clamp(m_max - float((e.pos.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
                 }
+
+                m_targetValue = m_sliderValue = m_value;
             }
         });
 
@@ -62,11 +70,25 @@ namespace tml::Interface
         {
             if(m_state.MouseOver)
             {
-                m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * 5, 0, 1);
+                m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * s_animationSpeed, 0, 1);
             }
             else
             {
-                m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * 5, 0, 1);
+                m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * s_animationSpeed, 0, 1);
+            }
+
+            if(m_sliderValue != m_targetValue)
+            {
+                if(m_sliderValue < m_targetValue)
+                {
+                    m_sliderValue += e.update.delta * s_animationSpeed;
+                    m_sliderValue = Math::Clamp<float>(m_sliderValue, 0, m_targetValue);
+                }
+                else
+                {
+                    m_sliderValue -= e.update.delta * s_animationSpeed;
+                    m_sliderValue = Math::Clamp<float>(m_sliderValue, m_targetValue, 1);
+                }
             }
 
             m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);
@@ -99,12 +121,12 @@ namespace tml::Interface
 
         if constexpr(axis == ComponentAxis::Horizontal)
         {
-            const auto x = Math::Max<float>(Math::Lerp<float>(0, m_size.x, m_value / m_max), m_roundness*2);
+            const auto x = Math::Max<float>(Math::Lerp<float>(0, m_size.x, m_sliderValue / m_max), m_roundness*2);
             target.DrawRect(m_pos + Vector2f(1, 1), Vector2f(x - 2 , m_size.y - 2), m_activeColor, m_roundness);
         }
         else
         {
-            const auto y = Math::Min<float>(Math::Lerp<float>(0, m_size.y, 1.0 - m_value / m_max), m_size.y - m_roundness * 2);
+            const auto y = Math::Min<float>(Math::Lerp<float>(0, m_size.y, 1.0 - m_sliderValue / m_max), m_size.y - m_roundness * 2);
             target.DrawRect(m_pos + Vector2i(0, y), Vector2f(m_size.x, m_size.y - y), m_activeColor, m_roundness);
         }
     }

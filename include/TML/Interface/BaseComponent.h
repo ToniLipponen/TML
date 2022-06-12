@@ -42,6 +42,8 @@ namespace tml::Interface
         bool Enabled() const noexcept;
 
         /**
+         * @brief Some valid listeners
+         *
          * @Click When mouse has been pressed and then released over the component.
          * @MouseDown When mouse has been pressed over the component.
          * @MouseEnter When mouse enters the area of the component.
@@ -58,9 +60,9 @@ namespace tml::Interface
          * @ChildAdded When a child gets added to the component.
          * @ChildRemoved When a child gets removed from the component.
          * @WindowResized When a window returns a resize event.
-         * @Updated
-         * @Enabled
-         * @Disabled
+         * @Drawn When the component is drawn
+         * @Enabled When the component is enabled.
+         * @Disabled When the component is disabled.
          * @Any When an event occurs.
          */
         void AddListener(const std::string& name, const EventCallback& callback) noexcept;
@@ -81,6 +83,8 @@ namespace tml::Interface
         void SetPrimaryColor(const Color& color) noexcept;
         void SetSecondaryColor(const Color& color) noexcept;
         void SetActiveColor(const Color& color) noexcept;
+        virtual void SetTextColor(const Color& color) noexcept;
+        void SetRoundness(float radius) noexcept;
         void Raise() noexcept;
         void ForEachChild(const std::function<bool(BaseComponent* c)>& function) noexcept;
         void SetPosition(const Vector2i& position) noexcept;
@@ -88,6 +92,9 @@ namespace tml::Interface
         void SetSize(const Vector2i& size) noexcept;
         void SetSize(uint32_t width, uint32_t height) noexcept;
         Vector2i GetOriginalSize() const noexcept;
+
+    public:
+        static void SetGlobalAnimationSpeed(double speed) noexcept;
 
     protected:
         void ClearFocused() noexcept;
@@ -98,12 +105,12 @@ namespace tml::Interface
         virtual void pDraw(RenderTarget& renderer) noexcept = 0;
         void OnDraw(RenderTarget* renderer, Texture*) noexcept final;
 
-//        Vector2i m_pos;
-//        Vector2i m_size;
         Vector2i m_originalSize; //!< Layouts might resize a component, so the original size needs to be saved.
         Color m_pColor;
         Color m_sColor;
         Color m_activeColor;
+        Color m_textColor;
+        float m_roundness = 30;
 
         SizePolicy m_hSizePolicy = SizePolicy::Fixed; // Horizontal size policy.
         SizePolicy m_vSizePolicy = SizePolicy::Fixed; // Vertical size policy.
@@ -118,5 +125,6 @@ namespace tml::Interface
 
         /** Might be used in the future. */
         [[maybe_unused]] static float s_scale;
+        [[maybe_unused]] static float s_animationSpeed;
     };
 }

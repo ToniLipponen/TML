@@ -11,9 +11,9 @@ namespace tml::Interface
                         const EventCallback& onClick = nullptr, bool expand = false);
         void SetRoundness(float roundness);
         void SetText(const std::string& str);
-        void SetTextSize(float s) { m_text.SetSize(s);}
-        void SetTextColor(const Color& color){ m_text.SetColor(color); }
-        inline const String& GetText() const noexcept { return m_text.GetString(); }
+        void SetTextSize(float s) noexcept;
+        void SetTextColor(const Color& color) noexcept override;
+        const String& GetText() const noexcept;
 
     private:
         void pDraw(RenderTarget& renderer) noexcept override;
