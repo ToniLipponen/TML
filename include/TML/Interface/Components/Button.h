@@ -7,7 +7,7 @@ namespace tml::Interface
     class TML_API Button : public BaseComponent
     {
     public:
-        explicit Button(const std::string& text, uint32_t w = 0, uint32_t h = 30, int32_t x = 0, int32_t y = 0,
+        explicit Button(const std::string& text, uint32_t w = 0, uint32_t h = 20, int32_t x = 0, int32_t y = 0,
                         const EventCallback& onClick = nullptr, bool expand = false);
         void SetText(const std::string& str);
         void SetTextSize(float s) noexcept;

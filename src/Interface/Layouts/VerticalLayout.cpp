@@ -33,6 +33,13 @@ namespace tml::Interface
         });
     }
 
+    VerticalLayout::VerticalLayout(const std::vector<BaseComponent*>& components, int32_t x, int32_t y, uint32_t h) noexcept
+    : VerticalLayout(x,y,0,h)
+    {
+        m_hSizePolicy = SizePolicy::Expand;
+        m_vSizePolicy = SizePolicy::Fixed;
+    }
+
     void VerticalLayout::ScaleChildren() noexcept
     {
         std::vector<BaseComponent*> expandThese, clampThese;
@@ -41,6 +48,7 @@ namespace tml::Interface
         {
             const auto itemSize = item->GetSize();
             const auto originalSize = item->GetOriginalSize();
+
             switch(item->GetVerticalSizePolicy())
             {
                 case SizePolicy::Fixed:
@@ -53,17 +61,24 @@ namespace tml::Interface
                     expandThese.push_back(item.get());
                     break;
             }
+
             switch(item->GetHorizontalSizePolicy())
             {
                 case SizePolicy::Expand:
+                {
                     item->SetSize({m_size.x, itemSize.y});
-                    break;
+                } break;
                 case SizePolicy::Clamp:
+                {
                     if(itemSize.x > m_size.x)
+                    {
                         item->SetSize({m_size.x, itemSize.y});
+                    }
                     else if(itemSize.x < originalSize.x)
-                        item->SetSize({Math::Min<int32_t>(originalSize.x, m_size.x), itemSize.y});
-                    break;
+                    {
+                        item->SetSize(Vector2i(Math::Min<int32_t>(originalSize.x, m_size.x), itemSize.y));
+                    }
+                } break;
                 default:
                     break;
             }
@@ -103,7 +118,7 @@ namespace tml::Interface
 
         for(auto & i : m_children)
         {
-            i->SetPosition({m_pos.x, static_cast<int>(m_pos.y + offset)});
+            i->SetPosition(Vector2i(m_pos.x, static_cast<int>(m_pos.y + offset)));
             offset += i->GetSize().y + m_padding.y;
         }
     }

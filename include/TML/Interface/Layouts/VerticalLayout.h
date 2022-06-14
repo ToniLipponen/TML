@@ -9,6 +9,8 @@ namespace tml::Interface
     public:
         VerticalLayout() noexcept;
         VerticalLayout(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept;
+        explicit VerticalLayout(const std::vector<BaseComponent*>& components,
+                                int32_t x = 0, int32_t y = 0, uint32_t h = 0) noexcept;
 
     private:
         void pDraw(RenderTarget& target) noexcept override {};

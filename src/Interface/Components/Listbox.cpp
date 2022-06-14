@@ -6,7 +6,7 @@ namespace tml::Interface
     {
         m_pos = Vector2i(x, y);
         m_size = Vector2i(width, height);
-        m_scrollbar = new Scrollbar<ComponentAxis::Vertical>(x + width - 21, y, height);
+        m_scrollbar = new Scrollbar<ComponentAxis::Vertical>(x + width - 21, y+1, height-2);
         m_hSizePolicy = SizePolicy::Expand;
         m_vSizePolicy = SizePolicy::Expand;
         AddChild(m_scrollbar);
@@ -17,8 +17,7 @@ namespace tml::Interface
             const Vector2i mousePos = {e.mouseButton.x, e.mouseButton.y};
             static auto PointInRect = [&](const Vector2i &tl, const Vector2i &br)
             {
-                return (mousePos.x <= br.x && mousePos.y <= br.y
-                     && mousePos.x >= tl.x && mousePos.y >= tl.y);
+                return (mousePos.x <= br.x && mousePos.y <= br.y && mousePos.x >= tl.x && mousePos.y >= tl.y);
             };
 
             for(int i = 0; i < m_values.size(); i++)
@@ -48,9 +47,13 @@ namespace tml::Interface
             if(m_state.MouseOver)
             {
                 if(e.mouseWheel.deltaY > 0.0)
+                {
                     m_scrollbar->SetValue(m_scrollbar->GetValue() - 1);
+                }
                 else if(e.mouseWheel.deltaY < 0.0)
+                {
                     m_scrollbar->SetValue(m_scrollbar->GetValue() + 1);
+                }
 
                 e = Event{};
             }
@@ -63,18 +66,19 @@ namespace tml::Interface
 
         AddListener("Resized", [&](BaseComponent* c, Event& e)
         {
+            m_size.y -= fmodf(m_size.y, 20);
             m_scrollbar->SetPosition(m_pos + Vector2i(m_size.x - 21, 0));
-            m_scrollbar->SetSize({m_scrollbar->GetSize().x, m_size.y});
+            m_scrollbar->SetSize({m_scrollbar->GetSize().x, m_size.y - 2});
 
-            const auto overflow = GetOverFlow();
-            if(overflow > 0)
+            if(const auto overflow = GetOverFlow())
             {
                 m_scrollbar->Enable();
                 m_scrollbar->SetRange(0, overflow);
             }
             else
+            {
                 m_scrollbar->Disable();
-
+            }
         });
 
         AddListener("Drawn", [&](BaseComponent* c, Event& e)
@@ -100,30 +104,40 @@ namespace tml::Interface
     void Listbox::AddValue(String value)
     {
         m_values.push_back(std::move(value));
-        const auto overflow = GetOverFlow();
-        if(overflow > 0)
+
+        if(const auto overflow = GetOverFlow())
         {
             m_scrollbar->Enable();
             m_scrollbar->SetRange(0, overflow);
         }
         else
+        {
             m_scrollbar->Disable();
+        }
     }
 
     void Listbox::SetValue(uint32_t index, String value)
     {
         if(index > m_values.size() - 1)
+        {
             return;
+        }
         else
+        {
             m_values.at(index) = std::move(value);
+        }
     }
 
     String Listbox::GetValue(uint32_t index)
     {
         if(index >= m_values.size())
+        {
             return {};
+        }
         else
+        {
             return m_values.at(index);
+        }
     }
 
     String Listbox::GetSelectedValue() const
@@ -132,6 +146,7 @@ namespace tml::Interface
         {
             return m_values.at(m_selectedIndex);
         }
+
         return "";
     }
 
@@ -147,10 +162,14 @@ namespace tml::Interface
 
     bool Listbox::ContainsValue(const std::string &value) const
     {
-        for(auto &i: m_values) {
+        for(auto &i : m_values)
+        {
             if(i == value)
+            {
                 return true;
+            }
         }
+
         return false;
     }
 
@@ -161,11 +180,15 @@ namespace tml::Interface
             m_values.erase(m_values.begin() + index);
             m_selectedIndex = -1;
 
-            const auto overflow = GetOverFlow();
-            if(overflow < 0)
-                m_scrollbar->Disable();
-            else
+            if(const auto overflow = GetOverFlow())
+            {
+                m_scrollbar->Enable();
                 m_scrollbar->SetRange(0, overflow);
+            }
+            else
+            {
+                m_scrollbar->Disable();
+            }
         }
     }
 
@@ -186,11 +209,11 @@ namespace tml::Interface
         target.DrawRect(m_pos + Vector2f(1, 1), m_size - Vector2f(2, 2), m_pColor);
 
         target.SetBounds(m_pos, m_size);
-        target.DrawRect(m_pos + Vector2f(0, (m_selectedIndex - m_scrollbar->GetValue()) * 20), Vector2f(m_size.x, 20.f), m_activeColor);
+        target.DrawRect(m_pos + Vector2f(1, (m_selectedIndex - m_scrollbar->GetValue()) * 20 + 1), Vector2f(m_size.x-2, 20.f-2), m_activeColor);
 
         for(int i = 0; i < m_values.size(); i++)
         {
-            target.DrawText(m_values.at(i), m_pos + Vector2i(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20, Color::Black);
+            target.DrawText(m_values.at(i), m_pos + Vector2i(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20, m_textColor);
         }
 
         target.ResetBounds();

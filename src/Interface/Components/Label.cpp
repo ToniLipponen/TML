@@ -2,13 +2,12 @@
 
 namespace tml::Interface
 {
-    Label::Label(const std::string& labelText, uint32_t s, uint32_t width, int32_t x, int32_t y) noexcept
+    Label::Label(const String& labelText, uint32_t s, uint32_t width, int32_t x, int32_t y) noexcept
     {
-        m_pos.x = x;
-        m_pos.y = y;
+        m_pos = Vector2f(x, y);
         m_text.SetString(labelText);
         m_text.SetSize(s);
-        m_text.SetColor(Color::Black);
+        m_text.SetColor(s_defaultTextColor);
         m_size = m_text.GetDimensions();
 
         if(width != 0)
@@ -22,7 +21,7 @@ namespace tml::Interface
         });
     }
 
-    void Label::SetValue(std::string str) noexcept
+    void Label::SetValue(const String& str) noexcept
     {
         m_text.SetString(str);
         m_size = m_text.GetDimensions();
@@ -31,6 +30,11 @@ namespace tml::Interface
     bool Label::ContainsPoint(const Vector2i &p) noexcept
     {
         return Math::PointInRect(p, m_pos, m_size, 0);
+    }
+
+    void Label::SetTextColor(const Color& color) noexcept
+    {
+        m_text.SetColor(color);
     }
 
     void Label::pDraw(RenderTarget& target) noexcept

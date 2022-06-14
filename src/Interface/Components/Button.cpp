@@ -8,7 +8,7 @@ Button::Button(const std::string& text, uint32_t w, uint32_t h, int32_t x, int32
     m_hSizePolicy = expand ? SizePolicy::Expand : SizePolicy::Fixed;
     m_vSizePolicy = SizePolicy::Fixed;
     m_text.SetString(text);
-    m_text.SetColor(Color::Black);
+    m_text.SetColor(s_defaultTextColor);
 
     m_text.SetSize(static_cast<float>(h) * 0.6f);
 

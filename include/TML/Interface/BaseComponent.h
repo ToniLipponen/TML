@@ -94,7 +94,11 @@ namespace tml::Interface
         Vector2i GetOriginalSize() const noexcept;
 
     public:
-        static void SetGlobalAnimationSpeed(double speed) noexcept;
+        static void SetGlobalAnimationSpeed(float speed) noexcept;
+        static void SetGlobalDefaultPrimaryColor(const Color& color) noexcept;
+        static void SetGlobalDefaultSecondaryColor(const Color& color) noexcept;
+        static void SetGlobalDefaultActiveColor(const Color& color) noexcept;
+        static void SetGlobalDefaultTextColor(const Color& color) noexcept;
 
     protected:
         void ClearFocused() noexcept;
@@ -126,5 +130,9 @@ namespace tml::Interface
         /** Might be used in the future. */
         [[maybe_unused]] static float s_scale;
         [[maybe_unused]] static float s_animationSpeed;
+        [[maybe_unused]] static Color s_defaultPrimaryColor;
+        [[maybe_unused]] static Color s_defaultSecondaryColor;
+        [[maybe_unused]] static Color s_defaultActiveColor;
+        [[maybe_unused]] static Color s_defaultTextColor;
     };
 }

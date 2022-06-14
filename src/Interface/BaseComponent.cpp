@@ -8,15 +8,28 @@ namespace tml::Interface
 {
     [[maybe_unused]] float BaseComponent::s_scale = 1.0f;
     [[maybe_unused]] float BaseComponent::s_animationSpeed = 5.f;
+    [[maybe_unused]] Color BaseComponent::s_defaultPrimaryColor = Color(0x171717ff);
+    [[maybe_unused]] Color BaseComponent::s_defaultSecondaryColor = Color(0x444444ff);
+    [[maybe_unused]] Color BaseComponent::s_defaultActiveColor = Color(0xda0037ff);
+    [[maybe_unused]] Color BaseComponent::s_defaultTextColor = Color(0xedededff);
 
     BaseComponent::BaseComponent() noexcept
-    : m_pColor(Color::White), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_parent(nullptr)
+    : m_pColor(s_defaultPrimaryColor),
+      m_sColor(s_defaultSecondaryColor),
+      m_activeColor(s_defaultActiveColor),
+      m_textColor(s_defaultTextColor),
+      m_parent(nullptr)
     {
         m_state.Enabled = true;
     }
 
     BaseComponent::BaseComponent(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept
-    : m_pColor(Color::White), m_sColor(0xc7c7c7ff), m_activeColor(0x4d8be4ff), m_originalSize(w,h), m_parent(nullptr)
+    : m_pColor(s_defaultPrimaryColor),
+      m_sColor(s_defaultSecondaryColor),
+      m_activeColor(s_defaultActiveColor),
+      m_textColor(s_defaultTextColor),
+      m_originalSize(w,h),
+      m_parent(nullptr)
     {
         m_pos = Vector2f(x,y);
         m_size = Vector2f(w,h);
@@ -487,9 +500,29 @@ namespace tml::Interface
         return false;
     }
 
-    void BaseComponent::SetGlobalAnimationSpeed(double speed) noexcept
+    void BaseComponent::SetGlobalAnimationSpeed(float speed) noexcept
     {
         s_animationSpeed = speed;
+    }
+
+    void BaseComponent::SetGlobalDefaultPrimaryColor(const Color& color) noexcept
+    {
+        s_defaultPrimaryColor = color;
+    }
+
+    void BaseComponent::SetGlobalDefaultSecondaryColor(const Color& color) noexcept
+    {
+        s_defaultSecondaryColor = color;
+    }
+
+    void BaseComponent::SetGlobalDefaultActiveColor(const Color& color) noexcept
+    {
+        s_defaultActiveColor = color;
+    }
+
+    void BaseComponent::SetGlobalDefaultTextColor(const Color& color) noexcept
+    {
+        s_defaultTextColor = color;
     }
 
     void BaseComponent::ClearFocused() noexcept
@@ -510,6 +543,7 @@ namespace tml::Interface
 
                 return false;
             });
+
             return false;
         });
     }

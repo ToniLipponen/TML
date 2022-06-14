@@ -6,10 +6,16 @@ namespace tml::Interface
     Scrollbar<axis>::Scrollbar(int32_t x, int32_t y, uint32_t length, uint32_t thickness) noexcept
     {
         m_pos = Vector2i(x,y);
-        if(axis == ComponentAxis::Horizontal)
+
+        if constexpr(axis == ComponentAxis::Horizontal)
+        {
             m_size = Vector2i(length, thickness);
+        }
         else
+        {
             m_size = Vector2i(thickness, length);
+        }
+
         m_pColor = Color(0xccccccff);
 
         AddListener("Click", [](BaseComponent*, Event& e) { e = {}; });
@@ -19,21 +25,36 @@ namespace tml::Interface
             if(m_state.MouseOver)
             {
                 m_state.MouseDown = static_cast<char>(e.mouseButton.button);
-                if(axis == ComponentAxis::Horizontal)
+
+                if constexpr(axis == ComponentAxis::Horizontal)
+                {
                     m_value = Math::Clamp<float>(float(e.mouseButton.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
+                }
                 else
+                {
                     m_value = m_max - Math::Clamp<float>(m_max - float((e.mouseButton.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
+                }
             }
         });
+
         AddListener("MouseMoved", [&](BaseComponent* c, Event& e)
         {
             if(m_state.MouseDown != -1)
             {
-                if(axis == ComponentAxis::Horizontal)
+                if constexpr(axis == ComponentAxis::Horizontal)
+                {
                     m_value = Math::Clamp<float>(float(e.pos.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
+                }
                 else
+                {
                     m_value = m_max - Math::Clamp<float>(m_max - float((e.pos.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
+                }
             }
+        });
+
+        AddListener("MouseEnter", [&](BaseComponent* c, Event& e)
+        {
+            e = {};
         });
     }
 
@@ -71,7 +92,7 @@ namespace tml::Interface
             const auto barPos = Math::Min(m_pos.y + barSize * m_value, m_pos.y + m_size.y - barSize);
 
             target.DrawRect(m_pos, m_size, m_pColor);
-            target.DrawRect(Vector2f(m_pos.x, barPos), Vector2f(m_size.x, barSize), m_activeColor);
+            target.DrawRect(Vector2f(m_pos.x, barPos), Vector2f(m_size.x, barSize), m_activeColor, m_size.x / 4);
         }
         else
         {
@@ -79,7 +100,7 @@ namespace tml::Interface
             const auto barPos = Math::Min(m_pos.x + barSize * m_value, m_pos.x + m_size.x - barSize);
 
             target.DrawRect(m_pos, m_size, m_pColor);
-            target.DrawRect(Vector2f(barPos, m_pos.y), Vector2f(barSize, m_size.y), m_activeColor);
+            target.DrawRect(Vector2f(barPos, m_pos.y), Vector2f(barSize, m_size.y), m_activeColor, m_size.y / 4);
         }
     }
 

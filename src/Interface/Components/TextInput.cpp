@@ -7,7 +7,7 @@ TextInput::TextInput(int32_t x, int32_t y, uint32_t width, uint32_t height) noex
 {
     m_pos = Vector2i(x,y);
     m_size = Vector2i(width, height);
-    m_text.SetColor(Color::Black);
+    m_text.SetColor(s_defaultTextColor);
     m_text.SetSize(height * 0.8f);
     m_cursorPos = Math::Clamp<int>(m_pos.x + 2, m_pos.x, m_pos.x + m_size.x - 4);
 
@@ -78,7 +78,9 @@ void TextInput::InitListeners() noexcept
             e = Event{};
         }
         else
+        {
             UnFocus();
+        }
     });
 
     AddListener("Click", [&](BaseComponent* c, Event& e)
@@ -90,7 +92,9 @@ void TextInput::InitListeners() noexcept
             e = Event{};
         }
         else
+        {
             UnFocus();
+        }
     });
 
     AddListener("KeyPressed", [&](BaseComponent* c, Event& e)
@@ -100,20 +104,31 @@ void TextInput::InitListeners() noexcept
             switch(e.key.value)
             {
                 case Keyboard::Key::LeftArrow:
+                {
                     if(e.key.control)
+                    {
                         m_cursorIndex = search_backwards();
+                    }
                     else
+                    {
                         m_cursorIndex = Math::Clamp<int32_t>(--m_cursorIndex, 0, m_value.size());
-                    break;
+                    }
+                } break;
 
                 case Keyboard::Key::RightArrow:
+                {
                     if(e.key.control)
+                    {
                         m_cursorIndex = search_forwards();
+                    }
                     else
+                    {
                         m_cursorIndex = Math::Clamp<int32_t>(++m_cursorIndex, 0, m_value.size());
-                    break;
+                    }
+                } break;
 
                 case Keyboard::Key::Backspace:
+                {
                     if(m_cursorIndex != 0)
                     {
                         if(e.key.control)
@@ -128,8 +143,10 @@ void TextInput::InitListeners() noexcept
                             m_cursorIndex = Math::Clamp<int32_t>(--m_cursorIndex, 0, m_value.size());
                         }
                     }
-                    break;
+                } break;
+
                 case Keyboard::Key::Delete:
+                {
                     if(m_cursorIndex != m_value.size() - 1)
                     {
                         if(e.key.control)
@@ -142,21 +159,28 @@ void TextInput::InitListeners() noexcept
                             m_value.erase(m_value.begin() + m_cursorIndex);
                         }
                     }
-                    break;
+                } break;
+
                 case Keyboard::Key::V:
+                {
                     if(e.key.control)
                     {
                         String str;
+
                         if(Clipboard::GetString(str))
                         {
                             m_value.insert(m_cursorIndex, str);
                             m_cursorIndex += str.length();
                         }
                     }
-                    break;
+                } break;
+
                 default:
                     break;
             }
+
+            m_blinkTimer = 0;
+            m_showLine = true;
 
             m_text.SetString(m_value.substr(0, m_cursorIndex));
             m_cursorPos = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
@@ -195,6 +219,7 @@ void TextInput::InitListeners() noexcept
         if(m_state.Focused)
         {
             m_blinkTimer += e.update.delta;
+
             if(m_blinkTimer > 1)
             {
                 m_showLine = !m_showLine;
@@ -231,7 +256,7 @@ void TextInput::pDraw(RenderTarget& target) noexcept
 
     if(m_state.Focused && m_showLine && !m_readOnly)
     {
-        target.DrawLine({m_cursorPos + clampedRounded, m_pos.y + (m_size.y / 10.0f)}, {m_cursorPos + clampedRounded, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, Color::Black, 0);
+        target.DrawLine({m_cursorPos + clampedRounded, m_pos.y + (m_size.y / 10.0f)}, {m_cursorPos + clampedRounded, m_pos.y + m_size.y - (m_size.y / 10.f)}, 2, m_sColor, false);
     }
 
     target.ResetBounds();

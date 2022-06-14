@@ -54,8 +54,23 @@ namespace tml::Interface
                 m_value = Math::Clamp(m_max - float((e.mouseButton.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
             }
 
+            Focus();
+            Raise();
             m_targetValue = m_value;
             e = {};
+        });
+
+        AddListener("MouseDown", [&](BaseComponent* c, Event& e)
+        {
+            if(m_state.MouseOver)
+            {
+                m_state.MouseDown = static_cast<char>(e.mouseButton.button);
+                e = Event{};
+            }
+            else
+            {
+                UnFocus();
+            }
         });
 
         AddListener("MouseMoved", [&](BaseComponent* c, Event& e)
@@ -72,6 +87,28 @@ namespace tml::Interface
                 }
 
                 m_targetValue = m_sliderValue = m_value;
+            }
+        });
+
+        AddListener("KeyPressed", [&](BaseComponent* c, Event& e)
+        {
+            if(m_state.Focused)
+            {
+                switch(e.key.value)
+                {
+                    case Keyboard::Key::LeftArrow:
+                    case Keyboard::Key::DownArrow:
+                        m_targetValue = Math::Clamp<float>(m_targetValue -= 0.1, 0, 1);
+                        break;
+
+                    case Keyboard::Key::RightArrow:
+                    case Keyboard::Key::UpArrow:
+                        m_targetValue = Math::Clamp<float>(m_targetValue += 0.1, 0, 1);
+                        break;
+
+                    default:
+                        break;
+                }
             }
         });
 
@@ -98,6 +135,11 @@ namespace tml::Interface
                     m_sliderValue -= e.update.delta * s_animationSpeed;
                     m_sliderValue = Math::Clamp<float>(m_sliderValue, m_targetValue, 1);
                 }
+            }
+
+            if(m_state.Focused)
+            {
+                m_borderAnimationProgress = 1;
             }
 
             m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);
