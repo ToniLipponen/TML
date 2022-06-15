@@ -46,6 +46,11 @@ namespace tml
         return m_gamma;
     }
 
+    Vector2f Monitor::GetContentScale() const noexcept
+    {
+        return m_contentScale;
+    }
+
     void Monitor::SetGamma(float gamma) noexcept
     {
         if(m_handle)

@@ -213,7 +213,16 @@ namespace tml::Interface
 
         for(int i = 0; i < m_values.size(); i++)
         {
-            target.DrawText(m_values.at(i), m_pos + Vector2i(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20, m_textColor);
+            const auto yPos = m_pos + Vector2f(0, i * 20 - (m_scrollbar->GetValue() * 20));
+
+            if(yPos.y + 20 > m_size.y + m_pos.y)
+            {
+                break;
+            }
+            if(yPos.y + 20 > m_pos.y)
+            {
+                target.DrawText(m_values.at(i), m_pos + Vector2i(5, i * 20 - (m_scrollbar->GetValue() * 20)), 20, m_textColor);
+            }
         }
 
         target.ResetBounds();
