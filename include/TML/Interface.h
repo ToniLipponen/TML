@@ -12,6 +12,7 @@
 #include <TML/Interface/Components/Spacer.h>
 #include <TML/Interface/Components/Menubar.h>
 #include <TML/Interface/Components/ToggleSwitch.h>
+#include <TML/Interface/Components/ImageButton.h>
 
 #include <TML/Interface/Layouts/VerticalLayout.h>
 #include <TML/Interface/Layouts/HorizontalLayout.h>

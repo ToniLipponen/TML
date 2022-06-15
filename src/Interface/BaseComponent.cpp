@@ -12,6 +12,7 @@ namespace tml::Interface
     [[maybe_unused]] Color BaseComponent::s_defaultSecondaryColor = Color(0x444444ff);
     [[maybe_unused]] Color BaseComponent::s_defaultActiveColor = Color(0xda0037ff);
     [[maybe_unused]] Color BaseComponent::s_defaultTextColor = Color(0xedededff);
+    std::deque<BaseComponent*> BaseComponent::s_processingQueue = std::deque<BaseComponent*>();
 
     BaseComponent::BaseComponent() noexcept
     : m_pColor(s_defaultPrimaryColor),
@@ -21,6 +22,7 @@ namespace tml::Interface
       m_parent(nullptr)
     {
         m_state.Enabled = true;
+        AddToProcessStack(this);
     }
 
     BaseComponent::BaseComponent(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept
@@ -34,6 +36,7 @@ namespace tml::Interface
         m_pos = Vector2f(x,y);
         m_size = Vector2f(w,h);
         m_state.Enabled = true;
+        AddToProcessStack(this);
     }
 
     BaseComponent::~BaseComponent() noexcept
@@ -132,19 +135,6 @@ namespace tml::Interface
                 component->m_hash = 0;
                 component->m_id = name;
                 m_children.emplace_back(component);
-                AddToProcessStack(component);
-
-                component->ForEachChild([](BaseComponent* c)
-                {
-                    c->AddToProcessStack(c);
-                    c->ForEachChild([](BaseComponent* c2)
-                    {
-                        c2->AddToProcessStack(c2);
-                        return false;
-                    });
-
-                    return false;
-                });
             }
             else
             {
@@ -152,20 +142,9 @@ namespace tml::Interface
                 component->m_hash = std::hash<std::string>{}(name);
                 component->m_id = name;
                 m_children.emplace_back(component);
-                AddToProcessStack(component);
-
-                component->ForEachChild([](BaseComponent* c)
-                {
-                    c->AddToProcessStack(c);
-                    c->ForEachChild([](BaseComponent* c2)
-                    {
-                        c2->AddToProcessStack(c2);
-                        return false;
-                    });
-                    return false;
-                });
             }
 
+            component->Raise();
             Event e{};
             CallUIFunc("ChildAdded", e);
         }
@@ -291,7 +270,7 @@ namespace tml::Interface
             return;
         }
 
-        if(!m_processStack.empty())
+        if(!s_processingQueue.empty())
         {
             /// This needs to be done here & not in item->ProcessEvents(event, delta);
             /// Because this event should not be missed even if the component is disabled.
@@ -299,16 +278,16 @@ namespace tml::Interface
             {
                 CallUIFunc("WindowResized", event);
 
-                for(int64_t i = m_processStack.size() - 1; i >= 0; --i)
+                for(int64_t i = s_processingQueue.size() - 1; i >= 0; --i)
                 {
-                    auto* item = m_processStack.at(i);
+                    auto* item = s_processingQueue.at(i);
                     item->CallUIFunc("WindowResized", event);
                 }
             }
 
-            for(int64_t i = m_processStack.size() - 1; i >= 0; --i)
+            for(int64_t i = s_processingQueue.size() - 1; i >= 0; --i)
             {
-                auto* item = m_processStack.at(i);
+                auto* item = s_processingQueue.at(i);
 
                 if(item->Enabled())
                 {
@@ -552,7 +531,7 @@ namespace tml::Interface
     {
         if(component && component->GetRoot())
         {
-            component->GetRoot()->m_processStack.push_back(component);
+            component->GetRoot()->s_processingQueue.push_back(component);
         }
     }
 
@@ -560,15 +539,13 @@ namespace tml::Interface
     {
         if(component && component->GetRoot())
         {
-            auto& processStack = component->GetRoot()->m_processStack;
-
-            if(!processStack.empty())
+            if(!s_processingQueue.empty())
             {
-                for(int64_t i = 0; i < processStack.size(); ++i)
+                for(int64_t i = 0; i < s_processingQueue.size(); ++i)
                 {
-                    if(processStack.at(i) == component)
+                    if(s_processingQueue.at(i) == component)
                     {
-                        processStack.erase(processStack.begin() + i);
+                        s_processingQueue.erase(s_processingQueue.begin() + i);
                         break;
                     }
                 }
@@ -583,10 +560,7 @@ namespace tml::Interface
         Event event{};
         event.update.delta = clock.Reset();
 
-        pDraw(*renderer);
-        CallUIFunc("Drawn", event);
-
-        for(auto* i : m_processStack)
+        for(auto* i : s_processingQueue)
         {
             if(i->Enabled())
             {

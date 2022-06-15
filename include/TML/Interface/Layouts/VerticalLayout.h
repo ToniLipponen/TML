@@ -4,7 +4,7 @@
 
 namespace tml::Interface
 {
-    class TML_API VerticalLayout : public BaseComponent, public Layout
+    class TML_API VerticalLayout : public Layout
     {
     public:
         VerticalLayout() noexcept;
@@ -13,8 +13,7 @@ namespace tml::Interface
                                 int32_t x = 0, int32_t y = 0, uint32_t h = 0) noexcept;
 
     private:
-        void pDraw(RenderTarget& target) noexcept override {};
-        void ScaleChildren() noexcept;
-        void AlignChildren() noexcept;
+        void ScaleChildren() noexcept final;
+        void AlignChildren() noexcept final;
     };
 }

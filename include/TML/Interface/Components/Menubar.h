@@ -8,6 +8,7 @@ namespace tml::Interface
     {
     public:
         explicit Menubar(RenderWindow& window) noexcept;
+
     private:
         void pDraw(RenderTarget& renderer) noexcept override;
     };

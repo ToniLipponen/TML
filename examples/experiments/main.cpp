@@ -6,20 +6,21 @@ using namespace Interface;
 
 int main()
 {
-    RenderWindow window(320, 420, "Window", Window::VSync);
+    RenderWindow window(320, 500, "Window", Window::VSync | Window::Resizeable);
+    window.SetClearColor(Color(0x444444ff));
 
-    VerticalLayout layout(10, 10, 300, 450);
+    VerticalLayout layout(0, 0, window.GetWidth(), window.GetHeight());
+    layout.AddListener("WindowResized", [](BaseComponent* pointerToComponent, Event& resizeEvent)
+    {
+        auto* pointerToLayout = dynamic_cast<VerticalLayout*>(pointerToComponent);
+        pointerToLayout->SetSize(resizeEvent.size.w, resizeEvent.size.h);
+    });
 
     Combobox* combobox;
     Listbox* listbox;
-    layout.AddChild(new Label("Widgets",25));
-    layout.AddChild(new HSeparator);
-    layout.AddChild(new HorizontalLayout({new Checkbox(0,0, 20), new Label("Option 1")}));
-    layout.AddChild(new HorizontalLayout({new Checkbox(0,0, 20), new Label("Option 2")}));
-    layout.AddChild(new HorizontalLayout({new Checkbox(0,0, 20), new Label("Option 3")}));
-    layout.AddChild(new HorizontalLayout({new Checkbox(0,0, 20), new Label("Option 4")}));
-    layout.AddChild(new HSeparator);
+    Menubar* menubar;
 
+    layout.AddChild(menubar = new Menubar(window));
     layout.AddChild(new HorizontalLayout({new Label("Checkbox:",    20, 125), new Checkbox(0,0, 20)}));
     layout.AddChild(new HorizontalLayout({new Label("Slider:",      20, 125), new HSlider(0,0,200)}));
     layout.AddChild(new HorizontalLayout({new Label("TextInput:",   20, 125), new TextInput(0,0,200,20)}));
@@ -33,8 +34,16 @@ int main()
 
     for(int i = 0; i < 20; i++)
     {
-        listbox->AddValue("ListItem " + std::to_string(i));
-        combobox->AddValue("ListItem " + std::to_string(i));
+        const auto istring = std::to_string(i);
+        listbox->AddValue("ListItem " + istring);
+        combobox->AddValue("ListItem " + istring);
+    }
+
+    for(int i = 0; i < 5; i++)
+    {
+        Button* button;
+        menubar->AddChild(button = new Button("Item" + std::to_string(i)));
+        button->SetRoundness(0);
     }
 
     while(window.IsOpen())
@@ -45,15 +54,17 @@ int main()
         {
             if(event.type == EventType::Closed)
             {
-                window.Close();
+                return 0;
             }
 
             layout.Update(event);
         }
 
         window.Clear();
-        window.Draw(layout);
+        window.Draw(*listbox);
         window.Display();
     }
+
     return 0;
 }
+

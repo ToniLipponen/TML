@@ -3,47 +3,32 @@
 namespace tml::Interface
 {
     VerticalLayout::VerticalLayout() noexcept
-    : VerticalLayout(0,0,0,0)
     {
 
     }
 
     VerticalLayout::VerticalLayout(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept
-    : BaseComponent(x,y,w,h)
     {
-        m_hSizePolicy = SizePolicy::Expand;
-        m_vSizePolicy = SizePolicy::Expand;
-
-        AddListener("ChildAdded", [&](BaseComponent* c, Event& e)
-        {
-            ScaleChildren();
-            AlignChildren();
-        });
-
-        AddListener("Resized", [&](BaseComponent* c, Event& e)
-        {
-            ScaleChildren();
-            AlignChildren();
-        });
-
-        AddListener("Moved", [&](BaseComponent* c, Event& e)
-        {
-            ScaleChildren();
-            AlignChildren();
-        });
+        SetPosition(x,y);
+        SetSize(w,h);
     }
 
     VerticalLayout::VerticalLayout(const std::vector<BaseComponent*>& components, int32_t x, int32_t y, uint32_t h) noexcept
     : VerticalLayout(x,y,0,h)
     {
-        m_hSizePolicy = SizePolicy::Expand;
-        m_vSizePolicy = SizePolicy::Fixed;
+        SetSizePolicy(SizePolicy::Expand, SizePolicy::Fixed);
+
+        for(auto* i : components)
+        {
+            AddChild(i);
+        }
     }
 
     void VerticalLayout::ScaleChildren() noexcept
     {
         std::vector<BaseComponent*> expandThese, clampThese;
         float height = 0;
+
         for(auto& item : m_children)
         {
             const auto itemSize = item->GetSize();

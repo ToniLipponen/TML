@@ -3,57 +3,21 @@
 namespace tml::Interface
 {
     HorizontalLayout::HorizontalLayout() noexcept
-    : HorizontalLayout(0,0,0,0)
     {
 
     }
 
     HorizontalLayout::HorizontalLayout(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept
-    : BaseComponent(x,y,w,h)
     {
-        m_hSizePolicy = SizePolicy::Expand;
-        m_vSizePolicy = SizePolicy::Expand;
-        AddListener("ChildAdded", [&](BaseComponent* c, Event& e)
-        {
-            ScaleChildren();
-            AlignChildren();
-        });
-
-        AddListener("Resized", [&](BaseComponent* c, Event& e)
-        {
-            ScaleChildren();
-            AlignChildren();
-        });
-
-        AddListener("Moved", [&](BaseComponent* c, Event& e)
-        {
-            ScaleChildren();
-            AlignChildren();
-        });
+        SetPosition(x,y);
+        SetSize(w,h);
     }
 
     HorizontalLayout::HorizontalLayout(const std::vector<BaseComponent*>& components, int32_t x, int32_t y, uint32_t h) noexcept
-    : BaseComponent(x,y,0,h)
+    : HorizontalLayout(x, y, 0, h)
     {
         m_hSizePolicy = SizePolicy::Expand;
         m_vSizePolicy = SizePolicy::Fixed;
-        AddListener("ChildAdded", [&](BaseComponent* c, Event& e)
-        {
-            ScaleChildren();
-            AlignChildren();
-        });
-
-        AddListener("Resized", [&](BaseComponent* c, Event& e)
-        {
-            ScaleChildren();
-            AlignChildren();
-        });
-
-        AddListener("Moved", [&](BaseComponent* c, Event& e)
-        {
-            ScaleChildren();
-            AlignChildren();
-        });
 
         if(h == 0)
         {

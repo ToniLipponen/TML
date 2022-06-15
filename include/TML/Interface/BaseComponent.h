@@ -94,11 +94,11 @@ namespace tml::Interface
         Vector2i GetOriginalSize() const noexcept;
 
     public:
-        static void SetGlobalAnimationSpeed(float speed) noexcept;
-        static void SetGlobalDefaultPrimaryColor(const Color& color) noexcept;
-        static void SetGlobalDefaultSecondaryColor(const Color& color) noexcept;
-        static void SetGlobalDefaultActiveColor(const Color& color) noexcept;
-        static void SetGlobalDefaultTextColor(const Color& color) noexcept;
+        [[maybe_unused]] static void SetGlobalAnimationSpeed(float speed) noexcept;
+        [[maybe_unused]] static void SetGlobalDefaultPrimaryColor(const Color& color) noexcept;
+        [[maybe_unused]] static void SetGlobalDefaultSecondaryColor(const Color& color) noexcept;
+        [[maybe_unused]] static void SetGlobalDefaultActiveColor(const Color& color) noexcept;
+        [[maybe_unused]] static void SetGlobalDefaultTextColor(const Color& color) noexcept;
 
     protected:
         void ClearFocused() noexcept;
@@ -110,6 +110,8 @@ namespace tml::Interface
         void OnDraw(RenderTarget* renderer, Texture*) noexcept final;
 
         Vector2i m_originalSize; //!< Layouts might resize a component, so the original size needs to be saved.
+        [[maybe_unused]] Vector2i m_minimumSize;  //!< Minimum size of the component.
+
         Color m_pColor;
         Color m_sColor;
         Color m_activeColor;
@@ -122,7 +124,6 @@ namespace tml::Interface
         uint64_t m_hash = 0;
         std::string m_id;
         std::vector<std::unique_ptr<BaseComponent>> m_children;
-        std::deque<BaseComponent*> m_processStack;
         std::unordered_map<std::string, std::vector<EventCallback>> m_listeners;
         BaseComponent* m_parent;
         StateFlag m_state;
@@ -134,5 +135,6 @@ namespace tml::Interface
         [[maybe_unused]] static Color s_defaultSecondaryColor;
         [[maybe_unused]] static Color s_defaultActiveColor;
         [[maybe_unused]] static Color s_defaultTextColor;
+        static std::deque<BaseComponent*> s_processingQueue;
     };
 }

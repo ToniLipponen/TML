@@ -52,21 +52,38 @@ void TextInput::AlignText() noexcept
 
 void TextInput::InitListeners() noexcept
 {
-    static auto search_forwards = [&]() noexcept -> size_t {
+    static auto search_forwards = [&]() noexcept -> size_t
+    {
         size_t index = m_cursorIndex;
+
         for(;index < m_value.size()-1; index++)
+        {
             if(m_value.at(index) == ' ')
+            {
                 break;
+            }
+        }
+
         return index;
     };
-    static auto search_backwards = [&]() noexcept -> size_t {
-        if(m_cursorIndex == 0)
-            return (size_t)0;
 
-        size_t index = m_cursorIndex-1;
+    static auto search_backwards = [&]() noexcept -> size_t
+    {
+        if(m_cursorIndex == 0)
+        {
+            return (size_t) 0;
+        }
+
+        size_t index = m_cursorIndex - 1;
+
         for(;index > 0; index--)
+        {
             if(m_value.at(index) == ' ')
+            {
                 break;
+            }
+        }
+
         return index;
     };
 
