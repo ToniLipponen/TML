@@ -7,13 +7,14 @@ TextInput::TextInput(int32_t x, int32_t y, uint32_t width, uint32_t height) noex
 {
     m_pos = Vector2i(x,y);
     m_size = Vector2i(width, height);
+    m_minimumSize = Vector2f(height);
     m_text.SetColor(s_defaultTextColor);
     m_text.SetSize(height * 0.8f);
-    m_cursorPos = Math::Clamp<int>(m_pos.x + 2, m_pos.x, m_pos.x + m_size.x - 4);
+    m_cursorPos = Math::Clamp<float>(m_pos.x + 2, m_pos.x, m_pos.x + m_size.x - 4);
 
     m_hSizePolicy = SizePolicy::Expand;
     m_vSizePolicy = SizePolicy::Fixed;
-//    m_roundness = 8;
+
     AlignText();
     InitListeners();
 }

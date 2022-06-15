@@ -23,6 +23,7 @@ Button::Button(const std::string& text, uint32_t w, uint32_t h, int32_t x, int32
     }
 
     m_originalSize = m_size;
+    m_minimumSize = Vector2f(m_size.y);
 
     const Vector2i textSize = m_text.GetDimensions();
     m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));

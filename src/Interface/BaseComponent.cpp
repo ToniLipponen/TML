@@ -381,16 +381,23 @@ namespace tml::Interface
 
     void BaseComponent::SetSize(const Vector2i &size) noexcept
     {
-        m_size = size;
+        const auto oldSize = m_size;
+
+        m_size.x = Math::Max<float>(size.x, m_minimumSize.x);
+        m_size.y = Math::Max<float>(size.y, m_minimumSize.y);
+
+        if(oldSize == m_size)
+        {
+            return;
+        }
+
         Event e{};
         CallUIFunc("Resized", e);
     }
 
     void BaseComponent::SetSize(uint32_t w, uint32_t h) noexcept
     {
-        m_size = Vector2f(static_cast<float>(w), static_cast<float>(h));
-        Event e{};
-        CallUIFunc("Resized", e);
+        SetSize({w, h});
     }
 
     Vector2i BaseComponent::GetOriginalSize() const noexcept
