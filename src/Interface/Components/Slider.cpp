@@ -3,7 +3,7 @@
 namespace tml::Interface
 {
     template<ComponentAxis axis>
-    Slider<axis>::Slider(int32_t x, int32_t y, uint32_t size, uint32_t thickness, float min, float max) noexcept
+    Slider<axis>::Slider(uint32_t size, uint32_t thickness, int32_t x, int32_t y, float min, float max) noexcept
     {
         m_min = Math::Max<float>(min, 0);
         m_max = Math::Max<float>(max, 0);

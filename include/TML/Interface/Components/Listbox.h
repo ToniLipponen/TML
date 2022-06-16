@@ -8,7 +8,7 @@ namespace tml::Interface
     class Listbox : public BaseComponent
     {
     public:
-        Listbox(int32_t x, int32_t y, uint32_t width, uint32_t height);
+        Listbox(uint32_t width, uint32_t height, int32_t x = 0, int32_t y = 0);
         void AddValue(String value);
         void SetValue(uint32_t index, String value);
         String GetValue(uint32_t index); //!< Returns an empty string if index is greater than list size - 1.

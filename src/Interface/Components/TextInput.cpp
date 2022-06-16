@@ -3,7 +3,7 @@
 
 using namespace tml::Interface;
 
-TextInput::TextInput(int32_t x, int32_t y, uint32_t width, uint32_t height) noexcept
+TextInput::TextInput(uint32_t width, uint32_t height, int32_t x, int32_t y) noexcept
 {
     m_pos = Vector2i(x,y);
     m_size = Vector2i(width, height);

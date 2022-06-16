@@ -21,16 +21,16 @@ int main()
     Menubar* menubar;
 
     layout.AddChild(menubar = new Menubar(window));
-    layout.AddChild(new HorizontalLayout({new Label("Checkbox:",    20, 125), new Checkbox(0,0, 20)}));
-    layout.AddChild(new HorizontalLayout({new Label("Slider:",      20, 125), new HSlider(0,0,200)}));
-    layout.AddChild(new HorizontalLayout({new Label("TextInput:",   20, 125), new TextInput(0,0,200,20)}));
+    layout.AddChild(new HorizontalLayout({new Label("Checkbox:",    20, 125), new Checkbox}));
+    layout.AddChild(new HorizontalLayout({new Label("Slider:",      20, 125), new HSlider(100)}));
+    layout.AddChild(new HorizontalLayout({new Label("TextInput:",   20, 125), new TextInput(200)}));
     layout.AddChild(new HorizontalLayout({new Label("ToggleSwitch:",20, 125), new ToggleSwitch}));
     layout.AddChild(new HorizontalLayout({new Label("Button:",      20, 125), new Button("Click me!")}));
-    layout.AddChild(new HorizontalLayout({new Label("Combobox:",    20, 125), combobox = new Combobox(10, 10,160)}));
+    layout.AddChild(new HorizontalLayout({new Label("Combobox:",    20, 125), combobox = new Combobox(160)}));
 
     layout.AddChild(new HSeparator);
     layout.AddChild(new Label("Listbox", 20));
-    layout.AddChild(listbox = new Listbox(0,0,300,300));
+    layout.AddChild(listbox = new Listbox(300,300));
 
     for(int i = 0; i < 20; i++)
     {

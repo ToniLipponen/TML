@@ -3,11 +3,11 @@
 
 namespace tml::Interface
 {
-    Combobox::Combobox(int32_t x, int32_t y, uint32_t width, uint32_t height)
+    Combobox::Combobox(uint32_t width, uint32_t height, int32_t x, int32_t y) noexcept
     : BaseComponent(x,y,width,height)
     {
-        AddChild(m_listComponent = new Listbox(x, y + height + 2, width, 200));
-        AddChild(m_textInput = new TextInput(x, y, width, height));
+        AddChild(m_listComponent = new Listbox(width, 200, x, y + height + 2));
+        AddChild(m_textInput = new TextInput(width, height, x, y));
         m_textInput->SetReadOnly(true);
 
         m_listComponent->Disable();
@@ -48,37 +48,37 @@ namespace tml::Interface
         });
     }
 
-    void Combobox::AddValue(String value)
+    void Combobox::AddValue(String value) noexcept
     {
         m_listComponent->AddValue(std::move(value));
     }
 
-    void Combobox::SetValue(uint32_t index, String value)
+    void Combobox::SetValue(uint32_t index, String value) noexcept
     {
         m_listComponent->SetValue(index, value);
     }
 
-    void Combobox::SetListHeight(int height)
+    void Combobox::SetListHeight(int height) noexcept
     {
         m_listComponent->SetSize(Vector2i(m_size.x, height));
     }
 
-    String Combobox::GetValue(uint32_t index)
+    String Combobox::GetValue(uint32_t index) noexcept
     {
         return m_listComponent->GetValue(index);
     }
 
-    String Combobox::GetSelectedValue() const
+    String Combobox::GetSelectedValue() const noexcept
     {
         return m_listComponent->GetSelectedValue();
     }
 
-    int32_t Combobox::GetSelectedIndex() const
+    int32_t Combobox::GetSelectedIndex() const noexcept
     {
         return m_listComponent->GetSelectedIndex();
     }
 
-    void Combobox::Clear()
+    void Combobox::Clear() noexcept
     {
         m_listComponent->Clear();
     }

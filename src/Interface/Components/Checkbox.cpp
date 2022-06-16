@@ -2,7 +2,7 @@
 
 namespace tml::Interface
 {
-    Checkbox::Checkbox(int32_t x, int32_t y, uint32_t size, bool checked) noexcept
+    Checkbox::Checkbox(uint32_t size, int32_t x, int32_t y, bool checked) noexcept
     {
         m_pos = Vector2f(x,y);
         m_size = Vector2f(size,size);
