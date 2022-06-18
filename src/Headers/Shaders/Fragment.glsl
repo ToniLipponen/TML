@@ -1,3 +1,4 @@
+/** NOT USED FOR ANYTHING. This is here just for reference. */
 R"END(
 #version 300 es
 in mediump vec4 vColor;

@@ -3,6 +3,8 @@
 #include <TML/Graphics/Core/Shader.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <sstream>
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -13,6 +15,86 @@
 #ifdef TML_PLATFORM_WINDOWS
     #undef DrawText
 #endif
+static std::string s_defaultFragmentSource;
+
+void CreateDefaultFragmentShader(int textureSlots)
+{
+    s_defaultFragmentSource =
+    R"END(
+    #version 300 es
+    in mediump vec4 vColor;
+    in mediump vec2 vUV;
+    flat in uint vTexID;
+    flat in uint vType;
+    layout (location = 0) out mediump vec4 outColor;
+
+    )END";
+
+    for(int i = 0; i < textureSlots; i++)
+    {
+        s_defaultFragmentSource.append("uniform sampler2D uTexture" + std::to_string(i) + ";\n");
+    }
+
+    s_defaultFragmentSource.append(
+            R"END(
+    mediump vec4 SampleTex(uint index)
+    {
+        switch(index)
+        {
+
+    )END");
+
+    for(int i = 0; i < textureSlots; i++)
+    {
+        std::stringstream ss;
+        ss << "case " << i << "u: return texture(uTexture" << i << ", vUV); break;\n";
+        s_defaultFragmentSource.append(ss.str());
+    }
+
+    s_defaultFragmentSource.append(R"END(
+        default: return vec4(1.0, 0.0, 0.0, 1.0); break;
+        }
+    }
+    )END");
+
+    s_defaultFragmentSource.append(R"END(
+    void main()
+    {
+       switch(vType)
+       {
+           /// Color
+           case 0u:
+               outColor = vColor;
+           break;
+
+           /// Texture
+           case 1u:
+               outColor = SampleTex(vTexID);
+               if(outColor.a < 0.01)
+                   discard;
+           break;
+
+           /// Text
+           case 2u:
+               mediump vec4 color = SampleTex(vTexID);
+               mediump float alpha = color.r * vColor.a;
+               if(alpha > 0.01)
+               {
+                   outColor = vColor;
+                   outColor.a = alpha;
+               }
+               else
+                   discard;
+           break;
+
+           default:
+           {
+               discard;
+           } break;
+       }
+    }
+)END");
+}
 
 namespace tml
 {
@@ -32,6 +114,7 @@ namespace tml
         GL_CALL(glad_glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureCount));
 
         m_maxTextureCount = Math::Min(m_maxTextureCount, 32);
+        CreateDefaultFragmentShader(m_maxTextureCount);
 
         m_vao           = new VertexArray;
         m_vertexBuffer  = new VertexBuffer;
@@ -49,9 +132,8 @@ namespace tml
         m_layout->Push(1, 4, BufferLayout::VERTEX_UNSIGNED_INT);
         m_layout->Push(1, 4, BufferLayout::VERTEX_UNSIGNED_INT);
 
-        m_shader->LoadFromString(VERTEX_STRING, FRAGMENT_STRING);
+        m_shader->LoadFromString(VERTEX_STRING, s_defaultFragmentSource);
         m_shader->Bind();
-
 
         GL_CALL(glad_glEnable(GL_BLEND));
         GL_CALL(glad_glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
