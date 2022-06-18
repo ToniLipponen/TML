@@ -3,7 +3,7 @@
 
 namespace tml::Interface
 {
-    class ToggleSwitch : public BaseComponent
+    class TML_API ToggleSwitch : public BaseComponent
     {
     public:
         explicit ToggleSwitch(int32_t x = 0, int32_t y = 0, uint32_t size = 20, bool state = false) noexcept;

@@ -31,6 +31,8 @@ namespace tml::Interface
     public:
         BaseComponent() noexcept;
         BaseComponent(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept;
+        BaseComponent(const BaseComponent&) = delete;
+        BaseComponent& operator=(const BaseComponent&) noexcept = delete;
         virtual ~BaseComponent() noexcept;
         void Focus() noexcept;
         void UnFocus() noexcept;

@@ -1,4 +1,4 @@
-#include <TML/TML.h>
+#include <TML/Interface.h>
 #include <iostream>
 
 using namespace tml;
@@ -6,7 +6,7 @@ using namespace Interface;
 
 int main()
 {
-    RenderWindow window(320, 500, "Window", Window::VSync | Window::Resizeable);
+    RenderWindow window(320, 500, "Window", Window::Resizeable);
     window.SetClearColor(Color(0x444444ff));
 
     VerticalLayout layout(0, 0, window.GetWidth(), window.GetHeight());
@@ -34,9 +34,8 @@ int main()
 
     for(int i = 0; i < 20; i++)
     {
-        const auto istring = std::to_string(i);
-        listbox->AddValue("ListItem " + istring);
-        combobox->AddValue("ListItem " + istring);
+        listbox->AddValue("ListItem" + std::to_string(i));
+        combobox->AddValue("ListItem" + std::to_string(i));
     }
 
     for(int i = 0; i < 5; i++)
