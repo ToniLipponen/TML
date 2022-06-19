@@ -86,7 +86,7 @@ namespace tml
 
                 glfwGetMonitorContentScale(monitors[i],
                                            &monitor.m_contentScale.x,
-                                           &monitor.m_contentScale.x);
+                                           &monitor.m_contentScale.y);
 
                 glfwGetMonitorPhysicalSize(monitors[i],
                                            &monitor.m_physicalSize.x,
