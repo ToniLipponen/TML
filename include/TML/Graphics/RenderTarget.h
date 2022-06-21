@@ -88,7 +88,7 @@ namespace tml
         /** @Brief Draws string of text on pos with a given size.
          * @note This is going to be very slow,
          * because the vertex data is going to have to be constructed on each draw.
-         * If you are going to be drawing text that doesn't change each frame, you should use Renderer::Draw(Text& text) instead. */
+         * If you are going to be drawing text that doesn't change each frame, you should use RenderTarget::Draw(Text& text) instead. */
         void DrawText(const String& text, const Vector2f& pos, float size, const Color& color = Color::White) noexcept;
 
         void PushVertexData(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices) noexcept;

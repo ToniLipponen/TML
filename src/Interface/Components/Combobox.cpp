@@ -36,7 +36,7 @@ namespace tml::Interface
             if(m_state.MouseOver)
             {
                 m_listComponent->ToggleEnabled();
-                m_listComponent->Raise();
+                Raise();
                 e = Event{};
             }
         });

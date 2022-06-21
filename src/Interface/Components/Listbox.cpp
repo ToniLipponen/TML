@@ -39,6 +39,7 @@ namespace tml::Interface
             if(c->ContainsPoint({e.mouseButton.x, e.mouseButton.y}))
             {
                 Raise();
+                m_scrollbar->Raise();
                 m_state.MouseDown = static_cast<char>(e.mouseButton.button);
                 e = Event{};
             }

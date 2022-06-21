@@ -51,9 +51,10 @@ namespace tml::Interface
         return m_value;
     }
 
-    void Checkbox::SetRoundness(float radius) noexcept
+
+    void Checkbox::SetValue(bool value) noexcept
     {
-        m_roundness = radius;
+        m_value = value;
     }
 
     void Checkbox::pDraw(RenderTarget& target) noexcept

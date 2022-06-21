@@ -11,10 +11,12 @@ namespace tml::Interface
 {
     enum class ComponentAxis { Horizontal, Vertical };
 
-    class TML_API BaseComponent : public Drawable
+    class UIRoot;
+
+    class TML_API BaseComponent
     {
     public:
-        struct [[maybe_unused]] StateFlag
+        struct StateFlag
         {
             char MouseDown   = -1;
             bool MouseOver  = false;
@@ -74,11 +76,10 @@ namespace tml::Interface
         BaseComponent* FindComponent(const std::string& id) noexcept;    //!< DANGER! Returns nullptr if not found.
         BaseComponent* FindComponent(uint64_t) noexcept;                 //!< DANGER! Returns nullptr if not found.
         BaseComponent* GetParent() noexcept;                             //!< DANGER! Returns nullptr if the component doesn't have a parent.
-        BaseComponent* GetRoot() noexcept;
+        UIRoot* GetRoot() noexcept;
         uint64_t GetHash() const noexcept;
         const std::string& GetID() const noexcept;
         virtual bool ContainsPoint(const Vector2i& p);
-        void Update(Event& event) noexcept;
         SizePolicy GetHorizontalSizePolicy() const noexcept;
         SizePolicy GetVerticalSizePolicy() const noexcept;
         void SetSizePolicy(SizePolicy horizontal, SizePolicy vertical) noexcept;
@@ -94,7 +95,10 @@ namespace tml::Interface
         void SetSize(const Vector2i& size) noexcept;
         void SetSize(uint32_t width, uint32_t height) noexcept;
         Vector2i GetOriginalSize() const noexcept;
+        Vector2f GetSize() const noexcept;
+        Vector2f GetPosition() const noexcept;
 
+        friend UIRoot;
     public:
         [[maybe_unused]] static void SetGlobalAnimationSpeed(float speed) noexcept;
         [[maybe_unused]] static void SetGlobalDefaultPrimaryColor(const Color& color) noexcept;
@@ -103,16 +107,14 @@ namespace tml::Interface
         [[maybe_unused]] static void SetGlobalDefaultTextColor(const Color& color) noexcept;
 
     protected:
-        void ClearFocused() noexcept;
-        void AddToProcessStack(BaseComponent* component) noexcept;
-        void RemoveFromProcessStack(BaseComponent* component) noexcept;
         bool CallUIFunc(const std::string& name, Event& event) noexcept;
         void ProcessEvents(Event& event, double dt) noexcept;
         virtual void pDraw(RenderTarget& renderer) noexcept = 0;
-        void OnDraw(RenderTarget* renderer, Texture*) noexcept final;
 
-        Vector2i m_originalSize; //!< Layouts might resize a component, so the original size needs to be saved.
-        [[maybe_unused]] Vector2i m_minimumSize;  //!< Minimum size of the component.
+        Vector2f m_pos;
+        Vector2f m_size;
+        Vector2f m_originalSize; //!< Layouts might resize a component, so the original size needs to be saved.
+        Vector2f m_minimumSize;  //!< Minimum size of the component.
 
         Color m_pColor;
         Color m_sColor;
@@ -128,6 +130,7 @@ namespace tml::Interface
         std::vector<std::unique_ptr<BaseComponent>> m_children;
         std::unordered_map<std::string, std::vector<EventCallback>> m_listeners;
         BaseComponent* m_parent;
+        UIRoot* m_root;
         StateFlag m_state;
 
         /** Might be used in the future. */
@@ -137,6 +140,5 @@ namespace tml::Interface
         [[maybe_unused]] static Color s_defaultSecondaryColor;
         [[maybe_unused]] static Color s_defaultActiveColor;
         [[maybe_unused]] static Color s_defaultTextColor;
-        static std::deque<BaseComponent*> s_processingQueue;
     };
 }

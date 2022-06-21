@@ -7,10 +7,10 @@ using namespace Interface;
 int main()
 {
     RenderWindow window(320, 500, "Window", Window::Resizeable);
-    window.SetClearColor(Color(0x444444ff));
 
-    VerticalLayout layout(0, 0, window.GetWidth(), window.GetHeight());
-    layout.AddListener("WindowResized", [](BaseComponent* pointerToComponent, Event& resizeEvent)
+    auto* layout = new VerticalLayout(0, 0, window.GetWidth(), window.GetHeight());
+
+    layout->AddListener("WindowResized", [](BaseComponent* pointerToComponent, Event& resizeEvent)
     {
         auto* pointerToLayout = dynamic_cast<VerticalLayout*>(pointerToComponent);
         pointerToLayout->SetSize(resizeEvent.size.w, resizeEvent.size.h);
@@ -20,17 +20,18 @@ int main()
     Listbox* listbox;
     Menubar* menubar;
 
-    layout.AddChild(menubar = new Menubar(window));
-    layout.AddChild(new HorizontalLayout({new Label("Checkbox:",    20, 125), new Checkbox}));
-    layout.AddChild(new HorizontalLayout({new Label("Slider:",      20, 125), new HSlider(100)}));
-    layout.AddChild(new HorizontalLayout({new Label("TextInput:",   20, 125), new TextInput(200)}));
-    layout.AddChild(new HorizontalLayout({new Label("ToggleSwitch:",20, 125), new ToggleSwitch}));
-    layout.AddChild(new HorizontalLayout({new Label("Button:",      20, 125), new Button("Click me!")}));
-    layout.AddChild(new HorizontalLayout({new Label("Combobox:",    20, 125), combobox = new Combobox(160)}));
+    layout->AddChild(menubar = new Menubar(window));
+    layout->AddChild(new HorizontalLayout({new Label("Checkbox:",    20, 125), new Checkbox}));
+    layout->AddChild(new HorizontalLayout({new Label("Slider:",      20, 125), new HSlider(100)}));
+    layout->AddChild(new HorizontalLayout({new Label("TextInput:",   20, 125), new TextInput(200)}));
+    layout->AddChild(new HorizontalLayout({new Label("ToggleSwitch:",20, 125), new ToggleSwitch}));
+    layout->AddChild(new HorizontalLayout({new Label("Button:",      20, 125), new Button("Click me!")}));
+    layout->AddChild(new HorizontalLayout({new Label("Combobox:",    20, 125), combobox = new Combobox(160)}));
 
-    layout.AddChild(new HSeparator);
-    layout.AddChild(new Label("Listbox", 20));
-    layout.AddChild(listbox = new Listbox(300,300));
+    layout->AddChild(new HSeparator);
+    layout->AddChild(new Label("Listbox", 20));
+    layout->AddChild(listbox = new Listbox(300,300));
+
 
     for(int i = 0; i < 20; i++)
     {
@@ -45,6 +46,9 @@ int main()
         button->SetRoundness(0);
     }
 
+    UIRoot uiRoot;
+    uiRoot.Attach(layout);
+
     while(window.IsOpen())
     {
         Event event{};
@@ -53,14 +57,14 @@ int main()
         {
             if(event.type == EventType::Closed)
             {
-                return 0;
+                window.Close();
             }
 
-            layout.Update(event);
+            uiRoot.Update(event);
         }
 
         window.Clear();
-        window.Draw(*listbox);
+        window.Draw(uiRoot);
         window.Display();
     }
 
