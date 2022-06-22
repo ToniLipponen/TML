@@ -6,7 +6,7 @@ namespace tml::Interface
     class Layer : public Drawable
     {
     public:
-        Layer() noexcept = default;
+        Layer() = default;
         Layer(Layer&& layer) noexcept;
         void Attach(BaseComponent* rootNode) noexcept;
         void Detach(BaseComponent* component) noexcept;
