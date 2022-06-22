@@ -15,18 +15,20 @@ namespace tml
         [[nodiscard]] virtual Vector2f GetCenter() noexcept
         {
             if(m_applyOriginToPosition)
+            {
                 return (m_pos + m_size / 2) - m_origin;
+            }
 
             return (m_pos + m_size / 2);
         }
 
-        Vector2f Move(const Vector2f& offset) noexcept
+        constexpr inline Vector2f Move(const Vector2f& offset) noexcept
         {
             m_updated = true;
             return (m_pos += offset);
         }
 
-        Vector2f Move(float x, float y) noexcept
+        constexpr inline Vector2f Move(float x, float y) noexcept
         {
             m_pos.x += x;
             m_pos.y += y;
@@ -34,57 +36,63 @@ namespace tml
             return m_pos;
         }
 
-        Vector2f SetPosition(const Vector2f& position) noexcept
+        constexpr inline Vector2f SetPosition(const Vector2f& position) noexcept
         {
             m_updated = true;
             return m_pos = position;
         }
 
-        Vector2f SetPosition(float x, float y) noexcept
+        constexpr inline Vector2f SetPosition(float x, float y) noexcept
         {
             m_updated = true;
             return m_pos = {x, y};
         }
 
-        Vector2f SetSize(const Vector2f& size) noexcept
+        constexpr inline Vector2f SetSize(const Vector2f& size) noexcept
         {
             m_updated = true;
             return this->m_size = size;
         }
 
-        Vector2f SetSize(float x, float y) noexcept
+        constexpr inline Vector2f SetSize(float x, float y) noexcept
         {
             m_updated = true;
             return m_size = {x, y};
         }
 
-        float Rotate(float degrees) noexcept
+        inline float Rotate(float degrees) noexcept
         {
             m_rotation = std::fmod(m_rotation + degrees, 360.f);
-            if (m_rotation < 0)
+
+            if(m_rotation < 0)
+            {
                 m_rotation += 360.f;
+            }
+
             m_updated = true;
             return m_rotation;
         }
 
-        float SetRotation(float degrees) noexcept
+        inline float SetRotation(float degrees) noexcept
         {
             m_rotation = std::fmod(degrees, 360.f);
 
             if(m_rotation < 0)
+            {
                 m_rotation += 360.f;
+            }
 
             m_updated = true;
             return m_rotation;
         }
 
-        void SetOrigin(const Vector2f& origin) noexcept
+        constexpr inline void SetOrigin(const Vector2f& origin) noexcept
         {
             m_origin = origin;
             m_updated = true;
         }
 
-        void ApplyOriginToPosition(bool value) noexcept
+        constexpr inline void ApplyOriginToPosition(bool value) noexcept
         {
             m_applyOriginToPosition = value;
         }

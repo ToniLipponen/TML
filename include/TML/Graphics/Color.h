@@ -81,21 +81,23 @@ namespace tml
 
     [[nodiscard]] inline constexpr Color Color::operator+(const Color& color) const noexcept
     {
-        return {
-                static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(r) + color.r, 255)),
-                static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(g) + color.g, 255)),
-                static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(b) + color.b, 255)),
-                static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(a) + color.a, 255))
+        return
+        {
+            static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(r) + color.r, 255)),
+            static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(g) + color.g, 255)),
+            static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(b) + color.b, 255)),
+            static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(a) + color.a, 255))
         };
     }
 
     [[nodiscard]] inline constexpr Color Color::operator-(const Color& color) const noexcept
     {
-        return {
-                static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(r) - color.r, 0)),
-                static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(g) - color.g, 0)),
-                static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(b) - color.b, 0)),
-                static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(a) - color.a, 0))
+        return
+        {
+            static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(r) - color.r, 0)),
+            static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(g) - color.g, 0)),
+            static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(b) - color.b, 0)),
+            static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(a) - color.a, 0))
         };
     }
 
@@ -112,11 +114,12 @@ namespace tml
     template<>
     inline constexpr Color Math::Lerp<Color>(const Color& a, const Color& b, double m) noexcept
     {
-        return {
-                Lerp(a.r, b.r, m),
-                Lerp(a.g, b.g, m),
-                Lerp(a.b, b.b, m),
-                Lerp(a.a, b.a, m)
+        return
+        {
+            Lerp(a.r, b.r, m),
+            Lerp(a.g, b.g, m),
+            Lerp(a.b, b.b, m),
+            Lerp(a.a, b.a, m)
         };
     }
 

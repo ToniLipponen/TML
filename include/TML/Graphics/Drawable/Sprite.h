@@ -23,9 +23,9 @@ namespace tml
         bool LoadFromTexture(const std::shared_ptr<Texture>& texture) noexcept;
         void SetInterpolation(bool interpolate) noexcept;
         void SetRect(const TexRect& r) noexcept;
-        TexRect GetRect() const noexcept;
-        Vector2f GetTextureSize() const noexcept;
-        const std::shared_ptr<Texture>& GetTexture() const noexcept;
+        [[nodiscard]] TexRect GetRect() const noexcept;
+        [[nodiscard]] Vector2f GetTextureSize() const noexcept;
+        [[nodiscard]] const std::shared_ptr<Texture>& GetTexture() const noexcept;
 
     protected:
         void OnDraw(class RenderTarget*, class Texture*) noexcept override;

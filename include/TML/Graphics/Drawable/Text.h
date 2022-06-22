@@ -14,17 +14,14 @@ namespace tml
 
         void SetSize(float s) noexcept;
         void SetString(const String& string) noexcept;
-        void SetFont(const Font& font) noexcept;
-        void SetFont(const std::shared_ptr<Font>& font) noexcept;
-        void SetLeading(float spacing) noexcept;   //!< Leading is the vertical spacing between lines of text.
-        void SetTracking(float tracking) noexcept; //!< Tracking is the horizontal spacing between characters.
-        void SetKerning(float kerning) noexcept;   //!< Kerning is the horizontal spacing between different characters defined by the font.
-        const String& GetString() const noexcept;
+        [[maybe_unused]] void SetFont(const Font& font) noexcept;
+        [[maybe_unused]] void SetFont(const std::shared_ptr<Font>& font) noexcept;
+        [[maybe_unused]] void SetLeading(float spacing) noexcept;   //!< Leading is the vertical spacing between lines of text.
+        [[maybe_unused]] void SetTracking(float tracking) noexcept; //!< Tracking is the horizontal spacing between characters.
+        [[maybe_unused]] void SetKerning(float kerning) noexcept;   //!< Kerning is the horizontal spacing between different characters defined by the font.
+        [[nodiscard]] const String& GetString() const noexcept;
         Vector2f GetDimensions() noexcept;
         Vector2f GetCenter() noexcept override;
-
-        void SetSize(const Vector2f&) = delete;
-        const Vector2f& GetSize(const Vector2f&) = delete;
 
     private:
         void Generate();
@@ -38,5 +35,9 @@ namespace tml
         Vector2f m_dimensions;
         std::shared_ptr<Font> m_font = nullptr;
         String m_string;
+
+    private:
+        using Transformable::SetSize;
+        using Transformable::GetSize;
     };
 }

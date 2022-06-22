@@ -14,8 +14,7 @@ namespace tml
         void SetPointB(const Vector2f& point) noexcept;
         void SetThickness(float thickness) noexcept;
         void SetRounded(bool rounded) noexcept;
-        Vector2f GetCenter() noexcept override {return (a + b) / 2; }
-        void SetSize(const Vector2f&) = delete;
+        inline Vector2f GetCenter() noexcept override { return (a + b) / 2; }
 
     private:
         void OnDraw(class RenderTarget*, class Texture*) noexcept override;
@@ -23,5 +22,8 @@ namespace tml
     private:
         Vector2f a, b;
         bool m_rounded = false;
+
+    private:
+        using Transformable::SetSize;
     };
 }

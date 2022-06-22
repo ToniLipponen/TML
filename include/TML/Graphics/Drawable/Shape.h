@@ -46,7 +46,7 @@ namespace tml
         void SetTexture(const std::shared_ptr<Texture>& texture) noexcept;
 
         Vector2f GetCenter() noexcept override;
-        uint32_t GetPointCount() const noexcept;
+        [[nodiscard]] uint32_t GetPointCount() const noexcept;
 
     private:
         void OnDraw(class RenderTarget* renderer, class Texture* circleTexture) noexcept override;

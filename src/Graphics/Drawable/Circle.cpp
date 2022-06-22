@@ -22,12 +22,9 @@ namespace tml
 
     void Circle::SetRadius(float r)
     {
-        if(m_size.x != r)
-        {
-            m_size = Vector2f{r * 2};
-            m_origin = Vector2f{r};
-            m_updated = true;
-        }
+        m_size = Vector2f{r * 2};
+        m_origin = Vector2f{r};
+        m_updated = true;
     }
 
     float Circle::GetRadius() const noexcept
