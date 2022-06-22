@@ -46,7 +46,7 @@ int main()
         button->SetRoundness(0);
     }
 
-    UIRoot uiRoot;
+    Layer uiRoot;
     uiRoot.Attach(layout);
 
     while(window.IsOpen())

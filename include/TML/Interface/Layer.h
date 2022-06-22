@@ -3,22 +3,26 @@
 
 namespace tml::Interface
 {
-    class UIRoot : public Drawable
+    class Layer : public Drawable
     {
     public:
-        UIRoot() noexcept = default;
+        Layer() noexcept = default;
+        Layer(Layer&& layer) noexcept;
         void Attach(BaseComponent* rootNode) noexcept;
         void Detach(BaseComponent* component) noexcept;
         void Raise(BaseComponent* component) noexcept;
         void ClearFocused() noexcept;
         void Update(Event& event) const noexcept;
+        void SetEnabled(bool enabled) noexcept;
+        [[nodiscard]] bool IsEnabled() const noexcept;
 
     protected:
         void OnDraw(RenderTarget* renderer, Texture*) noexcept final;
 
     protected:
         std::deque<BaseComponent*> m_processingQueue;
-        std::unique_ptr<BaseComponent> m_rootNode;
+        std::unique_ptr<BaseComponent> m_rootNode = nullptr;
+        bool m_enabled = true;
 
     private:
         using Drawable::GetColor;

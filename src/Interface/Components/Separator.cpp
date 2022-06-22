@@ -5,15 +5,15 @@ namespace tml::Interface
     template<ComponentAxis axis>
     Separator<axis>::Separator(uint32_t thickness) noexcept
     {
-        if(axis == ComponentAxis::Horizontal)
+        if constexpr(axis == ComponentAxis::Horizontal)
         {
-            m_hSizePolicy = BaseComponent::SizePolicy::Expand;
-            m_vSizePolicy = BaseComponent::SizePolicy::Fixed;
+            m_hSizePolicy = SizePolicy::Expand;
+            m_vSizePolicy = SizePolicy::Fixed;
         }
         else
         {
-            m_hSizePolicy = BaseComponent::SizePolicy::Fixed;
-            m_vSizePolicy = BaseComponent::SizePolicy::Expand;
+            m_hSizePolicy = SizePolicy::Fixed;
+            m_vSizePolicy = SizePolicy::Expand;
         }
 
         m_thickness = thickness;

@@ -1,9 +1,16 @@
-#include <TML/Interface/UIRoot.h>
+#include <TML/Interface/Layer.h>
 #include <TML/System/Clock.h>
 
 namespace tml::Interface
 {
-    void UIRoot::Attach(BaseComponent* rootNode) noexcept
+    Layer::Layer(Layer&& layer) noexcept
+    {
+        std::swap(m_processingQueue, layer.m_processingQueue);
+        std::swap(m_rootNode, layer.m_rootNode);
+        m_enabled = layer.m_enabled;
+    }
+
+    void Layer::Attach(BaseComponent* rootNode) noexcept
     {
         std::function<void(BaseComponent*)> registerFunc;
 
@@ -22,7 +29,7 @@ namespace tml::Interface
         m_rootNode = std::unique_ptr<BaseComponent>(rootNode);
     }
 
-    void UIRoot::Detach(BaseComponent* component) noexcept
+    void Layer::Detach(BaseComponent* component) noexcept
     {
         std::function<void(BaseComponent*)> unregisterFunc;
 
@@ -47,7 +54,7 @@ namespace tml::Interface
         unregisterFunc(component);
     }
 
-    void UIRoot::Raise(BaseComponent *component) noexcept
+    void Layer::Raise(BaseComponent *component) noexcept
     {
         std::function<void(BaseComponent*)> raiseFunc;
 
@@ -73,7 +80,7 @@ namespace tml::Interface
         raiseFunc(component);
     }
 
-    void UIRoot::ClearFocused() noexcept
+    void Layer::ClearFocused() noexcept
     {
         for(auto* i : m_processingQueue)
         {
@@ -81,15 +88,13 @@ namespace tml::Interface
         }
     }
 
-    void UIRoot::Update(Event &event) const noexcept
+    void Layer::Update(Event &event) const noexcept
     {
         static Clock clock;
         const double delta = clock.Reset();
 
         if(!m_processingQueue.empty())
         {
-            /// This needs to be done here & not in item->ProcessEvents(event, delta);
-            /// Because this event should not be missed even if the component is disabled.
             if(event.type == EventType::WindowResized)
             {
                 for(auto* i : m_processingQueue)
@@ -98,34 +103,50 @@ namespace tml::Interface
                 }
             }
 
-            for(auto* i : m_processingQueue)
+            if(m_enabled)
             {
-                if(i->Enabled())
+                for(auto* i : m_processingQueue)
                 {
-                    i->ProcessEvents(event, delta);
+                    if(i->Enabled())
+                    {
+                        i->ProcessEvents(event, delta);
+                    }
                 }
             }
         }
     }
 
-    void UIRoot::OnDraw(RenderTarget *renderer, Texture *) noexcept
+    void Layer::SetEnabled(bool enabled) noexcept
     {
-        static Clock clock;
+        m_enabled = enabled;
+    }
 
-        Event event{};
-        event.update.delta = clock.Reset();
+    bool Layer::IsEnabled() const noexcept
+    {
+        return m_enabled;
+    }
 
-        auto beg = m_processingQueue.rbegin();
-        auto end = m_processingQueue.rend();
-
-        for(auto i = beg; i != end; i++)
+    void Layer::OnDraw(RenderTarget *renderer, Texture *) noexcept
+    {
+        if(m_enabled)
         {
-            auto* item = *i;
+            static Clock clock;
 
-            if(item->Enabled())
+            Event event{};
+            event.update.delta = clock.Reset();
+
+            auto beg = m_processingQueue.rbegin();
+            auto end = m_processingQueue.rend();
+
+            for(auto i = beg; i != end; i++)
             {
-                item->pDraw(*renderer);
-                item->CallUIFunc("Drawn", event);
+                auto* item = *i;
+
+                if(item->Enabled())
+                {
+                    item->pDraw(*renderer);
+                    item->CallUIFunc("Drawn", event);
+                }
             }
         }
     }

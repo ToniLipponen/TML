@@ -10,8 +10,9 @@
 namespace tml::Interface
 {
     enum class ComponentAxis { Horizontal, Vertical };
+    enum class SizePolicy { Fixed, Expand, Clamp };
 
-    class UIRoot;
+    class Layer;
 
     class TML_API BaseComponent
     {
@@ -27,7 +28,6 @@ namespace tml::Interface
             bool Movable    = false;
             bool Raise      = false;
         };
-        enum class SizePolicy { Fixed, Expand, Clamp };
         using EventCallback = std::function<void(BaseComponent*, Event&)>;
 
     public:
@@ -76,7 +76,7 @@ namespace tml::Interface
         BaseComponent* FindComponent(const std::string& id) noexcept;    //!< DANGER! Returns nullptr if not found.
         BaseComponent* FindComponent(uint64_t) noexcept;                 //!< DANGER! Returns nullptr if not found.
         BaseComponent* GetParent() noexcept;                             //!< DANGER! Returns nullptr if the component doesn't have a parent.
-        UIRoot* GetRoot() noexcept;
+        Layer* GetRoot() noexcept;
         uint64_t GetHash() const noexcept;
         const std::string& GetID() const noexcept;
         virtual bool ContainsPoint(const Vector2i& p);
@@ -98,7 +98,7 @@ namespace tml::Interface
         Vector2f GetSize() const noexcept;
         Vector2f GetPosition() const noexcept;
 
-        friend UIRoot;
+        friend Layer;
     public:
         [[maybe_unused]] static void SetGlobalAnimationSpeed(float speed) noexcept;
         [[maybe_unused]] static void SetGlobalDefaultPrimaryColor(const Color& color) noexcept;
@@ -130,15 +130,15 @@ namespace tml::Interface
         std::vector<std::unique_ptr<BaseComponent>> m_children;
         std::unordered_map<std::string, std::vector<EventCallback>> m_listeners;
         BaseComponent* m_parent;
-        UIRoot* m_root;
+        Layer* m_root;
         StateFlag m_state;
 
         /** Might be used in the future. */
         [[maybe_unused]] static float s_scale;
-        [[maybe_unused]] static float s_animationSpeed;
-        [[maybe_unused]] static Color s_defaultPrimaryColor;
-        [[maybe_unused]] static Color s_defaultSecondaryColor;
-        [[maybe_unused]] static Color s_defaultActiveColor;
-        [[maybe_unused]] static Color s_defaultTextColor;
+        static float s_animationSpeed;
+        static Color s_defaultPrimaryColor;
+        static Color s_defaultSecondaryColor;
+        static Color s_defaultActiveColor;
+        static Color s_defaultTextColor;
     };
 }

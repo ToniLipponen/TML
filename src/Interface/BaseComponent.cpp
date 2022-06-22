@@ -1,5 +1,5 @@
 #include <TML/Interface/BaseComponent.h>
-#include <TML/Interface/UIRoot.h>
+#include <TML/Interface/Layer.h>
 #include <TML/Graphics/RenderTarget.h>
 #include <TML/System/Clock.h>
 #include <string>
@@ -49,10 +49,13 @@ namespace tml::Interface
 
     void BaseComponent::Focus() noexcept
     {
-        m_root->ClearFocused();
-        m_state.Focused = true;
-        Event e{};
-        CallUIFunc("GainedFocus", e);
+        if(m_root)
+        {
+            m_root->ClearFocused();
+            m_state.Focused = true;
+            Event e{};
+            CallUIFunc("GainedFocus", e);
+        }
     }
 
     void BaseComponent::UnFocus() noexcept
@@ -237,7 +240,7 @@ namespace tml::Interface
         return m_parent;
     }
 
-    UIRoot* BaseComponent::GetRoot() noexcept
+    Layer* BaseComponent::GetRoot() noexcept
     {
         return m_root;
     }
@@ -257,12 +260,12 @@ namespace tml::Interface
         return Math::PointInRect(p, m_pos, m_size, 0);
     }
 
-    BaseComponent::SizePolicy BaseComponent::GetHorizontalSizePolicy() const noexcept
+    SizePolicy BaseComponent::GetHorizontalSizePolicy() const noexcept
     {
         return m_hSizePolicy;
     }
 
-    BaseComponent::SizePolicy BaseComponent::GetVerticalSizePolicy() const noexcept
+    SizePolicy BaseComponent::GetVerticalSizePolicy() const noexcept
     {
         return m_vSizePolicy;
     }
