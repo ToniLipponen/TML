@@ -8,7 +8,7 @@ namespace tml
     class TML_API Monitor
     {
     public:
-        Monitor() noexcept = default;
+        Monitor() = default;
 
         [[nodiscard]] void* GetHandle() const noexcept;
         [[nodiscard]] String GetName() const noexcept;               //!< Returns the name of the monitor.
