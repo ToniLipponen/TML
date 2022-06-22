@@ -3,7 +3,7 @@
 
 namespace tml::Interface
 {
-    class Layer : public Drawable
+    class TML_API Layer : public Drawable
     {
     public:
         Layer() = default;
