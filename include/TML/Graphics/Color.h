@@ -63,19 +63,19 @@ namespace tml
 
     inline constexpr Color& Color::operator+=(const Color& color) noexcept
     {
-        r = static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(r) + color.r, 255));
-        g = static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(g) + color.g, 255));
-        b = static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(b) + color.b, 255));
-        a = static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(a) + color.a, 255));
+        r = static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(r) + color.r, 255));
+        g = static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(g) + color.g, 255));
+        b = static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(b) + color.b, 255));
+        a = static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(a) + color.a, 255));
         return *this;
     }
 
     inline constexpr Color& Color::operator-=(const Color& color) noexcept
     {
-        r = static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(r) - color.r, 0));
-        g = static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(g) - color.g, 0));
-        b = static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(b) - color.b, 0));
-        a = static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(a) - color.a, 0));
+        r = static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(r) - color.r, 0));
+        g = static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(g) - color.g, 0));
+        b = static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(b) - color.b, 0));
+        a = static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(a) - color.a, 0));
         return *this;
     }
 
@@ -83,10 +83,10 @@ namespace tml
     {
         return
         {
-            static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(r) + color.r, 255)),
-            static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(g) + color.g, 255)),
-            static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(b) + color.b, 255)),
-            static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(a) + color.a, 255))
+            static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(r) + color.r, 255)),
+            static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(g) + color.g, 255)),
+            static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(b) + color.b, 255)),
+            static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(a) + color.a, 255))
         };
     }
 

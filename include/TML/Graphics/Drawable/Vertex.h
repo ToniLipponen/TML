@@ -9,10 +9,10 @@ namespace tml
         {
             COLOR   = 0,
             TEXTURE = (1 << 16),
-            TEXT    = (2 << 16)
+            TEXT    = (1 << 17)
         };
         Vector2f pos{};
-        [[maybe_unused]] Vector2f uv{};
+        Vector2f uv{};
         uint32_t color = 0;
         uint32_t texAndType = 0;
     };
