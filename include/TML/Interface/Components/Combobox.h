@@ -9,7 +9,7 @@ namespace tml::Interface
     class TML_API Combobox : public BaseComponent
     {
     public:
-        Combobox(uint32_t width, uint32_t height = 20, int32_t x = 0, int32_t y = 0) noexcept;
+        explicit Combobox(uint32_t width, uint32_t height = 20, int32_t x = 0, int32_t y = 0) noexcept;
         void AddValue(String value) noexcept;
         void SetValue(uint32_t index, String value) noexcept;
         void SetListHeight(int height) noexcept;

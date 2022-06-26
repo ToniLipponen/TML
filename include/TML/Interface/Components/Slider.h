@@ -7,7 +7,7 @@ namespace tml::Interface
     class TML_API Slider : public BaseComponent
     {
     public:
-        Slider(uint32_t size, uint32_t thickness = 20, int32_t x = 0, int32_t y = 0, float min = 0.0f, float max = 1.0f) noexcept;
+        explicit Slider(uint32_t size = 0, uint32_t thickness = 20, int32_t x = 0, int32_t y = 0, float min = 0.0f, float max = 1.0f) noexcept;
         void SetValue(float value) noexcept;
         float GetValue() const noexcept;
 

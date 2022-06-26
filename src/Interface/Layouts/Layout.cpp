@@ -24,6 +24,12 @@ namespace tml::Interface
             ScaleChildren();
             AlignChildren();
         });
+
+        AddListener("Attached", [&](BaseComponent* c, Event& e)
+        {
+            ScaleChildren();
+            AlignChildren();
+        });
     }
 
     void Layout::SetPadding(const Vector2i &padding) noexcept

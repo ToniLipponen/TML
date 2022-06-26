@@ -2,14 +2,13 @@
 
 using namespace tml::Interface;
 
-Button::Button(const std::string& text, uint32_t w, uint32_t h, int32_t x, int32_t y, const EventCallback& onClick, bool expand)
+Button::Button(const std::string& text, uint32_t h, uint32_t w, int32_t x, int32_t y, bool expand)
 : BaseComponent(x,y,w,h)
 {
     m_hSizePolicy = expand ? SizePolicy::Expand : SizePolicy::Fixed;
     m_vSizePolicy = SizePolicy::Fixed;
     m_text.SetString(text);
     m_text.SetColor(s_defaultTextColor);
-
     m_text.SetSize(static_cast<float>(h) * 0.6f);
 
     if(w == 0)
@@ -22,7 +21,6 @@ Button::Button(const std::string& text, uint32_t w, uint32_t h, int32_t x, int32
         m_size = Vector2f(w, h);
     }
 
-    m_originalSize = m_size;
     m_minimumSize = Vector2f(m_size.y);
 
     const Vector2i textSize = m_text.GetDimensions();
@@ -33,11 +31,6 @@ Button::Button(const std::string& text, uint32_t w, uint32_t h, int32_t x, int32
         UnFocus();
         e = Event{};
     });
-
-    if(onClick)
-    {
-        AddListener("Click", onClick);
-    }
 
     AddListener("MouseUp", [&](BaseComponent* c, Event& e)
     {

@@ -17,6 +17,11 @@ namespace tml::Interface
             m_size = Vector2i(size, thickness);
             m_vSizePolicy = SizePolicy::Fixed;
             m_hSizePolicy = SizePolicy::Expand;
+
+            if(size)
+            {
+                m_minimumSize.x = static_cast<float>(size);
+            }
         }
         else
         {
@@ -24,6 +29,11 @@ namespace tml::Interface
             m_size = Vector2i(static_cast<int>(thickness), static_cast<int>(size));
             m_vSizePolicy = SizePolicy::Expand;
             m_hSizePolicy = SizePolicy::Fixed;
+
+            if(size)
+            {
+                m_minimumSize.y = static_cast<float>(size);
+            }
         }
 
         AddListener("MouseDown", [&](BaseComponent* c, Event& e)

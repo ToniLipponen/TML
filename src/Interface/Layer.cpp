@@ -19,6 +19,9 @@ namespace tml::Interface
             node->m_root = this;
             m_processingQueue.push_front(node);
 
+            Event e{};
+            node->CallUIFunc("Attached", e);
+
             for(auto& i : node->m_children)
             {
                 registerFunc(i.get());

@@ -14,6 +14,11 @@ namespace tml::Interface
         AddChild(m_scrollbar);
         m_scrollbar->Disable();
 
+        if(width)
+        {
+            m_minimumSize.x = static_cast<float>(width);
+        }
+
         AddListener("Click", [&](BaseComponent* c, Event& e)
         {
             const Vector2i mousePos = {e.mouseButton.x, e.mouseButton.y};

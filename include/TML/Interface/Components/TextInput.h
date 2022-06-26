@@ -7,7 +7,7 @@ namespace tml::Interface
     class TML_API TextInput : public BaseComponent
     {
     public:
-        TextInput(uint32_t width, uint32_t height = 20, int32_t x = 0, int32_t y = 0) noexcept;
+        explicit TextInput(uint32_t width = 0, uint32_t height = 20, int32_t x = 0, int32_t y = 0) noexcept;
         void SetValue(const String& string) noexcept;
         void SetTextColor(const Color& color) noexcept override;
         const String& GetValue() const noexcept;

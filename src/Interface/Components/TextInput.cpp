@@ -9,8 +9,13 @@ TextInput::TextInput(uint32_t width, uint32_t height, int32_t x, int32_t y) noex
     m_size = Vector2i(width, height);
     m_minimumSize = Vector2f(height);
     m_text.SetColor(s_defaultTextColor);
-    m_text.SetSize(height * 0.8f);
+    m_text.SetSize(static_cast<float>(height) * 0.8f);
     m_cursorPos = Math::Clamp<float>(m_pos.x + 2, m_pos.x, m_pos.x + m_size.x - 4);
+
+    if(width)
+    {
+        m_minimumSize.x = static_cast<float>(width);
+    }
 
     m_hSizePolicy = SizePolicy::Expand;
     m_vSizePolicy = SizePolicy::Fixed;
