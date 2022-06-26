@@ -9,6 +9,8 @@ namespace tml
     class TML_API Drawable : public Transformable
     {
     public:
+        virtual ~Drawable() = default;
+
         [[maybe_unused, nodiscard]] constexpr const Color& GetColor() const noexcept
         {
             return m_color;

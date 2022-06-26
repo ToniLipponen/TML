@@ -67,13 +67,14 @@ void main (void)
 
 int main()
 {
-    RenderWindow window(800, 600, "Compute", Window::Resizeable);
+    RenderWindow window(800, 600, "Compute", WindowSettings::Resizeable);
 
     std::vector<Color> circleColors;
     std::vector<PhysicsCircle> circles;
 
     constexpr static uint32_t CIRCLE_COUNT = 5000;
 
+    srand(time(0));
     for(uint32_t i = 0; i < CIRCLE_COUNT; i++)
     {
         PhysicsCircle pc;

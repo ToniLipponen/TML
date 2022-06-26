@@ -33,7 +33,7 @@ using namespace tml;
 
 int main(int argc, char** argv)
 {
-    RenderWindow window(1920, 1080, "TML - Image viewer", Window::Resizeable | Window::Maximized);
+    RenderWindow window(1920, 1080, "TML - Image viewer", WindowSettings::Resizeable | WindowSettings::Maximized);
     Sprite image;
     Vector2f imageSize = 0;
     Camera cam;

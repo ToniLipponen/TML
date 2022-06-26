@@ -52,7 +52,7 @@ struct Scene : public Drawable
 
 int main()
 {
-    RenderWindow window(800, 600, "Ray casting", Window::Resizeable | Window::Antialias);
+    RenderWindow window(800, 600, "Ray casting", WindowSettings::Resizeable | WindowSettings::Antialias);
     const Vector2f windowSize2 = window.GetSize() / 2;
 
     Scene scene;

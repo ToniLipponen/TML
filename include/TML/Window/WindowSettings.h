@@ -25,7 +25,6 @@ namespace tml
             Minimized            = (1 << 12),
         };
 
-
         uint32_t framerate;
         int32_t antialiasSamples;
         Vector2i minimumSize;
