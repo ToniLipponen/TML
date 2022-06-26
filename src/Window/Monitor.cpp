@@ -16,6 +16,11 @@ namespace tml
         return m_monitorName;
     }
 
+    Vector2i Monitor::GetPos() const noexcept
+    {
+        return m_pos;
+    }
+
     Vector2i Monitor::GetSize() const noexcept
     {
         return m_size;

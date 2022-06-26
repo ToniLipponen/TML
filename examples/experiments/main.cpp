@@ -6,7 +6,7 @@ using namespace Interface;
 
 int main()
 {
-    RenderWindow window(320, 500, "Window", Window::Resizeable);
+    RenderWindow window(320, 500, "Window", WindowSettings::Resizeable);
 
     auto* layout = new VerticalLayout(0, 0, window.GetWidth(), window.GetHeight());
 

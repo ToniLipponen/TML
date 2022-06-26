@@ -13,6 +13,13 @@ namespace tml
         m_autoResizeViewport = (settings & DontAutoResizeViewport) == 0;
     }
 
+    RenderWindow::RenderWindow(const WindowSettings &settings)
+    : Window(settings)
+    {
+        m_autoResizeView = (settings.flags & DontAutoResizeView) == 0;
+        m_autoResizeViewport = (settings.flags & DontAutoResizeViewport) == 0;
+    }
+
     void RenderWindow::Clear() noexcept
     {
         SetActive();

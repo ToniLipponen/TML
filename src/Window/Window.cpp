@@ -31,10 +31,16 @@ namespace tml
 
     }
 
-    Window::Window(int32_t w, int32_t h, const String& title, uint32_t settings) noexcept
+    Window::Window(int32_t w, int32_t h, const String& title, int32_t flags) noexcept
     : m_handle(nullptr)
     {
-        TML_ASSERT(Create(w, h, title, settings), "Failed to create a window");
+        TML_ASSERT(Create(w, h, title, flags), "Failed to create a window");
+    }
+
+    Window::Window(const WindowSettings& settings) noexcept
+    : m_handle(nullptr)
+    {
+        Create(settings);
     }
 
     Window::~Window() noexcept
@@ -51,11 +57,27 @@ namespace tml
         }
     }
 
-    bool Window::Create(int32_t w, int32_t h, const String& title, uint32_t settings) noexcept
+    bool Window::Create(int32_t w, int32_t h, const String& title, int32_t flags) noexcept
     {
-        GLFWwindow* glContextHandle = nullptr;
+        WindowSettings settingsStruct{};
+        settingsStruct.size = Vector2i(w, h);
+        settingsStruct.title = title;
+        settingsStruct.icon.LoadFromData(LOGO_DATA.data(), LOGO_DATA.size());
+        settingsStruct.flags = flags;
+        settingsStruct.maximumSize = Vector2i(8192, 8192);
+        settingsStruct.minimumSize = Vector2i(100, 100);
 
-        if(settings & NoClient)
+        return Create(settingsStruct);
+    }
+
+    bool Window::Create(const WindowSettings &settings) noexcept
+    {
+        m_settings = settings;
+        GLFWwindow* glContextHandle = nullptr;
+        int flags = settings.flags;
+        String title = settings.title;
+
+        if(flags & WindowSettings::NoClient)
         {
             TML_ASSERT(glfwInit() == GLFW_TRUE, "Failed to initialize GLFW");
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -66,33 +88,40 @@ namespace tml
             m_hasGLContext = (glContextHandle != nullptr); //!< If glContextHandle is nullptr, a context was not created.
         }
 
-        glfwWindowHint(GLFW_DECORATED,                 (settings & Settings::NoTopBar)     == 0);
-        glfwWindowHint(GLFW_RESIZABLE,                 (settings & Settings::Resizeable)   != 0);
-        glfwWindowHint(GLFW_MAXIMIZED,                 (settings & Settings::Maximized)    != 0);
-        glfwWindowHint(GLFW_VISIBLE,                   (settings & Settings::Hidden)       == 0);
-        glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER,   (settings & Settings::Transparent)  != 0);
-        glfwWindowHint(GLFW_FLOATING,                  (settings & Settings::AlwaysOnTop)  != 0);
-        glfwWindowHint(GLFW_SAMPLES, static_cast<int>(((settings & Settings::Antialias) >> 4) * 8));
-        glfwWindowHint(GLFW_DOUBLEBUFFER,              (settings & Settings::VSync)        != 0);
-        glfwWindowHint(GLFW_AUTO_ICONIFY,               (settings & Settings::Minimized)     != 0);
+        glfwWindowHint(GLFW_DECORATED,                 (flags & WindowSettings::NoTopBar)     == 0);
+        glfwWindowHint(GLFW_RESIZABLE,                 (flags & WindowSettings::Resizeable)   != 0);
+        glfwWindowHint(GLFW_MAXIMIZED,                 (flags & WindowSettings::Maximized)    != 0);
+        glfwWindowHint(GLFW_VISIBLE,                   (flags & WindowSettings::Hidden)       == 0);
+        glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER,   (flags & WindowSettings::Transparent)  != 0);
+        glfwWindowHint(GLFW_FLOATING,                  (flags & WindowSettings::AlwaysOnTop)  != 0);
+        glfwWindowHint(GLFW_DOUBLEBUFFER,              (flags & WindowSettings::VSync)        != 0);
+        glfwWindowHint(GLFW_AUTO_ICONIFY,              (flags & WindowSettings::Minimized)     != 0);
 
-        auto* primaryMonitor = glfwGetPrimaryMonitor();
-        auto* monitor = (settings & Settings::Fullscreen) ? primaryMonitor : nullptr;
-
-        if(settings & Settings::UseMonitorResolution)
+        if(flags & WindowSettings::Antialias)
         {
-            int workAreaW, workAreaH, workAreaX, workAreaY, posX, posY;
+            glfwWindowHint(GLFW_SAMPLES, Math::Clamp<int>(settings.antialiasSamples, 0, 16));
+        }
 
-            glfwGetMonitorPos(primaryMonitor, &posX, &posY);
-            glfwGetMonitorWorkarea(primaryMonitor, &workAreaX, &workAreaY, &workAreaW, &workAreaH);
+        GLFWmonitor* monitorHandle = nullptr;
 
-            m_size = Vector2i(workAreaW + workAreaX - posX, workAreaH + workAreaY - posY);
-            m_handle = glfwCreateWindow(m_size.x, m_size.y, title.c_str(), monitor, glContextHandle);
+        if(flags & WindowSettings::Fullscreen)
+        {
+            monitorHandle = static_cast<GLFWmonitor*>(settings.monitor.GetHandle());
+        }
+
+        if(flags & WindowSettings::UseMonitorResolution)
+        {
+            const Vector2i workAreaSize = settings.monitor.GetWorkAreaSize();
+            const Vector2i workAreaPos = settings.monitor.GetWorkAreaPos();
+            const Vector2i pos = settings.monitor.GetPos();
+
+            m_size = Vector2i(workAreaSize.x + workAreaPos.x - pos.x, workAreaSize.y + workAreaPos.y - pos.y);
+            m_handle = glfwCreateWindow(m_size.x, m_size.y, title.c_str(), monitorHandle, glContextHandle);
         }
         else
         {
-            m_handle = glfwCreateWindow(w, h, title.c_str(), monitor, glContextHandle);
-            m_size = {w, h};
+            m_handle = glfwCreateWindow(settings.size.x, settings.size.y, title.c_str(), monitorHandle, glContextHandle);
+            m_size = settings.size;
         }
 
         if(m_handle == nullptr)
@@ -101,39 +130,38 @@ namespace tml
         }
 
         SetActive();
-        glfwSwapInterval(static_cast<int>((settings & Settings::VSync) != 0));
+        glfwSwapInterval(static_cast<int>((flags & WindowSettings::VSync) != 0));
 
-        /** Set window icon to TML-logo **/
-        Image image(LOGO_DATA.data(), static_cast<int>(LOGO_DATA.size()));
-        SetIcon(image);
+        /** Set icon **/
+        {
+            Image icon;
+
+            if(settings.icon.GetData() && settings.icon.GetWidth() > 0 && settings.icon.GetHeight() > 0 && settings.icon.GetBpp())
+            {
+                icon = settings.icon;
+            }
+            else
+            {
+                icon.LoadFromData(LOGO_DATA.data(), LOGO_DATA.size());
+            }
+
+            SetIcon(icon);
+        }
 
         /** Set window limits **/
         {
-            int minimumWidth = 100, minimumHeight = 100, maximumWidth = 8192, maximumHeight = 8192;
-
-            if(settings & Settings::LimitAspect)
+            if(flags & WindowSettings::LimitAspect)
             {
-                SetAspectRatio(w,h);
+                SetAspectRatio(settings.size.x, settings.size.y);
             }
 
-            if(settings & LimitMinimumSize)
-            {
-                minimumWidth  = w;
-                minimumHeight = h;
-            }
-
-            if(settings & LimitMaximumSize)
-            {
-                maximumWidth  = w;
-                maximumHeight = h;
-            }
-
-            SetSizeLimits(minimumWidth, minimumHeight, maximumWidth, maximumHeight);
+            SetSizeLimits(settings.minimumSize, settings.maximumSize);
         }
 
         SetCallbacks();
         glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &m_pos.x, &m_pos.y);
-        return true;
+        glfwGetWindowSize(static_cast<GLFWwindow*>(m_handle), &m_size.x, &m_size.y);
+        return m_handle != nullptr;
     }
 
     void Window::Close() noexcept
@@ -187,6 +215,11 @@ namespace tml
     Vector2i Window::GetPosition() const noexcept
     {
         return m_pos;
+    }
+
+    const WindowSettings& Window::GetSettings() const noexcept
+    {
+        return m_settings;
     }
 
     std::vector<String> Window::GetDroppedFiles() const noexcept
@@ -271,7 +304,12 @@ namespace tml
 
     void Window::SetSizeLimits(const Vector2i &min, const Vector2i &max) noexcept
     {
-        glfwSetWindowSizeLimits(static_cast<GLFWwindow*>(m_handle), min.x, min.y, max.x, max.y);
+        const int minWidth = Math::Max(min.x, 0);
+        const int minHeight = Math::Max(min.y, 0);
+        const int maxWidth = Math::Max(max.x, minWidth);
+        const int maxHeight = Math::Max(max.y, minHeight);
+
+        glfwSetWindowSizeLimits(static_cast<GLFWwindow*>(m_handle), minWidth, minHeight, maxWidth, maxHeight);
     }
 
     void Window::Minimize() const noexcept

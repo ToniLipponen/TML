@@ -14,10 +14,11 @@ namespace tml
             DontAutoResizeViewport  = (1 << 17)
         };
     public:
-        RenderWindow(uint32_t w, uint32_t h, const String& title, uint32_t settings = Window::Settings::None);
+        RenderWindow(uint32_t w, uint32_t h, const String& title, uint32_t settings = 0);
+        explicit RenderWindow(const WindowSettings& settings);
         void Clear() noexcept override;
         void Display() noexcept override;
-        Image Screenshot() const noexcept;
+        [[nodiscard]] Image Screenshot() const noexcept;
     private:
         Vector2f GetRenderTargetSize() const noexcept override { return GetSize(); }
         bool m_autoResizeView = true;
