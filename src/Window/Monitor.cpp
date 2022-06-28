@@ -16,7 +16,7 @@ namespace tml
         return m_monitorName;
     }
 
-    Vector2i Monitor::GetPos() const noexcept
+    Vector2i Monitor::GetPosition() const noexcept
     {
         return m_pos;
     }
@@ -26,7 +26,7 @@ namespace tml
         return m_size;
     }
 
-    Vector2i Monitor::GetWorkAreaPos() const noexcept
+    Vector2i Monitor::GetWorkAreaPosition() const noexcept
     {
         return m_workAreaPos;
     }

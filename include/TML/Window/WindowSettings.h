@@ -22,17 +22,17 @@ namespace tml
             AlwaysOnTop          = (1 <<  9), //!< Keep the window above other windows.
             UseMonitorResolution = (1 << 10), //!< Use the primary monitors size instead of user supplied width & height.
             NoClient             = (1 << 11), //!< Dont create an OpenGL context.
-            Minimized            = (1 << 12),
+            Minimized            = (1 << 12), //!< Make the window minimized.
         };
 
-        uint32_t framerate;
-        int32_t antialiasSamples;
-        Vector2i minimumSize;
-        Vector2i maximumSize;
         Vector2i size;
-        Vector2i position;
-        Monitor monitor;
-        Image icon;
+        [[maybe_unused]] uint32_t framerate;
+        int32_t antialiasSamples;
+        std::optional<Vector2i> position;
+        std::optional<Vector2i> minimumSize;
+        std::optional<Vector2i> maximumSize;
+        std::optional<Monitor> monitor;
+        std::optional<Image> icon;
         String title;
         int32_t flags;
     };

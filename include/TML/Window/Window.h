@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include <cstdint>
 #include <TML/Window/WindowSettings.h>
 #include <TML/Window/Input.h>
@@ -61,7 +62,7 @@ namespace tml
         void Minimize() const noexcept;
         void Maximize() const noexcept;
         void Restore() const noexcept;
-        void SetFullscreen(bool fullscreen, const Monitor& monitor = GetPrimaryMonitor()) noexcept;
+        void SetFullscreen(bool fullscreen, const std::optional<Monitor>& monitor = std::nullopt) noexcept;
         void SetActive(bool active = true) const noexcept;
         void SetVisible(bool visible = true) const noexcept;
         void Show() const noexcept;

@@ -13,8 +13,8 @@ namespace tml
         [[nodiscard]] void* GetHandle() const noexcept;
         [[nodiscard]] String GetName() const noexcept;               //!< Returns the name of the monitor.
         [[nodiscard]] Vector2i GetSize() const noexcept;             //!< Returns the resolution of the monitor.
-        [[nodiscard]] Vector2i GetPos() const noexcept;
-        [[nodiscard]] Vector2i GetWorkAreaPos() const noexcept;      //!< Returns the work area position.
+        [[nodiscard]] Vector2i GetPosition() const noexcept;
+        [[nodiscard]] Vector2i GetWorkAreaPosition() const noexcept;      //!< Returns the work area position.
         [[nodiscard]] Vector2i GetWorkAreaSize() const noexcept;     //!< Returns the available work area size.
         [[nodiscard]] Vector2i GetPhysicalSize() const noexcept;     //!< Returns the physical size of the monitor in millimeters.
         [[nodiscard]] float GetDiagonalSize() const noexcept;        //!< Returns the size of the monitor in inches.

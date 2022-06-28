@@ -62,7 +62,7 @@ namespace tml
         WindowSettings settingsStruct{};
         settingsStruct.size = Vector2i(w, h);
         settingsStruct.title = title;
-        settingsStruct.icon.LoadFromData(LOGO_DATA.data(), LOGO_DATA.size());
+        settingsStruct.icon = Image(LOGO_DATA.data(), LOGO_DATA.size());
         settingsStruct.flags = flags;
         settingsStruct.maximumSize = Vector2i(8192, 8192);
         settingsStruct.minimumSize = Vector2i(100, 100);
@@ -106,14 +106,35 @@ namespace tml
 
         if(flags & WindowSettings::Fullscreen)
         {
-            monitorHandle = static_cast<GLFWmonitor*>(settings.monitor.GetHandle());
+            if(settings.monitor)
+            {
+                monitorHandle = static_cast<GLFWmonitor*>(settings.monitor->GetHandle());
+            }
+            else
+            {
+                monitorHandle = static_cast<GLFWmonitor*>(GetPrimaryMonitor().GetHandle());
+            }
         }
 
         if(flags & WindowSettings::UseMonitorResolution)
         {
-            const Vector2i workAreaSize = settings.monitor.GetWorkAreaSize();
-            const Vector2i workAreaPos = settings.monitor.GetWorkAreaPos();
-            const Vector2i pos = settings.monitor.GetPos();
+            Vector2i workAreaSize;
+            Vector2i workAreaPos;
+            Vector2i pos;
+
+            if(settings.monitor) //!< Checking if user provided a monitor in settings.
+            {
+                workAreaSize = settings.monitor->GetWorkAreaSize();
+                workAreaPos = settings.monitor->GetWorkAreaPosition();
+                pos = settings.monitor->GetPosition();
+            }
+            else //!< Use the primary monitor.
+            {
+                auto primaryMonitor = GetPrimaryMonitor();
+                workAreaSize = primaryMonitor.GetWorkAreaSize();
+                workAreaPos = primaryMonitor.GetWorkAreaPosition();
+                pos = primaryMonitor.GetPosition();
+            }
 
             m_size = Vector2i(workAreaSize.x + workAreaPos.x - pos.x, workAreaSize.y + workAreaPos.y - pos.y);
             m_handle = glfwCreateWindow(m_size.x, m_size.y, title.c_str(), monitorHandle, glContextHandle);
@@ -136,9 +157,9 @@ namespace tml
         {
             Image icon;
 
-            if(settings.icon.GetData() && settings.icon.GetWidth() > 0 && settings.icon.GetHeight() > 0 && settings.icon.GetBpp())
+            if(settings.icon)
             {
-                icon = settings.icon;
+                icon = settings.icon.value();
             }
             else
             {
@@ -155,7 +176,12 @@ namespace tml
                 SetAspectRatio(settings.size.x, settings.size.y);
             }
 
-            SetSizeLimits(settings.minimumSize, settings.maximumSize);
+                SetSizeLimits(settings.minimumSize.value_or(Vector2i(100, 100)), settings.maximumSize.value_or(Vector2i(8192, 8192)));
+        }
+
+        if(settings.position)
+        {
+            SetPosition(settings.position->x, settings.position->y);
         }
 
         SetCallbacks();
@@ -327,12 +353,30 @@ namespace tml
         glfwRestoreWindow(static_cast<GLFWwindow*>(m_handle));
     }
 
-    void Window::SetFullscreen(bool full, const Monitor& monitor) noexcept
+    void Window::SetFullscreen(bool full, const std::optional<Monitor>& monitor) noexcept
     {
         if(full)
         {
-            const auto size = monitor.GetSize();
-            const auto monitorHandle = static_cast<GLFWmonitor*>(monitor.GetHandle());
+            Vector2i size;
+            GLFWmonitor* monitorHandle;
+
+            if(monitor)
+            {
+                size = monitor->GetSize();
+                monitorHandle = static_cast<GLFWmonitor*>(monitor->GetHandle());
+            }
+            else if(m_settings.monitor) //<! Use the monitor provided with WindowSettings.
+            {
+                size = m_settings.monitor->GetSize();
+                monitorHandle = static_cast<GLFWmonitor*>(m_settings.monitor->GetHandle());
+            }
+            else //<! Use the primary monitor
+            {
+                Monitor primaryMonitor = GetPrimaryMonitor();
+                size = primaryMonitor.GetSize();
+                monitorHandle = static_cast<GLFWmonitor*>(primaryMonitor.GetHandle());
+            }
+
             glfwSetWindowMonitor(static_cast<GLFWwindow*>(m_handle),
                                  monitorHandle,
                                  0,
