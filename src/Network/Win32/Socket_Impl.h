@@ -107,6 +107,12 @@ namespace tml::Net
         return true;
     }
 
+    bool Socket::SetBlocking(bool blocking) const
+    {
+        u_long mode = static_cast<u_long>(!blocking);
+        return ioctlsocket(m_fd, FIONBIO, &mode) != SOCKET_ERROR;
+    }
+
     std::string Socket::IpFromHostname(const std::string &hostname)
     {
         return "";

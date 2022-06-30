@@ -16,6 +16,7 @@ namespace tml::Net
         bool IsConnected() const;
         bool Send(const void* data, uint64_t size) const;
         bool Receive(void* data, uint64_t size, uint64_t& received) const;
+        bool SetBlocking(bool blocking) const;
 
         friend class Receiver;
     protected:

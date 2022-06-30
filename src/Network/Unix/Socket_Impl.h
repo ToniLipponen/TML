@@ -9,6 +9,7 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <cstring>
+#include <fcntl.h>
 
 namespace tml::Net
 {
@@ -82,6 +83,22 @@ namespace tml::Net
 
         received = bytes;
         return true;
+    }
+
+    bool Socket::SetBlocking(bool blocking) const
+    {
+        int status;
+
+        if(!blocking)
+        {
+            status = fcntl(m_fd, F_SETFL, fcntl(m_fd, F_GETFL, 0) | O_NONBLOCK);
+        }
+        else
+        {
+            status = fcntl(m_fd, F_SETFL, fcntl(m_fd, F_GETFL, 0) & ~O_NONBLOCK);
+        }
+
+        return status != -1;
     }
 
     std::string Socket::IpFromHostname(const std::string& hostname)
