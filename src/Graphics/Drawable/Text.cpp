@@ -216,13 +216,12 @@ namespace tml
 
     Font& Text::GetDefaultFont() noexcept
     {
-        static Font* defaultFont = new Font;
-        static bool defaultFontInitialized = false;
+        static std::unique_ptr<Font> defaultFont;
 
-        if(!defaultFontInitialized)
+        if(!defaultFont)
         {
+            defaultFont = std::make_unique<Font>();
             defaultFont->LoadFromData(TML_DEFAULT_FONT_DATA);
-            defaultFontInitialized = true;
         }
 
         return *defaultFont;
