@@ -86,19 +86,18 @@ namespace tml::Net
 
     std::string Socket::IpFromHostname(const std::string& hostname)
     {
-        struct hostent *he;
-        struct in_addr **addr_list;
+        struct hostent* he = gethostbyname(hostname.c_str());
 
-        if((he = gethostbyname(hostname.c_str())) == nullptr)
+        if(he == nullptr)
         {
             return "";
         }
 
-        addr_list = (struct in_addr **) he->h_addr_list;
+        auto addressList  = reinterpret_cast<struct in_addr**>(he->h_addr_list);
 
-        for(int i = 0; addr_list[i] != nullptr; i++)
+        if(addressList[0])
         {
-            return inet_ntoa(*addr_list[i]);
+            return inet_ntoa(*addressList[0]);
         }
 
         return "";
