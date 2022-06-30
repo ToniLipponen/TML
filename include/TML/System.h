@@ -3,3 +3,4 @@
 #include <TML/System/Clock.h>
 #include <TML/System/Math.h>
 #include <TML/System/File.h>
+#include <TML/System/Compression.h>

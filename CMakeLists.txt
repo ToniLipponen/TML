@@ -75,6 +75,7 @@ add_subdirectory(external/glfw-3.3.7)
 add_subdirectory(external/Clip)
 add_subdirectory(external/lunasvg)
 add_subdirectory(external/glad)
+add_subdirectory(external/fastlz)
 
 # Add modules
 add_subdirectory(src/Audio)
