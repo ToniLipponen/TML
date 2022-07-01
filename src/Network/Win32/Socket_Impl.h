@@ -75,17 +75,9 @@ namespace tml::Net
         return m_fd != INVALID_SOCKET;
     }
 
-    bool Socket::Send(const void *data, uint64_t size) const
+    int64_t Socket::Send(const void *data, uint64_t size) const
     {
-        auto result = send(m_fd, reinterpret_cast<const char*>(data), static_cast<int>(size), 0);
-
-        if(result == SOCKET_ERROR)
-        {
-            closesocket(m_fd);
-            return false;
-        }
-
-        return true;
+        return send(m_fd, reinterpret_cast<const char*>(data), static_cast<int>(size), 0);
     }
 
     bool Socket::Receive(void *data, uint64_t size, uint64_t &received) const

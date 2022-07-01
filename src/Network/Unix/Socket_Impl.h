@@ -66,9 +66,9 @@ namespace tml::Net
         return m_fd != 0;
     }
 
-    bool Socket::Send(const void *data, uint64_t size) const
+    int64_t Socket::Send(const void *data, uint64_t size) const
     {
-        return write(m_fd, data, size) != -1;
+        return write(m_fd, data, size);
     }
 
     bool Socket::Receive(void *data, uint64_t size, uint64_t &received) const

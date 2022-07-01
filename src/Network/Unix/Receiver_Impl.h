@@ -22,6 +22,7 @@ namespace tml::Net
                 return false;
             }
         }
+
         return listen(m_fd, 5) != -1;
     }
 
