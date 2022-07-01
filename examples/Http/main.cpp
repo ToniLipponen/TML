@@ -1,19 +1,19 @@
 #include <TML/Network.h>
 #include <iostream>
+#include <vector>
 
 int main()
 {
-    tml::Net::HttpHost host("www.example.com", 80);
-    tml::Net::HttpRequest request(tml::Net::HttpRequest::GET, "/index.html");
-    request.SetProperty("Connection", "close");
+    tml::Net::Receiver receiver;
+    std::vector<tml::Net::Socket> sockets;
 
-    if(!host.Send(request))
-        std::cout << "Failed to send\n";
-
-    tml::Net::HttpResponse response;
-    if(!host.GetResponse(response))
-        std::cout << "No response\n";
-
-    std::cout << response.GetBody() << std::endl;
+    while(1)
+    {
+        tml::Net::Socket socket;
+        receiver.Listen(12000);
+        receiver.Accept(socket);
+        sockets.emplace_back(std::move(socket));
+        std::cout << "Connected\n";
+    }
     return 0;
 }

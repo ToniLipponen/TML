@@ -26,11 +26,23 @@ namespace tml::Net
         return listen(m_fd, 5) != -1;
     }
 
+    /// Note to self: Maybe clean this up at some point?
     bool Receiver::Accept(Socket& socket)
     {
-        struct sockaddr_in cliaddr = {};
-        socklen_t cliaddrlen = sizeof(cliaddr);
-        socket.m_fd = accept(m_fd, reinterpret_cast<sockaddr *>(&cliaddr), &cliaddrlen);
+        //// Accept the connection
+        struct sockaddr_in clientAddr = {};
+        socklen_t clientAddrlen = sizeof(clientAddr);
+        socket.m_fd = accept(m_fd, reinterpret_cast<sockaddr*>(&clientAddr), &clientAddrlen);
+        ////
+
+        //// Get the ip address
+        auto* addr = dynamic_cast<struct sockaddr_in*>(&clientAddr);
+        struct in_addr inAddr = addr->sin_addr;
+
+        std::string ipAddress(INET_ADDRSTRLEN, 0);
+        inet_ntop(AF_INET, &inAddr, &ipAddress[0], INET_ADDRSTRLEN);
+        socket.m_address = ipAddress;
+
         return (socket.m_fd != -1);
     }
 

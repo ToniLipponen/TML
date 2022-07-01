@@ -23,9 +23,12 @@ namespace tml::Net
         close(m_fd);
     }
 
-    bool Socket::Connect(const std::string& address, uint32_t port) noexcept
+    SocketResult Socket::Connect(const std::string& address, uint32_t port) noexcept
     {
         struct sockaddr_in sockAddress{};
+        sockAddress.sin_family = AF_INET;
+        sockAddress.sin_port = htons(port);
+
         auto result = inet_pton(AF_INET, address.c_str(), &sockAddress.sin_addr);
 
         if(result == 0)
@@ -36,29 +39,28 @@ namespace tml::Net
             /// Invalid address
             if(result != 1)
             {
-                return false;
+                return SocketResult::InvalidAddress;
             }
         }
 
-        sockAddress.sin_family = AF_INET;
-        sockAddress.sin_port = htons(port);
-
-        result = connect(m_fd, reinterpret_cast<struct sockaddr*>(&sockAddress), sizeof(struct sockaddr_in));
+        result = connect(m_fd, reinterpret_cast<struct sockaddr*>(&sockAddress), sizeof(sockAddress));
 
         /// Failed to connect to the host
         if(result == -1)
         {
             close(m_fd);
             m_fd = 0;
-            return false;
+            return SocketResult::FailedToConnect;
         }
 
-        return true;
+        return SocketResult::OK;
     }
 
-    bool Socket::Disconnect() const
+    SocketResult Socket::Disconnect()
     {
-        return close(m_fd) == 0;
+        const auto result = close(m_fd) == 0 ? SocketResult::OK : SocketResult::Error;
+        m_fd = 0;
+        return result;
     }
 
     [[maybe_unused]] bool Socket::IsConnected() const
@@ -66,39 +68,76 @@ namespace tml::Net
         return m_fd != 0;
     }
 
-    int64_t Socket::Send(const void *data, uint64_t size) const
+    SocketResult Socket::Send(const void *data, uint64_t size, uint64_t& sent) const
     {
-        return write(m_fd, data, size);
+        const int64_t written = write(m_fd, data, size);
+        sent = written;
+
+        if(written == -1) //!< No data was sent.
+        {
+            sent = 0;
+            return SocketResult::Error;
+        }
+        else if(written == size) //!< All data was sent.
+        {
+            return SocketResult::OK;
+        }
+
+        /// Only a portion of the data was sent.
+        return SocketResult::Incomplete;
     }
 
-    bool Socket::Receive(void *data, uint64_t size, uint64_t &received) const
+    SocketResult Socket::Receive(void *data, uint64_t size, uint64_t &received) const
     {
         int64_t bytes = read(m_fd, data, size);
+        received = bytes;
 
-        if(bytes < 0)
+        if(bytes < 0) //!< Error
         {
             received = 0;
-            return false;
+            return SocketResult::Error;
+        }
+        else if(bytes == size) //!< Potentially more data available.
+        {
+            return SocketResult::Incomplete;
+        }
+        else if(bytes < size) //!< All data was received
+        {
+            return SocketResult::OK;
         }
 
-        received = bytes;
-        return true;
+        return SocketResult::OK;
     }
 
-    bool Socket::SetBlocking(bool blocking) const
+    SocketResult Socket::SetBlocking(bool blocking)
     {
-        int status;
+        int status = 0;
 
-        if(!blocking)
+        if(blocking != m_blocking)
         {
-            status = fcntl(m_fd, F_SETFL, fcntl(m_fd, F_GETFL, 0) | O_NONBLOCK);
-        }
-        else
-        {
-            status = fcntl(m_fd, F_SETFL, fcntl(m_fd, F_GETFL, 0) & ~O_NONBLOCK);
+            const int flags = fcntl(m_fd, F_GETFL, 0);
+
+            if(!blocking)
+            {
+                status = fcntl(m_fd, F_SETFL, flags | O_NONBLOCK);
+            }
+            else
+            {
+                status = fcntl(m_fd, F_SETFL, flags & ~O_NONBLOCK);
+            }
+
+            if(status != -1)
+            {
+                m_blocking = blocking;
+            }
         }
 
-        return status != -1;
+        return status != -1 ? SocketResult::OK : SocketResult::Error;
+    }
+
+    bool Socket::GetBlocking() const
+    {
+        return m_blocking;
     }
 
     std::string Socket::IpFromHostname(const std::string& hostname)

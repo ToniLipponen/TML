@@ -17,7 +17,7 @@ namespace tml::Net
         WSACleanup();
     }
 
-    bool Socket::Connect(const std::string &address, uint32_t port) noexcept
+    SocketResult Socket::Connect(const std::string &address, uint32_t port) noexcept
     {
         m_port = port;
         struct addrinfo *result = NULL, *ptr = NULL, hints{};
@@ -31,7 +31,7 @@ namespace tml::Net
         /// Failed to get host address info
         if(iResult != 0)
         {
-            return false;
+            return SocketResult::InvalidAddress;
         }
 
         for(ptr = result; ptr != nullptr; ptr = ptr->ai_next)
@@ -40,7 +40,7 @@ namespace tml::Net
 
             if(m_fd == INVALID_SOCKET)
             {
-                return false;
+                return SocketResult::FailedToConnect;
             }
 
             iResult = connect(m_fd, ptr->ai_addr, ptr->ai_addrlen);
@@ -59,15 +59,17 @@ namespace tml::Net
 
         if(m_fd == INVALID_SOCKET)
         {
-            return false;
+            return SocketResult::FailedToConnect;
         }
 
-        return true;
+        return SocketResult::OK;
     }
 
-    bool Socket::Disconnect() const
+    SocketResult Socket::Disconnect()
     {
-        return closesocket(m_fd);
+        const auto result = closesocket(m_fd) == SOCKET_ERROR ? SocketResult::Error : SocketResult::OK;
+        m_fd = INVALID_SOCKET;
+        return result;
     }
 
     bool Socket::IsConnected() const
@@ -75,34 +77,63 @@ namespace tml::Net
         return m_fd != INVALID_SOCKET;
     }
 
-    int64_t Socket::Send(const void *data, uint64_t size) const
+    SocketResult Socket::Send(const void *data, uint64_t size, uint64_t& sent) const
     {
-        return send(m_fd, reinterpret_cast<const char*>(data), static_cast<int>(size), 0);
+        const int64_t written = send(m_fd, reinterpret_cast<const char*>(data), static_cast<int>(size), 0);
+        sent = written;
+
+        if(written == -1)
+        {
+            sent = 0;
+            return SocketResult::Error;
+        }
+        else if(written == size)
+        {
+            return SocketResult::OK;
+        }
+
+        return SocketResult::Incomplete;
     }
 
-    bool Socket::Receive(void *data, uint64_t size, uint64_t &received) const
+    SocketResult Socket::Receive(void *data, uint64_t size, uint64_t &received) const
     {
         int64_t bytes = recv(m_fd, reinterpret_cast<char *>(data), static_cast<int>(size), 0);
-
-        if(bytes < 0)
-        {
-            received = 0;
-            return false;
-        }
-        else if(bytes == 0)
-        {
-            received = 0;
-            return false;
-        }
-
         received = bytes;
-        return true;
+
+        if(bytes < 0) //!< Error
+        {
+            received = 0;
+            return SocketResult::Error;
+        }
+        else if(bytes == size) //!< Potentially more data available.
+        {
+            return SocketResult::Incomplete;
+        }
+        else if(bytes < size) //!< All data was received
+        {
+            return SocketResult::OK;
+        }
+
+        return SocketResult::OK;
     }
 
-    bool Socket::SetBlocking(bool blocking) const
+    SocketResult Socket::SetBlocking(bool blocking)
     {
         u_long mode = static_cast<u_long>(!blocking);
-        return ioctlsocket(m_fd, FIONBIO, &mode) != SOCKET_ERROR;
+        const auto result = ioctlsocket(m_fd, FIONBIO, &mode);
+
+        if(result == SOCKET_ERROR)
+        {
+            return SocketResult::Error;
+        }
+
+        m_blocking = blocking;
+        return SocketResult::OK;
+    }
+
+    bool Socket::GetBlocking() const
+    {
+        return m_blocking;
     }
 
     std::string Socket::IpFromHostname(const std::string &hostname)

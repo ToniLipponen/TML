@@ -8,11 +8,35 @@ namespace tml::Net
         m_socket.Connect(m_address, port);
     }
 
+    bool HttpHost::Connect(std::string address, uint32_t port) noexcept
+    {
+        m_address = std::move(address);
+        const auto result = m_socket.Connect(m_address, port);
+        return result == SocketResult::OK;
+    }
+
     bool HttpHost::Send(HttpRequest& request) noexcept
     {
         request.SetProperty("Host", m_address);
         const auto message = request.GetRequestString();
-        return m_socket.Send(message.data(), message.size());
+
+        uint64_t sent = 0;
+        SocketResult result = m_socket.Send(message.data(), message.size(), sent);
+
+        uint64_t totalSent = sent;
+
+        while(result != SocketResult::OK || totalSent < message.length())
+        {
+            result = m_socket.Send(message.data() + totalSent, message.size() - totalSent, sent);
+            totalSent += sent;
+
+            if(result == SocketResult::Error)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     bool HttpHost::GetResponse(HttpResponse& response) noexcept

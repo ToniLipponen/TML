@@ -1,81 +1,78 @@
 #include <TML/Network/Receiver.h>
 #include "NetworkContext.h"
 
-namespace tml
+namespace tml::Net
 {
-    namespace Net
+    Receiver::Receiver() = default;
+
+    bool Receiver::Listen(uint32_t port)
     {
-        Receiver::Receiver() = default;
-
-        bool Receiver::Listen(uint32_t port)
+        if(m_port != port)
         {
-            if(m_port != port)
-            {
-                m_port = port;
-                auto result = Bind(); // Rebind.
+            m_port = port;
+            auto result = Bind(); // Rebind.
 
-                if(!result)
-                {
-                    return false;
-                }
-            }
-
-            if(listen(m_fd, 5) == SOCKET_ERROR)
+            if(!result)
             {
-                closesocket(m_fd);
                 return false;
             }
-
-            return true;
         }
 
-        bool Receiver::Accept(Socket& socket)
+        if(listen(m_fd, 5) == SOCKET_ERROR)
         {
-            socket.m_fd = accept(m_fd, nullptr, nullptr);
-
-            if(socket.m_fd == INVALID_SOCKET)
-            {
-                closesocket(m_fd);
-                return false;
-            }
-
-            return true;
+            closesocket(m_fd);
+            return false;
         }
 
-        bool Receiver::Bind()
+        return true;
+    }
+
+    bool Receiver::Accept(Socket& socket)
+    {
+        socket.m_fd = accept(m_fd, nullptr, nullptr);
+
+        if(socket.m_fd == INVALID_SOCKET)
         {
-            struct addrinfo *result = NULL, *ptr = NULL, hints{};
-            hints.ai_family = AF_INET;
-            hints.ai_socktype = SOCK_STREAM;
-            hints.ai_protocol = IPPROTO_TCP;
-            hints.ai_flags = AI_PASSIVE;
+            closesocket(m_fd);
+            return false;
+        }
 
-            auto iResult = getaddrinfo(nullptr, std::to_string(m_port).c_str(), &hints, &result);
+        return true;
+    }
 
-            if(iResult != 0)
-            {
-                return false;
-            }
+    bool Receiver::Bind()
+    {
+        struct addrinfo *result = NULL, *ptr = NULL, hints{};
+        hints.ai_family = AF_INET;
+        hints.ai_socktype = SOCK_STREAM;
+        hints.ai_protocol = IPPROTO_TCP;
+        hints.ai_flags = AI_PASSIVE;
 
-            m_fd = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+        auto iResult = getaddrinfo(nullptr, std::to_string(m_port).c_str(), &hints, &result);
 
-            if(m_fd == INVALID_SOCKET)
-            {
-                freeaddrinfo(result);
-                return false;
-            }
+        if(iResult != 0)
+        {
+            return false;
+        }
 
-            iResult = bind(m_fd, result->ai_addr, result->ai_addrlen);
+        m_fd = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
 
-            if(iResult == SOCKET_ERROR)
-            {
-                freeaddrinfo(result);
-                closesocket(m_fd);
-                return false;
-            }
-
+        if(m_fd == INVALID_SOCKET)
+        {
             freeaddrinfo(result);
-            return true;
+            return false;
         }
+
+        iResult = bind(m_fd, result->ai_addr, result->ai_addrlen);
+
+        if(iResult == SOCKET_ERROR)
+        {
+            freeaddrinfo(result);
+            closesocket(m_fd);
+            return false;
+        }
+
+        freeaddrinfo(result);
+        return true;
     }
 }

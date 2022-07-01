@@ -140,8 +140,10 @@ namespace tml::Net
     class TML_API HttpHost
     {
     public:
+        HttpHost() = default;
         HttpHost(std::string address, uint32_t port);
 
+        bool Connect(std::string address, uint32_t port) noexcept;
         bool Send(HttpRequest& request) noexcept;
         bool GetResponse(HttpResponse& response) noexcept;
         std::string GetResponseString() noexcept;
