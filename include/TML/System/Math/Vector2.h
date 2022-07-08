@@ -8,7 +8,7 @@ namespace tml
     class Vector2
     {
     public:
-        Vector2() = default;
+        inline constexpr Vector2() noexcept;
         inline constexpr Vector2(T v) noexcept;
         inline constexpr Vector2(T x, T y) noexcept;
 
@@ -65,26 +65,40 @@ namespace tml
      * Vector2 implementation
      */
 
+
+    template<typename T>
+    inline constexpr Vector2<T>::Vector2() noexcept
+    {
+        static_assert(std::is_arithmetic<T>::value, "T in tml::Vector2<T> must be a numeric type");
+    }
+
     template<typename T>
     inline constexpr Vector2<T>::Vector2(T v) noexcept
-    : x(v), y(v)
     {
+        static_assert(std::is_arithmetic<T>::value, "T in tml::Vector2<T> must be a numeric type");
 
+        x = v;
+        y = v;
     }
 
     template<typename T>
     inline constexpr Vector2<T>::Vector2(T x, T y) noexcept
-    : x(x), y(y)
     {
+        static_assert(std::is_arithmetic<T>::value, "T in tml::Vector2<T> must be a numeric type");
 
+        this->x = x;
+        this->y = y;
     }
 
     template<typename T>
     template<typename R>
     inline constexpr Vector2<T>::Vector2(R v) noexcept
-    : x(static_cast<T>(v)), y(static_cast<T>(v))
     {
+        static_assert(std::is_arithmetic<R>::value, "R in tml::Vector2<T>(R v) must be a numeric type");
+        static_assert(std::is_arithmetic<T>::value, "T in tml::Vector2<T> must be a numeric type");
 
+        x = (static_cast<T>(v));
+        y = (static_cast<T>(v));
     }
 
     template<typename T>
@@ -92,7 +106,11 @@ namespace tml
     inline constexpr Vector2<T>::Vector2(R x, R y) noexcept
     : x(static_cast<T>(x)), y(static_cast<T>(y))
     {
+        static_assert(std::is_arithmetic<R>::value, "R in tml::Vector2<T>(R x, R y) must be a numeric type");
+        static_assert(std::is_arithmetic<T>::value, "T in tml::Vector2<T> must be a numeric type");
 
+        this->x = (static_cast<T>(x));
+        this->y = (static_cast<T>(y));
     }
 
     template<typename T>
