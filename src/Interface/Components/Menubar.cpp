@@ -6,7 +6,12 @@ namespace tml::Interface
     : HorizontalLayout(0,0, window.GetWidth(), 20)
     {
         m_vSizePolicy = SizePolicy::Fixed;
-        m_padding.x = 0;
+        m_padding.x = 1;
+
+        AddListener("WindowResized", [](BaseComponent* c, Event& e)
+        {
+            c->SetSize(e.size.w, static_cast<uint32_t>(c->GetSize().y));
+        });
     }
 
     void Menubar::pDraw(RenderTarget& target) noexcept
