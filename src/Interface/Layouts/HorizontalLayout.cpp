@@ -114,7 +114,8 @@ namespace tml::Interface
 
         for(auto& i : m_children)
         {
-            i->SetPosition(m_pos.x + offset, m_pos.y);
+            const auto y = Math::Max(m_pos.y + (m_size.y - i->GetSize().y) / 2, m_pos.y);
+            i->SetPosition(m_pos.x + offset, y);
             offset += i->GetSize().x + m_padding.x;
         }
     }
