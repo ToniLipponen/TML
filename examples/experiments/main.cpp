@@ -42,9 +42,7 @@ int main()
 
     for(int i = 0; i < 5; i++)
     {
-        Button* button;
-        menubar->AddChild(button = new Button("Item" + std::to_string(i)));
-        button->SetRoundness(0);
+        menubar->AddChild(new Button("Item" + std::to_string(i)));
     }
 
     Layer uiRoot;

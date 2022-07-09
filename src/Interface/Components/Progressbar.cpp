@@ -8,7 +8,7 @@ namespace tml::Interface
         m_size = Vector2i(w,h);
         m_hSizePolicy = SizePolicy::Expand;
         m_vSizePolicy = SizePolicy::Fixed;
-        m_text.SetColor(Color::Black);
+        m_text.SetColor(s_defaultTextColor);
     }
 
     float Progressbar::GetValue() const noexcept

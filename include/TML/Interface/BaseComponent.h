@@ -120,7 +120,7 @@ namespace tml::Interface
         Color m_sColor;
         Color m_activeColor;
         Color m_textColor;
-        float m_roundness = 30;
+        float m_roundness = 0;
 
         SizePolicy m_hSizePolicy = SizePolicy::Fixed; // Horizontal size policy.
         SizePolicy m_vSizePolicy = SizePolicy::Fixed; // Vertical size policy.

@@ -13,7 +13,6 @@ namespace tml::Interface
     private:
         void pDraw(RenderTarget& renderer) noexcept override;
         bool m_value = false;
-        float m_roundness = 100;
         Color m_borderColor, m_bodyColor;
         double m_borderAnimationProgress = 0, m_bodyAnimationProgress = 0;
     };

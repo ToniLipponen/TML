@@ -9,7 +9,6 @@ namespace tml::Interface
         m_max = Math::Max<float>(max, 0);
         m_minimumSize = {thickness};
         m_value = (m_min + m_max) / 2;
-        m_roundness = thickness / 2;
 
         if constexpr(axis == ComponentAxis::Horizontal)
         {

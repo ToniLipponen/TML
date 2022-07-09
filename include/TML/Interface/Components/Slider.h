@@ -13,7 +13,7 @@ namespace tml::Interface
 
     private:
         void pDraw(RenderTarget& target) noexcept override;
-        float m_min, m_max, m_value, m_roundness = 0, m_targetValue = 0.5f, m_sliderValue = 0.5f;
+        float m_min, m_max, m_value, m_targetValue = 0.5f, m_sliderValue = 0.5f;
         Color m_borderColor, m_bodyColor;
         double m_borderAnimationProgress = 0;
     };

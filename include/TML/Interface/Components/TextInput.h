@@ -24,7 +24,6 @@ namespace tml::Interface
         int32_t m_cursorIndex = 0;
         double m_blinkTimer = 0;
         float m_cursorPos = 0;
-        float m_roundness = 100;
         bool m_showLine = true;
         bool m_readOnly = false;
         double m_borderAnimationProgress = 0;
