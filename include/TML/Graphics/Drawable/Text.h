@@ -22,6 +22,7 @@ namespace tml
         [[nodiscard]] const String& GetString() const noexcept;
         Vector2f GetDimensions() noexcept;
         Vector2f GetCenter() noexcept override;
+        Vector2f GetOffsetToIndex(uint64_t index) noexcept;
 
     private:
         void Generate();

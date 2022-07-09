@@ -24,7 +24,7 @@ int main()
     layout->AddChild(menubar = new Menubar(window));
     layout->AddChild(new HorizontalLayout({new Label("Checkbox:",    20, 125), new Checkbox}));
     layout->AddChild(new HorizontalLayout({new Label("Slider:",      20, 125), new HSlider}));
-    layout->AddChild(new HorizontalLayout({new Label("TextInput:",   20, 125), new TextInput}));
+    layout->AddChild(new HorizontalLayout({new Label("TextInput:",   20, 125), new LineInput}));
     layout->AddChild(new HorizontalLayout({new Label("ToggleSwitch:",20, 125), new ToggleSwitch}));
     layout->AddChild(new HorizontalLayout({new Label("Button:",      20, 125), new Button("Click me!")}));
     layout->AddChild(new HorizontalLayout({new Label("Combobox:",    20, 125), combobox = new Combobox(180)}));

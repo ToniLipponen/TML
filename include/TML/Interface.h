@@ -5,7 +5,7 @@
 #include <TML/Interface/Components/Button.h>
 #include <TML/Interface/Components/Checkbox.h>
 #include <TML/Interface/Components/Slider.h>
-#include <TML/Interface/Components/TextInput.h>
+#include <TML/Interface/Components/LineInput.h>
 #include <TML/Interface/Components/Listbox.h>
 #include <TML/Interface/Components/Combobox.h>
 #include <TML/Interface/Components/Label.h>

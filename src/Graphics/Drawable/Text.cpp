@@ -95,7 +95,9 @@ namespace tml
     Vector2f Text::GetDimensions() noexcept
     {
         if(m_updated)
+        {
             Generate();
+        }
 
         return m_dimensions;
     }
@@ -103,6 +105,25 @@ namespace tml
     Vector2f Text::GetCenter() noexcept
     {
         return GetDimensions() / 2;
+    }
+
+    Vector2f Text::GetOffsetToIndex(uint64_t index) noexcept
+    {
+        if(index > m_string.length())
+        {
+            return {-1, -1};
+        }
+
+        /// This is very slow.
+        const auto oldString = m_string;
+        m_string = oldString.substr(0, index);
+
+        Generate();
+        const auto dimensions = m_dimensions;
+        m_string = oldString;
+        m_updated = true;
+
+        return dimensions;
     }
 
     inline constexpr void NormalizeQuad(stbtt_aligned_quad& q, double s, double x, double y) noexcept
@@ -156,6 +177,10 @@ namespace tml
 
                 case '\t':
                     x += m_size.x * TAB_SIZE + m_tracking;
+                    break;
+
+                case 32: //!< Space
+                    x += m_size.x + m_tracking;
                     break;
 
                 default:

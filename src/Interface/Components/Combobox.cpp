@@ -7,7 +7,7 @@ namespace tml::Interface
     : BaseComponent(x,y,width,height)
     {
         AddChild(m_listComponent = new Listbox(width, 200, x, y + height + 2));
-        AddChild(m_textInput = new TextInput(width, height, x, y));
+        AddChild(m_textInput = new LineInput(width, height, x, y));
         m_textInput->SetReadOnly(true);
 
         m_listComponent->Disable();
@@ -28,7 +28,11 @@ namespace tml::Interface
 
         m_textInput->AddListener("Drawn", [&](BaseComponent*, Event&)
         {
-            m_textInput->SetValue(String(m_listComponent->GetSelectedValue()));
+            /// This is stupid.
+            if(m_textInput->GetValue() != m_listComponent->GetSelectedValue())
+            {
+                m_textInput->SetValue(m_listComponent->GetSelectedValue());
+            }
         });
 
         m_textInput->AddListener("Click", [&](BaseComponent* c, Event& e)

@@ -1,15 +1,20 @@
-#include <TML/Interface/Components/TextInput.h>
+#include <TML/Interface/Components/LineInput.h>
 #include <TML/System/Clipboard.h>
+#include <iostream>
 
 using namespace tml::Interface;
 
-TextInput::TextInput(uint32_t width, uint32_t height, int32_t x, int32_t y) noexcept
+LineInput::LineInput(uint32_t width, uint32_t height, int32_t x, int32_t y) noexcept
 {
     m_pos = Vector2i(x,y);
     m_size = Vector2i(width, height);
     m_minimumSize = Vector2f(height);
     m_text.SetColor(s_defaultTextColor);
     m_text.SetSize(static_cast<float>(height) * 0.8f);
+
+    m_passwordText.SetColor(s_defaultTextColor);
+    m_passwordText.SetSize(static_cast<float>(height) * 0.8f);
+
     m_cursorPos = Math::Clamp<float>(m_pos.x + 2, m_pos.x, m_pos.x + m_size.x - 4);
 
     if(width)
@@ -24,39 +29,81 @@ TextInput::TextInput(uint32_t width, uint32_t height, int32_t x, int32_t y) noex
     InitListeners();
 }
 
-void TextInput::SetValue(const String& string) noexcept
+void LineInput::SetValue(const String& string) noexcept
 {
     m_value = string;
     m_text.SetString(string);
     m_cursorIndex = string.length();
-    m_cursorPos = m_text.GetDimensions().x;
+    UpdateCursorPosition();
+    UpdatePasswordText();
 }
 
-void TextInput::SetTextColor(const Color &color) noexcept
+void LineInput::SetTextColor(const Color &color) noexcept
 {
     m_text.SetColor(color);
 }
 
-const tml::String& TextInput::GetValue() const noexcept
-{
-    return m_text.GetString();
-}
-
-void TextInput::SetReadOnly(bool readOnly) noexcept
+void LineInput::SetReadOnly(bool readOnly) noexcept
 {
     m_readOnly = readOnly;
 }
 
-void TextInput::AlignText() noexcept
+void LineInput::SetPasswordField(bool passwordField) noexcept
+{
+    m_password = passwordField;
+}
+
+const tml::String& LineInput::GetValue() const noexcept
+{
+    return m_text.GetString();
+}
+
+bool LineInput::GetReadOnly() const noexcept
+{
+    return m_readOnly;
+}
+
+bool LineInput::GetPasswordField() const noexcept
+{
+    return m_password;
+}
+
+void LineInput::AlignText() noexcept
 {
     const auto textSize = m_text.GetDimensions();
     auto pos = GetPosition();
     pos.y += m_size.y / 2 - textSize.y / 2;
     pos.x += Math::Clamp<float>(m_roundness, 0, m_size.y / 2);
     m_text.SetPosition(pos);
+    m_passwordText.SetPosition(pos);
 }
 
-void TextInput::InitListeners() noexcept
+void LineInput::UpdateCursorPosition() noexcept
+{
+    if(m_password)
+    {
+        m_cursorPos = m_pos.x + 2 + m_passwordText.GetOffsetToIndex(m_cursorIndex).x;
+    }
+    else
+    {
+        m_cursorPos = m_pos.x + 2 + m_text.GetOffsetToIndex(m_cursorIndex).x;
+    }
+    std::cout << m_cursorPos << std::endl;
+}
+
+void LineInput::UpdatePasswordText() noexcept
+{
+    String str;
+
+    for(int i = 0; i < m_text.GetString().length(); i++)
+    {
+        str.append("*");
+    }
+
+    m_passwordText.SetString(str);
+}
+
+void LineInput::InitListeners() noexcept
 {
     static auto search_forwards = [&]() noexcept -> size_t
     {
@@ -134,7 +181,7 @@ void TextInput::InitListeners() noexcept
                     }
                     else
                     {
-                        m_cursorIndex = Math::Clamp<int32_t>(--m_cursorIndex, 0, m_value.size());
+                        m_cursorIndex = Math::Clamp<int32_t>(--m_cursorIndex, 0, m_value.length());
                     }
                 } break;
 
@@ -146,7 +193,7 @@ void TextInput::InitListeners() noexcept
                     }
                     else
                     {
-                        m_cursorIndex = Math::Clamp<int32_t>(++m_cursorIndex, 0, m_value.size());
+                        m_cursorIndex = Math::Clamp<int32_t>(++m_cursorIndex, 0, m_value.length());
                     }
                 } break;
 
@@ -163,7 +210,7 @@ void TextInput::InitListeners() noexcept
                         else
                         {
                             m_value.erase(m_value.begin() + m_cursorIndex - 1);
-                            m_cursorIndex = Math::Clamp<int32_t>(--m_cursorIndex, 0, m_value.size());
+                            m_cursorIndex = Math::Clamp<int32_t>(--m_cursorIndex, 0, m_value.length());
                         }
                     }
                 } break;
@@ -181,6 +228,7 @@ void TextInput::InitListeners() noexcept
                         {
                             m_value.erase(m_value.begin() + m_cursorIndex);
                         }
+
                     }
                 } break;
 
@@ -204,11 +252,11 @@ void TextInput::InitListeners() noexcept
 
             m_blinkTimer = 0;
             m_showLine = true;
-
-            m_text.SetString(m_value.substr(0, m_cursorIndex));
-            m_cursorPos = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
             m_text.SetString(m_value);
+
             AlignText();
+            UpdatePasswordText();
+            UpdateCursorPosition();
             e = Event{};
         }
     });
@@ -219,10 +267,11 @@ void TextInput::InitListeners() noexcept
         {
             m_value.insert(m_value.begin() + m_cursorIndex, e.text.unicode);
             m_cursorIndex++;
-            m_text.SetString(m_value.substr(0, m_cursorIndex));
-            m_cursorPos = Math::Clamp<float>(m_pos.x + m_text.GetDimensions().x + 2, m_pos.x, m_pos.x + m_size.x - 4);
             m_text.SetString(m_value);
+
             AlignText();
+            UpdatePasswordText();
+            UpdateCursorPosition();
             e = Event{};
         }
     });
@@ -268,14 +317,22 @@ void TextInput::InitListeners() noexcept
     });
 }
 
-void TextInput::pDraw(RenderTarget& target) noexcept
+void LineInput::pDraw(RenderTarget& target) noexcept
 {
     const auto clampedRounded = Math::Clamp<float>(m_roundness, 0, m_size.y / 2);
     target.DrawRect(m_pos, m_size, m_borderColor, clampedRounded);
     target.DrawRect(m_pos + Vector2f(1, 1), m_size - Vector2f(2, 2), m_pColor, clampedRounded);
 
     target.SetBounds(m_pos + Vector2f(clampedRounded, 0), m_size - Vector2f(clampedRounded * 2, 0));
-    target.Draw(m_text);
+
+    if(m_password)
+    {
+        target.Draw(m_passwordText);
+    }
+    else
+    {
+        target.Draw(m_text);
+    }
 
     if(m_state.Focused && m_showLine && !m_readOnly)
     {
