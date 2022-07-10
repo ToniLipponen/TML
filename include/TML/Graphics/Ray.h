@@ -22,15 +22,16 @@ namespace tml
             std::vector<Info> points;
         };
 
-        Ray();
-        Ray(const Vector2f& pos, const Vector2f& dir);
+        Ray() noexcept;
+        Ray(const Vector2f& pos, const Vector2f& dir) noexcept;
+        virtual ~Ray() noexcept = default;
 
-        Intersection IntersectsRect(const Vector2f& pos, const Vector2f& size, float rotation = 0.0f) const noexcept;
-        Intersection IntersectsCircle(const Vector2f& pos, float radius) const noexcept;
-        Intersection IntersectsLine(const Vector2f& a, const Vector2f& b) const noexcept;
+        [[nodiscard]] Intersection IntersectsRect(const Vector2f& pos, const Vector2f& size, float rotation = 0.0f) const noexcept;
+        [[nodiscard]] Intersection IntersectsCircle(const Vector2f& pos, float radius) const noexcept;
+        [[nodiscard]] Intersection IntersectsLine(const Vector2f& a, const Vector2f& b) const noexcept;
 
         // Checks intersection between a ray and a shape made out of connected points.
-        Intersection IntersectsShape(const std::vector<Vector2f>& points) const noexcept;
+        [[nodiscard]] Intersection IntersectsShape(const std::vector<Vector2f>& points) const noexcept;
 
         Vector2f position;
         Vector2f direction;

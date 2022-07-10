@@ -18,6 +18,8 @@ namespace tml
     public:
         RenderTarget();
 
+        virtual ~RenderTarget() noexcept = default;
+
         Vector2f WorldToScreen(const Vector2f& point, const Camera& camera) const noexcept;
 
         Vector2f ScreenToWorld(const Vector2f& point, const Camera& camera) const noexcept;

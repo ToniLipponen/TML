@@ -10,12 +10,11 @@ namespace tml
     {
     public:
         RenderTexture();
-        virtual ~RenderTexture() noexcept = default;
         void Create(int32_t width, int32_t height) noexcept;
         bool SetActive(bool active = true);
         void Clear() noexcept override;
         void Display() noexcept;
-        const Texture& GetTexture() const noexcept;
+        [[nodiscard]] const Texture& GetTexture() const noexcept;
         
     private:
         Vector2f GetRenderTargetSize() const noexcept override { return {m_width, m_height}; }
@@ -23,6 +22,5 @@ namespace tml
         int32_t m_height = 0;
         Texture m_texture;
         std::unique_ptr<FrameBuffer> m_frameBuffer;
-//        class FrameBuffer* m_frameBuffer;
     };
 }

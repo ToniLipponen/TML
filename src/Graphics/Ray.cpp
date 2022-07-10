@@ -5,13 +5,13 @@
 
 namespace tml
 {
-    Ray::Ray()
+    Ray::Ray() noexcept
     : position(0), direction(0)
     {
 
     }
 
-    Ray::Ray(const Vector2f &pos, const Vector2f &dir)
+    Ray::Ray(const Vector2f &pos, const Vector2f &dir) noexcept
     : position(pos), direction(dir)
     {
 
