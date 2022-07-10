@@ -6,7 +6,7 @@
 namespace tml
 {
     Shader::Shader() noexcept
-    : m_id(0)
+    : m_id(TML_INVALID_ID)
     {
 
     }
@@ -35,7 +35,7 @@ namespace tml
 
     void Shader::LoadFromString(const std::string& vs, const std::string& fs) const noexcept
     {
-        if(m_id == 0)
+        if(m_id == TML_INVALID_ID)
         {
             m_id = GL_CALL(glad_glCreateProgram());
         }
