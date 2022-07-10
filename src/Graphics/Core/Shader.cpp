@@ -3,6 +3,7 @@
 #include "../../Headers/GLHeader.h"
 #include <TML/System/File.h>
 #include <iostream>
+#include <array>
 
 #define TML_INVALID_UNIFORM_LOCATION -1
 
