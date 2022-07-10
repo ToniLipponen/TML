@@ -24,7 +24,8 @@ namespace tml
     {
     public:
         Font() noexcept;
-        Font(const Font& rhs) noexcept;
+        Font(const Font& other) noexcept;
+        Font(Font&& other) noexcept;
         virtual ~Font() noexcept;
 
         Font& operator=(const Font& rhs) noexcept;

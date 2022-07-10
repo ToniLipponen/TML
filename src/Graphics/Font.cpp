@@ -17,15 +17,24 @@
 namespace tml
 {
     Font::Font() noexcept
+    : m_cdata(new stbtt_packedchar[MAX_GLYPH_COUNT])
     {
-        m_cdata = new stbtt_packedchar[MAX_GLYPH_COUNT];
+
     }
 
-    Font::Font(const Font& rhs) noexcept
+    Font::Font(const Font& other) noexcept
+    : m_cdata(new stbtt_packedchar[MAX_GLYPH_COUNT])
     {
-        m_cdata = new stbtt_packedchar[MAX_GLYPH_COUNT];
-        std::memcpy(m_cdata, rhs.m_cdata, sizeof(stbtt_packedchar) * MAX_GLYPH_COUNT);
-        m_texture = rhs.m_texture;
+        std::memcpy(m_cdata, other.m_cdata, sizeof(stbtt_packedchar) * MAX_GLYPH_COUNT);
+        m_texture = other.m_texture;
+    }
+
+    Font::Font(Font&& other) noexcept
+    : m_cdata(nullptr)
+    {
+        std::swap(m_cdata, other.m_cdata);
+        m_texture = std::move(other.m_texture);
+        m_kerningMap = std::move(other.m_kerningMap);
     }
 
     Font::~Font() noexcept
