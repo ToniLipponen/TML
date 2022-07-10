@@ -8,6 +8,7 @@ namespace tml
     class TML_API Transformable
     {
     public:
+        virtual ~Transformable() noexcept = default;
         [[nodiscard]] constexpr inline Vector2f GetPosition()   const noexcept { return m_pos;      }
         [[nodiscard]] constexpr inline Vector2f GetSize()       const noexcept { return m_size;     }
         [[nodiscard]] constexpr inline Vector2f GetOrigin()     const noexcept { return m_origin;   }
