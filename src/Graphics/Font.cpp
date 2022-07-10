@@ -16,24 +16,24 @@
 
 namespace tml
 {
-    Font::Font()
+    Font::Font() noexcept
     {
         m_cdata = new stbtt_packedchar[MAX_GLYPH_COUNT];
     }
 
-    Font::Font(const Font& rhs)
+    Font::Font(const Font& rhs) noexcept
     {
         m_cdata = new stbtt_packedchar[MAX_GLYPH_COUNT];
         std::memcpy(m_cdata, rhs.m_cdata, sizeof(stbtt_packedchar) * MAX_GLYPH_COUNT);
         m_texture = rhs.m_texture;
     }
 
-    Font::~Font()
+    Font::~Font() noexcept
     {
         delete[] ((stbtt_packedchar*)m_cdata);
     }
 
-    Font& Font::operator=(const Font& rhs)
+    Font& Font::operator=(const Font& rhs) noexcept
     {
         if(&rhs == this)
         {
@@ -102,7 +102,7 @@ namespace tml
         return MakeKerningTable(data);
     }
 
-    void Font::GetAlignedQuad(void *output, int codePoint, float& x, float& y)
+    void Font::GetAlignedQuad(void *output, int codePoint, float& x, float& y) noexcept
     {
         stbtt_GetPackedQuad(static_cast<const stbtt_packedchar*>(m_cdata), 4096, 4096, codePoint, &x, &y, static_cast<stbtt_aligned_quad*>(output), 1);
     }
