@@ -5,13 +5,13 @@
 
 namespace tml
 {
-    Shader::Shader()
+    Shader::Shader() noexcept
     : m_id(0)
     {
 
     }
 
-    Shader::~Shader()
+    Shader::~Shader() noexcept
     {
         GL_CALL(glad_glDeleteProgram(m_id));
     }

@@ -8,8 +8,8 @@ namespace tml
     class TML_API Shader
     {
     public:
-        Shader();
-        ~Shader();
+        Shader() noexcept;
+        virtual ~Shader() noexcept;
 
         void Bind() const noexcept;
         void Unbind() const noexcept;
