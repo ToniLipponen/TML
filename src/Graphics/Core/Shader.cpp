@@ -3,6 +3,8 @@
 #include "../../Headers/GLHeader.h"
 #include <TML/System/File.h>
 
+#define TML_INVALID_UNIFORM_LOCATION -1
+
 namespace tml
 {
     Shader::Shader() noexcept
@@ -108,7 +110,7 @@ namespace tml
 
         const int32_t loc = GL_CALL(glGetUniformLocation(m_id, name.c_str()));
 
-        if(loc != -1)
+        if(loc != TML_INVALID_UNIFORM_LOCATION)
         {
             m_uniformCache[name] = loc;
         }
