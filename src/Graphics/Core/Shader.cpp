@@ -2,6 +2,7 @@
 #include "../../Headers/_Assert.h"
 #include "../../Headers/GLHeader.h"
 #include <TML/System/File.h>
+#include <iostream>
 
 #define TML_INVALID_UNIFORM_LOCATION -1
 
@@ -59,18 +60,16 @@ namespace tml
 
         if(vertex_status != GL_TRUE)
         {
-            char vertex_message[1024];
-            int32_t vertex_message_len = 0;
-            GL_CALL(glad_glGetShaderInfoLog(_vs, 1024, &vertex_message_len, vertex_message));
-            std::printf("[Error]: Vertex shader error: %s\n", vertex_message);
+            std::array<char, 1024> message{};
+            const auto readBytes = GetShaderInfoLog(_vs, message.data(), message.size());
+            std::cout << "[Error]: Vertex shader error: " << std::string(message.data(), readBytes) << std::endl;
         }
 
         if(fragment_status != GL_TRUE)
         {
-            char fragment_message[1024];
-            int32_t fragment_message_len = 0;
-            GL_CALL(glad_glGetShaderInfoLog(_fs, 1024, &fragment_message_len, fragment_message));
-            std::printf("[Error]: Fragment shader error: %s\n", fragment_message);
+            std::array<char, 1024> message{};
+            const auto readBytes = GetShaderInfoLog(_fs, message.data(), message.size());
+            std::cout << "[Error]: Fragment shader error: " << std::string(message.data(), readBytes) << std::endl;
         }
 
         GL_CALL(glad_glAttachShader(m_id, _vs));
@@ -116,6 +115,13 @@ namespace tml
         }
 
         return loc;
+    }
+
+    int32_t Shader::GetShaderInfoLog(uint32_t id, char *str, int32_t maxBytes) const noexcept
+    {
+        int32_t readBytes = 0;
+        GL_CALL(glad_glGetShaderInfoLog(id, maxBytes, &readBytes, str));
+        return readBytes;
     }
 
     void Shader::Uniform1f(const std::string& name, float x) const noexcept

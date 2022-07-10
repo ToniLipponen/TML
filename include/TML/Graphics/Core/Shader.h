@@ -52,6 +52,7 @@ namespace tml
 
     protected:
         inline int32_t GetUniformLocation(const std::string& name) const noexcept;
+        int32_t GetShaderInfoLog(uint32_t id, char* str, int32_t maxBytes) const noexcept;
 
     protected:
         mutable std::unordered_map<std::string, int32_t> m_uniformCache;
