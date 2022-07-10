@@ -1,6 +1,7 @@
 #pragma once
 #include <TML/Graphics/Core/Texture.h>
 #include <TML/Graphics/RenderTarget.h>
+#include <TML/Graphics/Core/FrameBuffer.h>
 #include <TML/Export.h>
 
 namespace tml
@@ -9,7 +10,7 @@ namespace tml
     {
     public:
         RenderTexture();
-        virtual ~RenderTexture() noexcept;
+        virtual ~RenderTexture() noexcept = default;
         void Create(int32_t width, int32_t height) noexcept;
         bool SetActive(bool active = true);
         void Clear() noexcept override;
@@ -21,6 +22,7 @@ namespace tml
         int32_t m_width = 0;
         int32_t m_height = 0;
         Texture m_texture;
-        class FrameBuffer* m_frameBuffer;
+        std::unique_ptr<FrameBuffer> m_frameBuffer;
+//        class FrameBuffer* m_frameBuffer;
     };
 }

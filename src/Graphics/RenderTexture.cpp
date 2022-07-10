@@ -1,6 +1,5 @@
 #include <TML/Graphics/RenderTexture.h>
 #include <TML/Graphics/Core/FrameBuffer.h>
-#include <iostream>
 #include <glad/include/glad/gl.h>
 
 namespace tml
@@ -11,16 +10,11 @@ namespace tml
 
     }
 
-    RenderTexture::~RenderTexture() noexcept
-    {
-        delete m_frameBuffer;
-    }
-
     void RenderTexture::Create(int32_t width, int32_t height) noexcept
     {
         if(!m_frameBuffer)
         {
-            m_frameBuffer = new FrameBuffer();
+            m_frameBuffer = std::make_unique<FrameBuffer>();
         }
 
         m_width = width;
