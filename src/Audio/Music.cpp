@@ -19,7 +19,6 @@ namespace tml
     Music::~Music()
     {
         auto* decoder = static_cast<ma_decoder*>(m_decoder);
-        Mixer::GetInstance().RemoveSound(m_id);
         ma_decoder_uninit(decoder);
         delete decoder;
     }
