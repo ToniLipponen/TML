@@ -176,7 +176,7 @@ namespace tml
                 SetAspectRatio(settings.size.x, settings.size.y);
             }
 
-                SetSizeLimits(settings.minimumSize.value_or(Vector2i(100, 100)), settings.maximumSize.value_or(Vector2i(8192, 8192)));
+            SetSizeLimits(settings.minimumSize.value_or(Vector2i(100, 100)), settings.maximumSize.value_or(Vector2i(8192, 8192)));
         }
 
         if(settings.position)

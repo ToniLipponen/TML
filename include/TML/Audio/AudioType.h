@@ -9,11 +9,11 @@ namespace tml
     class TML_API AudioType
     {
     public:
-        enum State { Stopped, Playing, Paused, Ended };
+        enum State { Stopped, Playing, Paused };
 
     public:
         AudioType();
-        ~AudioType();
+        virtual ~AudioType();
         virtual void Play();
         virtual void Stop();
         virtual void Pause();
@@ -21,9 +21,10 @@ namespace tml
         void SetLooping(bool loop);
         void SetVolume(float volume);
         void SetBalance(float balance);
-        float GetVolume() const { return m_volume; }
-        bool IsPlaying() const { return m_state == Playing; }
-        bool IsLooping() const { return m_looping; }
+        float GetVolume() const;
+        State GetState() const;
+        bool IsPlaying() const;
+        bool IsLooping() const;
         virtual uint32_t ReadFrames(float* output, uint32_t frameCount) = 0;
         virtual uint64_t GetLength() noexcept;
         virtual uint64_t GetLengthInSeconds() noexcept;

@@ -15,7 +15,6 @@ namespace tml
         Sound(const float* data, uint8_t channels, uint32_t rate, size_t sampleCount);  //!< Loads sound from samples in memory.
         Sound(const Sound& sound);                                                      //!< Copy constructor.
         Sound(Sound&& sound) noexcept;                                                  //!< Move constructor.
-        ~Sound();                                                                       //!< Destructor.
 
         Sound& operator=(const Sound& sound) noexcept;
         bool LoadFromFile(const String& filename) noexcept;                              //!< Loads sound from file.

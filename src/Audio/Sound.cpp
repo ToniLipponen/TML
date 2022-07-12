@@ -1,5 +1,4 @@
 #include <TML/Audio/Sound.h>
-#include <TML/Audio/Mixer.h>
 #include <TML/System/Math.h>
 
 namespace tml
@@ -30,11 +29,6 @@ namespace tml
     {
         *this = sound;
         sound.m_id = 0;
-    }
-
-    Sound::~Sound()
-    {
-        Mixer::GetInstance().RemoveSound(m_id);
     }
 
     Sound& Sound::operator=(const Sound& sound) noexcept

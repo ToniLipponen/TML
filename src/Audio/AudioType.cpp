@@ -71,6 +71,26 @@ namespace tml
         m_balance = Math::Clamp<float>(balance, -1, 1);
     }
 
+    float AudioType::GetVolume() const
+    {
+        return m_volume;
+    }
+
+    AudioType::State AudioType::GetState() const
+    {
+        return m_state;
+    }
+
+    bool AudioType::IsPlaying() const
+    {
+        return m_state == Playing;
+    }
+
+    bool AudioType::IsLooping() const
+    {
+        return m_looping;
+    }
+
     uint64_t AudioType::GetLength() noexcept
     {
         return m_frameCount;
