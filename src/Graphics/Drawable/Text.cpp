@@ -3,14 +3,13 @@
 #include <TML/System/Math.h>
 #include <TML/Graphics/Font.h>
 #include "../../Headers/Font.h" //!< Default font data.
+#include "../TextDefines.h"
 
 struct stbtt_aligned_quad
 {
     float x0,y0,s0,t0; // top-left
     float x1,y1,s1,t1; // bottom-right
 };
-
-#define TAB_SIZE 4
 
 namespace tml
 {
@@ -128,10 +127,10 @@ namespace tml
 
     inline constexpr void NormalizeQuad(stbtt_aligned_quad& q, double s, double x, double y) noexcept
     {
-        q.x1 = float((q.x1 * (s / 96.0)) + x);
-        q.x0 = float((q.x0 * (s / 96.0)) + x);
-        q.y0 = float((q.y0 * (s / 96.0)) + y);
-        q.y1 = float((q.y1 * (s / 96.0)) + y);
+        q.x1 = float((q.x1 * (s / FONT_GLYPH_SIZE)) + x);
+        q.x0 = float((q.x0 * (s / FONT_GLYPH_SIZE)) + x);
+        q.y0 = float((q.y0 * (s / FONT_GLYPH_SIZE)) + y);
+        q.y1 = float((q.y1 * (s / FONT_GLYPH_SIZE)) + y);
     }
 
     void Text::Generate()
@@ -141,7 +140,7 @@ namespace tml
         const auto offset = m_applyOriginToPosition ? m_origin * -1 : Vector2f();
 
         float x    = 0;
-        float y    = 96.0f - 96.0f / 4.0f;
+        float y    = FONT_GLYPH_SIZE - FONT_GLYPH_SIZE / 4.0f;
         float yPos = 0;
         float xPos = 0;
 
@@ -176,7 +175,7 @@ namespace tml
                 } break;
 
                 case '\t':
-                    x += m_size.x * TAB_SIZE + m_tracking;
+                    x += m_size.x * TEXT_TAB_SIZE + m_tracking;
                     break;
 
                 case 32: //!< Space

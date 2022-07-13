@@ -9,23 +9,20 @@
 #include <cstring>
 #include <vector>
 
-#define ATLAS_SIZE 4096
-#define OVER_SAMPLING 2
-#define GLYPH_SIZE 96
-#define MAX_GLYPH_COUNT 1024
+#include "TextDefines.h"
 
 namespace tml
 {
     Font::Font() noexcept
-    : m_cdata(new stbtt_packedchar[MAX_GLYPH_COUNT])
+    : m_cdata(new stbtt_packedchar[FONT_MAX_GLYPH_COUNT])
     {
 
     }
 
     Font::Font(const Font& other) noexcept
-    : m_cdata(new stbtt_packedchar[MAX_GLYPH_COUNT])
+    : m_cdata(new stbtt_packedchar[FONT_MAX_GLYPH_COUNT])
     {
-        std::memcpy(m_cdata, other.m_cdata, sizeof(stbtt_packedchar) * MAX_GLYPH_COUNT);
+        std::memcpy(m_cdata, other.m_cdata, sizeof(stbtt_packedchar) * FONT_MAX_GLYPH_COUNT);
         m_texture = other.m_texture;
     }
 
@@ -49,7 +46,7 @@ namespace tml
             return *this;
         }
 
-        std::memcpy(m_cdata, rhs.m_cdata, sizeof(stbtt_packedchar) * MAX_GLYPH_COUNT);
+        std::memcpy(m_cdata, rhs.m_cdata, sizeof(stbtt_packedchar) * FONT_MAX_GLYPH_COUNT);
         m_texture = rhs.m_texture;
         return *this;
     }
@@ -87,18 +84,18 @@ namespace tml
             return false;
         }
 
-        std::unique_ptr<uint8_t[]> bitmap(new uint8_t[ATLAS_SIZE * ATLAS_SIZE]);
+        std::unique_ptr<uint8_t[]> bitmap(new uint8_t[FONT_ATLAS_SIZE * FONT_ATLAS_SIZE]);
         stbtt_pack_context context{};
 
-        if(!stbtt_PackBegin(&context, bitmap.get(), ATLAS_SIZE, ATLAS_SIZE, 0, 10, nullptr))
+        if(!stbtt_PackBegin(&context, bitmap.get(), FONT_ATLAS_SIZE, FONT_ATLAS_SIZE, 0, 10, nullptr))
         {
             return false;
         }
 
-        stbtt_PackSetOversampling(&context, OVER_SAMPLING, OVER_SAMPLING);
+        stbtt_PackSetOversampling(&context, FONT_OVER_SAMPLING, FONT_OVER_SAMPLING);
         stbtt_PackSetSkipMissingCodepoints(&context, 1);
 
-        if(stbtt_PackFontRange(&context, data, 0, GLYPH_SIZE, 32, MAX_GLYPH_COUNT, (stbtt_packedchar*)m_cdata))
+        if(stbtt_PackFontRange(&context, data, 0, FONT_GLYPH_SIZE, 32, FONT_MAX_GLYPH_COUNT, (stbtt_packedchar*)m_cdata))
         {
             stbtt_PackEnd(&context);
             return false;
@@ -106,7 +103,7 @@ namespace tml
 
         stbtt_PackEnd(&context);
 
-        m_texture.LoadFromMemory(ATLAS_SIZE, ATLAS_SIZE, 1, bitmap.get());
+        m_texture.LoadFromMemory(FONT_ATLAS_SIZE, FONT_ATLAS_SIZE, 1, bitmap.get());
 
         return MakeKerningTable(data);
     }
