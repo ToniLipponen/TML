@@ -1,17 +1,20 @@
 #pragma once
 #include <TML/System/Math/Vector2.h>
-#include <TML/Export.h>
 #include <cmath>
-
-#ifndef M_PI
-    #define M_PI 3.14159265358979323846
-#endif
-#ifndef M_PI_2
-    #define M_PI_2 M_PI / 2
-#endif
+#include <random>
+#include <type_traits>
 
 namespace tml::Math
 {
+    inline constexpr double Pi = 3.14159265358979323846;
+    inline constexpr double Pi2 = Pi / 2;
+
+    namespace Impl
+    {
+        inline static std::random_device randomDevice;
+        inline static std::mt19937 generator(randomDevice());
+    }
+
     /** @brief Converts from degrees to radians. */
     inline constexpr double DegToRad(double x) noexcept
     {
@@ -135,7 +138,7 @@ namespace tml::Math
     template<typename T>
     inline double HeadingToAngle(const Vector2<T>& v) noexcept
     {
-        return -M_PI_2 - atan2(static_cast<double>(v.x), static_cast<double>(v.y));
+        return -Pi2 - atan2(static_cast<double>(v.x), static_cast<double>(v.y));
     }
 
     /// @brief Checks whether a value is withing given range
@@ -182,5 +185,35 @@ namespace tml::Math
     inline constexpr Vector2<T> Normalize(const Vector2<T>& v) noexcept
     {
         return v.Normalized();
+    }
+
+    /**
+     * Generates a random value within a given range.
+     *
+     * @tparam T Arithmetic value type
+     * @param min Minimum value
+     * @param max Maximum value
+     * @return Random value between minimum and maximum
+     */
+    template<typename T>
+    inline typename std::enable_if<std::is_arithmetic<T>::value, T>::type Random(T min, T max) noexcept
+    {
+        if constexpr(std::is_floating_point<T>::value)
+        {
+            std::uniform_real_distribution<T> distribution(min, max);
+
+            return distribution(Impl::generator);
+        }
+        else if constexpr(std::is_integral<T>::value)
+        {
+            std::uniform_int_distribution<T> distribution(min, max);
+
+            return distribution(Impl::generator);
+        }
+    }
+
+    inline uint32_t Random() noexcept
+    {
+        return Impl::randomDevice();
     }
 }
