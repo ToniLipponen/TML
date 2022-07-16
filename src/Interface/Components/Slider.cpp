@@ -3,10 +3,10 @@
 namespace tml::Interface
 {
     template<ComponentAxis axis>
-    Slider<axis>::Slider(uint32_t size, uint32_t thickness, int32_t x, int32_t y, float min, float max) noexcept
+    Slider<axis>::Slider(uint32_t size, uint32_t thickness, int32_t x, int32_t y) noexcept
     {
-        m_min = Math::Max<float>(min, 0);
-        m_max = Math::Max<float>(max, 0);
+        m_min = 0;
+        m_max = 1;
         m_minimumSize = {thickness};
         m_value = (m_min + m_max) / 2;
 
@@ -51,6 +51,10 @@ namespace tml::Interface
 
                 e = {};
             }
+            else
+            {
+                UnFocus();
+            }
         });
 
         AddListener("Click", [&](BaseComponent* c, Event& e)
@@ -68,19 +72,6 @@ namespace tml::Interface
             Raise();
             m_targetValue = m_value;
             e = {};
-        });
-
-        AddListener("MouseDown", [&](BaseComponent* c, Event& e)
-        {
-            if(m_state.MouseOver)
-            {
-                m_state.MouseDown = static_cast<char>(e.mouseButton.button);
-                e = Event{};
-            }
-            else
-            {
-                UnFocus();
-            }
         });
 
         AddListener("MouseMoved", [&](BaseComponent* c, Event& e)
@@ -176,13 +167,19 @@ namespace tml::Interface
 
         if constexpr(axis == ComponentAxis::Horizontal)
         {
-            const auto x = Math::Max<float>(Math::Lerp<float>(0, m_size.x, m_sliderValue / m_max), m_roundness*2);
-            target.DrawRect(m_pos + Vector2f(1, 1), Vector2f(x - 2 , m_size.y - 2), m_activeColor, m_roundness);
+            const auto radiusClamped = Math::Clamp<float>(m_roundness, 0, m_size.y);
+            const auto barSize = Math::Lerp<float>(0, m_size.x, m_sliderValue / m_max);
+            const auto x = Math::Max<float>(barSize, radiusClamped);
+
+            target.DrawRect(m_pos + Vector2f(1, 1), Vector2f(x - 2 , m_size.y - 2), m_activeColor, radiusClamped);
         }
         else
         {
-            const auto y = Math::Min<float>(Math::Lerp<float>(0, m_size.y, 1.0 - m_sliderValue / m_max), m_size.y - m_roundness * 2);
-            target.DrawRect(m_pos + Vector2i(0, y), Vector2f(m_size.x, m_size.y - y), m_activeColor, m_roundness);
+            const auto radiusClamped = Math::Clamp<float>(m_roundness, 0, m_size.x);
+            const auto barSize = Math::Lerp<float>(0, m_size.y, 1.0 - m_sliderValue / m_max);
+            const auto y = Math::Min<float>(barSize, m_size.y - radiusClamped);
+
+            target.DrawRect(m_pos + Vector2f(1, y + 1), Vector2f(m_size.x - 2, m_size.y - y - 2), m_activeColor, radiusClamped);
         }
     }
 

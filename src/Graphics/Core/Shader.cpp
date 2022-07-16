@@ -27,7 +27,7 @@ namespace tml
 
     void Shader::Unbind() const noexcept
     {
-        GL_CALL(glad_glUseProgram(0));
+        GL_CALL(glad_glUseProgram(TML_INVALID_ID));
     }
 
     void Shader::LoadFromFile(const std::string& vs, const std::string& fs) const noexcept
