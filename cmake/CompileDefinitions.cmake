@@ -21,6 +21,6 @@ if(TML_USE_GLES)
     add_compile_definitions(TML_USE_GLES GLAD_GLES2)
 endif()
 
-if (TML_DONT_USE_DSA)
-    add_compile_definitions(TML_DONT_USE_DSA=1)
+if(TML_USE_DSA)
+    add_compile_definitions(TML_USE_DSA=1)
 endif()

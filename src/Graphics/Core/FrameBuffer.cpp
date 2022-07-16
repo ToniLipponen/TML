@@ -6,7 +6,7 @@ namespace tml
     FrameBuffer::FrameBuffer()
     : m_id(0)
     {
-#if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
+#if defined(TML_USE_GLES) || !defined(TML_USE_DSA)
         GL_CALL(glad_glGenFramebuffers(1, &m_id));
 #else
         GL_CALL(glad_glCreateFramebuffers(1, &m_id));
@@ -30,7 +30,7 @@ namespace tml
 
     bool FrameBuffer::AttachTexture(const Texture &texture) const noexcept
     {
-#if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
+#if defined(TML_USE_GLES) || !defined(TML_USE_DSA)
         Bind();
         GL_CALL(glad_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.GetID(), 0));
 #else

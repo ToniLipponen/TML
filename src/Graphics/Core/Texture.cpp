@@ -71,7 +71,7 @@ namespace tml
     {
         GL_CALL(glad_glDeleteTextures(1, &m_id));
 
-#if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
+#if defined(TML_USE_GLES) || !defined(TML_USE_DSA)
         GL_CALL(glad_glGenTextures(1, &m_id));
 #else
         GL_CALL(glad_glCreateTextures(GL_TEXTURE_2D, 1, &m_id));
@@ -99,7 +99,7 @@ namespace tml
 
     void Texture::Bind(uint32_t slot) const noexcept
     {
-#if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
+#if defined(TML_USE_GLES) || !defined(TML_USE_DSA)
         GL_CALL(glad_glActiveTexture(GL_TEXTURE0 + slot));
         GL_CALL(glad_glBindTexture(GL_TEXTURE_2D, m_id));
 #else
@@ -131,7 +131,7 @@ namespace tml
         image.LoadFromMemory(m_width, m_height, m_bpp, nullptr);
         auto* imgData = image.GetData();
 
-#if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
+#if defined(TML_USE_GLES) || !defined(TML_USE_DSA)
             Bind();
             FrameBuffer frameBuffer;
             frameBuffer.AttachTexture((*this));
@@ -151,7 +151,7 @@ namespace tml
             return;
         }
 
-#if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
+#if defined(TML_USE_GLES) || !defined(TML_USE_DSA)
         GL_CALL(glad_glBindTexture(GL_TEXTURE_2D, m_id));
         GL_CALL(glad_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
         GL_CALL(glad_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
@@ -178,7 +178,7 @@ namespace tml
 
         if(m_width > 0 && m_height > 0)
         {
-#if defined(TML_USE_GLES) || defined(TML_DONT_USE_DSA)
+#if defined(TML_USE_GLES) || !defined(TML_USE_DSA)
             GL_CALL(glad_glTexStorage2D(GL_TEXTURE_2D, 8, m_internalFormat, m_width, m_height));
             GL_CALL(glad_glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, m_format, GL_UNSIGNED_BYTE, data));
             GL_CALL(glad_glGenerateMipmap(GL_TEXTURE_2D));

@@ -2,7 +2,7 @@
 #include <GLHeader.h>
 #include <cstring>
 
-#if !defined(TML_USE_GLES) && !defined(TML_DONT_USE_DSA)
+#if !defined(TML_USE_GLES) && defined(TML_USE_DSA)
 namespace tml
 {
     StorageBuffer::StorageBuffer() noexcept
