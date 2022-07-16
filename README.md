@@ -78,7 +78,6 @@ This project is licensed under the [Zlib License](LICENSE).
 |glfw| https://github.com/glfw/glfw | glfw |Zlib|
 |David Herberth| https://github.com/Dav1dde/glad | glad |MIT|
 |G-Truc| https://github.com/g-truc/glm | glm |MIT|
-| David Capello | https://github.com/dacap/clip | clip |MIT|
 | Nwutobo Samuel Ugochukwu | https://github.com/sammycage/lunasvg | lunasvg |MIT|
 | Jakob Riedle | https://github.com/DuffsDevice/tiny-utf8 | tiny-utf8 | BSD-3-Clause|
 ### And a special thank you to JetBrains for providing me with a free license for CLion.
