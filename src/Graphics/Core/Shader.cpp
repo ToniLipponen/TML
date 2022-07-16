@@ -39,10 +39,12 @@ namespace tml
 
     void Shader::LoadFromString(const std::string& vs, const std::string& fs) const noexcept
     {
-        if(m_id == TML_INVALID_ID)
+        if(m_id != TML_INVALID_ID)
         {
-            m_id = GL_CALL(glad_glCreateProgram());
+            GL_CALL(glad_glDeleteProgram(m_id));
         }
+
+        m_id = GL_CALL(glad_glCreateProgram());
 
         uint32_t _vs = GL_CALL(glad_glCreateShader(GL_VERTEX_SHADER));
         uint32_t _fs = GL_CALL(glad_glCreateShader(GL_FRAGMENT_SHADER));
