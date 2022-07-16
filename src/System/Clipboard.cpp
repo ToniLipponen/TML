@@ -1,30 +1,39 @@
 #include <TML/System/Clipboard.h>
-#include <Clip/clip.h>
+#include <TML/System/File.h>
+
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+#include <regex>
 
 namespace tml
 {
     bool Clipboard::IsEmpty()
     {
-        return (!clip::has(clip::text_format()) && !clip::has(clip::image_format()));
+        return glfwGetClipboardString(nullptr) == nullptr;
     }
 
+    /**
+     * Using regex to check if clipboard string contains an image file extension.
+     * Then checking if a file exists with that name.
+     */
     bool Clipboard::HasImage()
     {
-        return clip::has(clip::image_format());
+        const static std::regex regex("[^\\s]+(.*?)\\.(jpg|jpeg|png|gif|JPG|JPEG|PNG|GIF)$");
+
+        String str = glfwGetClipboardString(nullptr);
+        return std::regex_match(str.cpp_str(), regex) && File::Exists(str.cpp_str());
     }
 
     bool Clipboard::HasText()
     {
-        return clip::has(clip::text_format());
+        return !IsEmpty() && !HasImage();
     }
 
     bool Clipboard::GetString(String& string)
     {
         if(HasText())
         {
-            std::string str;
-            clip::get_text(str);
-            string = str;
+            string = String(glfwGetClipboardString(nullptr));
             return true;
         }
 
@@ -35,16 +44,7 @@ namespace tml
     {
         if(HasImage())
         {
-            clip::image clipImage;
-            clip::get_image(clipImage);
-            image.LoadFromMemory(
-                    static_cast<int32_t>(clipImage.spec().width),
-                    static_cast<int32_t>(clipImage.spec().height),
-                    4,
-                    reinterpret_cast<const uint8_t*>(clipImage.data())
-            );
-
-            return true;
+            return image.LoadFromFile(glfwGetClipboardString(nullptr));
         }
 
         return false;
@@ -52,30 +52,11 @@ namespace tml
 
     void Clipboard::Clear()
     {
-        clip::clear();
+        glfwSetClipboardString(nullptr,"\0");
     }
 
     void Clipboard::SetString(const String& string)
     {
-        clip::set_text(string.cpp_str());
-    }
-
-    void Clipboard::SetImage(const Image& image)
-    {
-        clip::image_spec spec{1};
-        spec.bits_per_pixel = image.GetBpp() * 8;
-        spec.width = image.GetWidth();
-        spec.height = image.GetHeight();
-        spec.bytes_per_row = spec.width * image.GetBpp();
-
-        spec.red_mask    = 0x000000ff;
-        spec.green_mask  = 0x0000ff00;
-        spec.blue_mask   = 0x00ff0000;
-        spec.red_shift   = 0;
-        spec.green_shift = 8;
-        spec.blue_shift  = 16;
-
-        clip::image clipImage(image.GetData(), spec);
-        clip::set_image(clipImage);
+        glfwSetClipboardString(nullptr,string.c_str());
     }
 }

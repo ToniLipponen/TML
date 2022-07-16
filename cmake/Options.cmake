@@ -1,0 +1,8 @@
+option(TML_BUILD_STATIC "Build TML as a static library" no)
+option(TML_DEBUG_OPENGL_CALLS "Applies error checking around OpenGL function calls." no)
+option(TML_ASSERT "Applies asserts around important functions." yes)
+option(TML_BUILD_EXAMPLES "Builds some example programs." yes)
+option(TML_USE_GLES "Use OpenGL ES 3.1 instead of OpenGL 4.5." no)
+option(TML_DONT_USE_DSA "Use non-DSA functions for OpenGL 4.5." yes)
+option(TML_BUILD_EXPERIMENTAL "Build experimental features" no)
+option(TML_BUILD_MONOLITHIC "Build a single library file" no)

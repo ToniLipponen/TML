@@ -165,8 +165,6 @@ namespace tml
             {
                 icon.LoadFromData(LOGO_DATA.data(), LOGO_DATA.size());
             }
-
-            SetIcon(icon);
         }
 
         /** Set window limits **/

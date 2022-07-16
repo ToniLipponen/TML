@@ -14,5 +14,4 @@ namespace tml::Clipboard
     TML_API bool GetImage(Image& image);
 
     TML_API void SetString(const String& string);
-    TML_API void SetImage(const Image& image);
 }
