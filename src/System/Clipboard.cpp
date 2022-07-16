@@ -9,6 +9,7 @@ namespace tml
 {
     bool Clipboard::IsEmpty()
     {
+        glfwInit();
         return glfwGetClipboardString(nullptr) == nullptr;
     }
 
@@ -18,6 +19,7 @@ namespace tml
      */
     bool Clipboard::HasImage()
     {
+        glfwInit();
         const static std::regex regex("[^\\s]+(.*?)\\.(jpg|jpeg|png|gif|JPG|JPEG|PNG|GIF)$");
 
         String str = glfwGetClipboardString(nullptr);
@@ -31,6 +33,7 @@ namespace tml
 
     bool Clipboard::GetString(String& string)
     {
+        glfwInit();
         if(HasText())
         {
             string = String(glfwGetClipboardString(nullptr));
@@ -52,11 +55,13 @@ namespace tml
 
     void Clipboard::Clear()
     {
+        glfwInit();
         glfwSetClipboardString(nullptr,"\0");
     }
 
     void Clipboard::SetString(const String& string)
     {
+        glfwInit();
         glfwSetClipboardString(nullptr,string.c_str());
     }
 }

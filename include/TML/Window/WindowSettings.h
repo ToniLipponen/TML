@@ -26,7 +26,7 @@ namespace tml
         };
 
         Vector2i size;
-        [[maybe_unused]] uint32_t framerate;
+        uint32_t framerate;
         int32_t antialiasSamples;
         std::optional<Vector2i> position;
         std::optional<Vector2i> minimumSize;
