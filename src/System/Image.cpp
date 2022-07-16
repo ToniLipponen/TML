@@ -265,9 +265,9 @@ namespace tml
 
     bool Image::LoadSvg(const String& filename, int32_t requestedWidth, int32_t requestedHeight) noexcept
     {
-        std::vector<char> data;
+        std::vector<char> data = File::GetBytes(filename.cpp_str());
 
-        if(!File::GetBytes(filename.cpp_str(), data))
+        if(!data.empty())
         {
             return false;
         }

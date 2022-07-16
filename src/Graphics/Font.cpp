@@ -67,9 +67,9 @@ namespace tml
 
     bool Font::LoadFromFile(const String& filename) noexcept
     {
-        std::vector<char> data;
+        std::vector<char> data = File::GetBytes(filename.cpp_str());
 
-        if(!File::GetBytes(filename.cpp_str(), data))
+        if(data.empty())
         {
             return false;
         }

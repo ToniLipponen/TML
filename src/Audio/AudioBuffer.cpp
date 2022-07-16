@@ -36,15 +36,17 @@ namespace tml
 
     bool AudioBuffer::LoadFromFile(const String& filename) noexcept
     {
-        std::ifstream file(filename.cpp_str(), std::ios::ate | std::ios::binary);
-
-        size_t length = 0;
-        auto data = File::GetBytes(filename.cpp_str(), length);
-        return LoadFromData(data.get(), length);
+        auto data = File::GetBytes(filename.cpp_str());
+        return LoadFromData(data.data(), data.size());
     }
 
     bool AudioBuffer::LoadFromData(const void *data, size_t bytes) noexcept
     {
+        if(data == nullptr || bytes == 0)
+        {
+            return false;
+        }
+
         static ma_decoder_config config = ma_decoder_config_init(ma_format_f32, 2, 48000);
         ma_decoder decoder;
         ma_result result = ma_decoder_init_memory(data, bytes, &config, &decoder);

@@ -22,14 +22,24 @@ namespace tml::File
         return output;
     }
 
+    std::vector<uint8_t> Compress(const std::vector<uint8_t>& data) noexcept
+    {
+        return Compress(data.data(), static_cast<int32_t>(data.size()));
+    }
+
     std::vector<uint8_t> Decompress(const void* data, int32_t bytes, int32_t maxOutput) noexcept
     {
         std::vector<uint8_t> output(maxOutput);
 
         /// result could be 0.
-        const auto result = fastlz_decompress(data, bytes, &output.at(0), maxOutput);
+        const auto result = fastlz_decompress(data, bytes, &output[0], maxOutput);
         output.resize(result);
 
         return output;
+    }
+
+    std::vector<uint8_t> Decompress(const std::vector<uint8_t>& data, int32_t maxSize) noexcept
+    {
+        return Decompress(data.data(), static_cast<int32_t>(data.size()), maxSize);
     }
 }

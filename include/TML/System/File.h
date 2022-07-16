@@ -1,140 +1,17 @@
 #pragma once
+#include <TML/Export.h>
 #include <string>
-#include <fstream>
-#include <filesystem>
 #include <vector>
-#include <memory>
 
 namespace tml::File
 {
-    inline bool Exists(const std::string& filename) noexcept
-    {
-        return std::filesystem::exists(filename);
-    }
+    TML_API bool Exists(const std::string& filename) noexcept;
 
-    inline std::vector<char> GetBytes(const std::string& filename) noexcept
-    {
-        if(std::filesystem::exists(filename))
-        {
-            std::ifstream file(filename, std::ios::binary | std::ios::ate);
-            const auto fileLength = file.tellg();
-            file.seekg(std::ios::beg);
+    TML_API uint64_t Size(const std::string& filename) noexcept;
 
-            std::vector<char> data(fileLength, 0);
-            file.read(&data[0], fileLength);
+    TML_API std::vector<char> GetBytes(const std::string& filename) noexcept;
 
-            return data;
-        }
+    TML_API std::string GetString(const std::string& filename) noexcept;
 
-        return {};
-    }
-
-    inline bool GetBytes(const std::string& filename, std::vector<char>& output) noexcept
-    {
-        if(std::filesystem::exists(filename))
-        {
-            std::ifstream file(filename, std::ios::binary | std::ios::ate);
-            const auto fileLength = file.tellg();
-            file.seekg(std::ios::beg);
-
-            std::vector<char> data(fileLength, 0);
-            file.read(&data[0], fileLength);
-            output = std::move(data);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    inline std::unique_ptr<char[]> GetBytes(const std::string& filename, size_t& size) noexcept
-    {
-        if(std::filesystem::exists(filename))
-        {
-            std::ifstream file(filename, std::ios::binary | std::ios::ate);
-            size = file.tellg();
-            file.seekg(std::ios::beg);
-
-            std::unique_ptr<char[]> data(new char[size]);
-            file.read(data.get(), size);
-
-            return data;
-        }
-
-        size = 0;
-        return {};
-    }
-
-    inline std::string GetString(const std::string& filename) noexcept
-    {
-        if(std::filesystem::exists(filename))
-        {
-            std::string lines, line;
-            std::ifstream file(filename);
-
-            while(std::getline(file, line))
-            {
-                lines.append("\n" + line);
-            }
-
-            return lines;
-        }
-
-        return "";
-    }
-
-    inline bool GetString(const std::string& filename, std::string& output) noexcept
-    {
-        if(std::filesystem::exists(filename))
-        {
-            std::string line;
-            std::ifstream file(filename);
-
-            while(std::getline(file, line))
-            {
-                output.append("\n" + line);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    inline std::vector<std::string> GetLines(const std::string& filename) noexcept
-    {
-        if(std::filesystem::exists(filename))
-        {
-            std::vector<std::string> lines;
-            std::string line;
-            std::ifstream file(filename);
-
-            while(std::getline(file, line))
-            {
-                lines.push_back(line);
-            }
-
-            return lines;
-        }
-
-        return {};
-    }
-
-    inline bool GetLines(const std::string& filename, std::vector<std::string>& output) noexcept
-    {
-        if(std::filesystem::exists(filename))
-        {
-            std::string line;
-            std::ifstream file(filename);
-
-            while(std::getline(file, line))
-            {
-                output.push_back(line);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
+    TML_API std::vector<std::string> GetLines(const std::string& filename) noexcept;
 }
