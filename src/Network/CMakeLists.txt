@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(tml-network VERSION ${TML_API_VERSION})
 
 if(WIN32)
-    set(SRC_FILES Receiver.cpp Socket.cpp Http/Request.cpp Http/Response.cpp Http/Host.cpp Win32/NetworkContext.cpp)
+    set(SRC_FILES Receiver.cpp Socket.cpp Http/Request.cpp Http/Response.cpp Http/Host.cpp)
 else()
     set(SRC_FILES Receiver.cpp Socket.cpp Http/Request.cpp Http/Response.cpp Http/Host.cpp)
 endif()
