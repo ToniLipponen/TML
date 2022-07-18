@@ -40,7 +40,7 @@ namespace tml::Interface
             return ContainsPoint(Vector2i(e.pos.x, e.pos.y));
         });
 
-        AddListener("Dragged", [&](Interface::BaseComponent* c, const Event& e)
+        AddListener("Dragged", [&](BaseComponent* c, const Event& e)
         {
             return ContainsPoint({e.drag.beginX, e.drag.beginY});
         });

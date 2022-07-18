@@ -1,15 +1,15 @@
-#include <TML/Interface/Layer.h>
+#include <TML/Interface/Interface.h>
 #include <TML/System/Clock.h>
 
 namespace tml::Interface
 {
-    Layer::Layer(Layer&& layer) noexcept
+    Interface::Interface(Interface&& layer) noexcept
     {
         std::swap(m_processingQueue, layer.m_processingQueue);
         m_enabled = layer.m_enabled;
     }
 
-    void Layer::Attach(BaseComponent* rootNode) noexcept
+    void Interface::Attach(BaseComponent* rootNode) noexcept
     {
         std::function<void(BaseComponent*)> registerFunc;
 
@@ -31,7 +31,7 @@ namespace tml::Interface
         m_roots.emplace_back(rootNode);
     }
 
-    void Layer::Detach(BaseComponent* component) noexcept
+    void Interface::Detach(BaseComponent* component) noexcept
     {
         std::function<void(BaseComponent*)> unregisterFunc;
 
@@ -65,7 +65,7 @@ namespace tml::Interface
         }
     }
 
-    void Layer::Focus(BaseComponent *component) noexcept
+    void Interface::Focus(BaseComponent *component) noexcept
     {
         for(auto* i : m_processingQueue)
         {
@@ -86,7 +86,7 @@ namespace tml::Interface
         }
     }
 
-    void Layer::ClearFocused() noexcept
+    void Interface::ClearFocused() noexcept
     {
         for(auto* i : m_processingQueue)
         {
@@ -94,7 +94,7 @@ namespace tml::Interface
         }
     }
 
-    void Layer::ClearDragged() noexcept
+    void Interface::ClearDragged() noexcept
     {
         for(auto* i : m_processingQueue)
         {
@@ -102,7 +102,7 @@ namespace tml::Interface
         }
     }
 
-    void Layer::ClearMouseOver() noexcept
+    void Interface::ClearMouseOver() noexcept
     {
         for(auto* i : m_processingQueue)
         {
@@ -110,7 +110,7 @@ namespace tml::Interface
         }
     }
 
-    void Layer::Update(Event &event) noexcept
+    void Interface::Update(Event &event) noexcept
     {
         static Clock clock;
         const double delta = clock.Reset();
@@ -129,17 +129,17 @@ namespace tml::Interface
         }
     }
 
-    void Layer::SetEnabled(bool enabled) noexcept
+    void Interface::SetEnabled(bool enabled) noexcept
     {
         m_enabled = enabled;
     }
 
-    bool Layer::IsEnabled() const noexcept
+    bool Interface::IsEnabled() const noexcept
     {
         return m_enabled;
     }
 
-    void Layer::OnDraw(RenderTarget *renderer, Texture *) noexcept
+    void Interface::OnDraw(RenderTarget *renderer, Texture *) noexcept
     {
         if(m_enabled)
         {
@@ -164,7 +164,7 @@ namespace tml::Interface
         }
     }
 
-    void Layer::HandleEvent(Event &event) noexcept
+    void Interface::HandleEvent(Event &event) noexcept
     {
         if(m_enabled)
         {

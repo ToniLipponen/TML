@@ -1,5 +1,5 @@
 #include <TML/Interface/BaseComponent.h>
-#include <TML/Interface/Layer.h>
+#include <TML/Interface/Interface.h>
 #include <TML/Graphics/RenderTarget.h>
 #include <TML/System/Clock.h>
 #include <string>
@@ -240,7 +240,7 @@ namespace tml::Interface
         return m_parent;
     }
 
-    Layer* BaseComponent::GetRoot() noexcept
+    Interface* BaseComponent::GetRoot() noexcept
     {
         return m_root;
     }

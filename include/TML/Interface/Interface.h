@@ -3,11 +3,11 @@
 
 namespace tml::Interface
 {
-    class TML_API Layer : public Drawable
+    class TML_API Interface : public Drawable
     {
     public:
-        Layer() = default;
-        Layer(Layer&& layer) noexcept;
+        Interface() = default;
+        Interface(Interface&& layer) noexcept;
         void Attach(BaseComponent* rootNode) noexcept;
         void Detach(BaseComponent* component) noexcept;
         void Focus(BaseComponent* component) noexcept;

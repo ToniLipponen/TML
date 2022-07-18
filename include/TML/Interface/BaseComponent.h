@@ -25,7 +25,7 @@ namespace tml::Interface
     enum class ComponentAxis { Horizontal, Vertical };
     enum class SizePolicy { Fixed, Expand, Clamp };
 
-    class Layer;
+    class Interface;
 
     class TML_API BaseComponent
     {
@@ -85,7 +85,7 @@ namespace tml::Interface
         BaseComponent* FindComponent(const std::string& id) noexcept;    //!< DANGER! Returns nullptr if not found.
         BaseComponent* FindComponent(uint64_t) noexcept;                 //!< DANGER! Returns nullptr if not found.
         BaseComponent* GetParent() noexcept;                             //!< DANGER! Returns nullptr if the component doesn't have a parent.
-        Layer* GetRoot() noexcept;
+        Interface* GetRoot() noexcept;
         uint64_t GetHash() const noexcept;
         const std::string& GetID() const noexcept;
         virtual bool ContainsPoint(const Vector2i& p);
@@ -106,7 +106,7 @@ namespace tml::Interface
         Vector2f GetSize() const noexcept;
         Vector2f GetPosition() const noexcept;
 
-        friend Layer;
+        friend Interface;
     public:
         [[maybe_unused]] static void SetGlobalAnimationSpeed(float speed) noexcept;
         [[maybe_unused]] static void SetGlobalDefaultPrimaryColor(const Color& color) noexcept;
@@ -138,7 +138,7 @@ namespace tml::Interface
         std::vector<std::unique_ptr<BaseComponent>> m_children;
         std::unordered_map<std::string, std::vector<EventCallback>> m_listeners;
         BaseComponent* m_parent;
-        Layer* m_root;
+        Interface* m_root;
         StateFlag m_state;
 
         /** Might be used in the future. */
