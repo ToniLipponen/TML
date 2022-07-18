@@ -5,26 +5,13 @@ namespace tml::Interface
     ToggleSwitch::ToggleSwitch(int32_t x, int32_t y, uint32_t size, bool state) noexcept
     : BaseComponent(x, y, size * 2, size), m_toggleState(state)
     {
-        AddListener("MouseDown",[&](BaseComponent* c, Event& e)
-        {
-            if(m_state.MouseOver)
-            {
-                Focus();
-                m_state.MouseDown = static_cast<char>(e.mouseButton.button);
-                e = Event{};
-            }
-            else
-            {
-                UnFocus();
-            }
-        });
-
-        AddListener("Click", [&](BaseComponent*, Event&)
+        AddListener("Click", [&](BaseComponent*, const Event&)
         {
             m_toggleState = !m_toggleState;
+            return true;
         });
 
-        AddListener("Drawn", [&](BaseComponent*, Event& e)
+        AddListener("Drawn", [&](BaseComponent*, const Event& e)
         {
             if(m_toggleState)
             {
@@ -35,7 +22,7 @@ namespace tml::Interface
                 m_knobValue -= e.update.delta * s_animationSpeed;
             }
 
-            if(m_state.MouseOver)
+            if(m_state.MouseOver || m_state.Focused || m_state.Dragged)
             {
                 m_borderAnimationProgress += e.update.delta * s_animationSpeed;
             }
@@ -47,6 +34,7 @@ namespace tml::Interface
             m_knobValue = Math::Clamp<float>(m_knobValue, 0, 1);
             m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress, 0, 1);
             m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);
+            return true;
         });
     }
 

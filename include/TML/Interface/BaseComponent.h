@@ -7,6 +7,19 @@
 #include <vector>
 #include <unordered_map>
 
+#define TML_GUI_HANDLE_EVENT(eventName)                                      \
+AddListener(eventName, [&](tml::Interface::BaseComponent*, const tml::Event&) \
+{                                                                            \
+    return true;                                                             \
+})
+
+#define TML_GUI_ON_EVENT(eventName, functionality)                                           \
+AddListener(eventName, [&](tml::Interface::BaseComponent* COMPONENT, const tml::Event& EVENT) \
+{                                                                                            \
+    functionality                                                                            \
+    return true;                                                                             \
+})
+
 namespace tml::Interface
 {
     enum class ComponentAxis { Horizontal, Vertical };
@@ -19,16 +32,12 @@ namespace tml::Interface
     public:
         struct StateFlag
         {
-            char MouseDown   = -1;
             bool MouseOver  = false;
             bool Enabled    = true;
             bool Focused    = false;
             bool Dragged    = false;
-            bool Resizeable = false;
-            bool Movable    = false;
-            bool Raise      = false;
         };
-        using EventCallback = std::function<void(BaseComponent*, Event&)>;
+        using EventCallback = std::function<bool(BaseComponent*, const Event&)>;
 
     public:
         BaseComponent() noexcept;
@@ -88,7 +97,6 @@ namespace tml::Interface
         void SetActiveColor(const Color& color) noexcept;
         virtual void SetTextColor(const Color& color) noexcept;
         void SetRoundness(float radius) noexcept;
-        void Raise() noexcept;
         void ForEachChild(const std::function<bool(BaseComponent* c)>& function) noexcept;
         void SetPosition(const Vector2i& position) noexcept;
         void SetPosition(int32_t x, int32_t y) noexcept;
@@ -107,8 +115,8 @@ namespace tml::Interface
         [[maybe_unused]] static void SetGlobalDefaultTextColor(const Color& color) noexcept;
 
     protected:
-        bool CallUIFunc(const std::string& name, Event& event) noexcept;
-        void ProcessEvents(Event& event, double dt) noexcept;
+        bool CallUIFunc(const std::string& name, const Event& event) noexcept;
+        bool HandleEvent(const Event& event) noexcept;
         virtual void pDraw(RenderTarget& renderer) noexcept = 0;
 
         Vector2f m_pos;

@@ -42,6 +42,11 @@ namespace tml::Interface
         m_originalSize = m_size;
     }
 
+    bool HorizontalLayout::SetCenterVertically(bool value) noexcept
+    {
+        return m_verticallyCenter = value;
+    }
+
     void HorizontalLayout::ScaleChildren() noexcept
     {
         std::vector<BaseComponent*> expandThese;
@@ -114,7 +119,13 @@ namespace tml::Interface
 
         for(auto& i : m_children)
         {
-            const auto y = Math::Max(m_pos.y + (m_size.y - i->GetSize().y) / 2, m_pos.y);
+            float y = m_pos.y;
+
+            if(m_verticallyCenter)
+            {
+                y = Math::Max(m_pos.y + (m_size.y - i->GetSize().y) / 2, m_pos.y);
+            }
+
             i->SetPosition(m_pos.x + offset, y);
             offset += i->GetSize().x + m_padding.x;
         }

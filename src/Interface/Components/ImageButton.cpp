@@ -8,42 +8,17 @@ namespace tml::Interface
         m_texture.LoadFromImage(image);
         m_texture.SetSize(m_size);
 
-        AddListener("Click", [&](BaseComponent* c, Event& e)
-        {
-            UnFocus();
-            e = Event{};
-        });
 
-        AddListener("MouseUp", [&](BaseComponent* c, Event& e)
-        {
-            if(!m_state.MouseOver)
-            {
-                UnFocus();
-            }
-        });
-
-        AddListener("MouseDown",[&](BaseComponent* c, Event& e)
-        {
-            if(m_state.MouseOver)
-            {
-                Focus();
-                m_state.MouseDown = static_cast<char>(e.mouseButton.button);
-                e = Event{};
-            }
-            else
-            {
-                UnFocus();
-            }
-        });
-
-        AddListener("Moved", [&](BaseComponent* c, Event& e)
+        AddListener("Moved", [&](BaseComponent* c, const Event& e)
         {
             m_texture.SetPosition(m_pos);
+            return true;
         });
 
-        AddListener("Resized", [&](BaseComponent* c, Event& e)
+        AddListener("Resized", [&](BaseComponent* c, const Event& e)
         {
             m_texture.SetSize(m_size);
+            return true;
         });
     }
 

@@ -35,29 +35,7 @@ namespace tml::Interface
             }
         }
 
-        AddListener("MouseDown", [&](BaseComponent* c, Event& e)
-        {
-            if(m_state.MouseOver)
-            {
-                m_state.MouseDown = static_cast<char>(e.mouseButton.button);
-                if constexpr(axis == ComponentAxis::Horizontal)
-                {
-                    m_value = Math::Clamp(float(e.mouseButton.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
-                }
-                else
-                {
-                    m_value = Math::Clamp(m_max - float((e.mouseButton.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
-                }
-
-                e = {};
-            }
-            else
-            {
-                UnFocus();
-            }
-        });
-
-        AddListener("Click", [&](BaseComponent* c, Event& e)
+        AddListener("Click", [&](BaseComponent* c, const Event& e)
         {
             if constexpr(axis == ComponentAxis::Horizontal)
             {
@@ -68,30 +46,27 @@ namespace tml::Interface
                 m_value = Math::Clamp(m_max - float((e.mouseButton.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
             }
 
-            Focus();
-            Raise();
             m_targetValue = m_value;
-            e = {};
+            return true;
+            return false;
         });
 
-        AddListener("MouseMoved", [&](BaseComponent* c, Event& e)
+        AddListener("Dragged", [&](BaseComponent* c, const Event& e)
         {
-            if(m_state.MouseDown != -1)
+            if constexpr(axis == ComponentAxis::Horizontal)
             {
-                if constexpr(axis == ComponentAxis::Horizontal)
-                {
-                    m_value = Math::Clamp(float(e.pos.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
-                }
-                else
-                {
-                    m_value = Math::Clamp(m_max - float((e.pos.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
-                }
-
-                m_targetValue = m_sliderValue = m_value;
+                m_value = Math::Clamp(float(e.drag.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
             }
+            else
+            {
+                m_value = Math::Clamp(m_max - float((e.drag.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
+            }
+
+            m_targetValue = m_sliderValue = m_value;
+            return true;
         });
 
-        AddListener("KeyPressed", [&](BaseComponent* c, Event& e)
+        AddListener("KeyPressed", [&](BaseComponent* c, const Event& e)
         {
             if(m_state.Focused)
             {
@@ -110,12 +85,16 @@ namespace tml::Interface
                     default:
                         break;
                 }
+
+                return true;
             }
+
+            return false;
         });
 
-        AddListener("Drawn", [&](BaseComponent* c, Event& e)
+        AddListener("Drawn", [&](BaseComponent* c, const Event& e)
         {
-            if(m_state.MouseOver)
+            if(m_state.MouseOver || m_state.Focused || m_state.Dragged)
             {
                 m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * s_animationSpeed, 0, 1);
             }
@@ -138,12 +117,8 @@ namespace tml::Interface
                 }
             }
 
-            if(m_state.Focused)
-            {
-                m_borderAnimationProgress = 1;
-            }
-
             m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);
+            return true;
         });
     }
 

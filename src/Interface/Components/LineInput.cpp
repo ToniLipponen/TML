@@ -138,34 +138,18 @@ namespace tml::Interface
             return index;
         };
 
-        AddListener("MouseDown", [&](BaseComponent* c, Event& e)
+        AddListener("Click", [](BaseComponent* c, const Event& e)
         {
-            if(m_state.MouseOver)
+            if(c->GetState().MouseOver)
             {
-                m_state.MouseDown = static_cast<char>(e.mouseButton.button);
-                e = Event{};
+                c->Focus();
+                return true;
             }
-            else
-            {
-                UnFocus();
-            }
+
+            return false;
         });
 
-        AddListener("Click", [&](BaseComponent* c, Event& e)
-        {
-            if(m_state.MouseOver)
-            {
-                Focus();
-                Raise();
-                e = Event{};
-            }
-            else
-            {
-                UnFocus();
-            }
-        });
-
-        AddListener("KeyPressed", [&](BaseComponent* c, Event& e)
+        AddListener("KeyPressed", [&](BaseComponent* c, const Event& e)
         {
             if(m_state.Focused && !m_readOnly)
             {
@@ -255,11 +239,13 @@ namespace tml::Interface
                 AlignText();
                 UpdatePasswordText();
                 UpdateCursorPosition();
-                e = Event{};
+                return true;
             }
+
+            return false;
         });
 
-        AddListener("TextEntered", [&](BaseComponent* c, Event& e)
+        AddListener("TextEntered", [&](BaseComponent* c, const Event& e)
         {
             if(m_state.Focused && !m_readOnly)
             {
@@ -270,21 +256,25 @@ namespace tml::Interface
                 AlignText();
                 UpdatePasswordText();
                 UpdateCursorPosition();
-                e = Event{};
+                return true;
             }
+
+            return false;
         });
 
-        AddListener("Moved", [&](BaseComponent* c, Event& e)
+        AddListener("Moved", [&](BaseComponent* c, const Event& e)
         {
             AlignText();
+            return true;
         });
 
-        AddListener("Resized", [&](BaseComponent* c, Event& e)
+        AddListener("Resized", [&](BaseComponent* c, const Event& e)
         {
             AlignText();
+            return true;
         });
 
-        AddListener("Drawn", [&](BaseComponent* c, Event& e)
+        AddListener("Drawn", [&](BaseComponent* c, const Event& e)
         {
             if(m_state.Focused)
             {
@@ -297,7 +287,7 @@ namespace tml::Interface
                 }
             }
 
-            if(m_state.MouseOver)
+            if(m_state.MouseOver || m_state.Focused || m_state.Dragged)
             {
                 m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * s_animationSpeed, 0, 1);
             }
@@ -306,12 +296,8 @@ namespace tml::Interface
                 m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * s_animationSpeed, 0, 1);
             }
 
-            if(m_state.Focused)
-            {
-                m_borderAnimationProgress = 1;
-            }
-
             m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);
+            return true;
         });
     }
 

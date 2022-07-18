@@ -11,44 +11,44 @@ namespace tml::Interface
         m_textInput->SetReadOnly(true);
 
         m_listComponent->Disable();
-        m_listComponent->AddListener("Click", [](BaseComponent* c, Event& e){ c->Disable(); });
-
-        AddListener("MouseDown", [&](BaseComponent*, Event& e)
+        m_listComponent->AddListener("Click", [](BaseComponent* c, const Event& e)
         {
-            if(m_state.MouseOver)
-            {
-                m_state.MouseDown = static_cast<char>(e.mouseButton.button);
-                e = Event{};
-            }
-            else
-            {
-                m_listComponent->Disable();
-            }
+            c->Disable();
+            return true;
         });
 
-        m_textInput->AddListener("Drawn", [&](BaseComponent*, Event&)
+        AddListener("LostFocus", [&](BaseComponent*, const Event& e)
+        {
+            m_listComponent->Disable();
+            return true;
+        });
+
+        m_textInput->AddListener("Drawn", [&](BaseComponent*, const Event&)
         {
             /// This is stupid.
             if(m_textInput->GetValue() != m_listComponent->GetSelectedValue())
             {
                 m_textInput->SetValue(m_listComponent->GetSelectedValue());
             }
+            return true;
         });
 
-        m_textInput->AddListener("Click", [&](BaseComponent* c, Event& e)
+        m_textInput->AddListener("Click", [&](BaseComponent* c, const Event& e)
         {
-            if(m_state.MouseOver)
+            if(m_state.Focused)
             {
                 m_listComponent->ToggleEnabled();
-                Raise();
-                e = Event{};
+                return true;
             }
+
+            return true;
         });
 
-        AddListener("Moved", [&](BaseComponent* c, Event& e)
+        AddListener("Moved", [&](BaseComponent* c, const Event& e)
         {
             m_textInput->SetPosition(m_pos);
             m_listComponent->SetPosition({m_pos.x, m_pos.y + m_size.y + 2});
+            return true;
         });
     }
 

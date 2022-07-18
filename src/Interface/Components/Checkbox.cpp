@@ -8,22 +8,15 @@ namespace tml::Interface
         m_size = Vector2f(size,size);
         m_value = checked;
 
-        AddListener("MouseDown", [&](BaseComponent*, Event& e)
-        {
-            if(m_state.MouseOver)
-            {
-                m_state.MouseDown = static_cast<char>(e.mouseButton.button);
-            }
-        });
-
-        AddListener("Click", [&](BaseComponent*, Event& e)
+        AddListener("Click", [&](BaseComponent*, const Event& e)
         {
             m_value = !m_value;
+            return true;
         });
 
-        AddListener("Drawn", [&](BaseComponent* c, Event& e)
+        AddListener("Drawn", [&](BaseComponent* c, const Event& e)
         {
-            if(m_state.MouseOver)
+            if(m_state.MouseOver || m_state.Focused || m_state.Dragged)
             {
                 m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * s_animationSpeed, 0, 1);
             }
@@ -43,6 +36,7 @@ namespace tml::Interface
 
             m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);
             m_bodyColor = Math::Lerp(m_pColor, m_activeColor, m_bodyAnimationProgress);
+            return true;
         });
     }
 

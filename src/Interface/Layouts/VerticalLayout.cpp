@@ -1,4 +1,5 @@
 #include <TML/Interface/Layouts/VerticalLayout.h>
+#include <iostream>
 
 namespace tml::Interface
 {
@@ -13,8 +14,8 @@ namespace tml::Interface
         SetSize(w,h);
     }
 
-    VerticalLayout::VerticalLayout(const std::vector<BaseComponent*>& components, int32_t x, int32_t y, uint32_t h) noexcept
-    : VerticalLayout(x,y,0,h)
+    VerticalLayout::VerticalLayout(const std::vector<BaseComponent*>& components, int32_t x, int32_t y, uint32_t w) noexcept
+    : VerticalLayout(x,y,w,0)
     {
         SetSizePolicy(SizePolicy::Expand, SizePolicy::Fixed);
 
@@ -22,6 +23,26 @@ namespace tml::Interface
         {
             AddChild(i);
         }
+
+        TML_GUI_ON_EVENT("Attached",
+            float width = m_size.x;
+            float height = 0;
+
+            for(auto& i : m_children)
+            {
+                auto iWidth = i->GetSize().x;
+
+                if(iWidth > width)
+                {
+                    width = iWidth;
+                }
+
+                height += i->GetSize().y + m_padding.y;
+            }
+
+            SetSize(width, height);
+            return false;
+        );
     }
 
     void VerticalLayout::ScaleChildren() noexcept

@@ -74,7 +74,10 @@ namespace tml
 
     protected:
         WindowSettings m_settings;
-        Vector2i m_size, m_pos;
+        Vector2i m_size, m_pos, m_mouseDownPos;
+        bool m_mouseDown;
+        Mouse::Button m_buttonDown;
+
         void* m_handle = nullptr;
         bool m_hasGLContext = false;
     };

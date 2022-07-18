@@ -26,50 +26,36 @@ Button::Button(const std::string& text, uint32_t h, uint32_t w, int32_t x, int32
     const Vector2i textSize = m_text.GetDimensions();
     m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
 
-    AddListener("Click", [&](BaseComponent* c, Event& e)
+    AddListener("MouseDown", [&](BaseComponent* c, const Event& e)
     {
-        UnFocus();
-        e = Event{};
+        m_mouseDown = true;
+        return true;
     });
 
-    AddListener("MouseUp", [&](BaseComponent* c, Event& e)
+    AddListener("MouseUp", [&](BaseComponent* c, const Event& e)
     {
-        if(!m_state.MouseOver)
-        {
-            UnFocus();
-        }
+        m_mouseDown = false;
+        return false;
     });
 
-    AddListener("MouseDown",[&](BaseComponent* c, Event& e)
-    {
-        if(m_state.MouseOver)
-        {
-            Focus();
-            m_state.MouseDown = static_cast<char>(e.mouseButton.button);
-            e = Event{};
-        }
-        else
-        {
-            UnFocus();
-        }
-    });
-
-    AddListener("Moved", [&](BaseComponent* c, Event& e)
+    AddListener("Moved", [&](BaseComponent* c, const Event& e)
     {
         const Vector2i textSize = m_text.GetDimensions();
         m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
+        return true;
     });
 
-    AddListener("Resized", [&](BaseComponent* c, Event& e)
+    AddListener("Resized", [&](BaseComponent* c, const Event& e)
     {
         m_text.SetSize(m_size.y * 0.6f);
         const Vector2i textSize = m_text.GetDimensions();
         m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
+        return true;
     });
 
-    AddListener("Drawn", [&](BaseComponent* c, Event& e)
+    AddListener("Drawn", [&](BaseComponent* c, const Event& e)
     {
-        if(m_state.MouseOver)
+        if(m_state.MouseOver || m_state.Focused)
         {
             m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress + e.update.delta * s_animationSpeed, 0, 1);
         }
@@ -78,7 +64,7 @@ Button::Button(const std::string& text, uint32_t h, uint32_t w, int32_t x, int32
             m_borderAnimationProgress = Math::Clamp<double>(m_borderAnimationProgress - e.update.delta * s_animationSpeed, 0, 1);
         }
 
-        if(m_state.MouseDown > -1)
+        if(m_mouseDown)
         {
             m_bodyAnimationProgress = 1;
         }
@@ -89,6 +75,7 @@ Button::Button(const std::string& text, uint32_t h, uint32_t w, int32_t x, int32
 
         m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);
         m_bodyColor = Math::Lerp(m_pColor, m_activeColor, m_bodyAnimationProgress);
+        return true;
     });
 }
 

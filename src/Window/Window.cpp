@@ -426,13 +426,51 @@ namespace tml
     {
         switch(e.type)
         {
-            case tml::EventType::WindowResized:
+            case tml::Event::WindowResized:
                 m_size = Vector2i{e.size.w, e.size.h};
                 break;
 
-            case tml::EventType::WindowMoved:
+            case tml::Event::WindowMoved:
                 m_pos = Vector2i{e.pos.x, e.pos.y};
                 break;
+
+            case tml::Event::MouseButtonPressed:
+            {
+                m_mouseDown = true;
+                m_buttonDown = static_cast<Mouse::Button>(e.mouseButton.button);
+                m_mouseDownPos = {e.mouseButton.x, e.mouseButton.y};
+            } break;
+
+            case tml::Event::MouseButtonReleased:
+            {
+                m_mouseDown = false;
+                if(m_mouseDownPos == Vector2i(e.mouseButton.x, e.mouseButton.y))
+                {
+                    Event clickEvent{};
+                    clickEvent.type = tml::Event::MouseButtonClicked;
+                    clickEvent.mouseButton.button = static_cast<tml::Mouse::Button>(m_buttonDown);
+                    clickEvent.mouseButton.x = e.mouseButton.x;
+                    clickEvent.mouseButton.y = e.mouseButton.y;
+
+                    tml::EventSystem::GetInstance().PushEvent(m_handle, clickEvent);
+                }
+            } break;
+
+            case tml::Event::MouseMoved:
+            {
+                if(m_mouseDown)
+                {
+                    Event dragEvent{};
+                    dragEvent.type = tml::Event::MouseDragged;
+                    dragEvent.drag.button = static_cast<tml::Mouse::Button>(m_buttonDown);
+                    dragEvent.drag.x = e.pos.x;
+                    dragEvent.drag.y = e.pos.y;
+                    dragEvent.drag.beginX = m_mouseDownPos.x;
+                    dragEvent.drag.beginY = m_mouseDownPos.y;
+
+                    tml::EventSystem::GetInstance().PushEvent(m_handle, dragEvent);
+                }
+            } break;
 
             default:
                 break;
@@ -467,7 +505,7 @@ void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
     auto mousePos = tml::Mouse::GetPosition();
     Event event{};
-    event.type = tml::EventType::MouseWheelScrolled;
+    event.type = tml::Event::MouseWheelScrolled;
 
     event.mouseWheel.x      = static_cast<int>(mousePos.x);
     event.mouseWheel.y      = static_cast<int>(mousePos.y);
@@ -480,7 +518,7 @@ void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 void CharCallback(GLFWwindow* window, unsigned int code)
 {
     Event event{};
-    event.type = tml::EventType::TextEntered;
+    event.type = tml::Event::TextEntered;
     event.text.unicode = code;
     tml::EventSystem::GetInstance().PushEvent(window, event);
 }
@@ -488,7 +526,7 @@ void CharCallback(GLFWwindow* window, unsigned int code)
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     Event event{};
-    event.type = (action == GLFW_PRESS || action == GLFW_REPEAT) ? tml::EventType::KeyPressed : tml::EventType::KeyReleased;
+    event.type = (action == GLFW_PRESS || action == GLFW_REPEAT) ? tml::Event::KeyPressed : tml::Event::KeyReleased;
     event.key.value = static_cast<tml::Keyboard::Key>(key);
     event.key.code = scancode;
 
@@ -507,7 +545,7 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
     glfwGetCursorPos(window, &x, &y);
 
     Event event{};
-    event.type = (action == GLFW_PRESS) ? tml::EventType::MouseButtonPressed : tml::EventType::MouseButtonReleased;
+    event.type = (action == GLFW_PRESS) ? tml::Event::MouseButtonPressed : tml::Event::MouseButtonReleased;
     event.mouseButton.button = static_cast<tml::Mouse::Button>(button);
     event.mouseButton.x = x;
     event.mouseButton.y = y;
@@ -517,7 +555,7 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 void WindowResizeCallback(GLFWwindow* window, int x, int y)
 {
     tml::Event event{};
-    event.type = tml::EventType::WindowResized;
+    event.type = tml::Event::WindowResized;
     event.size.w = x;
     event.size.h = y;
     tml::EventSystem::GetInstance().PushEvent(window, event);
@@ -526,42 +564,42 @@ void WindowResizeCallback(GLFWwindow* window, int x, int y)
 void WindowFocusCallback(GLFWwindow* window, int focus)
 {
     Event event{};
-    event.type = focus ? tml::EventType::GainedFocus : tml::EventType::LostFocus;
+    event.type = focus ? tml::Event::GainedFocus : tml::Event::LostFocus;
     tml::EventSystem::GetInstance().PushEvent(window, event);
 }
 
 void WindowCloseCallback(GLFWwindow* window)
 {
     Event event{};
-    event.type = tml::EventType::Closed;
+    event.type = tml::Event::Closed;
     tml::EventSystem::GetInstance().PushEvent(window, event);
 }
 
 void CursorEnterCallback(GLFWwindow* window, int entered)
 {
     Event event{};
-    event.type = entered ? tml::EventType::MouseEntered : tml::EventType::MouseLeft;
+    event.type = entered ? tml::Event::MouseEntered : tml::Event::MouseLeft;
     tml::EventSystem::GetInstance().PushEvent(window, event);
 }
 
 void WindowMaximizeCallback(GLFWwindow* window, int maximized)
 {
     Event event{};
-    event.type = maximized ? tml::EventType::WindowMaximized : tml::EventType::WindowRestored;
+    event.type = maximized ? tml::Event::WindowMaximized : tml::Event::WindowRestored;
     tml::EventSystem::GetInstance().PushEvent(window, event);
 }
 
 void WindowMinimizeCallback(GLFWwindow* window, int minimized)
 {
     Event event{};
-    event.type = minimized ? tml::EventType::WindowMinimized : tml::EventType::WindowRestored;
+    event.type = minimized ? tml::Event::WindowMinimized : tml::Event::WindowRestored;
     tml::EventSystem::GetInstance().PushEvent(window, event);
 }
 
 void CursorPosCallback(GLFWwindow* window, double x, double y)
 {
     Event event{};
-    event.type = tml::EventType::MouseMoved;
+    event.type = tml::Event::MouseMoved;
     event.pos = {static_cast<int>(x), static_cast<int>(y)};
     tml::EventSystem::GetInstance().PushEvent(window, event);
 }
@@ -569,7 +607,7 @@ void CursorPosCallback(GLFWwindow* window, double x, double y)
 void WindowMoveCallback(GLFWwindow* window, int x, int y)
 {
     Event event{};
-    event.type = tml::EventType::WindowMoved;
+    event.type = tml::Event::WindowMoved;
     event.pos = {x, y};
     tml::EventSystem::GetInstance().PushEvent(window, event);
 }
@@ -577,7 +615,7 @@ void WindowMoveCallback(GLFWwindow* window, int x, int y)
 void GamepadCallback(int jid, int glfwEvent)
 {
     Event event{};
-    event.type = glfwEvent == GLFW_CONNECTED ? tml::EventType::GamepadConnected : tml::EventType::GamepadDisconnected;
+    event.type = glfwEvent == GLFW_CONNECTED ? tml::Event::GamepadConnected : tml::Event::GamepadDisconnected;
     event.gamepad.id = jid;
     tml::EventSystem::GetInstance().PushGlobalEvent(event);
 }
@@ -592,7 +630,7 @@ void DropCallback(GLFWwindow* window, int pathCount, const char** paths)
     }
 
     tml::Event event{};
-    event.type = tml::EventType::Drop;
+    event.type = tml::Event::Drop;
     tml::EventSystem::GetInstance().PushEvent(window, event);
     tml::DropManager::GetInstance().Set(window, pathsVector);
 }

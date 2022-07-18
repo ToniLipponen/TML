@@ -24,6 +24,7 @@ namespace tml::Interface
         void pDraw(RenderTarget& renderer) noexcept override;
         Text m_text;
         Color m_borderColor, m_bodyColor;
+        bool m_mouseDown = false;
         double m_borderAnimationProgress = 0, m_bodyAnimationProgress = 0;
     };
 }

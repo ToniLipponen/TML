@@ -52,33 +52,36 @@
 
 namespace tml
 {
-    enum class [[maybe_unused]] EventType
-    {
-        Null,
-        Closed,                 //!< The window requested to be closed (no data)
-        WindowResized,          //!< The window was resized (data in event.size)
-        WindowMinimized,        //!< The window was minimized (no data)
-        WindowMaximized,        //!< The window was maximized (no data)
-        WindowRestored,         //!< The window was restored (no data)
-        WindowMoved,            //!< The window was moved (data in event.pos)
-        LostFocus,              //!< The window lost the focus (no data)
-        GainedFocus,            //!< The window gained the focus (no data)
-        TextEntered,            //!< A character was entered (data in event.text)
-        KeyPressed,             //!< A key was pressed (data in event.key)
-        KeyReleased,            //!< A key was released (data in event.key)
-        MouseWheelScrolled,     //!< The mouse wheel was scrolled (data in event.mouseWheelScroll)
-        MouseButtonPressed,     //!< A mouse button was pressed (data in event.mouseButton)
-        MouseButtonReleased,    //!< A mouse button was released (data in event.mouseButton)
-        MouseMoved,             //!< The mouse cursor moved (data in event.pos)
-        MouseEntered,           //!< The mouse cursor entered the area of the window (no data)
-        MouseLeft,              //!< The mouse cursor left the area of the window (no data)
-        GamepadConnected,       //!< Gamepad was connected. (data in event.gamepad)
-        GamepadDisconnected,    //!< Gamepad was disconnected. (data in event.gamepad)
-        Drop                    //!< A file was drag and dropped onto a window. (no data). Get the dropped file paths using Window::GetDroppedFiles().
-    };
-
     struct Event
     {
+        enum Type
+        {
+            Null,
+            Closed,                 //!< The window requested to be closed (no data)
+            WindowResized,          //!< The window was resized (data in event.size)
+            WindowMinimized,        //!< The window was minimized (no data)
+            WindowMaximized,        //!< The window was maximized (no data)
+            WindowRestored,         //!< The window was restored (no data)
+            WindowMoved,            //!< The window was moved (data in event.pos)
+            LostFocus,              //!< The window lost the focus (no data)
+            GainedFocus,            //!< The window gained the focus (no data)
+            TextEntered,            //!< A character was entered (data in event.text)
+            KeyPressed,             //!< A key was pressed (data in event.key)
+            KeyReleased,            //!< A key was released (data in event.key)
+            MouseWheelScrolled,     //!< The mouse wheel was scrolled (data in event.mouseWheelScroll)
+            MouseButtonPressed,     //!< A mouse button was pressed (data in event.mouseButton)
+            MouseButtonReleased,    //!< A mouse button was released (data in event.mouseButton)
+            MouseButtonClicked,     //!< A mouse button was clicked (data in event.mouseButton)
+            Clicked = MouseButtonClicked,
+            MouseMoved,             //!< The mouse cursor moved (data in event.pos)
+            MouseEntered,           //!< The mouse cursor entered the area of the window (no data)
+            MouseDragged,
+            MouseLeft,              //!< The mouse cursor left the area of the window (no data)
+            GamepadConnected,       //!< Gamepad was connected. (data in event.gamepad)
+            GamepadDisconnected,    //!< Gamepad was disconnected. (data in event.gamepad)
+            Drop,                   //!< A file was drag and dropped onto a window. (no data). Get the dropped file paths using Window::GetDroppedFiles().
+        };
+
         struct ResizeEvent
         {
             int32_t w{};
@@ -121,6 +124,15 @@ namespace tml
             int32_t y{};       //!< Y position of the mouse pointer, relative to the top of the owner window
         };
 
+        struct MouseDragEvent
+        {
+            Mouse::Button button{};
+            int32_t x{};
+            int32_t y{};
+            int32_t beginX{};
+            int32_t beginY{};
+        };
+
         struct GamepadEvent
         {
             int32_t id{};
@@ -131,7 +143,7 @@ namespace tml
             double delta{};
         };
 
-        EventType type = EventType::Null;
+        Type type = Null;
 
         union
         {
@@ -141,6 +153,7 @@ namespace tml
             TextEvent             text;
             MouseButtonEvent      mouseButton;
             MouseWheelScrollEvent mouseWheel;
+            MouseDragEvent        drag;
             GamepadEvent          gamepad;
             Update                update;
         };

@@ -41,56 +41,56 @@ namespace tml::Interface
 
     BaseComponent::~BaseComponent() noexcept
     {
-        if(m_root)
-        {
-            m_root->Detach(this);
-        }
+
     }
 
     void BaseComponent::Focus() noexcept
     {
         if(m_root)
         {
-            m_root->ClearFocused();
-            m_state.Focused = true;
-            Event e{};
-            CallUIFunc("GainedFocus", e);
+            m_root->Focus(this);
         }
     }
 
     void BaseComponent::UnFocus() noexcept
     {
-        m_state.Focused = false;
-        Event e{};
-        CallUIFunc("LostFocus", e);
+        if(m_state.Focused)
+        {
+            m_state.Focused = false;
+            Event e{};
+            CallUIFunc("LostFocus", e);
+        }
     }
 
     void BaseComponent::Enable() noexcept
     {
-        m_state.Enabled = true;
-        Event event{};
-        CallUIFunc("Enabled", event);
+        if(!m_state.Enabled)
+        {
+            m_state.Enabled = true;
+            Event event{};
+            CallUIFunc("Enabled", event);
+        }
     }
 
     void BaseComponent::Disable() noexcept
     {
-        m_state.Enabled = false;
-        Event event{};
-        CallUIFunc("Disabled", event);
+        if(m_state.Enabled)
+        {
+            m_state.Enabled = false;
+            Event event{};
+            CallUIFunc("Disabled", event);
+        }
     }
 
     void BaseComponent::ToggleEnabled() noexcept
     {
-        m_state.Enabled = !m_state.Enabled;
-
-        Event event{};
         if(m_state.Enabled)
         {
-            CallUIFunc("Enabled", event);
+            Disable();
         }
         else
         {
-            CallUIFunc("Disabled", event);
+            Enable();
         }
     }
 
@@ -301,11 +301,6 @@ namespace tml::Interface
         m_roundness = radius;
     }
 
-    void BaseComponent::Raise() noexcept
-    {
-        m_root->Raise(this);
-    }
-
     void BaseComponent::ForEachChild(const std::function<bool(BaseComponent *)> &function) noexcept
     {
         if(!m_children.empty())
@@ -370,84 +365,131 @@ namespace tml::Interface
         return m_pos;
     }
 
-    void BaseComponent::ProcessEvents(Event& event, double dt) noexcept
-    {
-        CallUIFunc("Any", event);
-
-        switch(event.type)
-        {
-            case EventType::MouseButtonPressed:
-            {
-                CallUIFunc("MouseDown", event);
-            } break;
-
-            case EventType::MouseButtonReleased:
-            {
-                if(m_state.MouseDown != -1 && m_state.MouseOver)
-                {
-                    CallUIFunc("Click", event);
-                }
-
-                CallUIFunc("MouseUp", event);
-                m_state.MouseDown = -1;
-            } break;
-
-            case EventType::MouseMoved:
-            {
-                const bool oldMouseOver = m_state.MouseOver;
-                m_state.MouseOver = ContainsPoint({event.pos.x, event.pos.y});
-                CallUIFunc("MouseMoved", event);
-
-                if(m_state.MouseOver && !oldMouseOver)
-                {
-                    CallUIFunc("MouseEnter", event);
-                }
-                else if(!m_state.MouseOver && oldMouseOver)
-                {
-                    CallUIFunc("MouseExit", event);
-                }
-            } break;
-
-            case EventType::MouseWheelScrolled:
-            {
-                CallUIFunc("MouseScroll", event);
-            } break;
-
-            case EventType::KeyPressed:
-            {
-                CallUIFunc("KeyPressed", event);
-            } break;
-
-            case EventType::KeyReleased:
-            {
-                CallUIFunc("KeyReleased", event);
-            } break;
-
-            case EventType::TextEntered:
-            {
-                CallUIFunc("TextEntered", event);
-            } break;
-
-            default:
-                break;
-        }
-    }
-
-    bool BaseComponent::CallUIFunc(const std::string& name, Event &event) noexcept
+    bool BaseComponent::CallUIFunc(const std::string& name, const Event& event) noexcept
     {
         if(m_listeners.find(name) != m_listeners.end())
         {
+            bool handled = false;
             const auto& functions = m_listeners.at(name);
 
             /// Iterating functions in reverse, so that the user added functions are called first.
             for(auto function = functions.rbegin(); function != functions.rend(); function++)
             {
-                (*function)(this, event);
+                if((*function)(this, event))
+                {
+                    handled = true;
+                }
             }
 
-            return true;
+            return handled;
         }
 
+        return false;
+    }
+
+    bool BaseComponent::HandleEvent(const Event& event) noexcept
+    {
+        CallUIFunc("Any", event);
+
+        switch(event.type)
+        {
+            case Event::MouseButtonPressed:
+            {
+                if(m_state.MouseOver)
+                {
+                    CallUIFunc("MouseDown", event);
+                    return true;
+                }
+            } break;
+
+            case Event::Clicked:
+            {
+                if(m_state.MouseOver)
+                {
+                    Focus();
+                    return CallUIFunc("Click", event);
+                }
+            } break;
+
+            case Event::MouseButtonReleased:
+            {
+                bool handled = false;
+
+                if(CallUIFunc("MouseUp", event))
+                {
+                    handled = true;
+                }
+
+                m_state.Dragged = false;
+
+                return handled;
+            } break;
+
+            case Event::MouseMoved:
+            {
+                bool handled = false;
+                const bool oldMouseOver = m_state.MouseOver;
+                m_state.MouseOver = ContainsPoint({event.pos.x, event.pos.y});
+
+                if(!oldMouseOver && m_state.MouseOver)
+                {
+                    if(CallUIFunc("MouseEnter", event))
+                    {
+                        handled = true;
+                    }
+                }
+                else if(oldMouseOver && !m_state.MouseOver)
+                {
+                    if(CallUIFunc("MouseExit", event))
+                    {
+                        handled = true;
+                    }
+                }
+
+                if(m_state.MouseOver)
+                {
+                    if(CallUIFunc("MouseMoved", event))
+                    {
+                        handled = true;
+                    }
+                }
+
+                return handled;
+            } break;
+
+            case Event::MouseWheelScrolled:
+            {
+                return CallUIFunc("MouseScroll", event);
+            } break;
+
+            case Event::MouseDragged:
+            {
+                if(ContainsPoint({event.drag.beginX, event.drag.beginY}))
+                {
+                    m_state.Dragged = true;
+                }
+
+                return (m_state.Dragged && CallUIFunc("Dragged", event));
+            } break;
+
+            case Event::KeyPressed:
+            {
+                return (m_state.Focused && CallUIFunc("KeyPressed", event));
+            } break;
+
+            case Event::KeyReleased:
+            {
+                return (m_state.Focused && CallUIFunc("KeyReleased", event));
+            } break;
+
+            case Event::TextEntered:
+            {
+                return CallUIFunc("TextEntered", event);
+            } break;
+
+            default:
+                break;
+        }
         return false;
     }
 

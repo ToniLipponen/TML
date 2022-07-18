@@ -10,18 +10,21 @@ namespace tml::Interface
         Layer(Layer&& layer) noexcept;
         void Attach(BaseComponent* rootNode) noexcept;
         void Detach(BaseComponent* component) noexcept;
-        void Raise(BaseComponent* component) noexcept;
+        void Focus(BaseComponent* component) noexcept;
         void ClearFocused() noexcept;
-        void Update(Event& event) const noexcept;
+        void ClearDragged() noexcept;
+        void ClearMouseOver() noexcept;
+        void Update(Event& event) noexcept;
         void SetEnabled(bool enabled) noexcept;
         [[nodiscard]] bool IsEnabled() const noexcept;
 
     protected:
         void OnDraw(RenderTarget* renderer, Texture*) noexcept final;
+        void HandleEvent(Event& event) noexcept;
 
     protected:
+        std::vector<std::unique_ptr<BaseComponent>> m_roots;
         std::deque<BaseComponent*> m_processingQueue;
-        std::unique_ptr<BaseComponent> m_rootNode = nullptr;
         bool m_enabled = true;
 
     private:

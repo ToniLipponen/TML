@@ -6,7 +6,6 @@ namespace tml::Interface
     Layer::Layer(Layer&& layer) noexcept
     {
         std::swap(m_processingQueue, layer.m_processingQueue);
-        std::swap(m_rootNode, layer.m_rootNode);
         m_enabled = layer.m_enabled;
     }
 
@@ -29,7 +28,7 @@ namespace tml::Interface
         };
 
         registerFunc(rootNode);
-        m_rootNode = std::unique_ptr<BaseComponent>(rootNode);
+        m_roots.emplace_back(rootNode);
     }
 
     void Layer::Detach(BaseComponent* component) noexcept
@@ -55,50 +54,70 @@ namespace tml::Interface
         };
 
         unregisterFunc(component);
+
+        for(int i = 0; i < m_roots.size(); i++)
+        {
+            if(m_roots.at(i).get() == component)
+            {
+                m_roots.erase(m_roots.begin() + i);
+                break;
+            }
+        }
     }
 
-    void Layer::Raise(BaseComponent *component) noexcept
+    void Layer::Focus(BaseComponent *component) noexcept
     {
-        std::function<void(BaseComponent*)> raiseFunc;
-
-        raiseFunc = [&](BaseComponent* node) noexcept -> void
+        for(auto* i : m_processingQueue)
         {
-            const auto end = m_processingQueue.end();
-            const auto beg = m_processingQueue.begin();
-            const auto it = std::find(beg, end, node);
-            auto value = *it;
-
-            if(it != end)
+            if(i == component)
             {
-                m_processingQueue.erase(it);
-                m_processingQueue.push_front(value);
-            }
+                if(!i->m_state.Focused)
+                {
+                    i->m_state.Focused = true;
 
-            for(auto& i : node->m_children)
+                    Event e{};
+                    i->CallUIFunc("GainedFocus", e);
+                }
+            }
+            else
             {
-                raiseFunc(i.get());
+                i->UnFocus();
             }
-        };
-
-        raiseFunc(component);
+        }
     }
 
     void Layer::ClearFocused() noexcept
     {
         for(auto* i : m_processingQueue)
         {
-            i->m_state.Focused = false;
+            i->UnFocus();
         }
     }
 
-    void Layer::Update(Event &event) const noexcept
+    void Layer::ClearDragged() noexcept
+    {
+        for(auto* i : m_processingQueue)
+        {
+            i->m_state.Dragged = false;
+        }
+    }
+
+    void Layer::ClearMouseOver() noexcept
+    {
+        for(auto* i : m_processingQueue)
+        {
+            i->m_state.MouseOver = false;
+        }
+    }
+
+    void Layer::Update(Event &event) noexcept
     {
         static Clock clock;
         const double delta = clock.Reset();
 
         if(!m_processingQueue.empty())
         {
-            if(event.type == EventType::WindowResized)
+            if(event.type == Event::WindowResized)
             {
                 for(auto* i : m_processingQueue)
                 {
@@ -106,16 +125,7 @@ namespace tml::Interface
                 }
             }
 
-            if(m_enabled)
-            {
-                for(auto* i : m_processingQueue)
-                {
-                    if(i->Enabled())
-                    {
-                        i->ProcessEvents(event, delta);
-                    }
-                }
-            }
+            HandleEvent(event);
         }
     }
 
@@ -150,6 +160,26 @@ namespace tml::Interface
                     item->pDraw(*renderer);
                     item->CallUIFunc("Drawn", event);
                 }
+            }
+        }
+    }
+
+    void Layer::HandleEvent(Event &event) noexcept
+    {
+        if(m_enabled)
+        {
+            for(auto* i : m_processingQueue)
+            {
+                if(i->Enabled() && i->HandleEvent(event))
+                {
+                    event = {};
+                    break;
+                }
+            }
+
+            if(event.type == Event::MouseButtonReleased)
+            {
+                ClearFocused();
             }
         }
     }

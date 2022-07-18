@@ -18,43 +18,18 @@ namespace tml::Interface
 
         m_pColor = Color(0xccccccff);
 
-        AddListener("Click", [](BaseComponent*, Event& e) { e = {}; });
-
-        AddListener("MouseDown", [&](BaseComponent* c, Event& e)
+        AddListener("Dragged", [&](BaseComponent* c, const Event& e)
         {
-            if(m_state.MouseOver)
+            if constexpr(axis == ComponentAxis::Horizontal)
             {
-                m_state.MouseDown = static_cast<char>(e.mouseButton.button);
-
-                if constexpr(axis == ComponentAxis::Horizontal)
-                {
-                    m_value = Math::Clamp<float>(float(e.mouseButton.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
-                }
-                else
-                {
-                    m_value = m_max - Math::Clamp<float>(m_max - float((e.mouseButton.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
-                }
+                m_value = Math::Clamp<float>(float(e.mouseButton.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
             }
-        });
-
-        AddListener("MouseMoved", [&](BaseComponent* c, Event& e)
-        {
-            if(m_state.MouseDown != -1)
+            else
             {
-                if constexpr(axis == ComponentAxis::Horizontal)
-                {
-                    m_value = Math::Clamp<float>(float(e.pos.x - m_pos.x) / float(m_size.x) * m_max, m_min, m_max);
-                }
-                else
-                {
-                    m_value = m_max - Math::Clamp<float>(m_max - float((e.pos.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
-                }
+                m_value = m_max - Math::Clamp<float>(m_max - float((e.mouseButton.y - m_pos.y) / float(m_size.y) * m_max), m_min, m_max);
             }
-        });
 
-        AddListener("MouseEnter", [&](BaseComponent* c, Event& e)
-        {
-            e = {};
+            return true;
         });
     }
 

@@ -19,40 +19,34 @@ namespace tml::Interface
             m_minimumSize.x = static_cast<float>(width);
         }
 
-        AddListener("Click", [&](BaseComponent* c, Event& e)
-        {
-            const Vector2i mousePos = {e.mouseButton.x, e.mouseButton.y};
-            static auto PointInRect = [&](const Vector2i &tl, const Vector2i &br)
-            {
-                return (mousePos.x <= br.x && mousePos.y <= br.y && mousePos.x >= tl.x && mousePos.y >= tl.y);
-            };
-
-            for(int i = 0; i < m_values.size(); i++)
-            {
-                if(PointInRect(m_pos + Vector2i(0, i * 20), m_pos + Vector2i(m_size.x - 20, (i * 20) + 20)))
-                {
-                    m_selectedIndex = i + m_scrollbar->GetValue();
-                    break;
-                }
-            }
-
-            e = Event{};
-        });
-
-        AddListener("MouseDown", [&](BaseComponent* c, Event& e)
-        {
-            if(c->ContainsPoint({e.mouseButton.x, e.mouseButton.y}))
-            {
-                Raise();
-                m_scrollbar->Raise();
-                m_state.MouseDown = static_cast<char>(e.mouseButton.button);
-                e = Event{};
-            }
-        });
-
-        AddListener("MouseScroll", [&](BaseComponent* c, Event& e)
+        AddListener("Click", [&](BaseComponent* c, const Event& e)
         {
             if(m_state.MouseOver)
+            {
+                const Vector2i mousePos = {e.mouseButton.x, e.mouseButton.y};
+                static auto PointInRect = [&](const Vector2i &tl, const Vector2i &br)
+                {
+                    return (mousePos.x <= br.x && mousePos.y <= br.y && mousePos.x >= tl.x && mousePos.y >= tl.y);
+                };
+
+                for(int i = 0; i < m_values.size(); i++)
+                {
+                    if(PointInRect(m_pos + Vector2i(0, i * 20), m_pos + Vector2i(m_size.x - 20, (i * 20) + 20)))
+                    {
+                        m_selectedIndex = i + m_scrollbar->GetValue();
+                        break;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        });
+
+        AddListener("MouseScroll", [&](BaseComponent* c, const Event& e)
+        {
+            if(m_state.MouseOver && m_scrollbar->Enabled())
             {
                 if(e.mouseWheel.deltaY > 0.0)
                 {
@@ -63,16 +57,19 @@ namespace tml::Interface
                     m_scrollbar->SetValue(m_scrollbar->GetValue() + 1);
                 }
 
-                e = Event{};
+                return true;
             }
+
+            return false;
         });
 
-        AddListener("Moved", [&](BaseComponent* c, Event& e)
+        AddListener("Moved", [&](BaseComponent* c, const Event& e)
         {
             m_scrollbar->SetPosition(m_pos + Vector2i(m_size.x - 21, 1));
+            return true;
         });
 
-        AddListener("Resized", [&](BaseComponent* c, Event& e)
+        AddListener("Resized", [&](BaseComponent* c, const Event& e)
         {
             m_size.y -= fmodf(m_size.y, 20);
             m_scrollbar->SetPosition(m_pos + Vector2i(m_size.x - 21, 0));
@@ -87,9 +84,11 @@ namespace tml::Interface
             {
                 m_scrollbar->Disable();
             }
+
+            return true;
         });
 
-        AddListener("Drawn", [&](BaseComponent* c, Event& e)
+        AddListener("Drawn", [&](BaseComponent* c, const Event& e)
         {
             if(m_state.MouseOver)
             {
@@ -106,6 +105,7 @@ namespace tml::Interface
             }
 
             m_borderColor = Math::Lerp(m_sColor, m_activeColor, m_borderAnimationProgress);
+            return true;
         });
     }
 
