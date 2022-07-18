@@ -4,7 +4,7 @@
 
 namespace tml::Interface
 {
-    class TML_API ImageButton : public BaseComponent
+    class TML_API ImageButton : public Component
     {
     public:
         explicit ImageButton(

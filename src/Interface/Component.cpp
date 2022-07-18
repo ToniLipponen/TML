@@ -1,4 +1,4 @@
-#include <TML/Interface/BaseComponent.h>
+#include <TML/Interface/Component.h>
 #include <TML/Interface/Interface.h>
 #include <TML/Graphics/RenderTarget.h>
 #include <TML/System/Clock.h>
@@ -7,14 +7,14 @@
 
 namespace tml::Interface
 {
-    [[maybe_unused]] float BaseComponent::s_scale = 1.0f;
-    [[maybe_unused]] float BaseComponent::s_animationSpeed = 5.f;
-    [[maybe_unused]] Color BaseComponent::s_defaultPrimaryColor = Color(0x171717ff);
-    [[maybe_unused]] Color BaseComponent::s_defaultSecondaryColor = Color(0x444444ff);
-    [[maybe_unused]] Color BaseComponent::s_defaultActiveColor = Color(0xda0037ff);
-    [[maybe_unused]] Color BaseComponent::s_defaultTextColor = Color(0xedededff);
+    [[maybe_unused]] float Component::s_scale = 1.0f;
+    [[maybe_unused]] float Component::s_animationSpeed = 5.f;
+    [[maybe_unused]] Color Component::s_defaultPrimaryColor = Color(0x171717ff);
+    [[maybe_unused]] Color Component::s_defaultSecondaryColor = Color(0x444444ff);
+    [[maybe_unused]] Color Component::s_defaultActiveColor = Color(0xda0037ff);
+    [[maybe_unused]] Color Component::s_defaultTextColor = Color(0xedededff);
 
-    BaseComponent::BaseComponent() noexcept
+    Component::Component() noexcept
     : m_pColor(s_defaultPrimaryColor),
       m_sColor(s_defaultSecondaryColor),
       m_activeColor(s_defaultActiveColor),
@@ -25,7 +25,7 @@ namespace tml::Interface
         m_state.Enabled = true;
     }
 
-    BaseComponent::BaseComponent(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept
+    Component::Component(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept
     : m_pColor(s_defaultPrimaryColor),
       m_sColor(s_defaultSecondaryColor),
       m_activeColor(s_defaultActiveColor),
@@ -39,12 +39,12 @@ namespace tml::Interface
         m_state.Enabled = true;
     }
 
-    BaseComponent::~BaseComponent() noexcept
+    Component::~Component() noexcept
     {
 
     }
 
-    void BaseComponent::Focus() noexcept
+    void Component::Focus() noexcept
     {
         if(m_root)
         {
@@ -52,7 +52,7 @@ namespace tml::Interface
         }
     }
 
-    void BaseComponent::UnFocus() noexcept
+    void Component::UnFocus() noexcept
     {
         if(m_state.Focused)
         {
@@ -62,7 +62,7 @@ namespace tml::Interface
         }
     }
 
-    void BaseComponent::Enable() noexcept
+    void Component::Enable() noexcept
     {
         if(!m_state.Enabled)
         {
@@ -72,7 +72,7 @@ namespace tml::Interface
         }
     }
 
-    void BaseComponent::Disable() noexcept
+    void Component::Disable() noexcept
     {
         if(m_state.Enabled)
         {
@@ -82,7 +82,7 @@ namespace tml::Interface
         }
     }
 
-    void BaseComponent::ToggleEnabled() noexcept
+    void Component::ToggleEnabled() noexcept
     {
         if(m_state.Enabled)
         {
@@ -94,17 +94,17 @@ namespace tml::Interface
         }
     }
 
-    BaseComponent::StateFlag BaseComponent::GetState() const noexcept
+    Component::StateFlag Component::GetState() const noexcept
     {
         return m_state;
     }
 
-    bool BaseComponent::Focused() const noexcept
+    bool Component::Focused() const noexcept
     {
         return m_state.Focused;
     }
 
-    bool BaseComponent::Enabled() const noexcept
+    bool Component::Enabled() const noexcept
     {
         if(!m_state.Enabled)
         {
@@ -126,12 +126,12 @@ namespace tml::Interface
         return m_state.Enabled;
     }
 
-    void BaseComponent::AddListener(const std::string& name, const EventCallback& callback) noexcept
+    void Component::AddListener(const std::string& name, const EventCallback& callback) noexcept
     {
         m_listeners[name].push_back(callback);
     }
 
-    void BaseComponent::AddChild(BaseComponent* component, const std::string& name) noexcept
+    void Component::AddChild(Component* component, const std::string& name) noexcept
     {
         if(component)
         {
@@ -155,7 +155,7 @@ namespace tml::Interface
         }
     }
 
-    bool BaseComponent::RemoveChild(const std::string& id) noexcept
+    bool Component::RemoveChild(const std::string& id) noexcept
     {
         auto* ptr = FindComponent(id);
 
@@ -167,7 +167,7 @@ namespace tml::Interface
         return RemoveChild(ptr);
     }
 
-    bool BaseComponent::RemoveChild(BaseComponent *component) noexcept
+    bool Component::RemoveChild(Component *component) noexcept
     {
         if(component == nullptr)
         {
@@ -201,13 +201,13 @@ namespace tml::Interface
         return false;
     }
 
-    BaseComponent* BaseComponent::FindComponent(const std::string& name) noexcept
+    Component* Component::FindComponent(const std::string& name) noexcept
     {
         const uint64_t hash = std::hash<std::string>{}(name);
         return FindComponent(hash);
     }
 
-    BaseComponent* BaseComponent::FindComponent(uint64_t hash) noexcept
+    Component* Component::FindComponent(uint64_t hash) noexcept
     {
         if(m_children.empty())
         {
@@ -235,73 +235,73 @@ namespace tml::Interface
         return nullptr;
     }
 
-    BaseComponent* BaseComponent::GetParent() noexcept
+    Component* Component::GetParent() noexcept
     {
         return m_parent;
     }
 
-    Interface* BaseComponent::GetRoot() noexcept
+    Interface* Component::GetRoot() noexcept
     {
         return m_root;
     }
 
-    uint64_t BaseComponent::GetHash() const noexcept
+    uint64_t Component::GetHash() const noexcept
     {
         return m_hash;
     }
 
-    const std::string& BaseComponent::GetID() const noexcept
+    const std::string& Component::GetID() const noexcept
     {
         return m_id;
     }
 
-    bool BaseComponent::ContainsPoint(const Vector2i& p)
+    bool Component::ContainsPoint(const Vector2i& p)
     {
         return Math::PointInRect(p, m_pos, m_size, 0);
     }
 
-    SizePolicy BaseComponent::GetHorizontalSizePolicy() const noexcept
+    SizePolicy Component::GetHorizontalSizePolicy() const noexcept
     {
         return m_hSizePolicy;
     }
 
-    SizePolicy BaseComponent::GetVerticalSizePolicy() const noexcept
+    SizePolicy Component::GetVerticalSizePolicy() const noexcept
     {
         return m_vSizePolicy;
     }
 
-    void BaseComponent::SetSizePolicy(SizePolicy horizontal, SizePolicy vertical) noexcept
+    void Component::SetSizePolicy(SizePolicy horizontal, SizePolicy vertical) noexcept
     {
         m_hSizePolicy = horizontal;
         m_vSizePolicy = vertical;
     }
 
-    void BaseComponent::SetPrimaryColor(const Color& color) noexcept
+    void Component::SetPrimaryColor(const Color& color) noexcept
     {
         m_pColor = color;
     }
 
-    void BaseComponent::SetSecondaryColor(const Color& color) noexcept
+    void Component::SetSecondaryColor(const Color& color) noexcept
     {
         m_sColor = color;
     }
 
-    void BaseComponent::SetActiveColor(const Color& color) noexcept
+    void Component::SetActiveColor(const Color& color) noexcept
     {
         m_activeColor = color;
     }
 
-    void BaseComponent::SetTextColor(const Color& color) noexcept
+    void Component::SetTextColor(const Color& color) noexcept
     {
         m_textColor = color;
     }
 
-    void BaseComponent::SetRoundness(float radius) noexcept
+    void Component::SetRoundness(float radius) noexcept
     {
         m_roundness = radius;
     }
 
-    void BaseComponent::ForEachChild(const std::function<bool(BaseComponent *)> &function) noexcept
+    void Component::ForEachChild(const std::function<bool(Component *)> &function) noexcept
     {
         if(!m_children.empty())
         {
@@ -315,21 +315,21 @@ namespace tml::Interface
         }
     }
 
-    void BaseComponent::SetPosition(const Vector2i &position) noexcept
+    void Component::SetPosition(const Vector2i &position) noexcept
     {
         m_pos = position;
         Event e{};
         CallUIFunc("Moved", e);
     }
 
-    void BaseComponent::SetPosition(int32_t x, int32_t y) noexcept
+    void Component::SetPosition(int32_t x, int32_t y) noexcept
     {
         m_pos = Vector2f(static_cast<float>(x), static_cast<float>(y));
         Event e{};
         CallUIFunc("Moved", e);
     }
 
-    void BaseComponent::SetSize(const Vector2i &size) noexcept
+    void Component::SetSize(const Vector2i &size) noexcept
     {
         const auto oldSize = m_size;
 
@@ -345,27 +345,27 @@ namespace tml::Interface
         CallUIFunc("Resized", e);
     }
 
-    void BaseComponent::SetSize(uint32_t w, uint32_t h) noexcept
+    void Component::SetSize(uint32_t w, uint32_t h) noexcept
     {
         SetSize({w, h});
     }
 
-    Vector2i BaseComponent::GetOriginalSize() const noexcept
+    Vector2i Component::GetOriginalSize() const noexcept
     {
         return m_originalSize;
     }
 
-    Vector2f BaseComponent::GetSize() const noexcept
+    Vector2f Component::GetSize() const noexcept
     {
         return m_size;
     }
 
-    Vector2f BaseComponent::GetPosition() const noexcept
+    Vector2f Component::GetPosition() const noexcept
     {
         return m_pos;
     }
 
-    bool BaseComponent::CallUIFunc(const std::string& name, const Event& event) noexcept
+    bool Component::CallUIFunc(const std::string& name, const Event& event) noexcept
     {
         if(m_listeners.find(name) != m_listeners.end())
         {
@@ -387,7 +387,7 @@ namespace tml::Interface
         return false;
     }
 
-    bool BaseComponent::HandleEvent(const Event& event) noexcept
+    bool Component::HandleEvent(const Event& event) noexcept
     {
         CallUIFunc("Any", event);
 
@@ -493,27 +493,27 @@ namespace tml::Interface
         return false;
     }
 
-    void BaseComponent::SetGlobalAnimationSpeed(float speed) noexcept
+    void Component::SetGlobalAnimationSpeed(float speed) noexcept
     {
         s_animationSpeed = speed;
     }
 
-    void BaseComponent::SetGlobalDefaultPrimaryColor(const Color& color) noexcept
+    void Component::SetGlobalDefaultPrimaryColor(const Color& color) noexcept
     {
         s_defaultPrimaryColor = color;
     }
 
-    void BaseComponent::SetGlobalDefaultSecondaryColor(const Color& color) noexcept
+    void Component::SetGlobalDefaultSecondaryColor(const Color& color) noexcept
     {
         s_defaultSecondaryColor = color;
     }
 
-    void BaseComponent::SetGlobalDefaultActiveColor(const Color& color) noexcept
+    void Component::SetGlobalDefaultActiveColor(const Color& color) noexcept
     {
         s_defaultActiveColor = color;
     }
 
-    void BaseComponent::SetGlobalDefaultTextColor(const Color& color) noexcept
+    void Component::SetGlobalDefaultTextColor(const Color& color) noexcept
     {
         s_defaultTextColor = color;
     }

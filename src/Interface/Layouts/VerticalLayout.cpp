@@ -14,7 +14,7 @@ namespace tml::Interface
         SetSize(w,h);
     }
 
-    VerticalLayout::VerticalLayout(const std::vector<BaseComponent*>& components, int32_t x, int32_t y, uint32_t w) noexcept
+    VerticalLayout::VerticalLayout(const std::vector<Component*>& components, int32_t x, int32_t y, uint32_t w) noexcept
     : VerticalLayout(x,y,w,0)
     {
         SetSizePolicy(SizePolicy::Expand, SizePolicy::Fixed);
@@ -47,7 +47,7 @@ namespace tml::Interface
 
     void VerticalLayout::ScaleChildren() noexcept
     {
-        std::vector<BaseComponent*> expandThese, clampThese;
+        std::vector<Component*> expandThese, clampThese;
         float height = 0;
 
         for(auto& item : m_children)

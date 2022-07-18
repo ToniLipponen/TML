@@ -1,11 +1,11 @@
 #pragma once
-#include <TML/Interface/BaseComponent.h>
+#include <TML/Interface/Component.h>
 #include <TML/System/Math/Vector2.h>
 #include <TML/Export.h>
 
 namespace tml::Interface
 {
-    class TML_API Layout : public BaseComponent
+    class TML_API Layout : public Component
     {
     public:
         Layout() noexcept;

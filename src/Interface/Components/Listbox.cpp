@@ -19,7 +19,7 @@ namespace tml::Interface
             m_minimumSize.x = static_cast<float>(width);
         }
 
-        AddListener("Click", [&](BaseComponent* c, const Event& e)
+        AddListener("Click", [&](Component* c, const Event& e)
         {
             if(m_state.MouseOver)
             {
@@ -44,7 +44,7 @@ namespace tml::Interface
             return false;
         });
 
-        AddListener("MouseScroll", [&](BaseComponent* c, const Event& e)
+        AddListener("MouseScroll", [&](Component* c, const Event& e)
         {
             if(m_state.MouseOver && m_scrollbar->Enabled())
             {
@@ -63,13 +63,13 @@ namespace tml::Interface
             return false;
         });
 
-        AddListener("Moved", [&](BaseComponent* c, const Event& e)
+        AddListener("Moved", [&](Component* c, const Event& e)
         {
             m_scrollbar->SetPosition(m_pos + Vector2i(m_size.x - 21, 1));
             return true;
         });
 
-        AddListener("Resized", [&](BaseComponent* c, const Event& e)
+        AddListener("Resized", [&](Component* c, const Event& e)
         {
             m_size.y -= fmodf(m_size.y, 20);
             m_scrollbar->SetPosition(m_pos + Vector2i(m_size.x - 21, 0));
@@ -88,7 +88,7 @@ namespace tml::Interface
             return true;
         });
 
-        AddListener("Drawn", [&](BaseComponent* c, const Event& e)
+        AddListener("Drawn", [&](Component* c, const Event& e)
         {
             if(m_state.MouseOver)
             {

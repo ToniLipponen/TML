@@ -9,11 +9,11 @@ namespace tml::Interface
         m_enabled = layer.m_enabled;
     }
 
-    void Interface::Attach(BaseComponent* rootNode) noexcept
+    void Interface::Attach(Component* rootNode) noexcept
     {
-        std::function<void(BaseComponent*)> registerFunc;
+        std::function<void(Component*)> registerFunc;
 
-        registerFunc = [&](BaseComponent* node) noexcept -> void
+        registerFunc = [&](Component* node) noexcept -> void
         {
             node->m_root = this;
             m_processingQueue.push_front(node);
@@ -31,11 +31,11 @@ namespace tml::Interface
         m_roots.emplace_back(rootNode);
     }
 
-    void Interface::Detach(BaseComponent* component) noexcept
+    void Interface::Detach(Component* component) noexcept
     {
-        std::function<void(BaseComponent*)> unregisterFunc;
+        std::function<void(Component*)> unregisterFunc;
 
-        unregisterFunc = [&](BaseComponent* node) noexcept -> void
+        unregisterFunc = [&](Component* node) noexcept -> void
         {
             const auto end = m_processingQueue.end();
             const auto beg = m_processingQueue.begin();
@@ -65,7 +65,7 @@ namespace tml::Interface
         }
     }
 
-    void Interface::Focus(BaseComponent *component) noexcept
+    void Interface::Focus(Component *component) noexcept
     {
         for(auto* i : m_processingQueue)
         {

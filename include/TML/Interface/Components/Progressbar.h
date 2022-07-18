@@ -1,9 +1,9 @@
 #pragma once
-#include <TML/Interface/BaseComponent.h>
+#include <TML/Interface/Component.h>
 
 namespace tml::Interface
 {
-    class TML_API Progressbar : public BaseComponent
+    class TML_API Progressbar : public Component
     {
     public:
         Progressbar(int32_t x, int32_t y, uint32_t w, uint32_t h = 30) noexcept;

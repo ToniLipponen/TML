@@ -4,26 +4,26 @@
 namespace tml::Interface
 {
     Combobox::Combobox(uint32_t width, uint32_t height, int32_t x, int32_t y) noexcept
-    : BaseComponent(x,y,width,height)
+    : Component(x, y, width, height)
     {
         AddChild(m_listComponent = new Listbox(width, 200, x, y + height + 2));
         AddChild(m_textInput = new LineInput(width, height, x, y));
         m_textInput->SetReadOnly(true);
 
         m_listComponent->Disable();
-        m_listComponent->AddListener("Click", [](BaseComponent* c, const Event& e)
+        m_listComponent->AddListener("Click", [](Component* c, const Event& e)
         {
             c->Disable();
             return true;
         });
 
-        AddListener("LostFocus", [&](BaseComponent*, const Event& e)
+        AddListener("LostFocus", [&](Component*, const Event& e)
         {
             m_listComponent->Disable();
             return true;
         });
 
-        m_textInput->AddListener("Drawn", [&](BaseComponent*, const Event&)
+        m_textInput->AddListener("Drawn", [&](Component*, const Event&)
         {
             /// This is stupid.
             if(m_textInput->GetValue() != m_listComponent->GetSelectedValue())
@@ -33,7 +33,7 @@ namespace tml::Interface
             return true;
         });
 
-        m_textInput->AddListener("Click", [&](BaseComponent* c, const Event& e)
+        m_textInput->AddListener("Click", [&](Component* c, const Event& e)
         {
             if(m_state.Focused)
             {
@@ -44,7 +44,7 @@ namespace tml::Interface
             return true;
         });
 
-        AddListener("Moved", [&](BaseComponent* c, const Event& e)
+        AddListener("Moved", [&](Component* c, const Event& e)
         {
             m_textInput->SetPosition(m_pos);
             m_listComponent->SetPosition({m_pos.x, m_pos.y + m_size.y + 2});

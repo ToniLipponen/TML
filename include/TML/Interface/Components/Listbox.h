@@ -1,11 +1,11 @@
 #pragma once
-#include "../BaseComponent.h"
+#include "../Component.h"
 #include <TML/Interface/Components/Scrollbar.h>
 #include <vector>
 
 namespace tml::Interface
 {
-    class TML_API Listbox : public BaseComponent
+    class TML_API Listbox : public Component
     {
     public:
         explicit Listbox(uint32_t width = 0, uint32_t height = 0, int32_t x = 0, int32_t y = 0);

@@ -1,5 +1,5 @@
 #pragma once
-#include <TML/Interface/BaseComponent.h>
+#include <TML/Interface/Component.h>
 #include <TML/Interface/Layout.h>
 
 namespace tml::Interface
@@ -9,7 +9,7 @@ namespace tml::Interface
     public:
         HorizontalLayout() noexcept;
         HorizontalLayout(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept;
-        explicit HorizontalLayout(const std::vector<BaseComponent*>& components, int32_t x = 0, int32_t y = 0, uint32_t h = 0) noexcept;
+        explicit HorizontalLayout(const std::vector<Component*>& components, int32_t x = 0, int32_t y = 0, uint32_t h = 0) noexcept;
         bool SetCenterVertically(bool value) noexcept;
 
     private:

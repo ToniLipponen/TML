@@ -444,7 +444,8 @@ namespace tml
             case tml::Event::MouseButtonReleased:
             {
                 m_mouseDown = false;
-                if(m_mouseDownPos == Vector2i(e.mouseButton.x, e.mouseButton.y))
+
+                if(Math::Distance(m_mouseDownPos, Vector2i(e.mouseButton.x, e.mouseButton.y)) < 10)
                 {
                     Event clickEvent{};
                     clickEvent.type = tml::Event::MouseButtonClicked;

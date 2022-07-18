@@ -3,14 +3,14 @@
 namespace tml::Interface
 {
     Spacer::Spacer() noexcept
-    : BaseComponent()
+    : Component()
     {
         m_vSizePolicy = SizePolicy::Expand;
         m_hSizePolicy = SizePolicy::Expand;
     }
 
     Spacer::Spacer(ComponentAxis axis, int size) noexcept
-    : BaseComponent()
+    : Component()
     {
         if(axis == ComponentAxis::Horizontal)
         {

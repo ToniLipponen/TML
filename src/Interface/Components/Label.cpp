@@ -15,7 +15,7 @@ namespace tml::Interface
             m_size.x = width;
         }
 
-        AddListener("Moved", [&](BaseComponent*, const Event& e) noexcept
+        AddListener("Moved", [&](Component*, const Event& e) noexcept
         {
             m_text.SetPosition(m_pos);
             return true;

@@ -138,7 +138,7 @@ namespace tml::Interface
             return index;
         };
 
-        AddListener("Click", [](BaseComponent* c, const Event& e)
+        AddListener("Click", [](Component* c, const Event& e)
         {
             if(c->GetState().MouseOver)
             {
@@ -149,7 +149,7 @@ namespace tml::Interface
             return false;
         });
 
-        AddListener("KeyPressed", [&](BaseComponent* c, const Event& e)
+        AddListener("KeyPressed", [&](Component* c, const Event& e)
         {
             if(m_state.Focused && !m_readOnly)
             {
@@ -245,7 +245,7 @@ namespace tml::Interface
             return false;
         });
 
-        AddListener("TextEntered", [&](BaseComponent* c, const Event& e)
+        AddListener("TextEntered", [&](Component* c, const Event& e)
         {
             if(m_state.Focused && !m_readOnly)
             {
@@ -262,19 +262,19 @@ namespace tml::Interface
             return false;
         });
 
-        AddListener("Moved", [&](BaseComponent* c, const Event& e)
+        AddListener("Moved", [&](Component* c, const Event& e)
         {
             AlignText();
             return true;
         });
 
-        AddListener("Resized", [&](BaseComponent* c, const Event& e)
+        AddListener("Resized", [&](Component* c, const Event& e)
         {
             AlignText();
             return true;
         });
 
-        AddListener("Drawn", [&](BaseComponent* c, const Event& e)
+        AddListener("Drawn", [&](Component* c, const Event& e)
         {
             if(m_state.Focused)
             {

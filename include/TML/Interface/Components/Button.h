@@ -1,10 +1,10 @@
 #pragma once
-#include "../BaseComponent.h"
+#include "../Component.h"
 #include <TML/Graphics/Drawable/Text.h>
 
 namespace tml::Interface
 {
-    class TML_API Button : public BaseComponent
+    class TML_API Button : public Component
     {
     public:
         explicit Button(

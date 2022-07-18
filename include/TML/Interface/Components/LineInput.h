@@ -1,10 +1,10 @@
 #pragma once
-#include "../BaseComponent.h"
+#include "../Component.h"
 #include <TML/Graphics/Drawable/Text.h>
 
 namespace tml::Interface
 {
-    class TML_API LineInput : public BaseComponent
+    class TML_API LineInput : public Component
     {
     public:
         explicit LineInput(uint32_t width = 0, uint32_t height = 20, int32_t x = 0, int32_t y = 0) noexcept;

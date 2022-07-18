@@ -18,7 +18,7 @@ namespace tml::Interface
 
         m_pColor = Color(0xccccccff);
 
-        AddListener("Dragged", [&](BaseComponent* c, const Event& e)
+        AddListener("Dragged", [&](Component* c, const Event& e)
         {
             if constexpr(axis == ComponentAxis::Horizontal)
             {

@@ -8,13 +8,13 @@ namespace tml::Interface
         m_size = Vector2f(size,size);
         m_value = checked;
 
-        AddListener("Click", [&](BaseComponent*, const Event& e)
+        AddListener("Click", [&](Component*, const Event& e)
         {
             m_value = !m_value;
             return true;
         });
 
-        AddListener("Drawn", [&](BaseComponent* c, const Event& e)
+        AddListener("Drawn", [&](Component* c, const Event& e)
         {
             if(m_state.MouseOver || m_state.Focused || m_state.Dragged)
             {

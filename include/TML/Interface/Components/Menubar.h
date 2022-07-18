@@ -1,5 +1,5 @@
 #pragma once
-#include <TML/Interface/BaseComponent.h>
+#include <TML/Interface/Component.h>
 #include <TML/Interface/Layouts/HorizontalLayout.h>
 
 namespace tml::Interface

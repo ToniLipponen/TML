@@ -1,9 +1,9 @@
 #pragma once
-#include "../BaseComponent.h"
+#include "../Component.h"
 
 namespace tml::Interface
 {
-    class TML_API Checkbox : public BaseComponent
+    class TML_API Checkbox : public Component
     {
     public:
         Checkbox(uint32_t = 20, int32_t x = 0, int32_t y = 0, bool checked = false) noexcept;

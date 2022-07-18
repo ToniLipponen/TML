@@ -3,15 +3,15 @@
 namespace tml::Interface
 {
     ToggleSwitch::ToggleSwitch(int32_t x, int32_t y, uint32_t size, bool state) noexcept
-    : BaseComponent(x, y, size * 2, size), m_toggleState(state)
+    : Component(x, y, size * 2, size), m_toggleState(state)
     {
-        AddListener("Click", [&](BaseComponent*, const Event&)
+        AddListener("Click", [&](Component*, const Event&)
         {
             m_toggleState = !m_toggleState;
             return true;
         });
 
-        AddListener("Drawn", [&](BaseComponent*, const Event& e)
+        AddListener("Drawn", [&](Component*, const Event& e)
         {
             if(m_toggleState)
             {

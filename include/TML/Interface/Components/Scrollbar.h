@@ -1,10 +1,10 @@
 #pragma once
-#include <TML/Interface/BaseComponent.h>
+#include <TML/Interface/Component.h>
 
 namespace tml::Interface
 {
     template<ComponentAxis axis>
-    class TML_API Scrollbar : public BaseComponent
+    class TML_API Scrollbar : public Component
     {
     public:
         Scrollbar(int32_t x, int32_t y, uint32_t length, uint32_t thickness = 20) noexcept;

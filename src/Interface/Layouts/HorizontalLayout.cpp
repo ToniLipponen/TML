@@ -13,7 +13,7 @@ namespace tml::Interface
         SetSize(w,h);
     }
 
-    HorizontalLayout::HorizontalLayout(const std::vector<BaseComponent*>& components, int32_t x, int32_t y, uint32_t h) noexcept
+    HorizontalLayout::HorizontalLayout(const std::vector<Component*>& components, int32_t x, int32_t y, uint32_t h) noexcept
     : HorizontalLayout(x, y, 0, h)
     {
         m_hSizePolicy = SizePolicy::Expand;
@@ -49,8 +49,8 @@ namespace tml::Interface
 
     void HorizontalLayout::ScaleChildren() noexcept
     {
-        std::vector<BaseComponent*> expandThese;
-        std::vector<BaseComponent*> clampThese;
+        std::vector<Component*> expandThese;
+        std::vector<Component*> clampThese;
         float fixedSize = 0, clampSize = 0;
 
         for(auto& item : m_children)

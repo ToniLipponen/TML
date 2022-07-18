@@ -8,13 +8,13 @@
 #include <unordered_map>
 
 #define TML_GUI_HANDLE_EVENT(eventName)                                      \
-AddListener(eventName, [&](tml::Interface::BaseComponent*, const tml::Event&) \
+AddListener(eventName, [&](tml::Interface::Component*, const tml::Event&) \
 {                                                                            \
     return true;                                                             \
 })
 
 #define TML_GUI_ON_EVENT(eventName, functionality)                                           \
-AddListener(eventName, [&](tml::Interface::BaseComponent* COMPONENT, const tml::Event& EVENT) \
+AddListener(eventName, [&](tml::Interface::Component* COMPONENT, const tml::Event& EVENT) \
 {                                                                                            \
     functionality                                                                            \
     return true;                                                                             \
@@ -27,7 +27,7 @@ namespace tml::Interface
 
     class Interface;
 
-    class TML_API BaseComponent
+    class TML_API Component
     {
     public:
         struct StateFlag
@@ -37,14 +37,14 @@ namespace tml::Interface
             bool Focused    = false;
             bool Dragged    = false;
         };
-        using EventCallback = std::function<bool(BaseComponent*, const Event&)>;
+        using EventCallback = std::function<bool(Component*, const Event&)>;
 
     public:
-        BaseComponent() noexcept;
-        BaseComponent(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept;
-        BaseComponent(const BaseComponent&) = delete;
-        BaseComponent& operator=(const BaseComponent&) noexcept = delete;
-        virtual ~BaseComponent() noexcept;
+        Component() noexcept;
+        Component(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept;
+        Component(const Component&) = delete;
+        Component& operator=(const Component&) noexcept = delete;
+        virtual ~Component() noexcept;
         void Focus() noexcept;
         void UnFocus() noexcept;
         void Enable() noexcept;
@@ -79,12 +79,12 @@ namespace tml::Interface
          * @Any When an event occurs.
          */
         void AddListener(const std::string& name, const EventCallback& callback) noexcept;
-        void AddChild(BaseComponent* component, const std::string& id = "") noexcept;
+        void AddChild(Component* component, const std::string& id = "") noexcept;
         bool RemoveChild(const std::string& id) noexcept;
-        bool RemoveChild(BaseComponent* component) noexcept;
-        BaseComponent* FindComponent(const std::string& id) noexcept;    //!< DANGER! Returns nullptr if not found.
-        BaseComponent* FindComponent(uint64_t) noexcept;                 //!< DANGER! Returns nullptr if not found.
-        BaseComponent* GetParent() noexcept;                             //!< DANGER! Returns nullptr if the component doesn't have a parent.
+        bool RemoveChild(Component* component) noexcept;
+        Component* FindComponent(const std::string& id) noexcept;    //!< DANGER! Returns nullptr if not found.
+        Component* FindComponent(uint64_t) noexcept;                 //!< DANGER! Returns nullptr if not found.
+        Component* GetParent() noexcept;                             //!< DANGER! Returns nullptr if the component doesn't have a parent.
         Interface* GetRoot() noexcept;
         uint64_t GetHash() const noexcept;
         const std::string& GetID() const noexcept;
@@ -97,7 +97,7 @@ namespace tml::Interface
         void SetActiveColor(const Color& color) noexcept;
         virtual void SetTextColor(const Color& color) noexcept;
         void SetRoundness(float radius) noexcept;
-        void ForEachChild(const std::function<bool(BaseComponent* c)>& function) noexcept;
+        void ForEachChild(const std::function<bool(Component* c)>& function) noexcept;
         void SetPosition(const Vector2i& position) noexcept;
         void SetPosition(int32_t x, int32_t y) noexcept;
         void SetSize(const Vector2i& size) noexcept;
@@ -135,9 +135,9 @@ namespace tml::Interface
 
         uint64_t m_hash = 0;
         std::string m_id;
-        std::vector<std::unique_ptr<BaseComponent>> m_children;
+        std::vector<std::unique_ptr<Component>> m_children;
         std::unordered_map<std::string, std::vector<EventCallback>> m_listeners;
-        BaseComponent* m_parent;
+        Component* m_parent;
         Interface* m_root;
         StateFlag m_state;
 

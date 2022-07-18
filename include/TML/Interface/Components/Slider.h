@@ -1,10 +1,10 @@
 #pragma once
-#include "../BaseComponent.h"
+#include "../Component.h"
 
 namespace tml::Interface
 {
     template<ComponentAxis axis>
-    class TML_API Slider : public BaseComponent
+    class TML_API Slider : public Component
     {
     public:
         explicit Slider(uint32_t size = 0, uint32_t thickness = 20, int32_t x = 0, int32_t y = 0) noexcept;

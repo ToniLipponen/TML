@@ -3,7 +3,7 @@
 using namespace tml::Interface;
 
 Button::Button(const std::string& text, uint32_t h, uint32_t w, int32_t x, int32_t y, bool expand)
-: BaseComponent(x,y,w,h)
+: Component(x, y, w, h)
 {
     m_hSizePolicy = expand ? SizePolicy::Expand : SizePolicy::Fixed;
     m_vSizePolicy = SizePolicy::Fixed;
@@ -26,26 +26,26 @@ Button::Button(const std::string& text, uint32_t h, uint32_t w, int32_t x, int32
     const Vector2i textSize = m_text.GetDimensions();
     m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
 
-    AddListener("MouseDown", [&](BaseComponent* c, const Event& e)
+    AddListener("MouseDown", [&](Component* c, const Event& e)
     {
         m_mouseDown = true;
         return true;
     });
 
-    AddListener("MouseUp", [&](BaseComponent* c, const Event& e)
+    AddListener("MouseUp", [&](Component* c, const Event& e)
     {
         m_mouseDown = false;
         return false;
     });
 
-    AddListener("Moved", [&](BaseComponent* c, const Event& e)
+    AddListener("Moved", [&](Component* c, const Event& e)
     {
         const Vector2i textSize = m_text.GetDimensions();
         m_text.SetPosition(m_pos + (m_size / 2) - (textSize / 2));
         return true;
     });
 
-    AddListener("Resized", [&](BaseComponent* c, const Event& e)
+    AddListener("Resized", [&](Component* c, const Event& e)
     {
         m_text.SetSize(m_size.y * 0.6f);
         const Vector2i textSize = m_text.GetDimensions();
@@ -53,7 +53,7 @@ Button::Button(const std::string& text, uint32_t h, uint32_t w, int32_t x, int32
         return true;
     });
 
-    AddListener("Drawn", [&](BaseComponent* c, const Event& e)
+    AddListener("Drawn", [&](Component* c, const Event& e)
     {
         if(m_state.MouseOver || m_state.Focused)
         {

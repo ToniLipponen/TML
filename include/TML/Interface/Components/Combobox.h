@@ -1,12 +1,12 @@
 #pragma once
-#include "../BaseComponent.h"
+#include "../Component.h"
 #include "Listbox.h"
 #include "LineInput.h"
 #include <string>
 
 namespace tml::Interface
 {
-    class TML_API Combobox : public BaseComponent
+    class TML_API Combobox : public Component
     {
     public:
         explicit Combobox(uint32_t width, uint32_t height = 20, int32_t x = 0, int32_t y = 0) noexcept;

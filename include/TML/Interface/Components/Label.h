@@ -1,10 +1,10 @@
 #pragma once
-#include <TML/Interface/BaseComponent.h>
+#include <TML/Interface/Component.h>
 #include <TML/Graphics/Drawable/Text.h>
 
 namespace tml::Interface
 {
-    class TML_API Label : public BaseComponent
+    class TML_API Label : public Component
     {
     public:
         explicit Label(const String& labelText, uint32_t s = 20, uint32_t width = 0, int32_t x = 0, int32_t y = 0) noexcept;

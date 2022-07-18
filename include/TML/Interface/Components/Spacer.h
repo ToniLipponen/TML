@@ -1,9 +1,9 @@
 #pragma once
-#include <TML/Interface/BaseComponent.h>
+#include <TML/Interface/Component.h>
 
 namespace tml::Interface
 {
-    class TML_API Spacer : public BaseComponent
+    class TML_API Spacer : public Component
     {
     public:
         Spacer() noexcept;

@@ -1,10 +1,10 @@
 #pragma once
-#include <TML/Interface/BaseComponent.h>
+#include <TML/Interface/Component.h>
 
 namespace tml::Interface
 {
     template<ComponentAxis axis>
-    class TML_API Separator : public BaseComponent
+    class TML_API Separator : public Component
     {
     public:
         explicit Separator(uint32_t thickness = 1) noexcept;

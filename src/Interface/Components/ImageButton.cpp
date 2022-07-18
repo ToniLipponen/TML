@@ -3,19 +3,19 @@
 namespace tml::Interface
 {
     ImageButton::ImageButton(const Image& image, uint32_t h, int32_t x, int32_t y) noexcept
-    : BaseComponent(x, y, h * (image.GetWidth() / image.GetHeight()), h)
+    : Component(x, y, h * (image.GetWidth() / image.GetHeight()), h)
     {
         m_texture.LoadFromImage(image);
         m_texture.SetSize(m_size);
 
 
-        AddListener("Moved", [&](BaseComponent* c, const Event& e)
+        AddListener("Moved", [&](Component* c, const Event& e)
         {
             m_texture.SetPosition(m_pos);
             return true;
         });
 
-        AddListener("Resized", [&](BaseComponent* c, const Event& e)
+        AddListener("Resized", [&](Component* c, const Event& e)
         {
             m_texture.SetSize(m_size);
             return true;

@@ -75,7 +75,7 @@ namespace tml
     protected:
         WindowSettings m_settings;
         Vector2i m_size, m_pos, m_mouseDownPos;
-        bool m_mouseDown;
+        bool m_mouseDown = false;
         Mouse::Button m_buttonDown;
 
         void* m_handle = nullptr;

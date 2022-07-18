@@ -7,40 +7,40 @@ namespace tml::Interface
         m_hSizePolicy = SizePolicy::Expand;
         m_vSizePolicy = SizePolicy::Expand;
 
-        AddListener("ChildAdded", [&](BaseComponent* c, const Event& e)
+        AddListener("ChildAdded", [&](Component* c, const Event& e)
         {
             ScaleChildren();
             AlignChildren();
             return true;
         });
 
-        AddListener("Resized", [&](BaseComponent* c, const Event& e)
+        AddListener("Resized", [&](Component* c, const Event& e)
         {
             ScaleChildren();
             AlignChildren();
             return true;
         });
 
-        AddListener("Moved", [&](BaseComponent* c, const Event& e)
+        AddListener("Moved", [&](Component* c, const Event& e)
         {
             ScaleChildren();
             AlignChildren();
             return true;
         });
 
-        AddListener("Attached", [&](BaseComponent* c, const Event& e)
+        AddListener("Attached", [&](Component* c, const Event& e)
         {
             ScaleChildren();
             AlignChildren();
             return true;
         });
 
-        AddListener("MouseMoved", [&](BaseComponent* c, const Event& e)
+        AddListener("MouseMoved", [&](Component* c, const Event& e)
         {
             return ContainsPoint(Vector2i(e.pos.x, e.pos.y));
         });
 
-        AddListener("Dragged", [&](BaseComponent* c, const Event& e)
+        AddListener("Dragged", [&](Component* c, const Event& e)
         {
             return ContainsPoint({e.drag.beginX, e.drag.beginY});
         });

@@ -1,5 +1,5 @@
 #pragma once
-#include <TML/Interface/BaseComponent.h>
+#include <TML/Interface/Component.h>
 
 namespace tml::Interface
 {
@@ -7,10 +7,10 @@ namespace tml::Interface
     {
     public:
         Interface() = default;
-        Interface(Interface&& layer) noexcept;
-        void Attach(BaseComponent* rootNode) noexcept;
-        void Detach(BaseComponent* component) noexcept;
-        void Focus(BaseComponent* component) noexcept;
+        Interface(Interface&& other) noexcept;
+        void Attach(Component* rootNode) noexcept;
+        void Detach(Component* component) noexcept;
+        void Focus(Component* component) noexcept;
         void ClearFocused() noexcept;
         void ClearDragged() noexcept;
         void ClearMouseOver() noexcept;
@@ -23,8 +23,8 @@ namespace tml::Interface
         void HandleEvent(Event& event) noexcept;
 
     protected:
-        std::vector<std::unique_ptr<BaseComponent>> m_roots;
-        std::deque<BaseComponent*> m_processingQueue;
+        std::vector<std::unique_ptr<Component>> m_roots;
+        std::deque<Component*> m_processingQueue;
         bool m_enabled = true;
 
     private:

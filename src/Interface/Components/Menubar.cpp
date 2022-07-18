@@ -8,7 +8,7 @@ namespace tml::Interface
         m_vSizePolicy = SizePolicy::Fixed;
         m_padding.x = 1;
 
-        AddListener("WindowResized", [](BaseComponent* c, const Event& e)
+        AddListener("WindowResized", [](Component* c, const Event& e)
         {
             c->SetSize(e.size.w, static_cast<uint32_t>(c->GetSize().y));
             return true;

@@ -35,7 +35,7 @@ namespace tml::Interface
             }
         }
 
-        AddListener("Click", [&](BaseComponent* c, const Event& e)
+        AddListener("Click", [&](Component* c, const Event& e)
         {
             if constexpr(axis == ComponentAxis::Horizontal)
             {
@@ -51,7 +51,7 @@ namespace tml::Interface
             return false;
         });
 
-        AddListener("Dragged", [&](BaseComponent* c, const Event& e)
+        AddListener("Dragged", [&](Component* c, const Event& e)
         {
             if constexpr(axis == ComponentAxis::Horizontal)
             {
@@ -66,7 +66,7 @@ namespace tml::Interface
             return true;
         });
 
-        AddListener("KeyPressed", [&](BaseComponent* c, const Event& e)
+        AddListener("KeyPressed", [&](Component* c, const Event& e)
         {
             if(m_state.Focused)
             {
@@ -92,7 +92,7 @@ namespace tml::Interface
             return false;
         });
 
-        AddListener("Drawn", [&](BaseComponent* c, const Event& e)
+        AddListener("Drawn", [&](Component* c, const Event& e)
         {
             if(m_state.MouseOver || m_state.Focused || m_state.Dragged)
             {
