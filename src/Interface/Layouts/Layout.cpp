@@ -4,8 +4,8 @@ namespace tml::Interface
 {
     Layout::Layout() noexcept
     {
-        m_hSizePolicy = SizePolicy::Expand;
-        m_vSizePolicy = SizePolicy::Expand;
+        m_hSizePolicy = SizePolicy::Dynamic;
+        m_vSizePolicy = SizePolicy::Dynamic;
 
         AddListener("ChildAdded", [&](Component* c, const Event& e)
         {

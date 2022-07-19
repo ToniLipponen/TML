@@ -16,7 +16,7 @@ namespace tml::Interface
     HorizontalLayout::HorizontalLayout(const std::vector<Component*>& components, int32_t x, int32_t y, uint32_t h) noexcept
     : HorizontalLayout(x, y, 0, h)
     {
-        m_hSizePolicy = SizePolicy::Expand;
+        m_hSizePolicy = SizePolicy::Dynamic;
         m_vSizePolicy = SizePolicy::Fixed;
 
         if(h == 0)
@@ -38,8 +38,6 @@ namespace tml::Interface
                 AddChild(i);
             }
         }
-
-        m_originalSize = m_size;
     }
 
     bool HorizontalLayout::SetCenterVertically(bool value) noexcept
@@ -49,67 +47,44 @@ namespace tml::Interface
 
     void HorizontalLayout::ScaleChildren() noexcept
     {
-        std::vector<Component*> expandThese;
-        std::vector<Component*> clampThese;
-        float fixedSize = 0, clampSize = 0;
+        std::vector<Component*> scaledChildren;
+        float fixedSize = 0;
 
-        for(auto& item : m_children)
+        for(auto& i : m_children)
         {
-            const auto itemSize = item->GetSize();
-            const auto originalSize = item->GetOriginalSize();
-            switch(item->GetHorizontalSizePolicy())
+            if(i->GetHorizontalSizePolicy() == SizePolicy::Fixed)
             {
-                case SizePolicy::Fixed:
-                    fixedSize += itemSize.x + m_padding.x;
-                    break;
-                case SizePolicy::Clamp:
-                    clampSize += itemSize.x + m_padding.x;
-                    clampThese.push_back(item.get());
-                    break;
-                default:
-                    expandThese.push_back(item.get());
-                    break;
+                fixedSize += i->GetSize().x;
             }
-            switch(item->GetVerticalSizePolicy())
+            else
             {
-                case SizePolicy::Expand:
-                    item->SetSize({itemSize.x, m_size.y});
-                    break;
-                case SizePolicy::Clamp:
-                    if(itemSize.y > m_size.y)
-                        item->SetSize({itemSize.x, m_size.y});
-                    else if(itemSize.y < originalSize.y)
-                        item->SetSize(itemSize.x, Math::Min<int32_t>(originalSize.y, m_size.y));
-                    break;
-                default:
-                    break;
+                scaledChildren.push_back(i.get());
             }
-        }
-        float widthMinusFixedWidth = Math::Max<float>(m_size.x - fixedSize, 0);
-        float expandSize = widthMinusFixedWidth; /// How much size there is to expand children.
 
-        if(!clampThese.empty())
-        {
-            auto multiplier = Math::Max<float>(widthMinusFixedWidth / clampSize, 0);
-            for(auto i : clampThese)
+            if(i->GetVerticalSizePolicy() == SizePolicy::Dynamic)
             {
-                auto iSize = i->GetSize();
-                auto iOldSize = i->GetOriginalSize();
-                auto scale = Math::Clamp<float>(multiplier, 0, iOldSize.x / float(iSize.x));
-                auto iNewSize = Vector2f(iSize.x * scale, iSize.y);
-                i->SetSize(iNewSize);
-
-                expandSize -= iNewSize.x;
+                i->SetSize(i->GetSize().x, m_size.y);
             }
         }
 
-        auto expandedChildren = expandThese.size();
-        if(expandedChildren != 0)
-        {
-            auto size = expandSize / float(expandedChildren) - (m_padding.x / (expandedChildren / 2.f));
+        const int64_t children = m_children.size();
+        float size = m_size.x - fixedSize - m_padding.x * Math::Max<int64_t>(children - 1, 1);
 
-            for(auto i : expandThese)
-                i->SetSize(Vector2i(size, i->GetSize().y));
+        if(!scaledChildren.empty())
+        {
+            for(int64_t i = scaledChildren.size() - 1; i >= 0; i--)
+            {
+                auto* child = scaledChildren.at(i);
+
+                const auto maxWidth = child->GetMaximumSize().x;
+                const auto minWidth = child->GetMinimumSize().x;
+                const auto itemSize = size / scaledChildren.size();
+                const auto height = child->GetSize().y;
+                const auto width = Math::Clamp(itemSize, minWidth, maxWidth);
+                child->SetSize(width, height);
+                size -= width;
+                scaledChildren.pop_back();
+            }
         }
     }
 

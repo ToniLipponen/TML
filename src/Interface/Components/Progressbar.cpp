@@ -6,7 +6,7 @@ namespace tml::Interface
     {
         m_pos = Vector2i(x,y);
         m_size = Vector2i(w,h);
-        m_hSizePolicy = SizePolicy::Expand;
+        m_hSizePolicy = SizePolicy::Dynamic;
         m_vSizePolicy = SizePolicy::Fixed;
         m_text.SetColor(s_defaultTextColor);
     }

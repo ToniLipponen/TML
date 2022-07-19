@@ -5,7 +5,7 @@ using namespace tml::Interface;
 Button::Button(const std::string& text, uint32_t h, uint32_t w, int32_t x, int32_t y, bool expand)
 : Component(x, y, w, h)
 {
-    m_hSizePolicy = expand ? SizePolicy::Expand : SizePolicy::Fixed;
+    m_hSizePolicy = expand ? SizePolicy::Dynamic : SizePolicy::Fixed;
     m_vSizePolicy = SizePolicy::Fixed;
     m_text.SetString(text);
     m_text.SetColor(s_defaultTextColor);

@@ -7,13 +7,13 @@ namespace tml::Interface
     {
         if constexpr(axis == ComponentAxis::Horizontal)
         {
-            m_hSizePolicy = SizePolicy::Expand;
+            m_hSizePolicy = SizePolicy::Dynamic;
             m_vSizePolicy = SizePolicy::Fixed;
         }
         else
         {
             m_hSizePolicy = SizePolicy::Fixed;
-            m_vSizePolicy = SizePolicy::Expand;
+            m_vSizePolicy = SizePolicy::Dynamic;
         }
 
         m_thickness = thickness;

@@ -20,10 +20,35 @@ AddListener(eventName, [&](tml::Interface::Component* COMPONENT, const tml::Even
     return true;                                                                             \
 })
 
+/**
+ * @brief Some valid listeners
+ *
+ * @Click When mouse has been pressed and then released over the component.
+ * @MouseDown When mouse has been pressed over the component.
+ * @MouseEnter When mouse enters the area of the component.
+ * @MouseExit When mouse exits the are of the component.
+ * @MouseMoved When mouse is moved.
+ * @MouseScroll When mouse is scrolled.
+ * @KeyPressed When keyboard key is pressed down.
+ * @KeyReleased When keyboard key is released.
+ * @TextEntered When text is entered.
+ * @GainedFocus When the component gains focus.
+ * @LostFocus When the component loses focus.
+ * @Resized When the size of the component is changed.
+ * @Moved When the position of the component is changed.
+ * @ChildAdded When a child gets added to the component.
+ * @ChildRemoved When a child gets removed from the component.
+ * @WindowResized When a window returns a resize event.
+ * @Drawn When the component is drawn
+ * @Enabled When the component is enabled.
+ * @Disabled When the component is disabled.
+ * @Any When an event occurs.
+ */
+
 namespace tml::Interface
 {
     enum class ComponentAxis { Horizontal, Vertical };
-    enum class SizePolicy { Fixed, Expand, Clamp };
+    enum class SizePolicy { Fixed, Dynamic };
 
     class Interface;
 
@@ -53,58 +78,38 @@ namespace tml::Interface
         StateFlag GetState() const noexcept;
         bool Focused() const noexcept;
         bool Enabled() const noexcept;
-
-        /**
-         * @brief Some valid listeners
-         *
-         * @Click When mouse has been pressed and then released over the component.
-         * @MouseDown When mouse has been pressed over the component.
-         * @MouseEnter When mouse enters the area of the component.
-         * @MouseExit When mouse exits the are of the component.
-         * @MouseMoved When mouse is moved.
-         * @MouseScroll When mouse is scrolled.
-         * @KeyPressed When keyboard key is pressed down.
-         * @KeyReleased When keyboard key is released.
-         * @TextEntered When text is entered.
-         * @GainedFocus When the component gains focus.
-         * @LostFocus When the component loses focus.
-         * @Resized When the size of the component is changed.
-         * @Moved When the position of the component is changed.
-         * @ChildAdded When a child gets added to the component.
-         * @ChildRemoved When a child gets removed from the component.
-         * @WindowResized When a window returns a resize event.
-         * @Drawn When the component is drawn
-         * @Enabled When the component is enabled.
-         * @Disabled When the component is disabled.
-         * @Any When an event occurs.
-         */
         void AddListener(const std::string& name, const EventCallback& callback) noexcept;
         void AddChild(Component* component, const std::string& id = "") noexcept;
         bool RemoveChild(const std::string& id) noexcept;
         bool RemoveChild(Component* component) noexcept;
-        Component* FindComponent(const std::string& id) noexcept;    //!< DANGER! Returns nullptr if not found.
-        Component* FindComponent(uint64_t) noexcept;                 //!< DANGER! Returns nullptr if not found.
-        Component* GetParent() noexcept;                             //!< DANGER! Returns nullptr if the component doesn't have a parent.
+        virtual bool ContainsPoint(const Vector2i& p);
+        void ForEachChild(const std::function<bool(Component* c)>& function) noexcept;
+
+
+        Vector2f GetSize() const noexcept;
+        Vector2f GetPosition() const noexcept;
+        Vector2f GetMaximumSize() const noexcept;
+        Vector2f GetMinimumSize() const noexcept;
+        SizePolicy GetHorizontalSizePolicy() const noexcept;
+        SizePolicy GetVerticalSizePolicy() const noexcept;
+        Component* GetParent() noexcept;                        //!< DANGER! Returns nullptr if the component doesn't have a parent.
+        Component* GetChild(const std::string& id) noexcept;    //!< DANGER! Returns nullptr if not found.
+        Component* GetChild(uint64_t) noexcept;                 //!< DANGER! Returns nullptr if not found.
         Interface* GetRoot() noexcept;
         uint64_t GetHash() const noexcept;
         const std::string& GetID() const noexcept;
-        virtual bool ContainsPoint(const Vector2i& p);
-        SizePolicy GetHorizontalSizePolicy() const noexcept;
-        SizePolicy GetVerticalSizePolicy() const noexcept;
+
+
+        void SetPosition(const Vector2i& position) noexcept;
+        void SetPosition(int32_t x, int32_t y) noexcept;
+        void SetSize(const Vector2i& size) noexcept;
+        void SetSize(uint32_t width, uint32_t height) noexcept;
         void SetSizePolicy(SizePolicy horizontal, SizePolicy vertical) noexcept;
         void SetPrimaryColor(const Color& color) noexcept;
         void SetSecondaryColor(const Color& color) noexcept;
         void SetActiveColor(const Color& color) noexcept;
         virtual void SetTextColor(const Color& color) noexcept;
         void SetRoundness(float radius) noexcept;
-        void ForEachChild(const std::function<bool(Component* c)>& function) noexcept;
-        void SetPosition(const Vector2i& position) noexcept;
-        void SetPosition(int32_t x, int32_t y) noexcept;
-        void SetSize(const Vector2i& size) noexcept;
-        void SetSize(uint32_t width, uint32_t height) noexcept;
-        Vector2i GetOriginalSize() const noexcept;
-        Vector2f GetSize() const noexcept;
-        Vector2f GetPosition() const noexcept;
 
         friend Interface;
     public:
@@ -121,8 +126,8 @@ namespace tml::Interface
 
         Vector2f m_pos;
         Vector2f m_size;
-        Vector2f m_originalSize; //!< Layouts might resize a component, so the original size needs to be saved.
         Vector2f m_minimumSize;  //!< Minimum size of the component.
+        Vector2f m_maximumSize;
 
         Color m_pColor;
         Color m_sColor;

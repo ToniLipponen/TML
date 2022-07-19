@@ -15,7 +15,7 @@ namespace tml::Interface
             m_pos = Vector2i(x,y);
             m_size = Vector2i(size, thickness);
             m_vSizePolicy = SizePolicy::Fixed;
-            m_hSizePolicy = SizePolicy::Expand;
+            m_hSizePolicy = SizePolicy::Dynamic;
 
             if(size)
             {
@@ -26,7 +26,7 @@ namespace tml::Interface
         {
             m_pos = Vector2i(x,y);
             m_size = Vector2i(static_cast<int>(thickness), static_cast<int>(size));
-            m_vSizePolicy = SizePolicy::Expand;
+            m_vSizePolicy = SizePolicy::Dynamic;
             m_hSizePolicy = SizePolicy::Fixed;
 
             if(size)

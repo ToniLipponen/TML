@@ -21,7 +21,7 @@ namespace tml::Interface
             m_minimumSize.x = static_cast<float>(width);
         }
 
-        m_hSizePolicy = SizePolicy::Expand;
+        m_hSizePolicy = SizePolicy::Dynamic;
         m_vSizePolicy = SizePolicy::Fixed;
 
         AlignText();

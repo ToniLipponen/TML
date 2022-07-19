@@ -7,8 +7,8 @@ namespace tml::Interface
         m_pos = Vector2i(x, y);
         m_size = Vector2i(width, height);
         m_scrollbar = new Scrollbar<ComponentAxis::Vertical>(x + width - 21, y+1, height-2);
-        m_hSizePolicy = SizePolicy::Expand;
-        m_vSizePolicy = SizePolicy::Expand;
+        m_hSizePolicy = SizePolicy::Dynamic;
+        m_vSizePolicy = SizePolicy::Dynamic;
         m_minimumSize = Vector2f(100, 20);
 
         AddChild(m_scrollbar);

@@ -17,7 +17,7 @@ namespace tml::Interface
     VerticalLayout::VerticalLayout(const std::vector<Component*>& components, int32_t x, int32_t y, uint32_t w) noexcept
     : VerticalLayout(x,y,w,0)
     {
-        SetSizePolicy(SizePolicy::Expand, SizePolicy::Fixed);
+        SetSizePolicy(SizePolicy::Dynamic, SizePolicy::Fixed);
 
         for(auto* i : components)
         {
@@ -47,74 +47,44 @@ namespace tml::Interface
 
     void VerticalLayout::ScaleChildren() noexcept
     {
-        std::vector<Component*> expandThese, clampThese;
-        float height = 0;
+        std::vector<Component*> scaledChildren;
+        float fixedSize = 0;
 
-        for(auto& item : m_children)
+        for(auto& i : m_children)
         {
-            const auto itemSize = item->GetSize();
-            const auto originalSize = item->GetOriginalSize();
-
-            switch(item->GetVerticalSizePolicy())
+            if(i->GetVerticalSizePolicy() == SizePolicy::Fixed)
             {
-                case SizePolicy::Fixed:
-                    height += itemSize.y + m_padding.y;
-                    break;
-                case SizePolicy::Clamp:
-                    clampThese.push_back(item.get());
-                    break;
-                default: /// Expand
-                    expandThese.push_back(item.get());
-                    break;
+                fixedSize += i->GetSize().y;
+            }
+            else
+            {
+                scaledChildren.push_back(i.get());
             }
 
-            switch(item->GetHorizontalSizePolicy())
+            if(i->GetHorizontalSizePolicy() == SizePolicy::Dynamic)
             {
-                case SizePolicy::Expand:
-                {
-                    item->SetSize({m_size.x, itemSize.y});
-                } break;
-                case SizePolicy::Clamp:
-                {
-                    if(itemSize.x > m_size.x)
-                    {
-                        item->SetSize({m_size.x, itemSize.y});
-                    }
-                    else if(itemSize.x < originalSize.x)
-                    {
-                        item->SetSize(Vector2i(Math::Min<int32_t>(originalSize.x, m_size.x), itemSize.y));
-                    }
-                } break;
-                default:
-                    break;
+                i->SetSize(m_size.x, i->GetSize().y);
             }
         }
 
-        float heightMinusFixedHeight = Math::Max<float>(m_size.y - height, 0);
-        float expandSize = heightMinusFixedHeight;
+        const int64_t children = m_children.size();
+        float size = m_size.y - fixedSize - m_padding.y * Math::Max<int64_t>(children - 1, 1);
 
-        if(!clampThese.empty())
+        if(!scaledChildren.empty())
         {
-            auto multiplier = Math::Max<float>(heightMinusFixedHeight / height, 0);
-            for(auto i : clampThese)
+            for(int64_t i = scaledChildren.size() - 1; i >= 0; i--)
             {
-                auto iSize = i->GetSize();
-                auto iOldSize = i->GetOriginalSize();
-                auto scale = Math::Clamp<float>(multiplier, 0, iOldSize.y / float(iSize.y));
-                auto iNewSize = Vector2i(iSize.x, iSize.y * scale);
-                i->SetSize(iNewSize);
+                auto* child = scaledChildren.at(i);
 
-                expandSize -= iNewSize.y;
+                const auto maxHeight = child->GetMaximumSize().y;
+                const auto minHeight = child->GetMinimumSize().y;
+                const auto itemSize = size / scaledChildren.size();
+                const auto height = Math::Clamp(itemSize, minHeight, maxHeight);
+                const auto width = child->GetSize().x;
+                child->SetSize(width, height);
+                size -= width + m_padding.y;
+                scaledChildren.pop_back();
             }
-        }
-
-        const auto expandedChildren = expandThese.size();
-        if(expandedChildren != 0)
-        {
-            auto size = Math::Max<float>((expandSize / expandedChildren) - (m_padding.y * m_children.size() / 2), 0);
-
-            for(auto i : expandThese)
-                i->SetSize(Vector2i(i->GetSize().x, size));
         }
     }
 

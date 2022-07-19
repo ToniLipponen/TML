@@ -19,6 +19,8 @@ namespace tml::Interface
       m_sColor(s_defaultSecondaryColor),
       m_activeColor(s_defaultActiveColor),
       m_textColor(s_defaultTextColor),
+      m_minimumSize(0),
+      m_maximumSize(10000),
       m_parent(nullptr),
       m_root(nullptr)
     {
@@ -30,7 +32,8 @@ namespace tml::Interface
       m_sColor(s_defaultSecondaryColor),
       m_activeColor(s_defaultActiveColor),
       m_textColor(s_defaultTextColor),
-      m_originalSize(w,h),
+      m_minimumSize(0),
+      m_maximumSize(10000),
       m_parent(nullptr),
       m_root(nullptr)
     {
@@ -157,7 +160,7 @@ namespace tml::Interface
 
     bool Component::RemoveChild(const std::string& id) noexcept
     {
-        auto* ptr = FindComponent(id);
+        auto* ptr = GetChild(id);
 
         if(ptr == nullptr)
         {
@@ -201,13 +204,68 @@ namespace tml::Interface
         return false;
     }
 
-    Component* Component::FindComponent(const std::string& name) noexcept
+    bool Component::ContainsPoint(const Vector2i& p)
     {
-        const uint64_t hash = std::hash<std::string>{}(name);
-        return FindComponent(hash);
+        return Math::PointInRect(p, m_pos, m_size, 0);
     }
 
-    Component* Component::FindComponent(uint64_t hash) noexcept
+    void Component::ForEachChild(const std::function<bool(Component *)> &function) noexcept
+    {
+        if(!m_children.empty())
+        {
+            for(auto i = m_children.rbegin(); i != m_children.rend(); i++)
+            {
+                if(function(i->get()))
+                {
+                    return;
+                }
+            }
+        }
+    }
+
+    /// Getters
+    Vector2f Component::GetSize() const noexcept
+    {
+        return m_size;
+    }
+
+    Vector2f Component::GetPosition() const noexcept
+    {
+        return m_pos;
+    }
+
+    Vector2f Component::GetMaximumSize() const noexcept
+    {
+        return m_maximumSize;
+    }
+
+    Vector2f Component::GetMinimumSize() const noexcept
+    {
+        return m_minimumSize;
+    }
+
+    SizePolicy Component::GetHorizontalSizePolicy() const noexcept
+    {
+        return m_hSizePolicy;
+    }
+
+    SizePolicy Component::GetVerticalSizePolicy() const noexcept
+    {
+        return m_vSizePolicy;
+    }
+
+    Component* Component::GetParent() noexcept
+    {
+        return m_parent;
+    }
+
+    Component* Component::GetChild(const std::string& name) noexcept
+    {
+        const uint64_t hash = std::hash<std::string>{}(name);
+        return GetChild(hash);
+    }
+
+    Component* Component::GetChild(uint64_t hash) noexcept
     {
         if(m_children.empty())
         {
@@ -224,7 +282,7 @@ namespace tml::Interface
 
         for(auto& i : m_children)
         {
-            auto* component = i->FindComponent(hash);
+            auto* component = i->GetChild(hash);
 
             if(component)
             {
@@ -233,11 +291,6 @@ namespace tml::Interface
         }
 
         return nullptr;
-    }
-
-    Component* Component::GetParent() noexcept
-    {
-        return m_parent;
     }
 
     Interface* Component::GetRoot() noexcept
@@ -255,66 +308,7 @@ namespace tml::Interface
         return m_id;
     }
 
-    bool Component::ContainsPoint(const Vector2i& p)
-    {
-        return Math::PointInRect(p, m_pos, m_size, 0);
-    }
-
-    SizePolicy Component::GetHorizontalSizePolicy() const noexcept
-    {
-        return m_hSizePolicy;
-    }
-
-    SizePolicy Component::GetVerticalSizePolicy() const noexcept
-    {
-        return m_vSizePolicy;
-    }
-
-    void Component::SetSizePolicy(SizePolicy horizontal, SizePolicy vertical) noexcept
-    {
-        m_hSizePolicy = horizontal;
-        m_vSizePolicy = vertical;
-    }
-
-    void Component::SetPrimaryColor(const Color& color) noexcept
-    {
-        m_pColor = color;
-    }
-
-    void Component::SetSecondaryColor(const Color& color) noexcept
-    {
-        m_sColor = color;
-    }
-
-    void Component::SetActiveColor(const Color& color) noexcept
-    {
-        m_activeColor = color;
-    }
-
-    void Component::SetTextColor(const Color& color) noexcept
-    {
-        m_textColor = color;
-    }
-
-    void Component::SetRoundness(float radius) noexcept
-    {
-        m_roundness = radius;
-    }
-
-    void Component::ForEachChild(const std::function<bool(Component *)> &function) noexcept
-    {
-        if(!m_children.empty())
-        {
-            for(auto i = m_children.rbegin(); i != m_children.rend(); i++)
-            {
-                if(function(i->get()))
-                {
-                    return;
-                }
-            }
-        }
-    }
-
+    /// Setters
     void Component::SetPosition(const Vector2i &position) noexcept
     {
         m_pos = position;
@@ -350,19 +344,35 @@ namespace tml::Interface
         SetSize({w, h});
     }
 
-    Vector2i Component::GetOriginalSize() const noexcept
+    void Component::SetSizePolicy(SizePolicy horizontal, SizePolicy vertical) noexcept
     {
-        return m_originalSize;
+        m_hSizePolicy = horizontal;
+        m_vSizePolicy = vertical;
     }
 
-    Vector2f Component::GetSize() const noexcept
+    void Component::SetPrimaryColor(const Color& color) noexcept
     {
-        return m_size;
+        m_pColor = color;
     }
 
-    Vector2f Component::GetPosition() const noexcept
+    void Component::SetSecondaryColor(const Color& color) noexcept
     {
-        return m_pos;
+        m_sColor = color;
+    }
+
+    void Component::SetActiveColor(const Color& color) noexcept
+    {
+        m_activeColor = color;
+    }
+
+    void Component::SetTextColor(const Color& color) noexcept
+    {
+        m_textColor = color;
+    }
+
+    void Component::SetRoundness(float radius) noexcept
+    {
+        m_roundness = radius;
     }
 
     bool Component::CallUIFunc(const std::string& name, const Event& event) noexcept
