@@ -323,25 +323,40 @@ namespace tml::Interface
         CallUIFunc("Moved", e);
     }
 
-    void Component::SetSize(const Vector2i &size) noexcept
+    Vector2f Component::SetSize(const Vector2i &size) noexcept
     {
-        const auto oldSize = m_size;
-
-        m_size.x = Math::Max<float>(size.x, m_minimumSize.x);
-        m_size.y = Math::Max<float>(size.y, m_minimumSize.y);
-
-        if(oldSize == m_size)
-        {
-            return;
-        }
+        m_size.x = Math::Clamp<float>(size.x, m_minimumSize.x, m_maximumSize.x);
+        m_size.y = Math::Clamp<float>(size.y, m_minimumSize.y, m_maximumSize.y);
 
         Event e{};
         CallUIFunc("Resized", e);
+
+        return m_size;
     }
 
-    void Component::SetSize(uint32_t w, uint32_t h) noexcept
+    Vector2f Component::SetSize(uint32_t w, uint32_t h) noexcept
     {
-        SetSize({w, h});
+        return SetSize({w, h});
+    }
+
+    void Component::SetMinimumSize(const Vector2i& size) noexcept
+    {
+        m_minimumSize = size;
+    }
+
+    void Component::SetMinimumSize(uint32_t w, uint32_t h) noexcept
+    {
+        m_minimumSize = Vector2i(w, h);
+    }
+
+    void Component::SetMaximumSize(const Vector2i& size) noexcept
+    {
+        m_maximumSize = size;
+    }
+
+    void Component::SetMaximumSize(uint32_t w, uint32_t h) noexcept
+    {
+        m_maximumSize = Vector2i(w, h);
     }
 
     void Component::SetSizePolicy(SizePolicy horizontal, SizePolicy vertical) noexcept
@@ -373,6 +388,12 @@ namespace tml::Interface
     void Component::SetRoundness(float radius) noexcept
     {
         m_roundness = radius;
+    }
+
+    void Component::SetID(const std::string& str) noexcept
+    {
+        m_hash = std::hash<std::string>{}(str);
+        m_id = str;
     }
 
     bool Component::CallUIFunc(const std::string& name, const Event& event) noexcept

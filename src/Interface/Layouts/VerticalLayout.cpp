@@ -72,18 +72,48 @@ namespace tml::Interface
 
         if(!scaledChildren.empty())
         {
-            for(int64_t i = scaledChildren.size() - 1; i >= 0; i--)
+            struct Bucket
             {
-                auto* child = scaledChildren.at(i);
+                float min, max, size;
+            };
 
-                const auto maxHeight = child->GetMaximumSize().y;
-                const auto minHeight = child->GetMinimumSize().y;
-                const auto itemSize = size / scaledChildren.size();
-                const auto height = Math::Clamp(itemSize, minHeight, maxHeight);
-                const auto width = child->GetSize().x;
-                child->SetSize(width, height);
-                size -= width + m_padding.y;
-                scaledChildren.pop_back();
+            std::vector<Bucket> buckets;
+            buckets.reserve(scaledChildren.size());
+
+            for(auto* i : scaledChildren)
+            {
+                Bucket bucket{};
+                bucket.min = i->GetMinimumSize().y;
+                bucket.max = i->GetMaximumSize().y;
+                bucket.size = bucket.min;
+                size -= bucket.min;
+                buckets.push_back(bucket);
+            }
+
+
+            while(size > 0)
+            {
+                bool incremented = false;
+
+                for(auto& bucket : buckets)
+                {
+                    if(bucket.size < bucket.max)
+                    {
+                        bucket.size += 1;
+                        size -= 1;
+                        incremented = true;
+                    }
+                }
+
+                if(!incremented)
+                {
+                    break;
+                }
+            }
+
+            for(int i = 0; i < scaledChildren.size(); i++)
+            {
+                scaledChildren.at(i)->SetSize(scaledChildren.at(i)->GetSize().x, buckets.at(i).size);
             }
         }
     }

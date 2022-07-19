@@ -102,14 +102,19 @@ namespace tml::Interface
 
         void SetPosition(const Vector2i& position) noexcept;
         void SetPosition(int32_t x, int32_t y) noexcept;
-        void SetSize(const Vector2i& size) noexcept;
-        void SetSize(uint32_t width, uint32_t height) noexcept;
+        Vector2f SetSize(const Vector2i& size) noexcept;
+        Vector2f SetSize(uint32_t width, uint32_t height) noexcept;
+        void SetMinimumSize(const Vector2i& size) noexcept;
+        void SetMinimumSize(uint32_t w, uint32_t h) noexcept;
+        void SetMaximumSize(const Vector2i& size) noexcept;
+        void SetMaximumSize(uint32_t w, uint32_t h) noexcept;
         void SetSizePolicy(SizePolicy horizontal, SizePolicy vertical) noexcept;
         void SetPrimaryColor(const Color& color) noexcept;
         void SetSecondaryColor(const Color& color) noexcept;
         void SetActiveColor(const Color& color) noexcept;
         virtual void SetTextColor(const Color& color) noexcept;
         void SetRoundness(float radius) noexcept;
+        void SetID(const std::string& str) noexcept;
 
         friend Interface;
     public:

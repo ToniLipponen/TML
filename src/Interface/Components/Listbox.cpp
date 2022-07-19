@@ -3,6 +3,7 @@
 namespace tml::Interface
 {
     Listbox::Listbox(uint32_t width, uint32_t height, int32_t x, int32_t y)
+    : Component(x,y,width,height)
     {
         m_pos = Vector2i(x, y);
         m_size = Vector2i(width, height);
