@@ -177,9 +177,20 @@ namespace tml::Interface
                 }
             }
 
-            if(event.type == Event::MouseButtonReleased)
+            switch(event.type)
             {
-                ClearFocused();
+                case Event::MouseButtonReleased:
+                {
+                    ClearFocused();
+                } break;
+
+                case Event::MouseLeft:
+                {
+                    ClearMouseOver();
+                } break;
+
+                default:
+                    break;
             }
         }
     }
