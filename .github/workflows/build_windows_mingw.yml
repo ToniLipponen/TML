@@ -1,4 +1,4 @@
-name: CMake
+name: Build on windows with mingw
 
 on:
   push:
