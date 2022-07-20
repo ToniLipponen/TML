@@ -25,7 +25,12 @@ namespace tml::Interface
     void Label::SetValue(const String& str) noexcept
     {
         m_text.SetString(str);
-        m_size = m_text.GetDimensions();
+        SetSize(m_text.GetDimensions());
+
+        if(m_parent)
+        {
+            m_parent->SetPosition(m_parent->GetPosition());
+        }
     }
 
     bool Label::ContainsPoint(const Vector2i &p) noexcept

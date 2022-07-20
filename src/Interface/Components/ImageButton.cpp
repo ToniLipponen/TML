@@ -5,9 +5,10 @@ namespace tml::Interface
     ImageButton::ImageButton(const Image& image, uint32_t h, int32_t x, int32_t y) noexcept
     : Component(x, y, h * (image.GetWidth() / image.GetHeight()), h)
     {
-        m_texture.LoadFromImage(image);
+        Image img = image;
+        img.FlipVertically();
+        m_texture.LoadFromImage(img);
         m_texture.SetSize(m_size);
-
 
         AddListener("Moved", [&](Component* c, const Event& e)
         {
