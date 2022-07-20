@@ -149,6 +149,7 @@ namespace tml
 
         uint32_t count = 0;
         const uint32_t hex = m_color.Hex();
+        const auto spaceSize = m_size.x / 4;
         Font& font = m_font ? *m_font : GetDefaultFont();
 
         char32_t previousChar = 0;
@@ -175,12 +176,13 @@ namespace tml
                 } break;
 
                 case '\t':
-                    x += m_size.x * TEXT_TAB_SIZE + m_tracking;
+                    xPos += spaceSize * TEXT_TAB_SIZE + m_tracking;
+                    m_dimensions.x += spaceSize * TEXT_TAB_SIZE + m_tracking;
                     break;
 
                 case 32: //!< Space
-                    xPos += m_size.x / 4 + m_tracking;
-                    m_dimensions.x += m_size.x / 4 + m_tracking;
+                    xPos += spaceSize + m_tracking;
+                    m_dimensions.x += spaceSize + m_tracking;
                     break;
 
                 default:

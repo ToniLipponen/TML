@@ -1,6 +1,6 @@
 #pragma once
 
-#define TEXT_TAB_SIZE        4
+#define TEXT_TAB_SIZE        8
 
 // Font
 #define FONT_ATLAS_SIZE      4096
