@@ -179,7 +179,8 @@ namespace tml
                     break;
 
                 case 32: //!< Space
-                    x += m_size.x + m_tracking;
+                    xPos += m_size.x / 4 + m_tracking;
+                    m_dimensions.x += m_size.x / 4 + m_tracking;
                     break;
 
                 default:
