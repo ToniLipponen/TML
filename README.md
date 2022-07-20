@@ -4,6 +4,7 @@
 [![License: Zlib](https://img.shields.io/badge/License-Zlib-red.svg)](https://opensource.org/licenses/Zlib)
 [![Build on linux](https://github.com/ToniLipponen/TML/actions/workflows/build_linux.yml/badge.svg?branch=master)](https://github.com/ToniLipponen/TML/actions/workflows/build_linux.yml)
 [![Build on windows](https://github.com/ToniLipponen/TML/actions/workflows/build_windows.yml/badge.svg?branch=master)](https://github.com/ToniLipponen/TML/actions/workflows/build_windows.yml)
+[![Build on windows with mingw](https://github.com/ToniLipponen/TML/actions/workflows/build_windows_mingw.yml/badge.svg)](https://github.com/ToniLipponen/TML/actions/workflows/build_windows_mingw.yml)
 
 TML is a simple library for making games and applications. It provides interfaces for window creation, graphics rendering, audio playback and keyboard/mouse/controller input. 
 
