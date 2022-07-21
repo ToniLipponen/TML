@@ -45,6 +45,7 @@ namespace tml
         void GetAlignedQuad(void* output, int codePoint, float& x, float& y) noexcept;
         float GetKerning(const std::pair<CodePoint, CodePoint>& pair) const noexcept;
         float GetKerning(CodePoint a, CodePoint b) const noexcept;
+        uint32_t GetAtlasSize() const noexcept;
 
     private:
         bool MakeKerningTable(const uint8_t* data, int offset = 0) noexcept;

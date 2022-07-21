@@ -84,33 +84,39 @@ namespace tml
             return false;
         }
 
-        std::unique_ptr<uint8_t[]> bitmap(new uint8_t[FONT_ATLAS_SIZE * FONT_ATLAS_SIZE]);
+        int32_t size = 64;
         stbtt_pack_context context{};
+        Image bitmap;
 
-        if(!stbtt_PackBegin(&context, bitmap.get(), FONT_ATLAS_SIZE, FONT_ATLAS_SIZE, 0, 10, nullptr))
+        while(size < FONT_ATLAS_SIZE)
         {
-            return false;
-        }
+            bitmap = Image(size, size, 1, nullptr);
 
-        stbtt_PackSetOversampling(&context, FONT_OVER_SAMPLING, FONT_OVER_SAMPLING);
-        stbtt_PackSetSkipMissingCodepoints(&context, 1);
+            if(!stbtt_PackBegin(&context, bitmap.GetData(), size, size, 0, 10, nullptr))
+            {
+                return false;
+            }
 
-        if(stbtt_PackFontRange(&context, data, 0, FONT_GLYPH_SIZE, 32, FONT_MAX_GLYPH_COUNT, (stbtt_packedchar*)m_cdata))
-        {
+            stbtt_PackSetOversampling(&context, FONT_OVER_SAMPLING, FONT_OVER_SAMPLING);
+            stbtt_PackSetSkipMissingCodepoints(&context, 1);
+
+            if(stbtt_PackFontRange(&context, data, 0, FONT_GLYPH_SIZE, 32, FONT_MAX_GLYPH_COUNT, (stbtt_packedchar*)m_cdata))
+            {
+                stbtt_PackEnd(&context);
+                break;
+            }
+
             stbtt_PackEnd(&context);
-            return false;
+            size *= 2;
         }
 
-        stbtt_PackEnd(&context);
-
-        m_texture.LoadFromMemory(FONT_ATLAS_SIZE, FONT_ATLAS_SIZE, 1, bitmap.get());
-
+        m_texture.LoadFromImage(bitmap);
         return MakeKerningTable(data);
     }
 
     void Font::GetAlignedQuad(void *output, int codePoint, float& x, float& y) noexcept
     {
-        stbtt_GetPackedQuad(static_cast<const stbtt_packedchar*>(m_cdata), 4096, 4096, codePoint, &x, &y, static_cast<stbtt_aligned_quad*>(output), 1);
+        stbtt_GetPackedQuad(static_cast<const stbtt_packedchar*>(m_cdata), m_texture.GetWidth(), m_texture.GetHeight(), codePoint, &x, &y, static_cast<stbtt_aligned_quad*>(output), 1);
     }
 
     float Font::GetKerning(const std::pair<CodePoint, CodePoint>& pair) const noexcept
@@ -133,6 +139,11 @@ namespace tml
         }
 
         return 0;
+    }
+
+    uint32_t Font::GetAtlasSize() const noexcept
+    {
+        return m_texture.GetWidth();
     }
 
     bool Font::MakeKerningTable(const uint8_t* data, int offset) noexcept
