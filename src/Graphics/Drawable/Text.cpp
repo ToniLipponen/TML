@@ -189,7 +189,7 @@ namespace tml
                 {
                     stbtt_aligned_quad q{};
 
-                    const float kerning = m_kerning * font.GetKerning((int)previousChar, (int)c) * (m_size.y / 96);
+                    const float kerning = m_kerning * font.GetKerning((int)previousChar, (int)c) * (m_size.y / FONT_GLYPH_SIZE);
                     font.GetAlignedQuad(&q, (int)c - 32, x, y);
                     NormalizeQuad(q, m_size.x, m_pos.x, m_pos.y);
 
