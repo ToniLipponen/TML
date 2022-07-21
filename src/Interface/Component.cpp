@@ -134,7 +134,7 @@ namespace tml::Interface
         m_listeners[name].push_back(callback);
     }
 
-    void Component::AddChild(Component* component, const std::string& name) noexcept
+    Component* Component::AddChild(Component* component, const std::string& name) noexcept
     {
         if(component)
         {
@@ -156,6 +156,8 @@ namespace tml::Interface
             Event e{};
             CallUIFunc("ChildAdded", e);
         }
+
+        return component;
     }
 
     bool Component::RemoveChild(const std::string& id) noexcept

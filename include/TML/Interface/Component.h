@@ -79,7 +79,7 @@ namespace tml::Interface
         bool Focused() const noexcept;
         bool Enabled() const noexcept;
         void AddListener(const std::string& name, const EventCallback& callback) noexcept;
-        void AddChild(Component* component, const std::string& id = "") noexcept;
+        Component* AddChild(Component* component, const std::string& id = "") noexcept;
         bool RemoveChild(const std::string& id) noexcept;
         bool RemoveChild(Component* component) noexcept;
         virtual bool ContainsPoint(const Vector2i& p);
