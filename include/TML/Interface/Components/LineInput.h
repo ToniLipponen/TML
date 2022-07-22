@@ -7,7 +7,7 @@ namespace tml::Interface
     class TML_API LineInput : public Component
     {
     public:
-        explicit LineInput(uint32_t width = 0, uint32_t height = 20, int32_t x = 0, int32_t y = 0) noexcept;
+        explicit LineInput(uint32_t width = 0, uint32_t height = 24, int32_t x = 0, int32_t y = 0) noexcept;
         void SetValue(const String& string) noexcept;
         void SetTextColor(const Color& color) noexcept override;
         void SetReadOnly(bool readOnly) noexcept;

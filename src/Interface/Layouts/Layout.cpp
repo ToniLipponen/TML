@@ -46,14 +46,24 @@ namespace tml::Interface
         });
     }
 
-    void Layout::SetPadding(const Vector2i &padding) noexcept
+    Vector2i Layout::SetPadding(const Vector2i &padding) noexcept
     {
-        m_padding = padding;
+        return m_padding = padding;
+    }
+
+    Vector2i Layout::SetMargin(const Vector2i& margin) noexcept
+    {
+        return m_margin = margin;
     }
 
     Vector2i Layout::GetPadding() const noexcept
     {
         return m_padding;
+    }
+
+    Vector2i Layout::GetMargin() const noexcept
+    {
+        return m_margin;
     }
 
     void Layout::pDraw(RenderTarget& target) noexcept

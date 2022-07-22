@@ -9,6 +9,7 @@ namespace tml::Interface
         m_max = 1;
         m_minimumSize = {thickness};
         m_value = (m_min + m_max) / 2;
+        m_roundness = 10;
 
         if constexpr(axis == ComponentAxis::Horizontal)
         {
@@ -144,7 +145,7 @@ namespace tml::Interface
         {
             const auto radiusClamped = Math::Clamp<float>(m_roundness, 0, m_size.y);
             const auto barSize = Math::Lerp<float>(0, m_size.x, m_sliderValue / m_max);
-            const auto x = Math::Max<float>(barSize, radiusClamped);
+            const auto x = Math::Max<float>(barSize, radiusClamped * 2);
 
             target.DrawRect(m_pos + Vector2f(1, 1), Vector2f(x - 2 , m_size.y - 2), m_activeColor, radiusClamped);
         }
@@ -152,7 +153,7 @@ namespace tml::Interface
         {
             const auto radiusClamped = Math::Clamp<float>(m_roundness, 0, m_size.x);
             const auto barSize = Math::Lerp<float>(0, m_size.y, 1.0 - m_sliderValue / m_max);
-            const auto y = Math::Min<float>(barSize, m_size.y - radiusClamped);
+            const auto y = Math::Min<float>(barSize, m_size.y - radiusClamped * 2);
 
             target.DrawRect(m_pos + Vector2f(1, y + 1), Vector2f(m_size.x - 2, m_size.y - y - 2), m_activeColor, radiusClamped);
         }

@@ -2,22 +2,21 @@
 
 namespace tml::Interface
 {
-    HorizontalLayout::HorizontalLayout() noexcept
-    {
-
-    }
+    HorizontalLayout::HorizontalLayout() noexcept = default;
 
     HorizontalLayout::HorizontalLayout(int32_t x, int32_t y, uint32_t w, uint32_t h) noexcept
     {
         SetPosition(x,y);
         SetSize(w,h);
+        m_verticallyCenter = false;
     }
 
     HorizontalLayout::HorizontalLayout(const std::vector<Component*>& components, int32_t x, int32_t y, uint32_t h) noexcept
     : HorizontalLayout(x, y, 0, h)
     {
-        m_hSizePolicy = SizePolicy::Dynamic;
-        m_vSizePolicy = SizePolicy::Fixed;
+//        m_sColor = Color(0,255,0,50);
+        SetSizePolicy(SizePolicy::Dynamic, SizePolicy::Fixed);
+        m_margin = {0, 0};
 
         if(h == 0)
         {
@@ -38,11 +37,36 @@ namespace tml::Interface
                 AddChild(i);
             }
         }
+
+//        TML_GUI_ON_EVENT("Attached",
+//             float width = m_size.x;
+//             float height = 0;
+//
+//             for(auto& i : m_children)
+//             {
+//                 auto iHeight = i->GetSize().x;
+//
+//                 if(iHeight > width)
+//                 {
+//                     width = iHeight;
+//                 }
+//
+//                 height += i->GetSize().y + m_padding.y;
+//             }
+//
+//             SetSize(width, height);
+//             return false;
+//        );
     }
 
     bool HorizontalLayout::SetCenterVertically(bool value) noexcept
     {
         return m_verticallyCenter = value;
+    }
+
+    bool HorizontalLayout::GetCenterVertically() const noexcept
+    {
+        return m_verticallyCenter;
     }
 
     void HorizontalLayout::ScaleChildren() noexcept
@@ -63,12 +87,12 @@ namespace tml::Interface
 
             if(i->GetVerticalSizePolicy() == SizePolicy::Dynamic)
             {
-                i->SetSize(i->GetSize().x, m_size.y);
+                i->SetSize(i->GetSize().x, m_size.y - m_margin.y * 2);
             }
         }
 
         const int64_t children = m_children.size();
-        float size = m_size.x - fixedSize - m_padding.x * Math::Max<int64_t>(children - 1, 1);
+        float size = m_size.x - m_margin.x * 2 -  fixedSize - m_padding.x * Math::Max<int64_t>(children - 1, 1);
 
         if(!scaledChildren.empty())
         {
@@ -119,7 +143,7 @@ namespace tml::Interface
 
     void HorizontalLayout::AlignChildren() noexcept
     {
-        float offset = 0;
+        float offset = m_margin.x;
 
         for(auto& i : m_children)
         {
@@ -130,7 +154,7 @@ namespace tml::Interface
                 y = Math::Max(m_pos.y + (m_size.y - i->GetSize().y) / 2, m_pos.y);
             }
 
-            i->SetPosition(m_pos.x + offset, y);
+            i->SetPosition(m_pos.x + offset, y + m_margin.y);
             offset += i->GetSize().x + m_padding.x;
         }
     }

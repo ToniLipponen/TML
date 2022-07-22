@@ -9,8 +9,11 @@ namespace tml::Interface
     {
     public:
         Layout() noexcept;
-        void SetPadding(const Vector2i& padding) noexcept;
+        Vector2i SetPadding(const Vector2i& padding) noexcept;
+        Vector2i SetMargin(const Vector2i& margin) noexcept;
+
         Vector2i GetPadding() const noexcept;
+        Vector2i GetMargin() const noexcept;
 
     private:
         void pDraw(RenderTarget& target) noexcept override;
@@ -20,6 +23,7 @@ namespace tml::Interface
         virtual void AlignChildren() noexcept = 0;
 
     protected:
-        Vector2i m_padding = {5, 5};
+        Vector2i m_padding = {5};
+        Vector2i m_margin = {5};
     };
 }

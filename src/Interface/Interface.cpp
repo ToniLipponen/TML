@@ -18,9 +18,6 @@ namespace tml::Interface
             node->m_root = this;
             m_processingQueue.push_front(node);
 
-            Event e{};
-            node->CallUIFunc("Attached", e);
-
             for(auto& i : node->m_children)
             {
                 registerFunc(i.get());
@@ -29,6 +26,12 @@ namespace tml::Interface
 
         registerFunc(rootNode);
         m_roots.emplace_back(rootNode);
+
+        for(auto* node : m_processingQueue)
+        {
+            Event e{};
+            node->CallUIFunc("Attached", e);
+        }
     }
 
     void Interface::Detach(Component* component) noexcept

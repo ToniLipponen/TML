@@ -9,7 +9,7 @@ namespace tml::Interface
     public:
         explicit Button(
                 const std::string& text,
-                uint32_t height = 20,
+                uint32_t height = 24,
                 uint32_t width = 0,
                 int32_t x = 0,
                 int32_t y = 0,

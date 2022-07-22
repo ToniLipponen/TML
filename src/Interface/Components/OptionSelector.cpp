@@ -17,7 +17,7 @@ namespace tml::Interface
     {
         m_vSizePolicy = SizePolicy::Dynamic;
         m_hSizePolicy = SizePolicy::Dynamic;
-        m_minimumSize = {0, 0};
+        m_minimumSize = {0, 20};
         m_maximumSize = {10000, 30};
 
         m_layout = new HorizontalLayout({
@@ -27,6 +27,8 @@ namespace tml::Interface
             new Spacer,
             m_incement = new Button(">"),
         });
+
+        m_layout->SetCenterVertically(true);
 
         AddChild(m_layout);
 

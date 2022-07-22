@@ -77,7 +77,7 @@ void CreateDefaultFragmentShader(int textureSlots)
            /// Text
            case 2u:
                mediump vec4 color = SampleTex(vTexID);
-               mediump float alpha = smoothstep(0.2, 0.7, color.r) * vColor.a;
+               mediump float alpha = smoothstep(0.1, 0.9, color.r) * vColor.a;
 
                if(alpha > 0.01)
                {
