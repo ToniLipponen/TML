@@ -80,8 +80,8 @@ namespace tml
         Converter converter(channels, static_cast<int>(rate), 2, 48000);
         unsigned long long framesIn = sampleCount / channels, framesOut = m_data.size();
         converter.Convert(m_data.data(), framesOut, data, framesIn);
-        m_channels = channels;
-        m_rate = rate;
+        m_channels = 2;
+        m_rate = 48000;
         return true;
     }
 

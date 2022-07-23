@@ -5,6 +5,8 @@ namespace tml::Interface
     ToggleSwitch::ToggleSwitch(int32_t x, int32_t y, uint32_t size, bool state) noexcept
     : Component(x, y, size * 2, size), m_toggleState(state)
     {
+        m_roundness = 30;
+
         AddListener("Click", [&](Component*, const Event&)
         {
             m_toggleState = !m_toggleState;
