@@ -1,0 +1,56 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Debug - build",
+            "type": "shell",
+            "command": "cmake -S . -B build/debug && cmake --build build/debug",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Debug - clean build",
+            "type": "shell",
+            "command": "cmake -S . -B build/debug && cmake --build build/debug --target clean && cmake --build build/debug",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Debug - clean",
+            "type": "shell",
+            "command": "cmake --build build/debug --target clean"
+        },
+        
+        {
+            "label": "Release - build",
+            "type": "shell",
+            "command": "cmake -S . -B build/release && cmake --build build/release",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Release - clean build",
+            "type": "shell",
+            "command": "cmake -S . -B build/release && cmake --build build/release --target clean && cmake --build build/release",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Release - clean",
+            "type": "shell",
+            "command": "cmake --build build/release --target clean"
+        },
+    ]
+}

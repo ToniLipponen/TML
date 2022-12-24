@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "name": "Common",
+            "includePath": [
+                "${workspaceFolder}/include"
+            ],
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}

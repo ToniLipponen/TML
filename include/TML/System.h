@@ -1,0 +1,12 @@
+#pragma once
+#include <TML/System/Clipboard.h>
+#include <TML/System/Clock.h>
+#include <TML/System/Compression.h>
+#include <TML/System/File.h>
+#include <TML/System/Math.h>
+#include <TML/System/Serializer/Serializer.h>
+#include <TML/System/Serializer/Deserializer.h>
+#include <TML/System/Serializer/StreamSerializer.h>
+#include <TML/System/Serializer/StreamDeserializer.h>
+#include <TML/System/Serializer/FileSerializer.h>
+#include <TML/System/Serializer/FileDeserializer.h>
