@@ -12,11 +12,6 @@ if(TML_BUILD_MODULE_GRAPHICS)
     set(BUILT_MODULES_LIST ${BUILT_MODULES_LIST} tml-graphics)
 endif()
 
-if(TML_BUILD_MODULE_INTERFACE)
-    add_subdirectory(src/Interface)
-    set(BUILT_MODULES_LIST ${BUILT_MODULES_LIST} tml-interface)
-endif()
-
 if(TML_BUILD_MODULE_NETWORK)
     add_subdirectory(src/Network)
     set(BUILT_MODULES_LIST ${BUILT_MODULES_LIST} tml-network)

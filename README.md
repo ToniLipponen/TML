@@ -33,7 +33,7 @@ Currently, I have no way of supporting macOS.
 If you wish to build the project from source, there are some instructions in [BUILDING.md](BUILDING.md)
 
 # Using
-Currently, there is no API documentation or tutorials on how to use this library. There are some very simple examples in the [examples](examples) directory. Once this project is a bit more matured, I will take the time to document the API and make some tutorials.
+Currently, there is no API documentation or tutorials on how to use this library. Once this project is a bit more matured, I will take the time to document the API and make some tutorials.
 
 ### Basic example
     
