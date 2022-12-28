@@ -31,9 +31,8 @@ namespace tml
         void SetURI(std::string URI);
         void SetProperty(std::string property, std::string value); /// Set header fields.
         void SetBody(std::string body);
-
-        friend class HttpHost;
         [[nodiscard]] std::string GetRequestString() const noexcept;
+        friend class HttpClient;
     private:
         enum Method m_method;
         uint32_t m_versionMajor = 1;
@@ -136,7 +135,7 @@ namespace tml
         [[nodiscard]] StatusCode GetStatusCode() const noexcept;
         [[nodiscard]] std::string GetContent() const noexcept;
 
-        friend class HttpHost;
+        friend class HttpClient;
     protected:
         void StatusFromString(const std::string& str);
         static std::string GetStatusTextFromStatusCode(StatusCode code) noexcept;
@@ -149,11 +148,11 @@ namespace tml
         std::map<std::string, std::string> m_properties;
     };
 
-    class TML_API HttpHost
+    class TML_API HttpClient
     {
     public:
-        HttpHost() = default;
-        HttpHost(std::string address, uint32_t port);
+        HttpClient() = default;
+        HttpClient(std::string address, uint32_t port);
 
         bool Connect(std::string address, uint32_t port) noexcept;
         bool Send(HttpRequest& request) noexcept;

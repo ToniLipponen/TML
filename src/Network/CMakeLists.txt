@@ -12,7 +12,7 @@ set(SRC_FILES
         Socket.cpp
         Http/Request.cpp
         Http/Response.cpp
-        Http/Host.cpp)
+        Http/Client.cpp)
 
 add_library(tml-network ${TML_LIBRARY_TYPE} ${SRC_FILES})
 set_target_properties(tml-network PROPERTIES VERSION ${TML_API_VERSION} SOVERSION ${TML_API_VERSION})

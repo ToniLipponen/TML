@@ -2,20 +2,20 @@
 
 namespace tml
 {
-    HttpHost::HttpHost(std::string address, uint32_t port)
+    HttpClient::HttpClient(std::string address, uint32_t port)
     : m_address(std::move(address))
     {
         m_socket.Connect(m_address, port);
     }
 
-    bool HttpHost::Connect(std::string address, uint32_t port) noexcept
+    bool HttpClient::Connect(std::string address, uint32_t port) noexcept
     {
         m_address = std::move(address);
         const auto result = m_socket.Connect(m_address, port);
         return result == Socket::Result::OK;
     }
 
-    bool HttpHost::Send(HttpRequest& request) noexcept
+    bool HttpClient::Send(HttpRequest& request) noexcept
     {
         request.SetProperty("Host", m_address);
         const auto message = request.GetRequestString();
@@ -39,14 +39,14 @@ namespace tml
         return true;
     }
 
-    bool HttpHost::GetResponse(HttpResponse& response) noexcept
+    bool HttpClient::GetResponse(HttpResponse& response) noexcept
     {
         const auto responseString = GetResponseString();
         response.SetContent(responseString);
         return !responseString.empty();
     }
 
-    std::string HttpHost::GetResponseString() noexcept
+    std::string HttpClient::GetResponseString() noexcept
     {
         uint64_t received = 1;
 

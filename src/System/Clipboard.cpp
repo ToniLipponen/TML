@@ -37,9 +37,16 @@ namespace tml
         return !IsEmpty() && !HasImage();
     }
 
+    void Clipboard::Clear()
+    {
+        glfwInit();
+        glfwSetClipboardString(nullptr,"\0");
+    }
+
     bool Clipboard::GetString(String& string)
     {
         glfwInit();
+
         if(HasText())
         {
             string = String(glfwGetClipboardString(nullptr));
@@ -59,10 +66,34 @@ namespace tml
         return false;
     }
 
-    void Clipboard::Clear()
+    std::optional<String> Clipboard::GetString()
     {
-        glfwInit();
-        glfwSetClipboardString(nullptr,"\0");
+        if(HasText())
+        {
+            String text;
+
+            if(GetString(text))
+            {
+                return text;
+            }
+        }
+
+        return std::nullopt;
+    }
+
+    std::optional<Image> Clipboard::GetImage()
+    {
+        if(HasImage())
+        {
+            Image image;
+
+            if(GetImage(image))
+            {
+                return image;
+            }
+        }
+
+        return std::nullopt;
     }
 
     void Clipboard::SetString(const String& string)
