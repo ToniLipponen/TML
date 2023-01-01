@@ -19,7 +19,7 @@ TcpSocket::TcpSocket(tml::TcpSocket&& other) noexcept
 	std::swap(m_address,    other.m_address);
 }
 
-TcpSocket& TcpSocket::operator=(tml::TcpSocket &&other) noexcept
+TcpSocket& TcpSocket::operator=(tml::TcpSocket&& other) noexcept
 {
 	std::swap(m_fd,         other.m_fd);
 	std::swap(m_address,    other.m_address);
@@ -31,8 +31,6 @@ TcpSocket& TcpSocket::operator=(tml::TcpSocket &&other) noexcept
 
 Socket::Result TcpSocket::Connect(const IpAddress& address, uint32_t port)
 {
-	Close();
-	Create();
 	sockaddr_in sockAddress = MakeAddress(address, port);
 
 	const auto result = connect(m_fd, reinterpret_cast<sockaddr*>(&sockAddress), sizeof(sockAddress));
@@ -40,7 +38,8 @@ Socket::Result TcpSocket::Connect(const IpAddress& address, uint32_t port)
 	/// Failed to connect to the host
 	if(result != 0)
 	{
-		Close();
+        std::cerr << "Socket failed to connect\n";
+
 		return CheckErrno();
 	}
 

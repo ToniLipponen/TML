@@ -51,13 +51,11 @@ Socket::Result UdpSocket::Connect(const tml::IpAddress& address, uint32_t port)
 
 Socket::Result UdpSocket::Bind(uint32_t port)
 {
-	Close();
-	Create();
 	m_data->address = MakeAddress("0.0.0.0", port);
 
 	if(bind(m_fd, reinterpret_cast<sockaddr*>(&m_data->address), sizeof(m_data->address)) == -1)
 	{
-		std::cerr << "Could not bind udp socket\n";
+		std::cerr << "Failed to bind UDP socket\n";
 		return Socket::Result::Error;
 	}
 

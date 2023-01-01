@@ -29,7 +29,7 @@ void SocketMonitor::Add(const tml::Socket& socket)
 
 	pollfd pollStruct{};
 	pollStruct.fd = handle;
-	pollStruct.events = POLLIN | POLLHUP | POLLOUT | POLLPRI;
+	pollStruct.events = POLLIN | POLLOUT;
 	pollStruct.revents = 0;
 
 	m_data->descriptors.push_back(pollStruct);
@@ -53,12 +53,10 @@ void SocketMonitor::Remove(const tml::Socket& socket)
 
 bool SocketMonitor::Poll(int32_t timeout)
 {
-	int result;
-
 #if defined(TML_PLATFORM_UNIX)
-	result = poll(m_data->descriptors.data(), m_data->descriptors.size(), timeout);
+	int result = poll(m_data->descriptors.data(), m_data->descriptors.size(), timeout);
 #elif defined(TML_PLATFORM_WINDOWS)
-	result = WSAPoll(m_data->descriptors.data(), m_data->descriptors.size(), timeout);
+	int result = WSAPoll(m_data->descriptors.data(), m_data->descriptors.size(), timeout);
 #endif
 
 	if(result > 0)

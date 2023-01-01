@@ -11,7 +11,7 @@ using namespace tml;
 Socket::Socket(tml::Socket::Type type)
 : m_fd(TML_INVALID_SOCKET), m_type(type)
 {
-
+    Create();
 }
 
 Socket::~Socket()
