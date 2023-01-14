@@ -15,7 +15,7 @@ namespace tml
         TML_ASSERT(glfwInit() == GLFW_TRUE, "Failed to initialize GLFW");
 
         /// Set GLFW error callback.
-        glfwSetErrorCallback([](int, const char* m){ std::printf("[Error]: %s\n", m); });
+        glfwSetErrorCallback([](int, const char* m){ std::fprintf(stderr, "[Error]: %s\n", m); });
 
         /// Set context hints.
 

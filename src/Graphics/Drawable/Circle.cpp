@@ -40,10 +40,10 @@ namespace tml
 
             m_vertexData.clear();
 
-            m_vertexData.push_back(Vertex{offset - s,                   {0.f, 1.f}, hex, Vertex::TEXT, 0});
-            m_vertexData.push_back(Vertex{offset + Vector2f(s.x, -s.y), {1.f, 1.f}, hex, Vertex::TEXT, 0});
-            m_vertexData.push_back(Vertex{offset + Vector2f(-s.x, s.y), {0.f, 0.f}, hex, Vertex::TEXT, 0});
-            m_vertexData.push_back(Vertex{offset + s,                   {1.f, 0.f}, hex, Vertex::TEXT, 0});
+            m_vertexData.push_back(Vertex{offset - s,                   {0.f, 1.f}, hex, Vertex::CIRCLE, 0});
+            m_vertexData.push_back(Vertex{offset + Vector2f(s.x, -s.y), {1.f, 1.f}, hex, Vertex::CIRCLE, 0});
+            m_vertexData.push_back(Vertex{offset + Vector2f(-s.x, s.y), {0.f, 0.f}, hex, Vertex::CIRCLE, 0});
+            m_vertexData.push_back(Vertex{offset + s,                   {1.f, 0.f}, hex, Vertex::CIRCLE, 0});
 
             for(auto& v : m_vertexData)
             {
@@ -52,6 +52,7 @@ namespace tml
 
             m_updated = false;
         }
+
         renderer->PushVertexData(m_vertexData, m_indexData, *circle);
     }
 }

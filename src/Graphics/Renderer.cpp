@@ -74,12 +74,46 @@ void CreateDefaultFragmentShader(int textureSlots)
 
            /// Text
            case 2u:
+           {
                mediump vec4 color = SampleTex(vTexID);
-               
+
                mediump float w = fwidth(color.r);
                mediump float alpha = smoothstep(0.5-w, 0.5+w, color.r) * vColor.a;
-               outColor = vColor;
-               outColor.a = alpha;
+
+               if(alpha < 0.01)
+               {
+                    discard;
+               }
+               else
+               {
+                   outColor = vColor;
+                   outColor.a = alpha;
+               }
+           }
+           break;
+
+           /// Circle
+           case 3u:
+           {
+               mediump vec4 color = SampleTex(vTexID);
+               mediump float w = fwidth(color.r);
+               mediump float lowerEdge = 0.5 - w;
+               mediump float upperEdge = 0.5 + w;
+               mediump float result = 0.0;
+               result = mix(smoothstep(lowerEdge, upperEdge, color.r), smoothstep(0.0, 0.995, color.r), w);
+
+               mediump float alpha = result * vColor.a;
+
+               if(alpha < 0.01)
+               {
+                    discard;
+               }
+               else
+               {
+                   outColor = vColor;
+                   outColor.a = alpha;
+               }
+           }
            break;
 
            default:
@@ -320,13 +354,13 @@ namespace tml
         const auto sin_r = static_cast<float>(std::sin(Math::DegreesToRadians(rotation)));
 
         m_vertexData.emplace_back(
-                Vertex{Math::Rotate(origin, pos, cos_r, sin_r), tl, hex, type, tex});
+                Math::Rotate(origin, pos, cos_r, sin_r), tl, hex, type, tex);
         m_vertexData.emplace_back(
-                Vertex{Math::Rotate(origin, pos + Vector2f{size.x, 0.f}, cos_r, sin_r), {br.x, tl.y}, hex, type, tex});
+                Math::Rotate(origin, pos + Vector2f{size.x, 0.f}, cos_r, sin_r), Vector2f{br.x, tl.y}, hex, type, tex);
         m_vertexData.emplace_back(
-                Vertex{Math::Rotate(origin, pos + Vector2f{0.f, size.y}, cos_r, sin_r), {tl.x, br.y}, hex, type, tex});
+                Math::Rotate(origin, pos + Vector2f{0.f, size.y}, cos_r, sin_r), Vector2f{tl.x, br.y}, hex, type, tex);
         m_vertexData.emplace_back(
-                Vertex{Math::Rotate(origin, pos + size, cos_r, sin_r), br, hex, type, tex});
+                Math::Rotate(origin, pos + size, cos_r, sin_r), br, hex, type, tex);
 
         m_indexData.emplace_back(currentElements + 0);
         m_indexData.emplace_back(currentElements + 1);

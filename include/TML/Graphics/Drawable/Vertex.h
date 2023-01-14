@@ -9,7 +9,8 @@ namespace tml
         {
             COLOR   = 0,
             TEXTURE = 1,
-            TEXT    = 2
+            TEXT    = 2,
+            CIRCLE  = 3,
         };
 
         Vertex(const Vector2f& pos,

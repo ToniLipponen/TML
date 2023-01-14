@@ -12,9 +12,12 @@ namespace tml
         {
             for(uint32_t j = 0; j < resolution; ++j)
             {
-                const auto dist = Math::Distance(Vector2f(j, i), center);
+                const auto dist = Math::Min<double>(Math::Distance(Vector2f(j, i), center), radius);
                 const auto d = dist / radius;
-                buffer[i * resolution + j] = static_cast<unsigned char>(Math::SmoothStep(0.0f, 0.05f, 1.0f - static_cast<float>(d)) * 255.0f);
+                const auto oneMinusD = 1.0 - d;
+
+                buffer[i * resolution + j] = static_cast<uint8_t>(
+                        Math::SmoothStep(0.0, 0.05, oneMinusD) * 255.0);
             }
         }
     }
@@ -28,7 +31,7 @@ namespace tml
 
         if(!s_circleTexture)
         {
-            constexpr uint32_t size = 2048;
+            constexpr uint32_t size = 1024;
             std::vector<uint8_t> circlePixels(size*size);
             MakeCircle(circlePixels.data(), size);
 
@@ -137,7 +140,7 @@ namespace tml
 
     void RenderTarget::DrawCircle(const Vector2f &pos, float radius, const Color &color) noexcept
     {
-        PushQuad(pos-Vector2f(radius), Vector2f(radius*2), color, *s_circleTexture, Vertex::TEXT);
+        PushQuad(pos-Vector2f(radius), Vector2f(radius*2), color, *s_circleTexture, Vertex::CIRCLE);
     }
 
     void RenderTarget::DrawBezier(const Vector2f &a, const Vector2f &cp1, const Vector2f& cp2, const Vector2f &b, float thickness,
