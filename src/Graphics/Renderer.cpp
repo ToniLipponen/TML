@@ -101,7 +101,7 @@ namespace tml
         TML_ASSERT(gladLoadGLES2(glfwGetProcAddress), "Failed to load OpenGL ES functions");
 #endif
 
-#if !defined(TML_USE_GLES) && !defined(TML_NO_GL_DEBUGGING)
+#if !defined(TML_USE_GLES) && !defined(TML_NO_GL_DEBUGGING) && defined(TML_USE_DSA)
         GL_CALL(glad_glEnable(GL_DEBUG_OUTPUT));
         GL_CALL(glad_glDebugMessageCallback(GLMessageCallback, nullptr));
 #endif

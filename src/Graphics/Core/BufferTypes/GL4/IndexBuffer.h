@@ -1,8 +1,8 @@
 #pragma once
 #include <TML/Graphics/Core/Buffers.h>
 #include <cstring>
-#include "BufferFlags.h"
-#include "../../Headers/GLHeader.h"
+#include "../BufferFlags.h"
+#include "../../../Headers/GLHeader.h"
 
 namespace tml
 {
