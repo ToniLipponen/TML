@@ -1,6 +1,6 @@
 #pragma once
-#include <TML/System/Platform.h>
-#include <glad/include/glad/gl.h>
+#include "TML/System/Platform.h"
+#include "glad/include/glad/gl.h"
 
 #ifndef TML_NO_GL_DEBUGGING
 #include <cassert>

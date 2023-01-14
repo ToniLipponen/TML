@@ -2,7 +2,7 @@
 #ifdef NDEBUG
     #undef NDEBUG
 #endif
-#include "_Assert.h"
+#include "TML/TMLAssert.h"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>

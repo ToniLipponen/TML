@@ -1,6 +1,6 @@
 #include <TML/Graphics/Font.h>
 #include <TML/System/File.h>
-#include "../Headers/_Assert.h"
+#include <TML/TMLAssert.h>
 
 #define STB_RECT_PACK_IMPLEMENTATION
 #define STB_TRUETYPE_IMPLEMENTATION
@@ -9,7 +9,7 @@
 #include <cstring>
 #include <vector>
 
-#include "TextDefines.h"
+#include "Headers/TextDefines.h"
 
 namespace tml
 {

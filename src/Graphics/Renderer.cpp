@@ -1,14 +1,14 @@
 #include "Renderer.h"
 #include <TML/Graphics/Core/Buffers.h>
 #include <TML/Graphics/Core/Shader.h>
+#include <TML/TMLAssert.h>
 #include <sstream>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include <GLHeader.h>
-#include <Shaders.h>
-#include <_Assert.h>
+#include "Headers/GLHeader.h"
+#include "Headers/Shaders.h"
 
 #ifdef TML_PLATFORM_WINDOWS
     #undef DrawText

@@ -2,8 +2,8 @@
 #include <TML/Graphics/RenderTarget.h>
 #include <TML/System/Math.h>
 #include <TML/Graphics/Font.h>
-#include "../../Headers/Font.h" //!< Default font data.
-#include "../TextDefines.h"
+#include "../Headers/Font.h" //!< Default font data.
+#include "../Headers/TextDefines.h"
 
 struct stbtt_aligned_quad
 {

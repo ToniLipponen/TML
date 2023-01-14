@@ -1,5 +1,8 @@
 #pragma once
+#include <TML/Graphics/Core/Buffers.h>
 #include <cstring>
+#include "BufferFlags.h"
+#include "../../Headers/GLHeader.h"
 
 namespace tml
 {
@@ -51,7 +54,9 @@ namespace tml
     void IndexBuffer::PushData(const uint32_t* data, uint32_t elements) noexcept
     {
         const uint32_t size = elements * sizeof(uint32_t);
-        GL_CALL(glad_glNamedBufferSubData(m_id, m_elements * sizeof(uint32_t), size, data));
+        const uint32_t offset = m_elements * sizeof(uint32_t);
+
+        GL_CALL(glad_glNamedBufferSubData(m_id, offset, size, data));
         m_elements += elements;
     }
 }

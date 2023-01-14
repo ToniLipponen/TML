@@ -1,5 +1,8 @@
 #pragma once
+#include <TML/Graphics/Core/Buffers.h>
 #include <cstring>
+#include "../BufferFlags.h"
+#include "../../../Headers/GLHeader.h"
 
 namespace tml
 {
@@ -54,7 +57,7 @@ namespace tml
     {
         Bind();
         const uint32_t size = vertexSize * vertexCount;
-        GL_CALL(glad_glNamedBufferSubData(m_id, m_dataSize, size, data));
+        GL_CALL(glad_glBufferSubData(GL_ARRAY_BUFFER, m_dataSize, size, data));
         m_dataSize += size;
         m_vertexCount += vertexCount;
     }

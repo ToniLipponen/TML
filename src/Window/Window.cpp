@@ -1,11 +1,11 @@
 #include <TML/Window/Window.h>
 #include <TML/Window/EventSystem.h>
 #include <TML/System/Math.h>
+#include <TML/TMLAssert.h>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include "../Headers/_Assert.h"
-#include "../Headers/Logo.h" /// Logo data
+#include "Logo.h" /// Logo data
 #include "GLContext/GLContext.h"
 #include "Drop/DropManager.h"
 

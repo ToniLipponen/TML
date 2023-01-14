@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstdint>
+#include "../../../Headers/GLHeader.h"
+#include <TML/Graphics/Core/Buffers.h>
+
 namespace tml
 {
     VertexArray::VertexArray() noexcept
@@ -73,42 +77,7 @@ namespace tml
 
     void VertexArray::BufferData(VertexBuffer& vb, IndexBuffer& ib, BufferLayout& layout) noexcept
     {
-        auto& lo = layout.GetData();
-        uint64_t offset = 0;
-
-        Bind();
-        vb.Bind();
         ib.Bind();
-
-        for(std::size_t i = 0; i < lo.size(); i++)
-        {
-            GL_CALL(glad_glEnableVertexAttribArray(i));
-
-            if(lo.at(i).dataType != BufferLayout::VERTEX_FLOAT)
-            {
-                GL_CALL(glad_glVertexAttribIPointer(
-                        i,
-                        static_cast<int>(lo.at(i).elements),
-                        lo.at(i).dataType,
-                        static_cast<int>(layout.GetStride()),
-                        (const void*)offset
-                ));
-            }
-            else
-            {
-                GL_CALL(glad_glVertexAttribPointer(
-                        i,
-                        static_cast<int>(lo.at(i).elements),
-                        lo.at(i).dataType,
-                        0,
-                        static_cast<int>(layout.GetStride()),
-                        (const void*)offset
-                ));
-            }
-
-            offset += static_cast<uint64_t>(lo.at(i).elements) * lo.at(i).size;
-        }
-
-        Unbind();
+        BufferData(vb, layout);
     }
 }

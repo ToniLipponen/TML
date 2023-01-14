@@ -1,7 +1,7 @@
 #include <TML/Graphics/RenderWindow.h>
 #include <TML/Graphics/Core/Buffers.h>
 #include <TML/Graphics/Core/Shader.h>
-#include "../Headers/GLHeader.h"
+#include "Headers/GLHeader.h"
 
 namespace tml
 {

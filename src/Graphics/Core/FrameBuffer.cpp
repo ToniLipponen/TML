@@ -1,5 +1,5 @@
 #include <TML/Graphics/Core/FrameBuffer.h>
-#include "../../Headers/GLHeader.h"
+#include "../Headers/GLHeader.h"
 
 namespace tml
 {
@@ -33,10 +33,12 @@ namespace tml
 #if defined(TML_USE_GLES) || !defined(TML_USE_DSA)
         Bind();
         GL_CALL(glad_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.GetID(), 0));
-#else
-        GL_CALL(glad_glNamedFramebufferTexture(m_id, GL_COLOR_ATTACHMENT0, texture.GetID(), 0));
-#endif
 
         return (glad_glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+#else
+        GL_CALL(glad_glNamedFramebufferTexture(m_id, GL_COLOR_ATTACHMENT0, texture.GetID(), 0));
+
+        return (glad_glCheckNamedFramebufferStatus(m_id, GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+#endif
     }
 }

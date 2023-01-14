@@ -1,6 +1,6 @@
 #include <TML/Graphics/Core/ComputeShader.h>
 #include <TML/System/File.h>
-#include "../../Headers/GLHeader.h"
+#include "../Headers/GLHeader.h"
 #include <iostream>
 
 namespace tml

@@ -1,33 +1,33 @@
-#include "../../Headers/GLHeader.h"
+#include "../Headers/GLHeader.h"
 #include <cstdio>
 
 int CheckGLError()
 {
     const auto e = glad_glGetError();
-    if(e == GL_NO_ERROR)
-        return 0;
 
-    switch(e)
+    if(e != GL_NO_ERROR)
     {
-        case 1280: std::printf("[Error]: GL_INVALID_ENUM");                 break;
-        case 1281: std::printf("[Error]: GL_INVALID_VALUE");                break;
-        case 1282: std::printf("[Error]: GL_INVALID_OPERATION");            break;
-        case 1283: std::printf("[Error]: GL_STACK_OVERFLOW");               break;
-        case 1284: std::printf("[Error]: GL_STACK_UNDERFLOW");              break;
-        case 1285: std::printf("[Error]: GL_OUT_OF_MEMORY");                break;
-        case 1286: std::printf("[Error]: GL_INVALID_FRAMEBUFFER_OPERATION");break;
-        default:                                                            break;
+        switch(e)
+        {
+            case 1280: std::perror("[Error]: GL_INVALID_ENUM");                 break;
+            case 1281: std::perror("[Error]: GL_INVALID_VALUE");                break;
+            case 1282: std::perror("[Error]: GL_INVALID_OPERATION");            break;
+            case 1283: std::perror("[Error]: GL_STACK_OVERFLOW");               break;
+            case 1284: std::perror("[Error]: GL_STACK_UNDERFLOW");              break;
+            case 1285: std::perror("[Error]: GL_OUT_OF_MEMORY");                break;
+            case 1286: std::perror("[Error]: GL_INVALID_FRAMEBUFFER_OPERATION");break;
+            default:                                                               break;
+        }
+
+        return 1;
     }
 
-    return 1;
+    return 0;
 }
 
 #ifndef TML_USE_GLES
-void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* user_param)
+void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei, const GLchar* message, const void*)
 {
-    (void)length;
-    (void)user_param;
-    
     auto const src_str = [source]()
     {
         switch (source)
@@ -69,6 +69,6 @@ void GLAPIENTRY GLMessageCallback(GLenum source, GLenum type, GLuint id, GLenum 
         }
     }();
 
-    std::printf("[%s]: %s, %s, %d, %s\n", type_str, src_str,severity_str, id, message);
+    std::fprintf(stderr, "[%s]: %s, %s, %d, %s\n", type_str, src_str,severity_str, id, message);
 }
 #endif

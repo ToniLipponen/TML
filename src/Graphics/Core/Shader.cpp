@@ -1,11 +1,11 @@
 #include <TML/Graphics/Core/Shader.h>
-#include "../../Headers/_Assert.h"
-#include "../../Headers/GLHeader.h"
+#include "TML/TMLAssert.h"
+#include "../Headers/GLHeader.h"
 #include <TML/System/File.h>
 #include <iostream>
 #include <array>
 
-#define TML_INVALID_UNIFORM_LOCATION -1
+#define TML_INVALID_UNIFORM_LOCATION (-1)
 
 namespace tml
 {
