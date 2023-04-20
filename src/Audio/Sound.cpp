@@ -132,6 +132,6 @@ namespace tml
         }
 
         m_framesRead += readFrames;
-        return frameCount;
+        return readFrames;
     }
 }

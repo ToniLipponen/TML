@@ -1,7 +1,5 @@
 #pragma once
 #include <cstdint>
-#include <unordered_map>
-#include <functional>
 #include <TML/Export.h>
 
 namespace tml
@@ -25,11 +23,13 @@ namespace tml
         [[nodiscard]] State GetState() const;
         [[nodiscard]] bool IsPlaying() const;
         [[nodiscard]] bool IsLooping() const;
-        virtual uint32_t ReadFrames(float* output, uint32_t frameCount) = 0;
         virtual uint64_t GetLength() noexcept;
         virtual uint64_t GetLengthInSeconds() noexcept;
         [[nodiscard]] virtual double GetProgress() const noexcept;
-
+        friend void MixerOnAudioCallback(void*, void*, const void*, uint32_t);
+    private:
+        virtual uint32_t ReadFrames(float* output, uint32_t frameCount) = 0;
+    
     protected:
         uint64_t m_framesRead;
         uint64_t m_frameCount;

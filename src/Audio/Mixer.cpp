@@ -24,8 +24,8 @@ namespace tml
     void MixerOnAudioCallback(void* device, void* pOutput, const void* pInput, ma_uint32 frameCount)
     {
         (void)pInput;
-        auto* maDevice = reinterpret_cast<ma_device*>(device);
-        auto* mixer = reinterpret_cast<Mixer*>(maDevice->pUserData);
+        auto* maDevice = static_cast<ma_device*>(device);
+        auto* mixer = static_cast<Mixer*>(maDevice->pUserData);
         auto& sounds = mixer->m_sounds;
         auto* pOutputF32 = static_cast<float*>(pOutput);
 
@@ -36,6 +36,7 @@ namespace tml
                 if(sound.second->IsPlaying())
                 {
                     const uint32_t frames = sound.second->ReadFrames(pOutputF32, frameCount);
+                    printf("Frames: %d\n", frames);
 
                     if(frames < frameCount)
                     {
