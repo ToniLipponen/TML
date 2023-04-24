@@ -115,6 +115,7 @@ namespace tml
         ma_encoder_init_file(filename.c_str(), &config, &encoder);
         ma_encoder_write_pcm_frames(&encoder, m_data.data(), m_data.size() / config.channels);
         ma_encoder_uninit(&encoder);
+        
         return true; /// Just returning true for now.
     }
 }

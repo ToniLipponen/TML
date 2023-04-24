@@ -55,13 +55,19 @@ namespace tml::Mixer
                 }
             }
 
+            for(auto& [name, effect] : s_effects)
+            {
+                if(effect->IsEnabled())
+                {
+                    for(uint32_t i = 0; i < frameCount; i++)
+                    {
+                        effect->Process(outputBuffer + i, 0, 0);
+                    }
+                }
+            }
+
             for(uint32_t i = 0; i < frameCount; i++)
             {
-                for(auto& [name, effect] : s_effects)
-                {
-                    effect->Process(outputBuffer + i, 0, 0);
-                }
-
                 outputBuffer[i] *= s_outputDevice->masterVolumeFactor;
             }
         }

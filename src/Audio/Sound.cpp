@@ -124,9 +124,12 @@ namespace tml
 
         for(auto& [name, effect] : m_effects)
         {
-            for(int i = 0; i < framesRead; i++)
+            if(effect->IsEnabled())
             {
-                effect->Process(buffer.data() + i, m_framesRead + i, m_frameCount);
+                for(int i = 0; i < framesRead; i++)
+                {
+                    effect->Process(buffer.data() + i, m_framesRead + i, m_frameCount);
+                }
             }
         }
 
