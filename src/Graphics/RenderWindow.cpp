@@ -1,5 +1,7 @@
 #include <TML/Graphics/RenderWindow.h>
-#include <TML/Graphics/Core/Buffers.h>
+#include <TML/Graphics/Core/VertexBuffer.h>
+#include <TML/Graphics/Core/IndexBuffer.h>
+#include <TML/Graphics/Core/VertexArray.h>
 #include <TML/Graphics/Core/Shader.h>
 #include "Headers/GLHeader.h"
 

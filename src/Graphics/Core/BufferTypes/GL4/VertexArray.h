@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include "../../../Headers/GLHeader.h"
-#include <TML/Graphics/Core/Buffers.h>
+#include <TML/Graphics/Core/VertexArray.h>
 
 namespace tml
 {
