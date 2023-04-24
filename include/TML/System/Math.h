@@ -3,6 +3,7 @@
 #include <random>
 #include <type_traits>
 #include <limits>
+#include <iterator>
 
 namespace tml::Math
 {
@@ -254,5 +255,101 @@ namespace tml::Math
 
             return distribution(Impl::randomGenerator);
         }
+    }
+
+    template<typename T, typename ValueType = typename T::value_type>
+    inline ValueType AvgOf(const T& container)
+    {
+        ValueType value{};
+
+        for(const auto& i : container)
+        {
+            value = value + i;
+        }
+
+        return value / container.size();
+    }
+
+    template<typename T>
+    inline T AvgOf(const std::initializer_list<T>& initializerList)
+    {
+        T value{};
+
+        for(const auto& i : initializerList)
+        {
+            value = value + i;
+        }
+
+        return value / initializerList.size();
+    }
+
+    template<typename ... Args>
+    inline typename std::common_type<Args...>::type AvgOf(const Args&... args)
+    {
+        return AvgOf({args...});
+    }
+
+    template<typename T, typename ValueType = typename T::value_type>
+    inline ValueType MaxOf(const T& container)
+    {
+        auto value = std::numeric_limits<ValueType>::min();
+
+        for(auto& i : container)
+        {
+            value = i > value ? i : value;
+        }
+            
+        return value;
+    }
+
+    template<typename T>
+    inline T MaxOf(const std::initializer_list<T>& initializerList)
+    {
+        T value = std::numeric_limits<T>::min();
+
+        for(const auto& i : initializerList)
+        {
+            value = i > value ? i : value;
+        }
+
+        return value;
+    }
+
+    template<typename ... Args>
+    inline typename std::common_type<Args...>::type MaxOf(const Args&... args)
+    {
+        return MaxOf({args...});
+    }
+
+    template<typename T, typename ValueType = typename T::value_type>
+    inline ValueType MinOf(const T& container)
+    {
+        auto value = std::numeric_limits<ValueType>::max();
+
+        for(auto& i : container)
+        {
+            value = i < value ? i : value;
+        }
+            
+        return value;
+    }
+
+    template<typename T>
+    inline T MinOf(const std::initializer_list<T>& initializerList)
+    {
+        T value = std::numeric_limits<T>::max();
+
+        for(const auto& i : initializerList)
+        {
+            value = i < value ? i : value;
+        }
+
+        return value;
+    }
+
+    template<typename ... Args>
+    inline typename std::common_type<Args...>::type MinOf(const Args&... args)
+    {
+        return MinOf({args...});
     }
 }

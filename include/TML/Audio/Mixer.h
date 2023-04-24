@@ -1,31 +1,13 @@
 #pragma once
-#include <cstdint>
-#include "Music.h"
-#include <map>
-#include <memory>
+#include <TML/Audio/AudioEffect.h>
 #include <TML/Export.h>
+#include <cstdint>
+#include <string>
 
-namespace tml
+namespace tml::Mixer
 {
-    class TML_API Mixer
-    {
-    private:
-        Mixer();
-        ~Mixer();
-
-    public:
-        static Mixer& GetInstance() noexcept;
-        void SetGain(float gain) noexcept;
-        void AddSound(uint64_t id, AudioType* snd) noexcept;
-        void RemoveSound(uint64_t id) noexcept;
-        uint64_t GetAudioID() noexcept;
-
-    private:
-        friend void MixerOnAudioCallback(void* device, void* pOutput, const void* pInput, uint32_t frameCount);
-
-    protected:
-        void* m_outputDevice = nullptr;
-        std::map<uint64_t, AudioType*> m_sounds;
-        uint64_t m_soundCount = 0;
-    };
+    TML_API void SetGain(float gain) noexcept;
+    TML_API AudioEffect* AddEffect(const std::string& name, AudioEffect* effect);
+    TML_API AudioEffect* GetEffect(const std::string& name);
+    TML_API void RemoveEffect(const std::string& name);
 }

@@ -1,6 +1,7 @@
 #include <TML/Audio/AudioType.h>
 #include <TML/Audio/Mixer.h>
 #include <TML/System/Math.h>
+#include "MixerPriv.h"
 
 namespace tml
 {
@@ -9,14 +10,14 @@ namespace tml
       m_frameCount(0),
       m_rate(0),
       m_channels(0),
-      m_id(Mixer::GetInstance().GetAudioID())
+      m_id(Mixer::GetAudioID())
     {
 
     }
 
     AudioType::~AudioType()
     {
-        Mixer::GetInstance().RemoveSound(m_id);
+        Mixer::RemoveSound(m_id);
     }
 
     void AudioType::Play()
@@ -24,7 +25,7 @@ namespace tml
         if(m_valid)
         {
             m_state = Playing;
-            Mixer::GetInstance().AddSound(m_id, this);
+            Mixer::AddSound(m_id, this);
         }
 
         m_framesRead = 0;
@@ -109,5 +110,26 @@ namespace tml
     double AudioType::GetProgress() const noexcept
     {
         return static_cast<double>(m_framesRead) / static_cast<double>(m_frameCount);
+    }
+
+    AudioEffect* AudioType::AddEffect(const std::string& name, AudioEffect* effect)
+    {
+        m_effects[name] = std::unique_ptr<AudioEffect>(effect);
+        return effect;
+    }
+
+    AudioEffect* AudioType::GetEffect(const std::string& name)
+    {
+        if(m_effects.find(name) == m_effects.end())
+        {
+            return nullptr;
+        }
+
+        return m_effects.at(name).get();
+    }
+
+    void AudioType::RemoveEffect(const std::string& name)
+    {
+        m_effects.erase(name);
     }
 }

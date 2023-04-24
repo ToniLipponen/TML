@@ -24,7 +24,7 @@ namespace tml
         void SetBuffer(const AudioBuffer& buffer) noexcept;
         void SetBuffer(const std::shared_ptr<AudioBuffer>& buffer) noexcept;
     private:
-        uint32_t ReadFrames(float* output, uint32_t frameCount) override;
+        uint32_t ReadFrames(AudioFrame* output, uint32_t frameCount) override;
         std::shared_ptr<AudioBuffer> m_buffer;
     };
 }

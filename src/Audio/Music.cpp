@@ -1,8 +1,10 @@
 #include <TML/Audio/Music.h>
 #include <TML/Audio/Mixer.h>
+#include <TML/System/Math.h>
 #include <miniaudio/miniaudio.h>
 #include <cmath>
-#include "TML/System/Math.h"
+
+#include "MixerPriv.h"
 
 namespace tml
 {
@@ -26,7 +28,7 @@ namespace tml
     bool Music::LoadFromFile(const String &filename)
     {
         m_state = Stopped;
-        Mixer::GetInstance().RemoveSound(m_id);
+        Mixer::RemoveSound(m_id);
 
         if(!m_decoder)
         {
@@ -53,7 +55,7 @@ namespace tml
     bool Music::LoadFromData(const char* data, uint32_t bytes)
     {
         m_state = Stopped;
-        Mixer::GetInstance().RemoveSound(m_id);
+        Mixer::RemoveSound(m_id);
 
         if(!m_decoder)
         {
@@ -87,15 +89,17 @@ namespace tml
         AudioType::Stop();
     }
 
-    uint32_t Music::ReadFrames(float *output, uint32_t frameCount)
+    uint32_t Music::ReadFrames(AudioFrame* output, uint32_t frameCount)
     {
-        auto* decoder = (ma_decoder*)m_decoder;
-        float temp[4096];
-        uint32_t tempCapInFrames = (sizeof(temp) / sizeof(float)) / decoder->outputChannels;
+        auto* decoder = static_cast<ma_decoder*>(m_decoder);
+        std::array<AudioFrame, 2048> temp;
+        const uint32_t tempCapInFrames = temp.size();
         uint32_t totalFramesRead = 0;
 
-        float left  = Math::Map<float>(m_balance, 1, 0, 0, 1);
-        float right = Math::Map<float>(m_balance, -1, 0, 0, 1);
+        AudioFrame balance = {
+            Math::Map<float>(m_balance, 1, 0, 0, 1),
+            Math::Map<float>(m_balance, -1, 0, 0, 1)
+        };
 
         while(totalFramesRead < frameCount)
         {
@@ -109,17 +113,24 @@ namespace tml
                 framesToReadThisIteration = totalFramesRemaining;
             }
 
-            framesReadThisIteration = (uint32_t)ma_decoder_read_pcm_frames(decoder, temp, framesToReadThisIteration);
+            framesReadThisIteration = (uint32_t)ma_decoder_read_pcm_frames(decoder, temp.data(), framesToReadThisIteration);
 
             if(framesReadThisIteration == 0)
             {
                 break;
             }
 
-            for(iSample = 0; iSample < framesReadThisIteration * decoder->outputChannels; iSample += 2)
+            for(auto& [name, effect] : m_effects)
             {
-                output[totalFramesRead * decoder->outputChannels + iSample    ] += temp[iSample    ] * m_volume * left;
-                output[totalFramesRead * decoder->outputChannels + iSample + 1] += temp[iSample + 1] * m_volume * right;
+                for(int i = 0; i < framesReadThisIteration; i++)
+                {
+                    effect->Process(temp.data() + i, m_framesRead + totalFramesRead + i, m_frameCount);
+                }
+            }
+
+            for(iSample = 0; iSample < framesReadThisIteration; iSample++)
+            {
+                output[totalFramesRead + iSample] += temp[iSample] * m_volume * balance;
             }
 
             totalFramesRead += framesReadThisIteration;
@@ -130,7 +141,7 @@ namespace tml
             }
         }
 
-        m_framesRead += totalFramesRead * m_channels;
+        m_framesRead += totalFramesRead;
         return totalFramesRead;
     }
 }

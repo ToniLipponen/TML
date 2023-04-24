@@ -82,9 +82,8 @@ namespace tml
 
         Converter converter(channels, static_cast<int>(rate), 2, 48000);
         unsigned long long framesIn = sampleCount / channels, framesOut = m_data.size();
-        converter.Convert(m_data.data(), framesOut, data, framesIn);
-        m_channels = 2;
-        m_rate = 48000;
+        converter.Convert((float*)m_data.data(), framesOut, data, framesIn);
+
         return true;
     }
 
@@ -99,12 +98,12 @@ namespace tml
         m_data.clear();
     }
 
-	const std::vector<float>& AudioBuffer::GetData() const noexcept
+	const std::vector<AudioFrame>& AudioBuffer::GetData() const noexcept
 	{
 		return m_data;
 	}
 
-	std::vector<float>& AudioBuffer::GetData() noexcept
+	std::vector<AudioFrame>& AudioBuffer::GetData() noexcept
 	{
 		return m_data;
 	}
