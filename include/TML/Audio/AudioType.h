@@ -1,5 +1,6 @@
 #pragma once
 #include <TML/Export.h>
+#include <TML/Audio/Common.h>
 #include <cstdint>
 #include <vector>
 

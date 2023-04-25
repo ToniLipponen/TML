@@ -1,5 +1,4 @@
 #pragma once
-#include <TML/Audio/AudioEffect.h>
 #include <TML/Export.h>
 #include <cstdint>
 #include <string>
