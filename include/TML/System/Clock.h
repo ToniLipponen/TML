@@ -11,7 +11,6 @@ namespace tml
             Reset();
         }
 
-        [[maybe_unused]]
         double Reset() noexcept /// @brief Resets clock and returns time.
         {
             const auto newBegin = std::chrono::high_resolution_clock::now();
@@ -20,8 +19,7 @@ namespace tml
             return time;
         }
 
-        [[maybe_unused, nodiscard]]
-        double GetTime() const noexcept /// @brief Returns elapsed time.
+        [[nodiscard]] double GetTime() const noexcept /// @brief Returns elapsed time.
         {
             return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - m_begin).count();
         }

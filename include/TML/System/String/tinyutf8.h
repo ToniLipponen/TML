@@ -120,7 +120,7 @@ namespace tml //tiny_utf8
 	class basic_string;
 	
 	//! Typedef of string (data type: char)
-	using string = basic_string<char32_t, char>;
+	using String = basic_string<char32_t, char>;
 	using utf8_string = basic_string<char32_t, char>; // For backwards compatibility
 	
 	//! Typedef of u8string (data type char8_t)

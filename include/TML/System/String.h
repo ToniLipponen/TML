@@ -4,10 +4,8 @@
 
 namespace tml
 {
-    using String = tml::string;
-
     template<typename T>
-    [[maybe_unused, nodiscard]] inline constexpr T StringToType(const std::string& str) noexcept
+    [[nodiscard]] inline constexpr T StringToType(const std::string& str) noexcept
     {
         if constexpr(!std::is_class<T>::value)
         {
