@@ -3,7 +3,7 @@
 #include <TML/System/Math.h>
 #include <miniaudio/miniaudio.h>
 #include <cmath>
-
+#include <array>
 #include "MixerPriv.h"
 
 namespace tml

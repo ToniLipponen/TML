@@ -1,8 +1,8 @@
 #pragma once
-#include <string>
-#include "AudioType.h"
 #include <TML/System/String.h>
+#include <TML/Audio/AudioType.h>
 #include <TML/Export.h>
+#include <string>
 
 namespace tml
 {

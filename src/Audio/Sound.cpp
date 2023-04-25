@@ -1,6 +1,6 @@
 #include <TML/Audio/Sound.h>
 #include <TML/System/Math.h>
-#include <iostream>
+#include <array>
 
 namespace tml
 {

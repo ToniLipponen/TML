@@ -1,12 +1,11 @@
 #pragma once
+#include <TML/Export.h>
+#include <TML/Audio/AudioEffect.h>
 #include <cstdint>
 #include <vector>
 #include <unordered_map>
 #include <memory>
 #include <string>
-
-#include <TML/Export.h>
-#include <TML/Audio/AudioEffect.h>
 
 namespace tml
 {
