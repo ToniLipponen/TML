@@ -20,10 +20,10 @@ namespace tml
 
         virtual ~RenderTarget() noexcept = default;
 
-        [[maybe_unused, nodiscard]]
+        [[nodiscard]]
         Vector2f WorldToScreen(const Vector2f& point, const Camera& camera) const noexcept;
 
-        [[maybe_unused, nodiscard]]
+        [[nodiscard]]
         Vector2f ScreenToWorld(const Vector2f& point, const Camera& camera) const noexcept;
 
         /// @brief Set active camera for rendering. @note This has to be done after calling RenderTarget::Clear().

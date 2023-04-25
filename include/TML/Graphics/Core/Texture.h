@@ -8,7 +8,7 @@ namespace tml
     class TML_API Texture
     {
     public:
-        enum [[maybe_unused]] ClampMode
+        enum ClampMode
         {
             ClampToBorder       = 0x812D,
             ClampToEdge         = 0x812F,
@@ -16,7 +16,7 @@ namespace tml
             Repeat              = 0x2901,
             MirrorRepeat        = 0x8370,
         };
-        enum [[maybe_unused]] Filter
+        enum Filter
         {
             Nearest                 = 0x2600,
             Linear                  = 0x2601,
@@ -43,14 +43,14 @@ namespace tml
         void SetMinMagFilter(Filter min, Filter mag) noexcept;
         void SetClampMode(ClampMode mode) noexcept;
 
-        [[nodiscard, maybe_unused]] Filter GetMinFilter() const noexcept;
-        [[nodiscard, maybe_unused]] Filter GetMagFilter() const noexcept;
-        [[nodiscard, maybe_unused]] ClampMode GetClampMode() const noexcept;
-        [[nodiscard, maybe_unused]] uint32_t GetID() const noexcept;
-        [[nodiscard, maybe_unused]] uint32_t GetWidth() const noexcept;
-        [[nodiscard, maybe_unused]] uint32_t GetHeight() const noexcept;
-        [[nodiscard, maybe_unused]] uint32_t GetBpp() const noexcept;
-        [[nodiscard, maybe_unused]] Image GetData() const noexcept;
+        [[nodiscard]] Filter GetMinFilter() const noexcept;
+        [[nodiscard]] Filter GetMagFilter() const noexcept;
+        [[nodiscard]] ClampMode GetClampMode() const noexcept;
+        [[nodiscard]] uint32_t GetID() const noexcept;
+        [[nodiscard]] uint32_t GetWidth() const noexcept;
+        [[nodiscard]] uint32_t GetHeight() const noexcept;
+        [[nodiscard]] uint32_t GetBpp() const noexcept;
+        [[nodiscard]] Image GetData() const noexcept;
         
     protected:
         inline void Update() const noexcept;

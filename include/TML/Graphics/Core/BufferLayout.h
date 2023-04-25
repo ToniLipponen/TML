@@ -39,8 +39,8 @@ namespace tml
             m_stride = 0;
         }
 
-        inline constexpr std::vector<Attribute> const & GetData() const noexcept { return m_layout; }
-        inline constexpr uint32_t GetStride() const noexcept { return m_stride; }
+        std::vector<Attribute> const & GetData() const noexcept { return m_layout; }
+        uint32_t GetStride() const noexcept { return m_stride; }
 
     private:
         std::vector<Attribute> m_layout;

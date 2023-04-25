@@ -133,13 +133,13 @@ namespace tml
         };
     }
 
-    [[maybe_unused]] inline constexpr Color Color::Red         = Color(0xff0000ff);
-    [[maybe_unused]] inline constexpr Color Color::Green       = Color(0x00ff00ff);
-    [[maybe_unused]] inline constexpr Color Color::Blue        = Color(0x0000ffff);
-    [[maybe_unused]] inline constexpr Color Color::Yellow      = Color(0xffff00ff);
-    [[maybe_unused]] inline constexpr Color Color::Magenta     = Color(0xff00ffff);
-    [[maybe_unused]] inline constexpr Color Color::Cyan        = Color(0x00ffffff);
-    [[maybe_unused]] inline constexpr Color Color::Black       = Color(0x000000ff);
-    [[maybe_unused]] inline constexpr Color Color::White       = Color(0xffffffff);
-    [[maybe_unused]] inline constexpr Color Color::Transparent = Color(0x00000000);
+    inline constexpr Color Color::Red         = Color(0xff0000ff);
+    inline constexpr Color Color::Green       = Color(0x00ff00ff);
+    inline constexpr Color Color::Blue        = Color(0x0000ffff);
+    inline constexpr Color Color::Yellow      = Color(0xffff00ff);
+    inline constexpr Color Color::Magenta     = Color(0xff00ffff);
+    inline constexpr Color Color::Cyan        = Color(0x00ffffff);
+    inline constexpr Color Color::Black       = Color(0x000000ff);
+    inline constexpr Color Color::White       = Color(0xffffffff);
+    inline constexpr Color Color::Transparent = Color(0x00000000);
 }
