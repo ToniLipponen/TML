@@ -1,7 +1,8 @@
 #pragma once
-#include <vector>
+#include <TML/Audio/Common.h>
 #include <TML/System/String.h>
 #include <TML/Export.h>
+#include <vector>
 
 namespace tml
 {
@@ -22,13 +23,11 @@ namespace tml
                             uint32_t rate, size_t samplesCount) noexcept;     //!< Loads sound from samples in memory.
         void Append(const AudioBuffer& anotherBuffer) noexcept;               //!< Appends anotherBuffer data to this buffer.
         void Clear() noexcept;                                                //!< Clears samples.
-        [[nodiscard]] const std::vector<float>& GetData() const noexcept;
-        [[nodiscard]] std::vector<float>& GetData() noexcept;
+        [[nodiscard]] const std::vector<AudioFrame>& GetData() const noexcept;
+        [[nodiscard]] std::vector<AudioFrame>& GetData() noexcept;
         bool WriteToFile(const String& filename) noexcept;
         friend class Sound;
     private:
-        std::vector<float> m_data;
-        uint32_t m_rate = 0;
-        uint8_t m_channels = 2;
+        std::vector<AudioFrame> m_data;
     };
 }

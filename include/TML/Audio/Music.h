@@ -17,7 +17,7 @@ namespace tml
         bool LoadFromData(const char* data, uint32_t bytes); //!< Loads music from raw file data. Data has to be available during playback.
         void Stop() override;
     private:
-        uint32_t ReadFrames(float* output, uint32_t frameCount) override;
+        uint32_t ReadFrames(AudioFrame* output, uint32_t frameCount) override;
         void* m_decoder = nullptr;
     };
 }

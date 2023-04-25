@@ -1,5 +1,6 @@
 #include <TML/Audio/Sound.h>
 #include <TML/System/Math.h>
+#include <iostream>
 
 namespace tml
 {
@@ -41,8 +42,6 @@ namespace tml
         m_framesRead    = 0;
         m_buffer        = sound.m_buffer;
         m_frameCount    = sound.m_frameCount;
-        m_rate          = sound.m_rate;
-        m_channels      = sound.m_channels;
         m_volume        = sound.m_volume;
         m_looping       = sound.m_looping;
         m_valid         = sound.m_valid;
@@ -56,9 +55,7 @@ namespace tml
         m_buffer = std::make_shared<AudioBuffer>(filename);
         m_valid = !m_buffer->GetData().empty();
         m_frameCount = m_buffer->GetData().size();
-        m_channels = m_buffer->m_channels;
         m_framesRead = 0;
-        m_rate = m_buffer->m_rate;
         return m_valid;
     }
 
@@ -68,9 +65,7 @@ namespace tml
         m_buffer = std::make_shared<AudioBuffer>(data, bytes);
         m_valid = !m_buffer->GetData().empty();
         m_frameCount = m_buffer->GetData().size();
-        m_channels = m_buffer->m_channels;
         m_framesRead = 0;
-        m_rate = m_buffer->m_rate;
         return m_valid;
     }
 
@@ -81,8 +76,6 @@ namespace tml
         m_valid = !m_buffer->GetData().empty();
         m_frameCount = m_buffer->GetData().size();
         m_framesRead = 0;
-        m_channels = m_buffer->m_channels;
-        m_rate = rate;
         return m_valid;
     }
 
@@ -92,8 +85,6 @@ namespace tml
         m_valid = !m_buffer->GetData().empty();
         m_frameCount = m_buffer->GetData().size();
         m_framesRead = 0;
-        m_channels = m_buffer->m_channels;
-        m_rate = m_buffer->m_rate;
     }
 
     void Sound::SetBuffer(const std::shared_ptr<AudioBuffer>& buffer) noexcept
@@ -109,29 +100,46 @@ namespace tml
         m_valid = !m_buffer->GetData().empty();
         m_frameCount = m_buffer->GetData().size();
         m_framesRead = 0;
-        m_channels = m_buffer->m_channels;
-        m_rate = m_buffer->m_rate;
     }
 
-    uint32_t Sound::ReadFrames(float *output, uint32_t frameCount)
+    uint32_t Sound::ReadFrames(AudioFrame* output, uint32_t frameCount)
     {
         if(m_buffer == nullptr)
         {
             return 0;
         }
 
-        const auto readFrames = Math::Clamp<uint32_t>(frameCount * m_channels, 0, m_frameCount - m_framesRead);
+        std::array<AudioFrame, 2048> buffer;
+        const auto framesRead = Math::Clamp<uint64_t>(frameCount, 0, Math::Min<uint64_t>(m_frameCount - m_framesRead, buffer.size()));
 
-        float left  = Math::Map<float>(m_balance, 1, 0, 0, 1);
-        float right = Math::Map<float>(m_balance, -1, 0, 0, 1);
+        AudioFrame balance = {
+            Math::Map<float>(m_balance, 1, 0, 0, 1),
+            Math::Map<float>(m_balance, -1, 0, 0, 1)
+        };
 
-        for(uint32_t i = 0; i < readFrames; i += 2)
+        for(uint32_t i = 0; i < framesRead; i++)
         {
-            output[i    ] += m_buffer->GetData()[m_framesRead + i    ] * m_volume * left;
-            output[i + 1] += m_buffer->GetData()[m_framesRead + i + 1] * m_volume * right;
+            buffer[i] = m_buffer->GetData()[m_framesRead + i];
         }
 
-        m_framesRead += readFrames;
-        return frameCount;
+        for(auto& [name, effect] : m_effects)
+        {
+            if(effect->IsEnabled())
+            {
+                for(int i = 0; i < framesRead; i++)
+                {
+                    effect->Process(buffer.data() + i, m_framesRead + i, m_frameCount);
+                }
+            }
+        }
+
+        for(uint32_t i = 0; i < framesRead; i++)
+        {
+            output[i] += (buffer[i] * m_volume * balance);
+        }
+
+        m_framesRead += framesRead;
+
+        return framesRead;
     }
 }
