@@ -45,11 +45,9 @@
  */
 
 #pragma once
-#include <cstdint>
-#include <queue>
-#include <map>
 #include <TML/Export.h>
 #include <TML/Window/Input.h>
+#include <cstdint>
 
 namespace tml
 {
@@ -68,7 +66,7 @@ namespace tml
             TextEntered,            //!< A character was entered (data in event.text)
             KeyPressed,             //!< A key was pressed (data in event.key)
             KeyReleased,            //!< A key was released (data in event.key)
-            MouseWheelScrolled,     //!< The mouse wheel was scrolled (data in event.mouseWheelScroll)
+            MouseScrolled,          //!< The mouse wheel was scrolled (data in event.mouseScroll)
             MouseButtonPressed,     //!< A mouse button was pressed (data in event.mouseButton)
             MouseButtonReleased,    //!< A mouse button was released (data in event.mouseButton)
             MouseButtonClicked,     //!< A mouse button was clicked (data in event.mouseButton)
@@ -116,7 +114,7 @@ namespace tml
             int32_t y;            //!< Y position of the mouse pointer, relative to the top of the owner window
         };
 
-        struct MouseWheelScrollEvent
+        struct MouseScrollEvent
         {
             float deltaX;    //!< Horizontal scroll offset.
             float deltaY;    //!< Vertical scroll offset.
@@ -147,7 +145,7 @@ namespace tml
             KeyEvent              key;
             TextEvent             text;
             MouseButtonEvent      mouseButton;
-            MouseWheelScrollEvent mouseWheel;
+            MouseScrollEvent      mouseWheel;
             MouseDragEvent        drag;
             GamepadEvent          gamepad;
         };

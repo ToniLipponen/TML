@@ -1,7 +1,7 @@
 #pragma once
+#include <TML/System/String.h>
 #include <vector>
 #include <map>
-#include <TML/System/String.h>
 
 namespace tml
 {

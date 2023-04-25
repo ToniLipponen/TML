@@ -119,6 +119,6 @@ namespace tml
             return {};
         }
 
-        return monitors.at(0);
+        return monitors.front();
     }
 }

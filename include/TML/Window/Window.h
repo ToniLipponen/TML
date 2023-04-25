@@ -1,6 +1,4 @@
 #pragma once
-#include <optional>
-#include <cstdint>
 #include <TML/Window/WindowSettings.h>
 #include <TML/Window/Input.h>
 #include <TML/Window/Event.h>
@@ -10,6 +8,8 @@
 #include <TML/System/Math/Vector2.h>
 #include <TML/System/String.h>
 #include <TML/Export.h>
+#include <optional>
+#include <cstdint>
 
 namespace tml
 {

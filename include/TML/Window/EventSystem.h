@@ -1,6 +1,8 @@
 #pragma once
 #include <TML/Window/Event.h>
 #include <TML/System/NonCopyable.h>
+#include <map>
+#include <queue>
 
 namespace tml
 {

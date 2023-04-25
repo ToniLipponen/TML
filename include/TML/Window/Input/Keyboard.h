@@ -129,6 +129,6 @@ namespace tml::Keyboard
         Menu = 348
     };
 
-    [[maybe_unused, nodiscard]] TML_API bool IsKeyPressed(Key key) noexcept;
-    [[maybe_unused, nodiscard]] TML_API bool IsKeyDown(Key key) noexcept;
+    [[nodiscard]] TML_API bool IsKeyPressed(Key key) noexcept;
+    [[nodiscard]] TML_API bool IsKeyDown(Key key) noexcept;
 }

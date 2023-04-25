@@ -525,6 +525,7 @@ namespace tml
         glfwSetWindowPosCallback(handle, WindowMoveCallback);
         glfwSetJoystickCallback(GamepadCallback);
         glfwSetDropCallback(handle, DropCallback);
+        glfwSetWindowUserPointer(handle, this);
         tml::EventSystem::GetInstance().Register(handle);
     }
 }
@@ -536,7 +537,7 @@ void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
     auto mousePos = tml::Mouse::GetPosition();
     Event event{};
-    event.type = tml::Event::MouseWheelScrolled;
+    event.type = tml::Event::MouseScrolled;
 
     event.mouseWheel.x      = static_cast<int>(mousePos.x);
     event.mouseWheel.y      = static_cast<int>(mousePos.y);
