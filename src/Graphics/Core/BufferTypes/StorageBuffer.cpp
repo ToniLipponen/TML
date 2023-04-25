@@ -1,10 +1,10 @@
-#include <TML/Graphics/Core/Buffers.h>
+#include <TML/Graphics/Core/StorageBuffer.h>
 #include "../../Headers/GLHeader.h"
 #include <cstring>
 
-#if !defined(TML_USE_GLES) && defined(TML_USE_DSA)
 namespace tml
 {
+#if !defined(TML_USE_GLES) && defined(TML_USE_DSA)
     StorageBuffer::StorageBuffer() noexcept
     : m_id(0)
     {
@@ -31,7 +31,9 @@ namespace tml
         void* p = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, bytes, GL_MAP_WRITE_BIT));
 
         if(p && data)
+        {
             std::memcpy(p, data, bytes);
+        }
 
         GL_CALL(glad_glUnmapNamedBuffer(m_id));
     }
@@ -41,7 +43,9 @@ namespace tml
         void* p = GL_CALL(glad_glMapNamedBufferRange(m_id, 0, bytes, GL_MAP_READ_BIT));
 
         if(p && data)
+        {
             std::memcpy(data, p, bytes);
+        }
 
         GL_CALL(glad_glUnmapNamedBuffer(m_id));
     }
@@ -50,10 +54,7 @@ namespace tml
     {
         GL_CALL(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, m_id));
     }
-}
 #else
-namespace tml
-{
     StorageBuffer::StorageBuffer() noexcept
     : m_id(0)
     {
@@ -107,5 +108,5 @@ namespace tml
         Bind();
         GL_CALL(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, m_id));
     }
-}
 #endif
+}

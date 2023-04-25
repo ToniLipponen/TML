@@ -20,52 +20,40 @@ namespace tml
 
         virtual ~RenderTarget() noexcept = default;
 
-        [[maybe_unused, nodiscard]]
+        [[nodiscard]]
         Vector2f WorldToScreen(const Vector2f& point, const Camera& camera) const noexcept;
 
-        [[maybe_unused, nodiscard]]
+        [[nodiscard]]
         Vector2f ScreenToWorld(const Vector2f& point, const Camera& camera) const noexcept;
 
         /// @brief Set active camera for rendering. @note This has to be done after calling RenderTarget::Clear().
-        [[maybe_unused]]
         void SetCamera(const Camera& camera);
 
         /// @brief Resets the camera.
-        [[maybe_unused]]
         void ResetCamera();
 
         /// @brief Forces the renderer to only draw within these bounds.
-        [[maybe_unused]]
         void SetBounds(const Vector2i& pos, const Vector2i& size) noexcept;
 
-        [[maybe_unused]]
         void SetViewport(const Vector2i& pos, const Vector2i& size) noexcept;
 
-        [[maybe_unused]]
         void SetView(const Vector2i& pos, const Vector2i& size) noexcept;
 
-        [[maybe_unused]]
         void ResetBounds() noexcept;
 
-        [[maybe_unused]]
         void SetClearColor(const Color& color) noexcept;
 
-        [[maybe_unused]]
         virtual void Clear() noexcept;
 
         virtual void Clear(Color color) noexcept;
 
-        [[maybe_unused]]
         void Draw(Drawable& drawable) noexcept;
 
-        [[maybe_unused]]
         void DrawLine(const Vector2f& a, const Vector2f& b, float thickness, Color color, bool rounded = true) noexcept;
 
-        [[maybe_unused]]
         void DrawRect(const Vector2f& pos, const Vector2f& dimensions, const Color& color, float roundness = 0.0f,
                       float rotation = 0.0f, const Vector2f& origin = {}) noexcept;
 
-        [[maybe_unused]]
         void DrawCircle(const Vector2f& pos, float radius, const Color& color) noexcept;
 
         /** @brief Draws a quadratic bezier-curve.
@@ -76,7 +64,6 @@ namespace tml
          * @param step Defines the smoothness of the curve, where a lower value means smoother curve.
          * @note Doesn't work well with translucent colors.*/
 
-        [[maybe_unused]]
         void DrawBezier(const Vector2f& a, const Vector2f& cp1, const Vector2f& cp2, const Vector2f& b,
                         float thickness,  const Color& color, bool rounded = true, float step = 0.01f) noexcept;
 
@@ -87,17 +74,14 @@ namespace tml
          * @param step Defines the smoothness of the curve, where a lower value means smoother curve.
          * @note Doesn't work well with translucent colors.*/
 
-        [[maybe_unused]]
         void DrawBezier(const Vector2f& a, const Vector2f& cp, const Vector2f& b, float thickness,
                         const Color& color, bool rounded = true, float step = 0.01f) noexcept;
 
         /// @brief Draws a grid. The rows and columns mean how many cells the grid should contain horizontally and vertically.
-        [[maybe_unused]]
         void DrawGrid(const Vector2f& top_left, const Vector2f& size, uint32_t rows, uint32_t columns,
                       const Color& color, float thickness = 1.f, bool rounded = false) noexcept;
 
         /// @brief Does exactly what it says. Just draws a texture on pos with given size.
-        [[maybe_unused]]
         void DrawTexture(const Texture& tex, const Vector2f& pos, const Vector2f& size) noexcept;
 
         /** @brief Draws texture with a given position and size. Rotation happens around the center of the texture. tl and rb are UV coordinates.
@@ -107,27 +91,21 @@ namespace tml
          * @param rotation Rotation in degrees around the middle point.
          * @param tl Top left UV coordinate of the texture.
          * @param br Bottom right UV coordinate of the texture. */
-        [[maybe_unused]]
         void DrawTextureRect(const Texture& tex, const Vector2f& pos, const Vector2f& size, float rotation, const Vector2f& tl, const Vector2f& br) noexcept;
 
         /** @Brief Draws string of text on pos with a given size.
          * @note This is going to be very slow,
          * because the vertex data is going to have to be constructed on each draw.
          * If you are going to be drawing text that doesn't change each frame, you should use RenderTarget::Draw(Text& text) instead. */
-        [[maybe_unused]]
         void DrawText(const String& text, const Vector2f& pos, float size, const Color& color = Color::White) noexcept;
 
-        [[maybe_unused]]
         void PushVertexData(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices) noexcept;
 
-        [[maybe_unused]]
         void PushVertexData(std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const Texture& texture) noexcept;
 
         /** @brief Reserves a slot for a texture in the current render batch. */
-        [[maybe_unused, nodiscard]]
         uint32_t PushTexture(const Texture&) noexcept;
 
-        [[maybe_unused]]
         void PushQuad(
                 const Vector2f& pos,
                 const Vector2f& size,
@@ -140,19 +118,15 @@ namespace tml
         ) noexcept;
 
         /** @brief Draws the current batch and flushes all buffers. */
-        [[maybe_unused]]
         void EndBatch() noexcept;
 
-        [[maybe_unused, nodiscard]]
-        inline OpenGLVersion GetOpenGLVersion() const noexcept { return m_version; }
+        [[nodiscard]] OpenGLVersion GetOpenGLVersion() const noexcept { return m_version; }
 
-		[[maybe_unused, nodiscard]]
-		const Matrix4f& GetViewMatrix() const noexcept;
+		[[nodiscard]] const Matrix4f& GetViewMatrix() const noexcept;
         void PushState() noexcept;
         void PopState() noexcept;
 
-        [[maybe_unused, nodiscard]]
-        virtual Vector2f GetRenderTargetSize() const noexcept = 0;
+        [[nodiscard]] virtual Vector2f GetRenderTargetSize() const noexcept = 0;
     protected:
         class Renderer& m_renderer;
         float m_clearColor[4] = {};

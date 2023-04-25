@@ -12,7 +12,7 @@ namespace tml
         Text();
         explicit Text(String string, const Vector2f& pos = {0,0}, float size = 30, const Color& color = Color::White);
 
-        void SetSize(float s) noexcept;
+        void SetSize(float size) noexcept;
         void SetString(const String& string) noexcept;
         void SetFont(const Font& font) noexcept;
         void SetFont(const std::shared_ptr<Font>& font) noexcept;

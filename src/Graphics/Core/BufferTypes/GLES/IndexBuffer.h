@@ -1,5 +1,5 @@
 #pragma once
-#include <TML/Graphics/Core/Buffers.h>
+#include <TML/Graphics/Core/IndexBuffer.h>
 #include <cstring>
 #include "../BufferFlags.h"
 #include "../../../Headers/GLHeader.h"

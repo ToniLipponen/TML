@@ -1,8 +1,8 @@
 #pragma once
-#include "Shader.h"
-#include "Buffers.h"
-#include <TML/System/String.h>
 #include <TML/Export.h>
+#include <TML/Graphics/Core/Shader.h>
+#include <TML/Graphics/Core/StorageBuffer.h>
+#include <TML/System/String.h>
 
 namespace tml
 {
