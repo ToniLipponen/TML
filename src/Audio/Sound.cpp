@@ -122,17 +122,6 @@ namespace tml
             buffer[i] = m_buffer->GetData()[m_framesRead + i];
         }
 
-        for(auto& [name, effect] : m_effects)
-        {
-            if(effect->IsEnabled())
-            {
-                for(int i = 0; i < framesRead; i++)
-                {
-                    effect->Process(buffer.data() + i, m_framesRead + i, m_frameCount);
-                }
-            }
-        }
-
         for(uint32_t i = 0; i < framesRead; i++)
         {
             output[i] += (buffer[i] * m_volume * balance);

@@ -120,17 +120,6 @@ namespace tml
                 break;
             }
 
-            for(auto& [name, effect] : m_effects)
-            {
-                if(effect->IsEnabled())
-                {
-                    for(int i = 0; i < framesReadThisIteration; i++)
-                    {
-                        effect->Process(temp.data() + i, m_framesRead + totalFramesRead + i, m_frameCount);
-                    }
-                }
-            }
-
             for(iSample = 0; iSample < framesReadThisIteration; iSample++)
             {
                 output[totalFramesRead + iSample] += temp[iSample] * m_volume * balance;
