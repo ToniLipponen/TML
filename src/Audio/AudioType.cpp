@@ -111,25 +111,4 @@ namespace tml
     {
         return static_cast<double>(m_framesRead) / static_cast<double>(m_frameCount);
     }
-
-    AudioEffect* AudioType::AddEffect(const std::string& name, AudioEffect* effect)
-    {
-        m_effects[name] = std::unique_ptr<AudioEffect>(effect);
-        return effect;
-    }
-
-    AudioEffect* AudioType::GetEffect(const std::string& name)
-    {
-        if(m_effects.find(name) == m_effects.end())
-        {
-            return nullptr;
-        }
-
-        return m_effects.at(name).get();
-    }
-
-    void AudioType::RemoveEffect(const std::string& name)
-    {
-        m_effects.erase(name);
-    }
 }

@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
+#include <optional>
 
 namespace tml
 {
@@ -31,9 +32,6 @@ namespace tml
         virtual uint64_t GetLength() noexcept;
         virtual uint64_t GetLengthInSeconds() noexcept;
         [[nodiscard]] virtual double GetProgress() const noexcept;
-        AudioEffect* AddEffect(const std::string& name, AudioEffect* effect);
-        AudioEffect* GetEffect(const std::string& name);
-        void RemoveEffect(const std::string& name);
         virtual uint32_t ReadFrames(AudioFrame* output, uint32_t frameCount) = 0;
     
     protected:
@@ -47,7 +45,5 @@ namespace tml
         bool m_valid = false;
         State m_state = Stopped;
         uint64_t m_id;
-
-        std::unordered_map<std::string, std::unique_ptr<AudioEffect>> m_effects;
     };
 }
