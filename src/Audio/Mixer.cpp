@@ -95,7 +95,7 @@ namespace tml::Mixer
             InitializeMixer();
         }
 
-        s_sounds.insert(std::pair<uint32_t, AudioType*>(id, sound));
+        s_sounds[id] = sound;
     }
 
     void RemoveSound(uint64_t id) noexcept
