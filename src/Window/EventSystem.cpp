@@ -41,8 +41,6 @@ namespace tml
             return false;
         }
 
-        GLFWgamepadstate state;
-        glfwGetGamepadState(1, &state);
         glfwPollEvents();
 
         return PopEvent(handle, event);

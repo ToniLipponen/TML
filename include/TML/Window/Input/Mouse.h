@@ -15,6 +15,6 @@ namespace tml::Mouse
         Last
     };
 
-    [[maybe_unused, nodiscard]] TML_API Vector2d GetPosition() noexcept;
-    [[maybe_unused, nodiscard]] TML_API bool ButtonDown(Button button) noexcept;
+    [[nodiscard]] TML_API Vector2d GetPosition() noexcept;
+    [[nodiscard]] TML_API bool ButtonDown(Button button) noexcept;
 }

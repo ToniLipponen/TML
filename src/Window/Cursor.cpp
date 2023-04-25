@@ -45,12 +45,12 @@ namespace tml
         return m_handle;
     }
 
-    [[maybe_unused]] const Cursor Cursor::CrosshairCursor   = Cursor(GLFW_CROSSHAIR_CURSOR);
-    [[maybe_unused]] const Cursor Cursor::IBeamCursor       = Cursor(GLFW_IBEAM_CURSOR);
-    [[maybe_unused]] const Cursor Cursor::ArrowCursor       = Cursor(GLFW_ARROW_CURSOR);
-    [[maybe_unused]] const Cursor Cursor::VResizeCursor     = Cursor(GLFW_VRESIZE_CURSOR);
-    [[maybe_unused]] const Cursor Cursor::HResizeCursor     = Cursor(GLFW_HRESIZE_CURSOR);
-    [[maybe_unused]] const Cursor Cursor::CenterCursor      = Cursor(GLFW_CENTER_CURSOR);
-    [[maybe_unused]] const Cursor Cursor::HandCursor        = Cursor(GLFW_HAND_CURSOR);
-    [[maybe_unused]] const Cursor Cursor::DefaultCursor     = Cursor();
+    const Cursor Cursor::CrosshairCursor   = Cursor(GLFW_CROSSHAIR_CURSOR);
+    const Cursor Cursor::IBeamCursor       = Cursor(GLFW_IBEAM_CURSOR);
+    const Cursor Cursor::ArrowCursor       = Cursor(GLFW_ARROW_CURSOR);
+    const Cursor Cursor::VResizeCursor     = Cursor(GLFW_VRESIZE_CURSOR);
+    const Cursor Cursor::HResizeCursor     = Cursor(GLFW_HRESIZE_CURSOR);
+    const Cursor Cursor::CenterCursor      = Cursor(GLFW_CENTER_CURSOR);
+    const Cursor Cursor::HandCursor        = Cursor(GLFW_HAND_CURSOR);
+    const Cursor Cursor::DefaultCursor     = Cursor();
 }

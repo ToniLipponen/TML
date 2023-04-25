@@ -7,12 +7,12 @@ namespace tml::Gamepad
 {
     static unsigned char s_buttonStates[GamepadCount][ButtonCount]{};
 
-    [[maybe_unused]] bool IsGamepadConnected(GamepadEnum gamepad) noexcept
+    bool IsGamepadConnected(GamepadEnum gamepad) noexcept
     {
         return static_cast<bool>(glfwJoystickPresent(gamepad)) && static_cast<bool>(glfwJoystickIsGamepad(gamepad));
     }
 
-    [[maybe_unused]] Vector2f GetAxisValue(GamepadEnum gamepad, Joystick joystick) noexcept
+    Vector2f GetAxisValue(GamepadEnum gamepad, Joystick joystick) noexcept
     {
         GLFWgamepadstate state{};
         glfwGetGamepadState(gamepad, &state);
@@ -25,7 +25,7 @@ namespace tml::Gamepad
         return {state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X], state.axes[GLFW_GAMEPAD_AXIS_RIGHT_Y]};
     }
 
-    [[maybe_unused]] float GetTriggerValue(GamepadEnum gamepad, Trigger trigger) noexcept
+    float GetTriggerValue(GamepadEnum gamepad, Trigger trigger) noexcept
     {
         GLFWgamepadstate state{};
         glfwGetGamepadState(gamepad, &state);
@@ -39,7 +39,7 @@ namespace tml::Gamepad
         return (state.axes[GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER] + 1.0f) / 2.0f;
     }
 
-    [[maybe_unused]] bool IsButtonPressed(GamepadEnum gamepad, Gamepad::Button button) noexcept
+    bool IsButtonPressed(GamepadEnum gamepad, Gamepad::Button button) noexcept
     {
         GLFWgamepadstate state{};
         glfwGetGamepadState(gamepad, &state);
@@ -49,7 +49,7 @@ namespace tml::Gamepad
         return returnValue;
     }
 
-    [[maybe_unused]] bool IsButtonDown(GamepadEnum gamepad, Gamepad::Button button) noexcept
+    bool IsButtonDown(GamepadEnum gamepad, Gamepad::Button button) noexcept
     {
         GLFWgamepadstate state{};
         glfwGetGamepadState(gamepad, &state);
