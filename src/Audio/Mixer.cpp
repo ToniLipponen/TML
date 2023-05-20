@@ -2,6 +2,9 @@
 #include <TML/Audio/AudioType.h>
 #include <TML/TMLAssert.h>
 
+#include <map>
+#include <memory>
+
 #define STB_VORBIS_HEADER_ONLY
 #include <miniaudio/decoders/stb_vorbis.c>  /* Enables Vorbis decoding. */
 
@@ -20,8 +23,6 @@
 #undef STB_VORBIS_HEADER_ONLY
 #include <miniaudio/decoders/stb_vorbis.c>
 
-#include <map>
-#include <memory>
 
 namespace tml::Mixer
 {
@@ -29,7 +30,7 @@ namespace tml::Mixer
     static std::map<uint64_t, AudioType*> s_sounds;
     static uint64_t s_soundCount = 0;
 
-    void OnAudioCallback(void* device, void* output, const void*, ma_uint32 frameCount)
+    void OnAudioCallback(void*, void* output, const void*, ma_uint32 frameCount)
     {
         auto* outputBuffer = static_cast<tml::AudioFrame*>(output);
 
@@ -100,10 +101,7 @@ namespace tml::Mixer
 
     void RemoveSound(uint64_t id) noexcept
     {
-        if(s_sounds.find(id) != s_sounds.end())
-        {
-            s_sounds.erase(id);
-        }
+        s_sounds.erase(id);
     }
 
     uint64_t GetAudioID() noexcept

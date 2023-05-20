@@ -21,7 +21,7 @@ namespace tml::Math
     [[nodiscard]]
     inline constexpr typename std::enable_if<std::is_floating_point<T>::value, T>::type DegreesToRadians(T x) noexcept
     {
-        return x * 0.01745329252;
+        return x * static_cast<T>(0.01745329252);
     }
 
     /** @brief Converts from radians to degrees. */
@@ -29,7 +29,7 @@ namespace tml::Math
     [[nodiscard]]
     inline constexpr typename std::enable_if<std::is_floating_point<T>::value, T>::type RadiansToDegrees(T x) noexcept
     {
-        return x * 57.295779513;
+        return x * static_cast<T>(57.295779513);
     }
 
     /** @brief rotate point around origin using cosine and sine of rotation angle.
@@ -44,6 +44,7 @@ namespace tml::Math
         p = p - origin;
         const double cos_r = std::cos(r);
         const double sin_r = std::sin(r);
+
         return Vector2<T>{origin.x + p.x * cos_r - p.y * sin_r,
                 origin.y + p.x * sin_r + p.y * cos_r};
     }
@@ -69,6 +70,7 @@ namespace tml::Math
     {
         const float cos_r = std::cos(r);
         const float sin_r = std::sin(r);
+
         return {point.x * cos_r - point.y * sin_r,
                 point.x * sin_r + point.y * cos_r};
     }
@@ -117,6 +119,7 @@ namespace tml::Math
     inline constexpr typename std::enable_if<std::is_floating_point<T>::value, T>::type SmoothStep(T edge0, T edge1, T x) noexcept
     {
         const auto t = Clamp<T>((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+
         return t * t * (3.0 - 2.0 * t);
     }
 
@@ -241,7 +244,9 @@ namespace tml::Math
      *  @return Random value between minimum and maximum */
     template<typename T = int32_t>
     [[nodiscard]]
-    inline constexpr typename std::enable_if<std::is_arithmetic<T>::value, T>::type Random(T min = std::numeric_limits<T>::min(), T max = std::numeric_limits<T>::max()) noexcept
+    inline constexpr typename std::enable_if<std::is_arithmetic<T>::value, T>::type Random(
+            T min = std::numeric_limits<T>::min(),
+            T max = std::numeric_limits<T>::max()) noexcept
     {
         if constexpr(std::is_floating_point<T>::value)
         {
