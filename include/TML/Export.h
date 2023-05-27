@@ -1,5 +1,6 @@
 #pragma once
 #include <TML/System/Platform.h>
+#include <cstdint>
 
 #ifdef TML_STATIC
     #define TML_API
