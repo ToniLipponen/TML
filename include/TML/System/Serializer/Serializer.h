@@ -1,7 +1,6 @@
 #pragma once
 #include <TML/System/String.h>
 #include <TML/Export.h>
-#include <cstdint>
 #include <streambuf>
 #include <string>
 #include <type_traits>

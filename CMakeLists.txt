@@ -13,7 +13,6 @@ include_directories(include external src/Headers)
 
 include(cmake/Options.cmake)
 include(cmake/CompileDefinitions.cmake)
-include(cmake/GLFW.cmake)
 include(cmake/External.cmake)
 
 # Set C++ standard
