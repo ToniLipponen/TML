@@ -14,7 +14,7 @@ namespace tml::Clipboard
     TML_API bool GetString(String& string);
     
     [[nodiscard]] 
-    TML_API std::optional<String> GetString();
+    TML_API String GetString();
     
     TML_API void SetString(const String& string);
 }

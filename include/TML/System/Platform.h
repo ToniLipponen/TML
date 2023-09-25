@@ -4,17 +4,18 @@
     #define TML_PLATFORM_WINDOWS
 #endif
 
+#if defined(__linux__)
+    #define TML_PLATFORM_LINUX
+#endif
+
 #if defined(__unix__)
     #define TML_PLATFORM_UNIX
-
-    #if defined(__linux__)
-        #define TML_PLATFORM_LINUX
-    #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+    
+    #if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
         #define TML_PLATFORM_FREEBSD
     #elif defined(__ANDROID__)
         #define TML_PLATFORM_ANDROID
 	#endif
-
 #endif
 
 #if defined(__APPLE__)

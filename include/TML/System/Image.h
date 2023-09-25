@@ -39,7 +39,7 @@ namespace tml
         void SetPixel(Vector2ui position, Color pixelColor) noexcept;
         void InsertImage(uint32_t x, uint32_t y, const Image& image) noexcept;
         void InsertImage(Vector2ui position, const Image& image) noexcept;
-
+        
     private:
         enum ImageType { None, Jpg, Png, Bmp, Tga, Pic, Pnm, Svg };
         bool LoadSvg(const String& filename, uint32_t requestedWidth = 0, uint32_t requestedHeight = 0) noexcept;

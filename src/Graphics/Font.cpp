@@ -67,9 +67,11 @@ namespace tml
 
     bool Font::LoadFromFile(const String& filename) noexcept
     {
-        if(auto data = File::GetBytes(filename.cpp_str()))
+        auto data = File::ReadBytes(filename.cpp_str());
+
+        if(!data.empty())
         {
-            return LoadFromData(reinterpret_cast<const uint8_t *>(data->data()));
+            return LoadFromData(reinterpret_cast<const uint8_t *>(data.data()));
         }
 
         return false;
@@ -109,6 +111,7 @@ namespace tml
         } while(size < FONT_ATLAS_SIZE);
 
         m_texture.LoadFromMemory(size, size, 1, 8, bitmap.data());
+        
         return MakeKerningTable(data);
     }
 

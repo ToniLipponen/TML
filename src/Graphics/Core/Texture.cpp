@@ -41,6 +41,7 @@ namespace tml
         m_minFilter = rhs.m_minFilter;
         m_clampMode = rhs.m_clampMode;
         LoadFromImage(image);
+
         return *this;
     }
 
@@ -55,6 +56,7 @@ namespace tml
         std::swap(m_magFilter, rhs.m_magFilter);
         std::swap(m_clampMode, rhs.m_clampMode);
         rhs.m_id = 0;
+
         return *this;
     }
     
@@ -71,6 +73,7 @@ namespace tml
     {
         Image img(filename);
         img.FlipVertically();
+        
         return LoadFromImage(img);
     }
 
@@ -182,43 +185,43 @@ namespace tml
         Update();
     }
 
-    [[nodiscard, maybe_unused]]
+    [[nodiscard]]
     Texture::Filter Texture::GetMinFilter() const noexcept
     {
         return m_minFilter;
     }
 
-    [[nodiscard, maybe_unused]]
+    [[nodiscard]]
     Texture::Filter Texture::GetMagFilter() const noexcept
     {
         return m_magFilter;
     }
 
-    [[nodiscard, maybe_unused]]
+    [[nodiscard]]
     Texture::ClampMode Texture::GetClampMode() const noexcept
     {
         return m_clampMode;
     }
 
-    [[nodiscard, maybe_unused]]
+    [[nodiscard]]
     uint32_t Texture::GetID() const noexcept
     {
         return m_id;
     }
 
-    [[nodiscard, maybe_unused]]
+    [[nodiscard]]
     uint32_t Texture::GetWidth() const noexcept
     {
         return m_width;
     }
 
-    [[nodiscard, maybe_unused]]
+    [[nodiscard]]
     uint32_t Texture::GetHeight() const noexcept
     {
         return m_height;
     }
 
-    [[nodiscard, maybe_unused]]
+    [[nodiscard]]
     uint32_t Texture::GetBpp() const noexcept
     {
         return m_bitsPerChannel * m_channels / 8;

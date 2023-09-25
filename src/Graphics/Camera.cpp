@@ -62,6 +62,7 @@ namespace tml
         const auto r = Matrix4f::Rotate(Vector3f(0.f, 0.f, 1.f), -m_rotation);
         const auto o = Matrix4f::Translate({size.x / 2.f, size.y / 2.f, 0.f});
         const Vector4f res = tml::Matrix4f::Inverse(t * r * s * o) * Vector4f(point.x, point.y, 0.0f, 1.0f);
+        
         return {res.x, res.y};
     }
 
@@ -72,6 +73,7 @@ namespace tml
         const auto r = Matrix4f::Rotate(Vector3f(0.f, 0.f, 1.f), -m_rotation);
         const auto o = Matrix4f::Translate({size.x / 2, size.y / 2, 0.f});
         const Vector4f res = t * r * s * o * Vector4f(point.x, point.y, 0.0f, 1.0f);
+
         return {res.x, res.y};
     }
 
@@ -80,6 +82,7 @@ namespace tml
         const auto t = Matrix4f::Translate(Vector3f(-m_pos.x, -m_pos.y, 0.f));
         const auto s = Matrix4f::Scale(Vector3f(m_zoom, m_zoom, 1.f));
         const auto r = Matrix4f::Rotate(Vector3f(0.f, 0.f, 1.f), -m_rotation);
+
         return t * r * s;
     }
 }

@@ -9,9 +9,14 @@ namespace tml
 
     bool ComputeShader::LoadFromFile(const String &filename) noexcept
     {
-        if(const auto src = File::GetString(filename.cpp_str()))
+        if(tml::File::Exists(filename.cpp_str()))
         {
-            return LoadFromString(*src);
+            const auto src = File::ReadString(filename.cpp_str());
+
+            if(!src.empty())
+            {
+                return LoadFromString(src);
+            }
         }
 
         return false;
@@ -39,6 +44,7 @@ namespace tml
             int32_t vertex_message_len = 0;
             GL_CALL(glad_glGetShaderInfoLog(shaderID, 1024, &vertex_message_len, vertex_message));
             std::printf("[Error]: Compute shader error: %s\n", vertex_message);
+            
             return false;
         }
 
@@ -53,17 +59,20 @@ namespace tml
         if(linkStatus != GL_TRUE)
         {
             std::puts("[Error]: Failed to link shader program");
+
             return false;
         }
 
         if(validationStatus != GL_TRUE)
         {
             std::puts("[Error]: Failed to validate shader program");
+
             return false;
         }
 
         GL_CALL(glad_glDetachShader(m_id, shaderID));
         GL_CALL(glad_glDeleteShader(shaderID));
+
         return true;
     }
 

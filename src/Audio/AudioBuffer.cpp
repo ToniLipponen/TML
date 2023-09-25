@@ -24,20 +24,24 @@ namespace tml
     {
         AudioBuffer newBuffer = *this;
         newBuffer.Append(rhs);
+
         return newBuffer;
     }
 
     AudioBuffer& AudioBuffer::operator+=(const AudioBuffer &rhs) noexcept
     {
         Append(rhs);
+
         return *this;
     }
 
     bool AudioBuffer::LoadFromFile(const String& filename) noexcept
     {
-        if(auto data = File::GetBytes(filename.cpp_str()))
+        auto data = File::ReadBytes(filename.cpp_str());
+
+        if(!data.empty())
         {
-            return LoadFromData(data->data(), data->size());
+            return LoadFromData(data.data(), data.size());
         }
 
         return false;
@@ -57,6 +61,7 @@ namespace tml
         if(result != MA_SUCCESS)
         {
             ma_decoder_uninit(&decoder);
+            
             return false;
         }
 

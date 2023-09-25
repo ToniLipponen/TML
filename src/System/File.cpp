@@ -14,9 +14,9 @@ namespace tml::File
         return std::filesystem::file_size(filename);
     }
 
-    std::optional<std::vector<char>> GetBytes(const std::string& filename) noexcept
+    std::vector<char> ReadBytes(const std::string& filename) noexcept
     {
-        if(std::filesystem::exists(filename))
+        if(Exists(filename))
         {
             std::ifstream file(filename, std::ios::binary);
             const auto fileSize = Size(filename);
@@ -27,30 +27,30 @@ namespace tml::File
             return data;
         }
 
-        return std::nullopt;
+        return {};
     }
 
-    std::optional<std::string> GetString(const std::string& filename) noexcept
+    std::string ReadString(const std::string& filename) noexcept
     {
-        if(std::filesystem::exists(filename))
+        if(Exists(filename))
         {
             std::string lines, line;
             std::ifstream file(filename);
 
             while(std::getline(file, line))
             {
-                lines.append("\n" + line);
+                lines.append(line + "\n");
             }
 
             return lines;
         }
 
-        return std::nullopt;
+        return {};
     }
 
-    std::optional<std::vector<std::string>> GetLines(const std::string& filename) noexcept
+    std::vector<std::string> ReadLines(const std::string& filename) noexcept
     {
-        if(std::filesystem::exists(filename))
+        if(Exists(filename))
         {
             std::vector<std::string> lines;
             std::string line;
@@ -64,6 +64,19 @@ namespace tml::File
             return lines;
         }
 
-        return std::nullopt;
+        return {};
+    }
+
+    bool WriteBytes(const std::vector<char>& bytes, const std::string& filename) noexcept
+    {
+        if(!filename.empty())
+        {
+            std::ofstream file(filename);
+            file.write(bytes.data(), bytes.size());
+
+            return true;
+        }
+
+        return false;
     }
 }

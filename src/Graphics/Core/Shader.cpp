@@ -32,15 +32,10 @@ namespace tml
 
     bool Shader::LoadFromFile(const std::string& vs, const std::string& fs) const noexcept
     {
-        auto vert = File::GetString(vs);
-        auto frag = File::GetString(fs);
+        auto vert = File::ReadString(vs);
+        auto frag = File::ReadString(fs);
 
-        if(vert && frag)
-        {
-            return LoadFromString(*vert, *frag);
-        }
-
-        return false;
+        return LoadFromString(vert, frag);
     }
 
     bool Shader::LoadFromString(const std::string& vs, const std::string& fs) const noexcept
@@ -111,6 +106,7 @@ namespace tml
         }
 
         Cleanup(_vs, _fs);
+        
         return true;
     }
 
@@ -135,6 +131,7 @@ namespace tml
     {
         int32_t readBytes = 0;
         GL_CALL(glad_glGetShaderInfoLog(id, maxBytes, &readBytes, str));
+
         return readBytes;
     }
 

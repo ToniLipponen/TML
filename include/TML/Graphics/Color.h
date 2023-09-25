@@ -77,6 +77,7 @@ namespace tml
         g = static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(g) + color.g, 255));
         b = static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(b) + color.b, 255));
         a = static_cast<uint8_t>(Math::Min<int32_t>(static_cast<int32_t>(a) + color.a, 255));
+
         return *this;
     }
 
@@ -86,6 +87,7 @@ namespace tml
         g = static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(g) - color.g, 0));
         b = static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(b) - color.b, 0));
         a = static_cast<uint8_t>(Math::Max<int32_t>(static_cast<int32_t>(a) - color.a, 0));
+        
         return *this;
     }
 

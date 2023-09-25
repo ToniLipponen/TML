@@ -25,13 +25,14 @@ namespace tml
         if(!IsEmpty())
         {
             string = String(glfwGetClipboardString(nullptr));
+            
             return true;
         }
 
         return false;
     }
 
-    std::optional<String> Clipboard::GetString()
+    String Clipboard::GetString()
     {
         String text;
 
@@ -40,7 +41,7 @@ namespace tml
             return text;
         }
 
-        return std::nullopt;
+        return {};
     }
 
     void Clipboard::SetString(const String& string)

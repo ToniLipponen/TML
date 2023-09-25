@@ -17,6 +17,7 @@ namespace tml
 		Deserializer& operator>>(Deserializable& data)
 		{
 			data.Deserialize(*this);
+			
 			return *this;
 		}
 

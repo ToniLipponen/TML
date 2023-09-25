@@ -268,6 +268,7 @@ namespace tml
         m_data = std::move(newData);
         m_width = newWidth;
         m_height = newWidth;
+ 
         return true;
     }
 
@@ -295,10 +296,11 @@ namespace tml
 
     bool Image::LoadSvg(const String& filename, uint32_t requestedWidth, uint32_t requestedHeight) noexcept
     {
-        if(auto data = File::GetBytes(filename.cpp_str()))
+        if(auto data = File::ReadBytes(filename.cpp_str()); !data.empty())
         {
-            auto* bytes = reinterpret_cast<const uint8_t *>(data->data());
-            auto bytesLength = static_cast<uint32_t>(data->size());
+            auto* bytes = reinterpret_cast<const uint8_t *>(data.data());
+            auto bytesLength = static_cast<uint32_t>(data.size());
+
             return LoadSvg(bytes, bytesLength, requestedWidth, requestedHeight);
         }
 
@@ -319,6 +321,7 @@ namespace tml
                 auto bitmapSize = m_width * m_height;
                 m_data = std::vector<Color>(bitmapSize);
                 memcpy(m_data.data(), bitmap.data(), bitmapSize * sizeof(Color));
+            
                 return true;
             }
         }

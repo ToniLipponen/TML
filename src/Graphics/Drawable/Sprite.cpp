@@ -85,6 +85,7 @@ namespace tml
         if(!newTexture->LoadFromFile(filename))
         {
             m_texture = nullptr;
+
             return false;
         }
 
@@ -96,11 +97,13 @@ namespace tml
         if(image.GetData() == nullptr)
         {
             m_texture = nullptr;
+
             return false;
         }
 
         auto newTexture = std::make_shared<Texture>();
         newTexture->LoadFromImage(image);
+
         return LoadFromTexture(newTexture);
     }
 
@@ -108,6 +111,7 @@ namespace tml
     {
         auto newTexture = std::make_shared<Texture>();
         *newTexture = texture;
+
         return LoadFromTexture(newTexture);
     }
 
@@ -124,6 +128,7 @@ namespace tml
         m_texSize = m_size;
         m_rect = {{0,0}, m_size};
         m_updated = true;
+        
         return (m_texture != nullptr) && (m_texture->GetID() != 0);
     }
 

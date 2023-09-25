@@ -28,6 +28,7 @@ namespace tml
     {
         m_points.push_back(point);
         m_updated = true;
+        
         return m_points.size();
     }
 
@@ -37,6 +38,7 @@ namespace tml
         {
             m_points[index] = point;
             m_updated = true;
+
             return true;
         }
 
@@ -49,6 +51,7 @@ namespace tml
         {
             m_points.erase(m_points.begin() + index);
             m_updated = true;
+
             return true;
         }
 
@@ -61,6 +64,7 @@ namespace tml
         {
             m_points.clear();
             m_updated = true;
+
             return true;
         }
 
