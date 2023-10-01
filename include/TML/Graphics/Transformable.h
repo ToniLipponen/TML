@@ -8,27 +8,32 @@ namespace tml
     class TML_API Transformable
     {
     public:
-        [[nodiscard]] Vector2f GetPosition() const noexcept 
+        [[nodiscard]] 
+        Vector2f GetPosition() const noexcept 
         { 
             return m_pos;
         }
 
-        [[nodiscard]] Vector2f GetSize() const noexcept 
+        [[nodiscard]] 
+        Vector2f GetSize() const noexcept 
         {
             return m_size;
         }
 
-        [[nodiscard]] Vector2f GetOrigin() const noexcept 
+        [[nodiscard]] 
+        Vector2f GetOrigin() const noexcept 
         {
             return m_origin;
         }
 
-        [[nodiscard]] Vector2f GetScale() const noexcept 
+        [[nodiscard]] 
+        Vector2f GetScale() const noexcept 
         {
             return m_scale;
         }
 
-        [[nodiscard]] float GetRotation() const noexcept 
+        [[nodiscard]] 
+        float GetRotation() const noexcept 
         {
             return m_rotation;
         }

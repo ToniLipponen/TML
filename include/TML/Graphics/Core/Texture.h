@@ -43,14 +43,29 @@ namespace tml
         void SetMinMagFilter(Filter min, Filter mag) noexcept;
         void SetClampMode(ClampMode mode) noexcept;
 
-        [[nodiscard]] Filter GetMinFilter() const noexcept;
-        [[nodiscard]] Filter GetMagFilter() const noexcept;
-        [[nodiscard]] ClampMode GetClampMode() const noexcept;
-        [[nodiscard]] uint32_t GetID() const noexcept;
-        [[nodiscard]] uint32_t GetWidth() const noexcept;
-        [[nodiscard]] uint32_t GetHeight() const noexcept;
-        [[nodiscard]] uint32_t GetBpp() const noexcept;
-        [[nodiscard]] Image GetData() const noexcept;
+        [[nodiscard]]
+        Filter GetMinFilter() const noexcept;
+        
+        [[nodiscard]]
+        Filter GetMagFilter() const noexcept;
+        
+        [[nodiscard]]
+        ClampMode GetClampMode() const noexcept;
+        
+        [[nodiscard]]
+        uint32_t GetID() const noexcept;
+        
+        [[nodiscard]]
+        uint32_t GetWidth() const noexcept;
+        
+        [[nodiscard]]
+        uint32_t GetHeight() const noexcept;
+        
+        [[nodiscard]]
+        uint32_t GetBpp() const noexcept;
+        
+        [[nodiscard]]
+        Image GetData() const noexcept;
         
     protected:
         inline void Update() const noexcept;

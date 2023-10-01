@@ -25,22 +25,17 @@ namespace tml
             DataType dataType;
         };
     public:
-        BufferLayout() : m_stride(0) {}
+        BufferLayout();
 
-        void Push(uint32_t elements, uint32_t size, DataType type) noexcept
-        {
-            m_layout.push_back(Attribute{elements, size, type});
-            m_stride += elements * size;
-        }
+        void Push(uint32_t elements, uint32_t size, DataType type) noexcept;
 
-        void Clear()
-        {
-            m_layout.clear();
-            m_stride = 0;
-        }
+        void Clear() noexcept;
 
-        std::vector<Attribute> const & GetData() const noexcept { return m_layout; }
-        uint32_t GetStride() const noexcept { return m_stride; }
+        [[nodiscard]]
+        std::vector<Attribute> const & GetData() const noexcept;
+
+        [[nodiscard]]
+        uint32_t GetStride() const noexcept;
 
     private:
         std::vector<Attribute> m_layout;

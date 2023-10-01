@@ -19,7 +19,10 @@ namespace tml
         void Clear() noexcept override;
         void Clear(Color color) noexcept override;
         void Display() noexcept override;
-        [[nodiscard]] Image Screenshot() const noexcept;
+        
+        [[nodiscard]] 
+        Image Screenshot() const noexcept;
+        
         Vector2f GetRenderTargetSize() const noexcept override { return GetSize(); }
     private:
         bool m_autoResizeView = true;

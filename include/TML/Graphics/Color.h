@@ -41,13 +41,23 @@ namespace tml
 		}
 
         inline constexpr Color& operator+=(const Color& color) noexcept;
+        
         inline constexpr Color& operator-=(const Color& color) noexcept;
-        [[nodiscard]] inline constexpr Color operator+(const Color& color) const noexcept;
-        [[nodiscard]] inline constexpr Color operator-(const Color& color) const noexcept;
-        [[nodiscard]] inline constexpr bool operator==(const Color& color) const noexcept;
-        [[nodiscard]] inline constexpr bool operator!=(const Color& color) const noexcept;
+        
+        [[nodiscard]] 
+        inline constexpr Color operator+(const Color& color) const noexcept;
+        
+        [[nodiscard]] 
+        inline constexpr Color operator-(const Color& color) const noexcept;
+        
+        [[nodiscard]] 
+        inline constexpr bool operator==(const Color& color) const noexcept;
+        
+        [[nodiscard]] 
+        inline constexpr bool operator!=(const Color& color) const noexcept;
 
-        [[nodiscard]] inline constexpr uint32_t Hex() const noexcept
+        [[nodiscard]] 
+        inline constexpr uint32_t Hex() const noexcept
         {
             return  (static_cast<uint32_t>(r) << 24) |
                     (static_cast<uint32_t>(g) << 16) |
@@ -91,7 +101,8 @@ namespace tml
         return *this;
     }
 
-    [[nodiscard]] inline constexpr Color Color::operator+(const Color& color) const noexcept
+    [[nodiscard]] 
+    inline constexpr Color Color::operator+(const Color& color) const noexcept
     {
         return
         {
@@ -102,7 +113,8 @@ namespace tml
         };
     }
 
-    [[nodiscard]] inline constexpr Color Color::operator-(const Color& color) const noexcept
+    [[nodiscard]] 
+    inline constexpr Color Color::operator-(const Color& color) const noexcept
     {
         return
         {
@@ -113,12 +125,14 @@ namespace tml
         };
     }
 
-    [[nodiscard]] inline constexpr bool Color::operator==(const Color& color) const noexcept
+    [[nodiscard]] 
+    inline constexpr bool Color::operator==(const Color& color) const noexcept
     {
         return Hex() == color.Hex();
     }
 
-    [[nodiscard]] inline constexpr bool Color::operator!=(const Color& color) const noexcept
+    [[nodiscard]] 
+    inline constexpr bool Color::operator!=(const Color& color) const noexcept
     {
         return Hex() != color.Hex();
     }

@@ -4,6 +4,7 @@
 #include <TML/Window/Event.h>
 #include <TML/Window/Cursor.h>
 #include <TML/Window/Monitor.h>
+#include <TML/System/EventHandler.h>
 #include <TML/System/Image.h>
 #include <TML/System/Math/Vector2.h>
 #include <TML/System/String.h>
@@ -31,7 +32,7 @@ namespace tml
         bool Create(const WindowSettings& settings) noexcept;
         void Close() noexcept;
 
-        [[nodiscard]] bool IsOpen() const noexcept;
+        [[nodiscard]] bool IsOpen(bool waitForEvent = false) const noexcept;
 		[[nodiscard]] bool IsMaximized() const noexcept;
         [[nodiscard]] const void* GetHandle() const noexcept;
         [[nodiscard]] int32_t GetWidth() const noexcept;
@@ -41,12 +42,8 @@ namespace tml
         [[nodiscard]] Vector2i GetSize() const noexcept;
         [[nodiscard]] Vector2i GetPosition() const noexcept;
         [[nodiscard]] const WindowSettings& GetSettings() const noexcept;
-        [[nodiscard]] std::vector<String> GetDroppedFiles() const noexcept;
 		[[nodiscard]] Monitor GetMonitor() const noexcept;
 		[[nodiscard]] Vector2f GetContentScale() const noexcept;
-
-        bool PollEvents(Event& e) noexcept;
-        bool WaitEvents(Event& e) noexcept;
 
         void SetPosition(int32_t x, int32_t y) noexcept;
         void SetSize(uint32_t width, uint32_t height) noexcept;
@@ -71,8 +68,30 @@ namespace tml
         void Show() const noexcept;
         void Hide() const noexcept;
 
+        EventHandler<Window, MouseButtonEvent> OnMouseClicked;
+        EventHandler<Window, MoveEvent> OnMoved;
+        EventHandler<Window, ResizeEvent> OnResized;
+        EventHandler<Window, Event> OnMinimized;
+        EventHandler<Window, Event> OnRestored;
+        EventHandler<Window, Event> OnMaximized;
+
+        EventHandler<Window, Event> OnMouseEnter;
+        EventHandler<Window, Event> OnMouseExit;
+        EventHandler<Window, Event> OnClosed;
+        EventHandler<Window, Event> OnLostFocus;
+        EventHandler<Window, Event> OnGainedFocus;
+
+
+        EventHandler<Window, KeyEvent> OnKeyPressed;
+        EventHandler<Window, MoveEvent> OnMouseMoved;
+        EventHandler<Window, TextEvent> OnTextEntered;
+        EventHandler<Window, MouseButtonEvent> OnMouseDown;
+        EventHandler<Window, MouseScrollEvent> OnMouseScrolled;
+        EventHandler<Window, MouseDragEvent> OnMouseDragged;
+        EventHandler<Window, GamepadEvent> OnGamepad;
+        EventHandler<Window, FileDropEvent> OnFilesDropped;
+
     private:
-        void HandleWindowEvents(const Event& e) noexcept;
         void SetCallbacks() noexcept;
 
     protected:

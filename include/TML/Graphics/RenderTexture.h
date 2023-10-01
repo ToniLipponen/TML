@@ -15,7 +15,10 @@ namespace tml
         void Clear() noexcept override;
         void Clear(Color color) noexcept override;
         void Display() noexcept;
-        [[nodiscard]] const Texture& GetTexture() const noexcept;
+        
+        [[nodiscard]] 
+        const Texture& GetTexture() const noexcept;
+        
         Vector2f GetRenderTargetSize() const noexcept override { return {m_width, m_height}; }
 
     private:

@@ -120,19 +120,23 @@ namespace tml
         /** @brief Draws the current batch and flushes all buffers. */
         void EndBatch() noexcept;
 
-        [[nodiscard]] OpenGLVersion GetOpenGLVersion() const noexcept { return m_version; }
+        [[nodiscard]] 
+        OpenGLVersion GetOpenGLVersion() const noexcept { return m_version; }
 
-		[[nodiscard]] const Matrix4f& GetViewMatrix() const noexcept;
+		[[nodiscard]] 
+        const Matrix4f& GetViewMatrix() const noexcept;
+        
         void PushState() noexcept;
+        
         void PopState() noexcept;
+        
+        [[nodiscard]] 
+        virtual Vector2f GetRenderTargetSize() const noexcept = 0;
 
-        [[nodiscard]] virtual Vector2f GetRenderTargetSize() const noexcept = 0;
     protected:
         class Renderer& m_renderer;
         float m_clearColor[4] = {};
         OpenGLVersion m_version;
         static std::unique_ptr<Texture> s_circleTexture;
-
-    private:
     };
 }
