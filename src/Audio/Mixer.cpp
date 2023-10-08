@@ -50,6 +50,11 @@ namespace tml::Mixer
                         {
                             sound->Play();
                         }
+                        else
+                        {
+                            tml::Event e;
+                            sound->OnAudioEnd.Invoke(sound, e);
+                        }
                     }
                 }
             }

@@ -2,7 +2,7 @@
 #ifdef NDEBUG
     #undef NDEBUG
 #endif
-#include "TML/TMLAssert.h"
+#include <TML/TMLAssert.h>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -15,7 +15,7 @@ namespace tml
         TML_ASSERT(glfwInit() == GLFW_TRUE, "Failed to initialize GLFW");
 
         /// Set GLFW error callback.
-        glfwSetErrorCallback([](int, const char* m){ std::fprintf(stderr, "[Error]: %s\n", m); });
+        glfwSetErrorCallback([](int, const char* m){ tml::Logger::GetDefault().Error(m); });
 
         /// Set context hints.
 
@@ -40,8 +40,7 @@ namespace tml
         /// Create the actual context.
         m_contextHandle = glfwCreateWindow(640, 480, "", nullptr, nullptr);
 
-        if(!m_contextHandle)
-            exit(1);
+        TML_ASSERT(m_contextHandle != nullptr, "Failed to create an OpenGL context");
 
         glfwMakeContextCurrent(static_cast<GLFWwindow*>(m_contextHandle));
     }

@@ -63,7 +63,6 @@ namespace tml
         return static_cast<int64_t>(m_data.size());
     }
 
-    [[maybe_unused]]
     uint64_t Packet::GetReadBytes() const
     {
         return m_readPos;

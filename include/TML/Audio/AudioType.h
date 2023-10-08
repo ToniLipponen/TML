@@ -1,6 +1,7 @@
 #pragma once
 #include <TML/Export.h>
 #include <TML/Audio/Common.h>
+#include <TML/System/EventHandler.h>
 #include <cstdint>
 #include <vector>
 
@@ -29,6 +30,9 @@ namespace tml
         virtual uint64_t GetLengthInSeconds() noexcept;
         [[nodiscard]] virtual double GetProgress() const noexcept;
         virtual uint32_t ReadFrames(AudioFrame* output, uint32_t frameCount) = 0;
+    
+    public:
+        tml::EventHandler<AudioType> OnAudioEnd;
     
     protected:
         uint64_t m_framesRead;

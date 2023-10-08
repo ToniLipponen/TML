@@ -1,3 +1,7 @@
+#include <TML/System/Image.h>
+#include <TML/System/File.h>
+#include <TML/System/Logger.h>
+
 #define STBI_WINDOWS_UTF8
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -7,8 +11,6 @@
 #include <stb/stb_image_resize.h>
 
 #include <lunasvg.h>
-#include <TML/System/Image.h>
-#include <TML/System/File.h>
 #include <cstring>
 #include <algorithm>
 

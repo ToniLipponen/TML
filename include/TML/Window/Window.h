@@ -9,7 +9,6 @@
 #include <TML/System/Math/Vector2.h>
 #include <TML/System/String.h>
 #include <TML/Export.h>
-#include <optional>
 #include <cstdint>
 
 namespace tml
@@ -32,7 +31,7 @@ namespace tml
         bool Create(const WindowSettings& settings) noexcept;
         void Close() noexcept;
 
-        [[nodiscard]] bool IsOpen(bool waitForEvent = false) const noexcept;
+        [[nodiscard]] bool IsOpen(bool waitForEvent = false) noexcept;
 		[[nodiscard]] bool IsMaximized() const noexcept;
         [[nodiscard]] const void* GetHandle() const noexcept;
         [[nodiscard]] int32_t GetWidth() const noexcept;
@@ -81,7 +80,6 @@ namespace tml
         EventHandler<Window, Event> OnLostFocus;
         EventHandler<Window, Event> OnGainedFocus;
 
-
         EventHandler<Window, KeyEvent> OnKeyPressed;
         EventHandler<Window, MoveEvent> OnMouseMoved;
         EventHandler<Window, TextEvent> OnTextEntered;
@@ -96,11 +94,7 @@ namespace tml
 
     protected:
         WindowSettings m_settings;
-        Vector2i m_size, m_pos, m_mouseDownPos;
-        bool m_mouseDown = false;
-        bool m_dragging = false; // if set, don't send click event
-        Mouse::Button m_buttonDown;
-        float m_minDragDistance = 10;
+        Vector2i m_size, m_pos;
 
         void* m_handle = nullptr;
         bool m_hasGLContext = false;

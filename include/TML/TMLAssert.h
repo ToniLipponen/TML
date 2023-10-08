@@ -3,11 +3,12 @@
 #include <cassert>
 #include <cstdlib>
 #include <cstdio>
+#include <TML/System/Logger.h>
 
 #ifndef TML_NO_DEBUGGING
     #define TML_ASSERT(expr, msg) if(!(expr)){ \
-        printf("[Error]: %s\n", msg);\
-        exit(1);\
+        tml::Logger::GetDefault().Error(msg); \
+        assert(expr);\
     }
 #else
 	#define TML_ASSERT(expr, msg) expr

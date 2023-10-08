@@ -7,12 +7,13 @@ add_library(tml-system ${TML_LIBRARY_TYPE}
         File.cpp
         Compression.cpp
         Clipboard.cpp
-        Image.cpp)
+        Image.cpp
+        Logger.cpp)
 
 if(WIN32)
-    target_link_libraries(tml-system glfw lunasvg fastlz fmt)
+    target_link_libraries(tml-system glfw lunasvg fastlz)
 else()
-    target_link_libraries(tml-system glfw lunasvg fastlz fmt rt)
+    target_link_libraries(tml-system glfw lunasvg fastlz rt)
 endif()
 
 set_target_properties(tml-system PROPERTIES VERSION ${TML_API_VERSION} SOVERSION ${TML_API_VERSION})

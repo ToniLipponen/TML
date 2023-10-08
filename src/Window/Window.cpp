@@ -26,24 +26,27 @@ namespace tml
     Window::Window() noexcept
     : m_handle(nullptr)
     {
-        
+        OnClosed = [this](auto*, auto&){ Close(); };
     }
 
     Window::Window(int32_t w, int32_t h, const String& title, int32_t flags) noexcept
     : m_handle(nullptr)
     {
         TML_ASSERT(Create(w, h, title, flags), "Failed to create a window");
+        OnClosed = [this](auto*, auto&){ Close(); };
     }
 
     Window::Window(const WindowSettings& settings) noexcept
     : m_handle(nullptr)
     {
-        Create(settings);
+        TML_ASSERT(Create(settings), "Failed to create a window");
+        OnClosed = [this](auto*, auto&){ Close(); };
     }
 
     Window::~Window() noexcept
     {
         Close();
+        glfwDestroyWindow(static_cast<GLFWwindow*>(m_handle));
     }
 
     void Window::Display() noexcept
@@ -186,6 +189,17 @@ namespace tml
         }
 
         SetCallbacks();
+
+        OnResized = [&](auto*, tml::ResizeEvent& e)
+        {
+            m_size = tml::Vector2i(e.w, e.h);
+        };
+
+        OnMoved = [&](auto*, tml::MoveEvent& e)
+        {
+            m_pos = tml::Vector2i(e.x, e.y);
+        };
+
         glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &m_pos.x, &m_pos.y);
         glfwGetWindowSize(static_cast<GLFWwindow*>(m_handle), &m_size.x, &m_size.y);
         return m_handle != nullptr;
@@ -193,17 +207,15 @@ namespace tml
 
     void Window::Close() noexcept
     {
-        SetActive(false);
-        glfwDestroyWindow(static_cast<GLFWwindow*>(m_handle));
-        m_handle = nullptr;
+        glfwSetWindowShouldClose(static_cast<GLFWwindow*>(m_handle), 1);
     }
 
-    bool Window::IsOpen(bool waitForEvent) const noexcept
+    bool Window::IsOpen(bool waitForEvent) noexcept
     {
         if(m_handle)
         {
             SetActive(true);
-            
+
             if(waitForEvent)
             {
                 glfwWaitEvents();
@@ -433,68 +445,6 @@ namespace tml
     {
         glfwHideWindow(static_cast<GLFWwindow*>(m_handle));
     }
-
-    // void Window::HandleWindowEvents(const Event &e) noexcept
-    // {
-    //     switch(e.type)
-    //     {
-    //         case tml::Event::WindowResized:
-    //             m_size = Vector2i{e.size.w, e.size.h};
-    //             break;
-
-    //         case tml::Event::WindowMoved:
-    //             m_pos = Vector2i{e.pos.x, e.pos.y};
-    //             break;
-
-    //         case tml::Event::MouseButtonPressed:
-    //         {
-    //             m_mouseDown = true;
-    //             m_buttonDown = static_cast<Mouse::Button>(e.mouseButton.button);
-    //             m_mouseDownPos = {e.mouseButton.x, e.mouseButton.y};
-    //         } break;
-
-    //         case tml::Event::MouseButtonReleased:
-    //         {
-    //             m_mouseDown = false;
-    //             m_dragging = false;
-
-    //             if(!m_dragging)
-    //             {
-    //                 Event clickEvent{};
-    //                 clickEvent.type = tml::Event::MouseButtonClicked;
-    //                 clickEvent.mouseButton.button = static_cast<tml::Mouse::Button>(m_buttonDown);
-    //                 clickEvent.mouseButton.x = e.mouseButton.x;
-    //                 clickEvent.mouseButton.y = e.mouseButton.y;
-
-    //                 tml::EventSystem::GetInstance().PushEvent(m_handle, clickEvent);
-    //             }
-    //         } break;
-
-    //         case tml::Event::MouseMoved:
-    //         {
-    //             if(m_mouseDown)
-    //             {
-    //                 Event dragEvent{};
-    //                 dragEvent.type = tml::Event::MouseDragged;
-    //                 dragEvent.drag.button = static_cast<tml::Mouse::Button>(m_buttonDown);
-    //                 dragEvent.drag.x = e.pos.x;
-    //                 dragEvent.drag.y = e.pos.y;
-    //                 dragEvent.drag.beginX = m_mouseDownPos.x;
-    //                 dragEvent.drag.beginY = m_mouseDownPos.y;
-
-    //                 if(!m_dragging && Math::Distance(m_mouseDownPos, Vector2i(e.mouseButton.x, e.mouseButton.y)) > m_minDragDistance)
-    //                 {
-    //                     m_dragging = true;
-    //                 }
-
-    //                 tml::EventSystem::GetInstance().PushEvent(m_handle, dragEvent);
-    //             }
-    //         } break;
-
-    //         default:
-    //             break;
-    //     }
-    // }
 
     void Window::SetCallbacks() noexcept
     {
