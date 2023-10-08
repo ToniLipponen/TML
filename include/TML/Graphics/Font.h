@@ -50,7 +50,6 @@ namespace tml
         bool MakeKerningTable(const uint8_t* data, int offset = 0) noexcept;
 
     private:
-        void* m_charData;
         void* m_alignedQuads;
         Texture m_texture;
         std::unordered_map<std::pair<CodePoint, CodePoint>, Kerning> m_kerningMap;

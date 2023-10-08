@@ -29,15 +29,14 @@ namespace tml
     }
 
     Font::Font() noexcept
-    : m_charData(new stbtt_bakedchar[FONT_MAX_GLYPH_COUNT]), m_alignedQuads(new stbtt_aligned_quad[FONT_MAX_GLYPH_COUNT])
+    : m_alignedQuads(new stbtt_aligned_quad[FONT_MAX_GLYPH_COUNT])
     {
 
     }
 
     Font::Font(const Font& other) noexcept
-    : m_charData(new stbtt_bakedchar[FONT_MAX_GLYPH_COUNT]), m_alignedQuads(new stbtt_aligned_quad[FONT_MAX_GLYPH_COUNT])
+    : m_alignedQuads(new stbtt_aligned_quad[FONT_MAX_GLYPH_COUNT])
     {
-        std::memcpy(m_charData, other.m_charData, sizeof(stbtt_bakedchar) * FONT_MAX_GLYPH_COUNT);
         std::memcpy(m_alignedQuads, other.m_alignedQuads, sizeof(stbtt_aligned_quad) * FONT_MAX_GLYPH_COUNT);
         m_texture = other.m_texture;
         m_kerningMap = other.m_kerningMap;
@@ -45,7 +44,6 @@ namespace tml
 
     Font::Font(Font&& other) noexcept
     {
-        std::swap(m_charData, other.m_charData);
         std::swap(m_alignedQuads, other.m_alignedQuads);
         m_texture = std::move(other.m_texture);
         m_kerningMap = std::move(other.m_kerningMap);
@@ -53,7 +51,6 @@ namespace tml
 
     Font::~Font() noexcept
     {
-        delete[] ((stbtt_bakedchar*)m_charData);
         delete[] ((stbtt_aligned_quad*)m_alignedQuads);
     }
 
@@ -64,7 +61,6 @@ namespace tml
             return *this;
         }
 
-        std::memcpy(m_charData, rhs.m_charData, sizeof(stbtt_bakedchar) * FONT_MAX_GLYPH_COUNT);
         std::memcpy(m_alignedQuads, rhs.m_alignedQuads, sizeof(stbtt_aligned_quad) * FONT_MAX_GLYPH_COUNT);
         m_texture = rhs.m_texture;
         m_kerningMap = rhs.m_kerningMap;
@@ -79,9 +75,7 @@ namespace tml
             return *this;
         }
 
-        delete[] ((stbtt_bakedchar*)m_charData);
         delete[] ((stbtt_aligned_quad*)m_alignedQuads);
-        std::swap(m_charData, rhs.m_charData);
         std::swap(m_alignedQuads, rhs.m_alignedQuads);
         m_texture = std::move(rhs.m_texture);
         m_kerningMap = std::move(rhs.m_kerningMap);
@@ -147,16 +141,6 @@ namespace tml
                 yPos += static_cast<int>(sdfSize);
                 xPos = 0;
             }
-
-            stbtt_bakedchar& packedChar = static_cast<stbtt_bakedchar*>(m_charData)[codePoint];
-            packedChar.x0 = xPos;
-            packedChar.x1 = xPos + w;
-            packedChar.y0 = yPos;
-            packedChar.y1 = yPos + sdfSize;
-
-            packedChar.yoff = sdfSize + y;
-            packedChar.xoff = w + x;
-            packedChar.xadvance = advance;
             
             CopyPixels(bitmap.data(), pixels, FONT_ATLAS_SIZE, FONT_ATLAS_SIZE, w, h, xPos, yPos);
             auto xOff = w + x;
