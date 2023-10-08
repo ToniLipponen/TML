@@ -33,7 +33,6 @@ namespace tml
 
         bool LoadFromFile(const String& filename) noexcept;
         bool LoadFromData(const uint8_t *data) noexcept; //!< Load a font from raw file data.
-
         friend class Text;
         friend class Renderer;
 
@@ -51,7 +50,8 @@ namespace tml
         bool MakeKerningTable(const uint8_t* data, int offset = 0) noexcept;
 
     private:
-        void* m_cdata;
+        void* m_charData;
+        void* m_alignedQuads;
         Texture m_texture;
         std::unordered_map<std::pair<CodePoint, CodePoint>, Kerning> m_kerningMap;
     };

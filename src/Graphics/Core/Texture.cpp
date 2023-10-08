@@ -79,7 +79,7 @@ namespace tml
 
     bool Texture::LoadFromMemory(int32_t w, int32_t h, int32_t channels, int32_t bitsPerChannel, const void* data) noexcept
     {
-        GL_CALL(glad_glDeleteTextures(1, &m_id));
+        //GL_CALL(glad_glDeleteTextures(1, &m_id));
 
 #if defined(TML_USE_GLES) || !defined(TML_USE_DSA)
         GL_CALL(glad_glGenTextures(1, &m_id));

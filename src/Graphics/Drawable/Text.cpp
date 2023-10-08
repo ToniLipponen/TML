@@ -123,10 +123,11 @@ namespace tml
 
     inline constexpr void NormalizeQuad(stbtt_aligned_quad& q, double s) noexcept
     {
-        q.x1 = float((q.x1 * (s / FONT_GLYPH_SIZE)));
-        q.x0 = float((q.x0 * (s / FONT_GLYPH_SIZE)));
-        q.y0 = float((q.y0 * (s / FONT_GLYPH_SIZE)));
-        q.y1 = float((q.y1 * (s / FONT_GLYPH_SIZE)));
+        double scale = s / FONT_GLYPH_SIZE;
+        q.x1 = float(q.x1 * scale);
+        q.x0 = float(q.x0 * scale);
+        q.y0 = float(q.y0 * scale);
+        q.y1 = float(q.y1 * scale);
     }
 
     void Text::Generate()
@@ -186,13 +187,15 @@ namespace tml
                     stbtt_aligned_quad q{};
 
                     const float kerning = m_kerning * font.GetKerning((int)previousChar, (int)c) * (m_size.y / FONT_GLYPH_SIZE);
-                    font.GetAlignedQuad(&q, (int)c - 32, x, y);
+                    font.GetAlignedQuad(&q, (int)c, x, y);
                     NormalizeQuad(q, m_size.x);
+                    float quadWidth = q.x1;
 
-                    q.x0 += kerning + xPos;
-                    q.x1 += kerning + xPos;
+                    q.x0 += xPos;
+                    q.x1 += xPos;
                     q.y0 += yPos;
                     q.y1 += yPos;
+                    xPos += quadWidth;
 
                     m_vertexData.push_back({{q.x0, q.y0}, {q.s0, q.t0}, hex, Vertex::TEXT, 0});
                     m_vertexData.push_back({{q.x1, q.y0}, {q.s1, q.t0}, hex, Vertex::TEXT, 0});
