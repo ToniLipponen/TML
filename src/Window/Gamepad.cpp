@@ -3,32 +3,37 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-namespace tml::Gamepad
+namespace tml
 {
-    static unsigned char s_buttonStates[GamepadCount][ButtonCount]{};
-
-    bool IsGamepadConnected(GamepadEnum gamepad) noexcept
+    Gamepad::Gamepad()
+    : m_id(0)
     {
-        return static_cast<bool>(glfwJoystickPresent(gamepad)) && static_cast<bool>(glfwJoystickIsGamepad(gamepad));
+
     }
 
-    Vector2f GetAxisValue(GamepadEnum gamepad, Joystick joystick) noexcept
+    Gamepad::Gamepad(int32_t id)
+    : m_id(id)
+    {
+
+    }
+
+    Vector2f Gamepad::GetAxisValue(Joystick joystick) noexcept
     {
         GLFWgamepadstate state{};
-        glfwGetGamepadState(gamepad, &state);
+        glfwGetGamepadState(m_id, &state);
 
         if(joystick == Joystick::Left)
         {
-            return {state.axes[GLFW_GAMEPAD_AXIS_LEFT_X], state.axes[GLFW_GAMEPAD_AXIS_LEFT_Y]};
+            return { state.axes[GLFW_GAMEPAD_AXIS_LEFT_X], state.axes[GLFW_GAMEPAD_AXIS_LEFT_Y] };
         }
-
-        return {state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X], state.axes[GLFW_GAMEPAD_AXIS_RIGHT_Y]};
+            
+        return { state.axes[GLFW_GAMEPAD_AXIS_RIGHT_X], state.axes[GLFW_GAMEPAD_AXIS_RIGHT_Y] };
     }
 
-    float GetTriggerValue(GamepadEnum gamepad, Trigger trigger) noexcept
+    float Gamepad::GetTriggerValue(Trigger trigger) noexcept
     {
         GLFWgamepadstate state{};
-        glfwGetGamepadState(gamepad, &state);
+        glfwGetGamepadState(m_id, &state);
 
         if(trigger == Trigger::Left)
         {
@@ -39,20 +44,31 @@ namespace tml::Gamepad
         return (state.axes[GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER] + 1.0f) / 2.0f;
     }
 
-    bool IsButtonPressed(GamepadEnum gamepad, Gamepad::Button button) noexcept
+    bool Gamepad::IsButtonPressed(Gamepad::Button button) noexcept
     {
         GLFWgamepadstate state{};
-        glfwGetGamepadState(gamepad, &state);
+        glfwGetGamepadState(m_id, &state);
 
-        const auto returnValue = (state.buttons[button] == (GLFW_PRESS & s_buttonStates[gamepad][button])) != GLFW_PRESS;
-        s_buttonStates[gamepad][button] = state.buttons[button];
+        const auto returnValue = (state.buttons[button] == (GLFW_PRESS & m_buttonStates[button])) != GLFW_PRESS;
+        m_buttonStates[button] = state.buttons[button];
+
         return returnValue;
     }
 
-    bool IsButtonDown(GamepadEnum gamepad, Gamepad::Button button) noexcept
+    bool Gamepad::IsButtonDown(Gamepad::Button button) noexcept
     {
         GLFWgamepadstate state{};
-        glfwGetGamepadState(gamepad, &state);
+        glfwGetGamepadState(m_id, &state);
         return state.buttons[button] == GLFW_PRESS;
+    }
+
+    bool Gamepad::IsConnected() noexcept
+    {
+        return glfwJoystickPresent(m_id) && glfwJoystickIsGamepad(m_id);
+    }
+
+    int32_t Gamepad::GetId() noexcept
+    {
+        return m_id;
     }
 }

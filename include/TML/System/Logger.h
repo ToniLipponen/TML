@@ -24,6 +24,6 @@ namespace tml
         virtual void LogWarning(const std::string& message); 
         virtual void LogError(const std::string& message);
     private:
-        LoggingLevel m_logLevel = LogLevel::Error;
+        LogLevel m_logLevel = LogLevel::Error;
     };
 }

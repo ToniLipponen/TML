@@ -17,7 +17,7 @@ namespace tml
     {
     public:
         Window() noexcept;
-        Window(int32_t width, int32_t height, const String& title, int32_t flags = 0) noexcept;
+        Window(int32_t width, int32_t height, const String& title, int32_t flags = WindowSettings::VSync) noexcept;
         explicit Window(const WindowSettings& settings) noexcept;
         Window(const Window &) = delete;
         Window(const Window&&) = delete;
@@ -27,7 +27,7 @@ namespace tml
         virtual ~Window() noexcept;
         virtual void Display() noexcept;
 
-        bool Create(int32_t w, int32_t h, const String& title, int32_t flags = 0) noexcept;
+        bool Create(int32_t w, int32_t h, const String& title, int32_t flags = WindowSettings::VSync) noexcept;
         bool Create(const WindowSettings& settings) noexcept;
         void Close() noexcept;
 
@@ -67,7 +67,11 @@ namespace tml
         void Show() const noexcept;
         void Hide() const noexcept;
 
-        EventHandler<Window, MouseButtonEvent> OnMouseClicked;
+        EventHandler<Window, MouseButtonEvent> OnMouseUp;
+        EventHandler<Window, MouseButtonEvent> OnMouseDown;
+        EventHandler<Window, MouseScrollEvent> OnMouseScrolled;
+        EventHandler<Window, MoveEvent> OnMouseMoved;
+
         EventHandler<Window, MoveEvent> OnMoved;
         EventHandler<Window, ResizeEvent> OnResized;
         EventHandler<Window, Event> OnMinimized;
@@ -81,12 +85,7 @@ namespace tml
         EventHandler<Window, Event> OnGainedFocus;
 
         EventHandler<Window, KeyEvent> OnKeyPressed;
-        EventHandler<Window, MoveEvent> OnMouseMoved;
         EventHandler<Window, TextEvent> OnTextEntered;
-        EventHandler<Window, MouseButtonEvent> OnMouseDown;
-        EventHandler<Window, MouseScrollEvent> OnMouseScrolled;
-        EventHandler<Window, MouseDragEvent> OnMouseDragged;
-        EventHandler<Window, GamepadEvent> OnGamepad;
         EventHandler<Window, FileDropEvent> OnFilesDropped;
 
     private:

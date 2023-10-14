@@ -32,7 +32,7 @@ namespace tml
             return *this;
         }
 
-        void Invoke(Sender* sender, EventType& args)
+        void Invoke(Sender* sender, EventType& args) const
         {
             for(auto& callback : m_callbacks)
             {
@@ -41,6 +41,12 @@ namespace tml
                 if(args.handled)
                     break;
             }
+        }
+
+        void Invoke(Sender* sender) const
+        {
+            EventType e{};
+            Invoke(sender, e);
         }
 
         void Register(const Callback& callback)

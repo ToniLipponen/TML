@@ -1,5 +1,6 @@
 #include <TML/Window/Window.h>
 #include <TML/System/Math.h>
+#include <TML/Window/Gamepad.h>
 #include <TML/TMLAssert.h>
 
 #define GLFW_INCLUDE_NONE
@@ -192,12 +193,12 @@ namespace tml
 
         OnResized = [&](auto*, tml::ResizeEvent& e)
         {
-            m_size = tml::Vector2i(e.w, e.h);
+            m_size = e.size;
         };
 
         OnMoved = [&](auto*, tml::MoveEvent& e)
         {
-            m_pos = tml::Vector2i(e.x, e.y);
+            m_pos = e.position;
         };
 
         glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &m_pos.x, &m_pos.y);
@@ -449,6 +450,7 @@ namespace tml
     void Window::SetCallbacks() noexcept
     {
         auto* handle = static_cast<GLFWwindow*>(m_handle);
+        glfwSetWindowUserPointer(handle, this);
         glfwSetWindowSizeCallback(handle, WindowResizeCallback);
         glfwSetCharCallback(handle, CharCallback);
         glfwSetKeyCallback(handle, KeyCallback);
@@ -462,7 +464,6 @@ namespace tml
         glfwSetCursorPosCallback(handle, CursorPosCallback);
         glfwSetWindowPosCallback(handle, WindowMoveCallback);
         glfwSetDropCallback(handle, DropCallback);
-        glfwSetWindowUserPointer(handle, this);
     }
 }
 
@@ -470,10 +471,10 @@ static void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffs
 {
     auto mousePos = tml::Mouse::GetPosition();
     tml::MouseScrollEvent e{};
-    e.x      = static_cast<int>(mousePos.x);
-    e.y      = static_cast<int>(mousePos.y);
-    e.deltaY = static_cast<float>(yoffset);
-    e.deltaX = static_cast<float>(xoffset);
+    e.position.x = static_cast<int>(mousePos.x);
+    e.position.y = static_cast<int>(mousePos.y);
+    e.delta.y = static_cast<float>(yoffset);
+    e.delta.x = static_cast<float>(xoffset);
 
     auto tmlWindow = static_cast<tml::Window*>(glfwGetWindowUserPointer(window));
     tmlWindow->OnMouseScrolled.Invoke(tmlWindow, e);
@@ -493,7 +494,7 @@ static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
     auto tmlWindow = static_cast<tml::Window*>(glfwGetWindowUserPointer(window));
 
     tml::KeyEvent event{};
-    event.value     = static_cast<tml::Keyboard::Key>(key);
+    event.key       = static_cast<tml::Keyboard::Key>(key);
     event.code      = scancode;
     event.control   = (mods & GLFW_MOD_CONTROL) != 0;
     event.shift     = (mods & GLFW_MOD_SHIFT)   != 0;
@@ -514,86 +515,86 @@ static void MouseButtonCallback(GLFWwindow* window, int button, int action, int)
     auto tmlWindow = static_cast<tml::Window*>(glfwGetWindowUserPointer(window));
     tml::MouseButtonEvent e;
     e.button = static_cast<tml::Mouse::Button>(button);
-    e.x = static_cast<int>(x);
-    e.y = static_cast<int>(y);
+    e.position.x = static_cast<int>(x);
+    e.position.y = static_cast<int>(y);
 
-    tmlWindow->OnMouseDown.Invoke(tmlWindow, e);
+    if(action == GLFW_RELEASE)
+    {
+        tmlWindow->OnMouseUp.Invoke(tmlWindow, e);
+    }
+    else
+    {
+        tmlWindow->OnMouseDown.Invoke(tmlWindow, e);
+    }
 }
 
 static void WindowResizeCallback(GLFWwindow* window, int x, int y)
 {
     auto tmlWindow = static_cast<tml::Window*>(glfwGetWindowUserPointer(window));
     tml::ResizeEvent e;
-    e.w = x;
-    e.h = y;
+    e.size = {x, y};
     tmlWindow->OnResized.Invoke(tmlWindow, e);
 }
 
 static void WindowFocusCallback(GLFWwindow* window, int focus)
 {
     auto tmlWindow = static_cast<tml::Window*>(glfwGetWindowUserPointer(window));
-    tml::Event e;
     
     if(focus)
     {
-        tmlWindow->OnGainedFocus.Invoke(tmlWindow, e);
+        tmlWindow->OnGainedFocus.Invoke(tmlWindow);
     }
     else
     {
-        tmlWindow->OnLostFocus.Invoke(tmlWindow, e);
+        tmlWindow->OnLostFocus.Invoke(tmlWindow);
     }
 }
 
 static void WindowCloseCallback(GLFWwindow* window)
 {
     auto tmlWindow = static_cast<tml::Window*>(glfwGetWindowUserPointer(window));
-    tml::Event e;
-
-    tmlWindow->OnClosed.Invoke(tmlWindow, e);
+    tmlWindow->OnClosed.Invoke(tmlWindow);
 }
 
 static void CursorEnterCallback(GLFWwindow* window, int entered)
 {
     auto tmlWindow = static_cast<tml::Window*>(glfwGetWindowUserPointer(window));
-    tml::Event e;
 
     if(entered)
     {
-        tmlWindow->OnMouseEnter.Invoke(tmlWindow, e);
+        tmlWindow->OnMouseEnter.Invoke(tmlWindow);
     }
     else
     {
-        tmlWindow->OnMouseExit.Invoke(tmlWindow, e);
+        tmlWindow->OnMouseExit.Invoke(tmlWindow);
     }
 }
 
 static void WindowMaximizeCallback(GLFWwindow* window, int maximized)
 {
     auto tmlWindow = static_cast<tml::Window*>(glfwGetWindowUserPointer(window));
-    tml::Event e;
 
     if(maximized)
     {
-        tmlWindow->OnMaximized.Invoke(tmlWindow, e);
+        tmlWindow->OnMaximized.Invoke(tmlWindow);
     }
     else
     {
-        tmlWindow->OnRestored.Invoke(tmlWindow, e);
+        tmlWindow->OnRestored.Invoke(tmlWindow);
     }
 }
 
 static void WindowMinimizeCallback(GLFWwindow* window, int minimized)
 {
     auto tmlWindow = static_cast<tml::Window*>(glfwGetWindowUserPointer(window));
-    tml::Event e;
     
     if(minimized)
     {
-        tmlWindow->OnMinimized.Invoke(tmlWindow, e);
+        tmlWindow->OnMinimized.Invoke(tmlWindow);
     }
     else
     {
-        tmlWindow->OnRestored.Invoke(tmlWindow, e);
+        tmlWindow->OnRestored.Invoke(tmlWindow);
     }
 }
 
@@ -601,8 +602,8 @@ static void CursorPosCallback(GLFWwindow* window, double x, double y)
 {
     auto tmlWindow = static_cast<tml::Window*>(glfwGetWindowUserPointer(window));
     tml::MoveEvent e;
-    e.x = static_cast<int>(x);
-    e.y = static_cast<int>(y);
+    e.position.x = static_cast<int>(x);
+    e.position.y = static_cast<int>(y);
     tmlWindow->OnMouseMoved.Invoke(tmlWindow, e);
 }
 
@@ -610,8 +611,7 @@ static void WindowMoveCallback(GLFWwindow* window, int x, int y)
 {
     auto tmlWindow = static_cast<tml::Window*>(glfwGetWindowUserPointer(window));
     tml::MoveEvent e;
-    e.x = x;
-    e.y = y;
+    e.position = {x, y};
     tmlWindow->OnMoved.Invoke(tmlWindow, e);
 }
 

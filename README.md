@@ -38,28 +38,18 @@ Currently, there is no API documentation or tutorials on how to use this library
 ### Basic example
     
 ```cpp
-#include <TML/Graphics.h>
-using namespace tml;
+#include <TML/TML.h> //Include everything
 
 int main()
 {
-    RenderWindow window(800, 600, "Circle");
-
-    while(window.IsOpen())
+    tml::RenderWindow window(800, 600, "Hello world");
+    
+    while(window.IsOpen(true))
     {
-        Event event;
-
-        while(window.PollEvents(event))
-        {
-            if(event.type == Event::Closed)
-                window.Close();
-        }
-
         window.Clear();
-        window.DrawCircle(window.GetSize() / 2, 200, Color::Red);
+        window.DrawCircle(window.GetSize() / 2, 100, tml::Color::Green);
         window.Display();
     }
-    return 0;
 }
 ```
 

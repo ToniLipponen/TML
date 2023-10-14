@@ -14,7 +14,7 @@ namespace tml
             DontAutoResizeViewport  = (1 << 17)
         };
     public:
-        RenderWindow(uint32_t w, uint32_t h, const String& title, uint32_t settings = 0);
+        RenderWindow(uint32_t w, uint32_t h, const String& title, uint32_t settings = tml::WindowSettings::VSync);
         explicit RenderWindow(const WindowSettings& settings);
         void Clear() noexcept override;
         void Clear(Color color) noexcept override;
