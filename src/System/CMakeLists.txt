@@ -11,9 +11,9 @@ add_library(tml-system ${TML_LIBRARY_TYPE}
         Logger.cpp)
 
 if(WIN32)
-    target_link_libraries(tml-system glfw lunasvg fastlz)
+    target_link_libraries(tml-system glfw lunasvg fmt fastlz)
 else()
-    target_link_libraries(tml-system glfw lunasvg fastlz rt)
+    target_link_libraries(tml-system glfw lunasvg fmt fastlz rt)
 endif()
 
 set_target_properties(tml-system PROPERTIES VERSION ${TML_API_VERSION} SOVERSION ${TML_API_VERSION})
