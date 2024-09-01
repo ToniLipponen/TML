@@ -14,21 +14,42 @@ namespace tml
 
     public:
         AudioType();
+        
         virtual ~AudioType();
+        
         virtual void Play();
+        
         virtual void Stop();
+        
         virtual void Pause();
+        
         virtual void Resume();
+        
         void SetLooping(bool loop);
+        
         void SetVolume(float volume);
+        
         void SetBalance(float balance);
-        [[nodiscard]] float GetVolume() const;
-        [[nodiscard]] State GetState() const;
-        [[nodiscard]] bool IsPlaying() const;
-        [[nodiscard]] bool IsLooping() const;
+        
+        [[nodiscard]]
+        float GetVolume() const;
+        
+        [[nodiscard]]
+        State GetState() const;
+        
+        [[nodiscard]]
+        bool IsPlaying() const;
+        
+        [[nodiscard]]
+        bool IsLooping() const;
+        
         virtual uint64_t GetLength() noexcept;
+        
         virtual uint64_t GetLengthInSeconds() noexcept;
-        [[nodiscard]] virtual double GetProgress() const noexcept;
+        
+        [[nodiscard]] 
+        virtual double GetProgress() const noexcept;
+        
         virtual uint32_t ReadFrames(AudioFrame* output, uint32_t frameCount) = 0;
     
     public:

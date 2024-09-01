@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 project(tml-system VERSION ${TML_API_VERSION})
 
 add_library(tml-system ${TML_LIBRARY_TYPE}

@@ -1,9 +1,10 @@
 #pragma once
+#include <TML/Export.h>
 #include <string>
 
 namespace tml
 {
-    class Logger
+    class TML_API Logger
     {
     public:
         enum class LogLevel

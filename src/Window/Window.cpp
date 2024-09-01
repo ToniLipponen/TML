@@ -27,21 +27,32 @@ namespace tml
     Window::Window() noexcept
     : m_handle(nullptr)
     {
-        OnClosed = [this](auto*, auto&){ Close(); };
+        OnClosed = [this](auto*, auto&)
+        {
+            Close(); 
+        };
+
+        OnResized = [&](auto*, tml::ResizeEvent& e)
+        {
+            m_size = e.size;
+        };
+
+        OnMoved = [&](auto*, tml::MoveEvent& e)
+        {
+            m_pos = e.position;
+        };
     }
 
     Window::Window(int32_t w, int32_t h, const String& title, int32_t flags) noexcept
-    : m_handle(nullptr)
+    : Window()
     {
         TML_ASSERT(Create(w, h, title, flags), "Failed to create a window");
-        OnClosed = [this](auto*, auto&){ Close(); };
     }
 
     Window::Window(const WindowSettings& settings) noexcept
-    : m_handle(nullptr)
+    : Window()
     {
         TML_ASSERT(Create(settings), "Failed to create a window");
-        OnClosed = [this](auto*, auto&){ Close(); };
     }
 
     Window::~Window() noexcept
@@ -190,19 +201,9 @@ namespace tml
         }
 
         SetCallbacks();
-
-        OnResized = [&](auto*, tml::ResizeEvent& e)
-        {
-            m_size = e.size;
-        };
-
-        OnMoved = [&](auto*, tml::MoveEvent& e)
-        {
-            m_pos = e.position;
-        };
-
         glfwGetWindowPos(static_cast<GLFWwindow*>(m_handle), &m_pos.x, &m_pos.y);
         glfwGetWindowSize(static_cast<GLFWwindow*>(m_handle), &m_size.x, &m_size.y);
+
         return m_handle != nullptr;
     }
 
@@ -552,6 +553,7 @@ static void WindowFocusCallback(GLFWwindow* window, int focus)
 
 static void WindowCloseCallback(GLFWwindow* window)
 {
+    glfwSetWindowShouldClose(window, 0);
     auto tmlWindow = static_cast<tml::Window*>(glfwGetWindowUserPointer(window));
     tmlWindow->OnClosed.Invoke(tmlWindow);
 }

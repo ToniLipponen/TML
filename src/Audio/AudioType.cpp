@@ -39,6 +39,9 @@ namespace tml
         }
 
         m_framesRead = 0;
+
+        tml::Event e;
+        OnAudioEnd.Invoke(this, e);
     }
 
     void AudioType::Pause()

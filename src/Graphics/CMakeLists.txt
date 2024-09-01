@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 project(tml-graphics VERSION ${TML_API_VERSION})
 
 file(GLOB_RECURSE SRC_FILES ./*.cpp)

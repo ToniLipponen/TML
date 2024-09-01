@@ -10,34 +10,66 @@ namespace tml
     {
     public:
         Image() noexcept;
+        
         Image(int32_t w, int32_t h, const Color* data) noexcept;
+        
         Image(uint32_t w, uint32_t h, Color color = Color::Transparent) noexcept;
+        
         Image(const uint8_t* data, int32_t dataSize) noexcept;
+        
         explicit Image(const String& fileName, int32_t requestedWidth = 0, int32_t requestedHeight = 0) noexcept;
 
-        [[nodiscard]] int32_t GetWidth() const noexcept;
-        [[nodiscard]] int32_t GetHeight() const noexcept;
-        [[nodiscard]] Vector2ui GetSize() const noexcept;
-        [[nodiscard]] Image GetArea(uint32_t x, uint32_t y, uint32_t width, uint32_t height) const noexcept;
-        [[nodiscard]] Image GetArea(Vector2ui position, Vector2ui size) const noexcept;
-        [[nodiscard]] Color GetPixel(uint32_t x, uint32_t y) const noexcept;
-        [[nodiscard]] Color GetPixel(Vector2ui position) const noexcept;
-        [[nodiscard]] const Color* GetData() const noexcept;
-        [[nodiscard]] Color* GetData() noexcept;
-
+        [[nodiscard]]
+        int32_t GetWidth() const noexcept;
+        
+        [[nodiscard]]
+        int32_t GetHeight() const noexcept;
+        
+        [[nodiscard]]
+        Vector2ui GetSize() const noexcept;
+        
+        [[nodiscard]]
+        Image GetArea(uint32_t x, uint32_t y, uint32_t width, uint32_t height) const noexcept;
+        
+        [[nodiscard]]
+        Image GetArea(Vector2ui position, Vector2ui size) const noexcept;
+        
+        [[nodiscard]]
+        Color GetPixel(uint32_t x, uint32_t y) const noexcept;
+        
+        [[nodiscard]]
+        Color GetPixel(Vector2ui position) const noexcept;
+        
+        [[nodiscard]]
+        const Color* GetData() const noexcept;
+        
+        [[nodiscard]]
+        Color* GetData() noexcept;
+        
         bool LoadFromFile(const String& fileName, int32_t requestedWidth = 0, int32_t requestedHeight = 0) noexcept;
+        
         bool LoadFromMemory(int32_t w, int32_t h, const Color* data) noexcept;
+        
         bool LoadFromData(const uint8_t* data, int32_t dataSize) noexcept;
+        
         bool WriteToFile(const String& fileName, int32_t quality = 90) noexcept;
+        
         bool Resize(uint32_t requestedWidth = 0, uint32_t requestedHeight = 0) noexcept;
+        
         bool FlipVertically() noexcept;
+        
         void SetFlipOnLoad(bool flip) noexcept;
+        
         void SetFlipOnWrite(bool flip) noexcept;
 
         void Clear(Color clearColor = Color::Transparent) noexcept;
+        
         void SetPixel(uint32_t x, uint32_t y, Color pixelColor) noexcept;
+        
         void SetPixel(Vector2ui position, Color pixelColor) noexcept;
+        
         void InsertImage(uint32_t x, uint32_t y, const Image& image) noexcept;
+        
         void InsertImage(Vector2ui position, const Image& image) noexcept;
         
     private:

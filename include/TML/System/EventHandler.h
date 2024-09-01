@@ -12,18 +12,8 @@ namespace tml
     template<typename Sender, typename EventType = Event>
     struct EventHandler
     {
+        friend Sender;
         using Callback = std::function<void(Sender*, EventType&)>;
-
-        EventHandler& operator=(const EventHandler& other) = default;
-
-        EventHandler& operator=(EventHandler&& other) noexcept = default;
-
-        EventHandler& operator=(const Callback& callback)
-        {
-            Assign(callback);
-
-            return *this;
-        }
 
         EventHandler& operator+=(const Callback& callback)
         {
@@ -31,11 +21,12 @@ namespace tml
 
             return *this;
         }
-
+        
         void Invoke(Sender* sender, EventType& args) const
         {
-            for(auto& callback : m_callbacks)
+            for(auto it = m_callbacks.rbegin(); it != m_callbacks.rend(); it++)
             {
+                const Callback& callback = *it;
                 callback(sender, args);
 
                 if(args.handled)
@@ -47,6 +38,18 @@ namespace tml
         {
             EventType e{};
             Invoke(sender, e);
+        }
+
+    private:
+        EventHandler& operator=(const EventHandler& other) = default;
+
+        EventHandler& operator=(EventHandler&& other) noexcept = default;
+
+        EventHandler& operator=(const Callback& callback)
+        {
+            Assign(callback);
+
+            return *this;
         }
 
         void Register(const Callback& callback)
@@ -64,6 +67,7 @@ namespace tml
         {
             m_callbacks.clear();
         }
+
     private:
         std::vector<Callback> m_callbacks;
     };
